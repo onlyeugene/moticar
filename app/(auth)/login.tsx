@@ -108,6 +108,7 @@ export default function Login() {
             placeholder="Enter your email address"
             keyboardType="email-address"
             autoCapitalize="none"
+            editable={!login.isPending}
           />
         </View>
 
@@ -121,6 +122,7 @@ export default function Login() {
             name="password"
             control={control}
             placeholderClassName="text-[#7BA0A3]"
+            editable={!login.isPending}
           />
         </View>
 
@@ -143,9 +145,11 @@ export default function Login() {
         </View>
 
         <View className="mt-5">
-            <Text className="text-[#9BBABB] font-lexendMedium text-[14px] text-center">
+          <Pressable disabled={login.isPending}>
+            <Text className={`text-[#9BBABB] font-lexendMedium text-[14px] text-center ${login.isPending ? "opacity-50" : ""}`}>
                 Forgot Password?
             </Text>
+          </Pressable>
         </View>
 
         <View className="mt-10 flex-row items-center justify-center gap-2">
@@ -164,6 +168,7 @@ export default function Login() {
             googleBg="transparent"
             googleBorder="#09515D"
             appleIconColor="white"
+            disabled={login.isPending}
           />
         </View>
 
@@ -174,8 +179,11 @@ export default function Login() {
             <Text className="text-[#FFFFFF] text-[16px] font-lexendMedium">
               New to moticar?
             </Text>
-            <TouchableOpacity onPress={() => router.push("/(auth)/create")}>
-              <Text className="text-[#00AEB5] font-lexendBold text-[16px]">
+            <TouchableOpacity 
+              onPress={() => router.push("/(auth)/create")}
+              disabled={login.isPending}
+            >
+              <Text className={`text-[#00AEB5] font-lexendBold text-[16px] ${login.isPending ? "opacity-50" : ""}`}>
                Create an account
               </Text>
             </TouchableOpacity>

@@ -15,15 +15,17 @@ export const SocialAuthButtons = ({
   googleBorder = "#143E44",
   appleIconColor = "black",
   googleIconColor = "black",
+  disabled = false,
 }: SocialAuthProps) => {
   return (
-    <View className="w-full px-5">
+    <View className={`w-full px-5 ${disabled ? "opacity-50" : ""}`}>
       {/* SSO Buttons Row */}
       <View className="flex-row items-center justify-center w-full gap-4 mb-4">
         <Pressable
-          style={{ borderColor: appleBorder , backgroundColor: appleBg}}
+          style={{ borderColor: appleBorder, backgroundColor: appleBg }}
           className="flex-1 items-center justify-center border border-[#143E44] h-12 rounded-full active:opacity-80 shadow-sm"
           onPress={() => onAuth("apple")}
+          disabled={disabled}
         >
           <Ionicons name="logo-apple" size={24} color={appleIconColor} />
         </Pressable>
@@ -32,6 +34,7 @@ export const SocialAuthButtons = ({
           style={{ borderColor: googleBorder, backgroundColor: googleBg }}
           className="flex-1 items-center justify-center border border-[#143E44] h-12 rounded-full active:opacity-80 shadow-sm"
           onPress={() => onAuth("google")}
+          disabled={disabled}
         >
           <GoogleIcon width={22} height={22} />
         </Pressable>
@@ -39,9 +42,10 @@ export const SocialAuthButtons = ({
 
       {/* Email Button */}
       {showEmail && (
-        <Pressable 
+        <Pressable
           className="w-full bg-white h-12 rounded-full items-center justify-center active:opacity-90 shadow-md"
-          onPress={() => router.push('/(auth)/create')}
+          onPress={() => router.push("/(auth)/create")}
+          disabled={disabled}
         >
           <Text className="text-[#1E293B] font-lexendMedium text-base">
             Sign up with Email

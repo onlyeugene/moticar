@@ -30,6 +30,7 @@ export interface SocialAuthProps {
   googleBorder?: string;
   appleIconColor?: string;
   googleIconColor?: string;
+  disabled?: boolean;
 }
 
 export interface OtpInputProps {

@@ -1,8 +1,10 @@
 export interface Car {
-  id: string;
+  _id: string;
+  id?: string;
   user: string;
   make: string;
-  model: string;
+  carModel: string;
+  model?: string;
   year: number;
   plate: string;
   vin: string;
@@ -12,6 +14,30 @@ export interface Car {
   documents?: CarDocument[];
   createdAt?: string;
   updatedAt?: string;
+  color?: string;
+  condition?: string;
+  status?: string;
+  purchaseDate?: string;
+  currency?: string;
+  engineOil?: {
+    capacityLiters: number;
+    recommendedGrade: string;
+  };
+  fuelSpec?: {
+    capacityLiters: number;
+    avgPriceRange: number;
+  };
+  tyreSpec?: {
+    size: string;
+    recommendedPressurePsi: string;
+  };
+  brakePads?: {
+    thicknessMm: number;
+    estLifespanMiles: string;
+  };
+  batteryVoltage?: string;
+  bodyStyle?: string;
+  fuelType?: string;
 }
 
 export interface CarDocument {

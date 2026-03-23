@@ -80,7 +80,7 @@ export const carService = {
   },
 
   /** Get specific car by its ID */
-  getCarById: async (id: string): Promise<Car> => {
+  getCarById: async (id: string): Promise<{ car: Car }> => {
     const response = await apiClient.get(API_ROUTES.CARS.GET_BY_ID(id));
     return response.data;
   },

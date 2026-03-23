@@ -95,12 +95,14 @@ export default function Login() {
             placeholder="Enter your preferred email address"
             keyboardType="email-address"
             autoCapitalize="none"
+            editable={!signup.isPending}
           />
         </View>
 
         <Pressable 
           onPress={() => setIsAgreed(!isAgreed)}
-          className="mt-2 flex-row items-center"
+          className={`mt-2 flex-row items-center ${signup.isPending ? "opacity-50" : ""}`}
+          disabled={signup.isPending}
         >
           <View
             className={`w-6 h-6 rounded-md items-center justify-center ${isAgreed ? "bg-[#43E4E9]" : "border-2 border-[#43E4E9]"}`}
@@ -148,6 +150,7 @@ export default function Login() {
             googleBg="transparent"
             googleBorder="#09515D"
             appleIconColor="white"
+            disabled={signup.isPending}
           />
         </View>
 
@@ -166,8 +169,11 @@ export default function Login() {
             <Text className="text-[#FFFFFF] text-[16px] font-lexendMedium">
               Already have an account?
             </Text>
-            <TouchableOpacity onPress={() => router.push("/(auth)/login")}>
-              <Text className="text-[#00AEB5] font-lexendBold text-[16px]">
+            <TouchableOpacity 
+              onPress={() => router.push("/(auth)/login")}
+              disabled={signup.isPending}
+            >
+              <Text className={`text-[#00AEB5] font-lexendBold text-[16px] ${signup.isPending ? "opacity-50" : ""}`}>
                 Sign in
               </Text>
             </TouchableOpacity>

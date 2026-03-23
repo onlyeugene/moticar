@@ -1,5 +1,6 @@
 export interface Technician {
-  id: string;
+  _id: string;
+  id?: string;
   name: string;
   specialty: string;
   phone: string;

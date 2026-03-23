@@ -75,6 +75,9 @@ export default function TabBar({ state, descriptors, navigation }: any) {
     useState<ExpenseCategory | null>(null);
   const [successVisible, setSuccessVisible] = useState(false);
   const [openedFromCategorySheet, setOpenedFromCategorySheet] = useState(false);
+  
+  const currentRouteName = state.routes[state.index].name;
+  const isCarRoute = currentRouteName === "car";
 
   const { data: categoriesData } = useExpenseCategories();
   const categories = categoriesData?.categories || [];
@@ -184,7 +187,7 @@ export default function TabBar({ state, descriptors, navigation }: any) {
       )}
 
       {/* FAB menu items */}
-      {fabOpen && (
+      {fabOpen && !isCarRoute && (
         <View
           className="absolute right-5 z-20 items-end gap-3"
           style={{ bottom: 160 }}
@@ -260,23 +263,25 @@ export default function TabBar({ state, descriptors, navigation }: any) {
       )}
 
       {/* FAB button */}
-      <TouchableOpacity
-        className={`absolute bottom-28 right-6 w-14 h-14 rounded-full items-center justify-center z-30 ${
-          fabOpen
-            ? "bg-transparent border border-brand-yellow"
-            : "bg-primary shadow-lg"
-        }`}
-        onPress={toggleFab}
-        activeOpacity={0.85}
-      >
-        <Animated.View style={{ transform: [{ rotate: fabRotateDeg }] }}>
-          <Ionicons
-            name="add"
-            size={26}
-            color={fabOpen ? "#FBE74C" : "#0D2B2B"}
-          />
-        </Animated.View>
-      </TouchableOpacity>
+      {!isCarRoute && (
+        <TouchableOpacity
+          className={`absolute bottom-28 right-6 w-14 h-14 rounded-full items-center justify-center z-30 ${
+            fabOpen
+              ? "bg-transparent border border-brand-yellow"
+              : "bg-primary shadow-lg"
+          }`}
+          onPress={toggleFab}
+          activeOpacity={0.85}
+        >
+          <Animated.View style={{ transform: [{ rotate: fabRotateDeg }] }}>
+            <Ionicons
+              name="add"
+              size={26}
+              color={fabOpen ? "#FBE74C" : "#0D2B2B"}
+            />
+          </Animated.View>
+        </TouchableOpacity>
+      )}
 
       {/* Unified Tab Bar and Brand Container */}
       <View

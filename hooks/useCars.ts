@@ -41,6 +41,15 @@ export const useUserCars = () => {
   });
 };
 
+/** Get specific car by its ID */
+export const useCarById = (id: string) => {
+  return useQuery({
+    queryKey: ["cars", "details", id],
+    queryFn: () => carService.getCarById(id),
+    enabled: !!id,
+  });
+};
+
 /** Search for cars by make or model */
 export const useSearchCars = (query: string) => {
   return useQuery({
