@@ -11,7 +11,7 @@ import { useAppStore } from "@/store/useAppStore";
 import { getCurrencySymbol } from "@/utils/currency";
 import { Ionicons } from "@expo/vector-icons";
 import ExpenseBreakdownCard from "@/components/dashboard/ExpenseBreakdownCard";
-import Speedometer from "@/assets/icons/car/speedometer.svg";
+import MileageTracker from "@/components/dashboard/MileageTracker";
 import React, { useEffect, useState } from "react";
 import {
   Image,
@@ -230,33 +230,13 @@ export default function Dashboard() {
             />
 
             {/* Mileage Tracker Section */}
-            <View className="border-t border-[#7BA0A3] my-4" />
-            <View className="px-4 mb-4">
-              <TouchableOpacity>
-                <View className="w-full">
-                  <View className="flex-row justify-between items-center">
-                    <View>
-                      <Text className="text-[#000000] font-lexendMedium text-[20px]">
-                        Mileage Tracker
-                      </Text>
-                      <Text className="text-[#4A8588] font-lexendRegular text-[12px] mt-1">
-                        No entry has been recorded
-                      </Text>
-                    </View>
-                    <View className="w-12 h-12 bg-white rounded-full items-center justify-center">
-                      <Ionicons name="add" size={24} color="#00AEB5" />
-                    </View>
-                  </View>
-
-                  <View className="mt-10 flex-row items-start justify-between">
-                    <View>
-                      <Speedometer />
-                    </View>
-                    <View className="w-5 h-[5px] bg-[#006C70]" />
-                  </View>
-                </View>
-              </TouchableOpacity>
-            </View>
+            <View className="border-t border-[#8acece] my-4" />
+            <MileageTracker
+              mileage={userCar?.mileage}
+              updatedAt={userCar?.updatedAt}
+              approxKm={tripsData?.trips?.[0]?.distanceKm || 0}
+              entriesCount={tripsData?.count || 0}
+            />
           </View>
 
           {/* Expense Breakdown Section */}

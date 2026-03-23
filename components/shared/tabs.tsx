@@ -1,33 +1,44 @@
-import React, { useState, useRef } from "react";
+import React, { useRef, useState } from "react";
 import {
-  View,
+  Animated,
+  Platform,
+  Pressable,
   Text,
   TouchableOpacity,
-  Animated,
-  Pressable,
-  Platform,
-  Image,
+  View,
 } from "react-native";
 // import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import { BlurView } from "expo-blur";
-import { Ionicons, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
-import HomeIcon from "@/assets/icons/tabs/homeIcon.svg";
-import CarIcon from "@/assets/icons/tabs/car.svg";
-import ActivityIcon from "@/assets/icons/tabs/activity.svg";
-import MoreIcon from "@/assets/icons/tabs/more.svg";
 import HomeWhite from "@/assets/icons/tabs/Icon.svg";
-import CarWhite from "@/assets/icons/tabs/carIcon.svg";
+import ActivityIcon from "@/assets/icons/tabs/activity.svg";
 import ActivityWhite from "@/assets/icons/tabs/activityIcon.svg";
+import CarIcon from "@/assets/icons/tabs/car.svg";
+import CarWhite from "@/assets/icons/tabs/carIcon.svg";
+import HomeIcon from "@/assets/icons/tabs/homeIcon.svg";
+import MoreIcon from "@/assets/icons/tabs/more.svg";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
 // import MoreWhite from "@/assets/icons/tabs/moreIcon.svg";
 
 import LogoIcon from "@/assets/icons/logomark.svg";
+import { useExpenseCategories } from "@/hooks/useExpenses";
+import { ExpenseCategory } from "@/types/expense";
+
+import LogExpenseSheet from "../sheets/LogExpenseSheet";
+
+// Import SVGs for FAB items
+import AccessoriesIcon from "@/assets/tabs/accesory.svg";
+import CarWashIcon from "@/assets/tabs/carwash.svg";
+import FuelIcon from "@/assets/tabs/fuel.svg";
+import MechanicalIcon from "@/assets/tabs/mechanic.svg";
+import TyresIcon from "@/assets/tabs/tyreguage.svg";
+import ExpenseCategorySheet from "../sheets/ExpenseCategorySheet";
 
 const FAB_ITEMS = [
-  { label: "Accessories & Parts", icon: "bag-outline", lib: "Ionicons" },
-  { label: "Car Wash", icon: "car-wash", lib: "MaterialCommunityIcons" },
-  { label: "Tyre Gauge", icon: "radio-button-on-outline", lib: "Ionicons" },
-  { label: "Mechanical Work", icon: "construct-outline", lib: "Ionicons" },
-  { label: "Fuel Top-Up", icon: "fuel", lib: "MaterialCommunityIcons" },
+  { label: "Accessories & Parts", icon: AccessoriesIcon },
+  { label: "Car Wash", icon: CarWashIcon },
+  { label: "Tyre Guage", icon: TyresIcon },
+  { label: "Mechanical Work", icon: MechanicalIcon },
+  { label: "Fuel Top-Up", icon: FuelIcon },
   {
     label: "New Expense",
     icon: "add-circle-outline",
@@ -55,12 +66,17 @@ const TAB_LABELS: Record<string, string> = {
   more: "More",
 };
 
-export default function TabBar({
-  state,
-  descriptors,
-  navigation,
-}: any) {
+export default function TabBar({ state, descriptors, navigation }: any) {
   const [fabOpen, setFabOpen] = useState(false);
+  const [categorySheetVisible, setCategorySheetVisible] = useState(false);
+  const [logSheetVisible, setLogSheetVisible] = useState(false);
+  const [selectedCategory, setSelectedCategory] =
+    useState<ExpenseCategory | null>(null);
+  const [openedFromCategorySheet, setOpenedFromCategorySheet] = useState(false);
+
+  const { data: categoriesData } = useExpenseCategories();
+  const categories = categoriesData?.categories || [];
+
   const overlayAnim = useRef(new Animated.Value(0)).current;
   const fabRotate = useRef(new Animated.Value(0)).current;
   const itemAnims = useRef(FAB_ITEMS.map(() => new Animated.Value(0))).current;
@@ -125,6 +141,10 @@ export default function TabBar({
   });
 
   const renderIcon = (item: (typeof FAB_ITEMS)[0], size = 22) => {
+    if (typeof item.icon !== "string") {
+      const IconComponent = item.icon as React.FC<any>;
+      return <IconComponent width={size} height={size} />;
+    }
     if (item.lib === "MaterialCommunityIcons") {
       return (
         <MaterialCommunityIcons
@@ -199,6 +219,33 @@ export default function TabBar({
                   className="w-12 h-12 rounded-full items-center justify-center border bg-accent border-accent"
                   onPress={() => {
                     closeFab();
+                    if (item.label === "New Expense") {
+                      setOpenedFromCategorySheet(false);
+                      setCategorySheetVisible(true);
+                    } else {
+                      // Find matching category
+                      let matchingCategory = categories.find(
+                        (c) =>
+                          c.name.toLowerCase() === item.label.toLowerCase(),
+                      );
+
+                      // Specific mapping for Tyre Guage (aligned spelling)
+                      if (!matchingCategory && item.label === "Tyre Guage") {
+                        matchingCategory = categories.find(
+                          (c) => c.name === "Balancing" || c.id === "balancing",
+                        );
+                      }
+
+                      if (matchingCategory) {
+                        setOpenedFromCategorySheet(false);
+                        setSelectedCategory(matchingCategory);
+                        setLogSheetVisible(true);
+                      } else {
+                        // Fallback or handle missing category
+                        setOpenedFromCategorySheet(false);
+                        setCategorySheetVisible(true);
+                      }
+                    }
                   }}
                   activeOpacity={0.75}
                 >
@@ -311,6 +358,37 @@ export default function TabBar({
           <LogoIcon width={48} height={34} />
         </TouchableOpacity>
       </View>
+
+      <ExpenseCategorySheet
+        visible={categorySheetVisible}
+        onClose={() => {
+          setCategorySheetVisible(false);
+          setOpenedFromCategorySheet(false);
+        }}
+        onSelect={(category) => {
+          setCategorySheetVisible(false);
+          setOpenedFromCategorySheet(true);
+          setSelectedCategory(category);
+          setLogSheetVisible(true);
+        }}
+      />
+
+      <LogExpenseSheet
+        visible={logSheetVisible}
+        onClose={() => {
+          setLogSheetVisible(false);
+          if (openedFromCategorySheet) {
+            setCategorySheetVisible(true);
+            setOpenedFromCategorySheet(false);
+          }
+        }}
+        category={selectedCategory}
+        onSuccess={() => {
+          setLogSheetVisible(false);
+          setOpenedFromCategorySheet(false);
+          // Refresh data if needed
+        }}
+      />
     </>
   );
 }

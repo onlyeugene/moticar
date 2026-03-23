@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,6 +8,8 @@ import {
   Pressable,
   StyleSheet,
   DimensionValue,
+  Platform,
+  Keyboard,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -19,6 +21,7 @@ interface BottomSheetProps {
   headerRight?: React.ReactNode;
   height?: DimensionValue;
   backgroundColor?: string;
+  scrollable?: boolean;
 }
 
 export default function BottomSheet({
@@ -29,7 +32,26 @@ export default function BottomSheet({
   headerRight,
   backgroundColor = "#F0F0F0",
   height,
+  scrollable = true,
 }: BottomSheetProps) {
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
+      (e) => setKeyboardHeight(e.endCoordinates.height),
+    );
+    const hideSubscription = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
+      () => setKeyboardHeight(0),
+    );
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
+
   return (
     <Modal
       visible={visible}
@@ -58,15 +80,20 @@ export default function BottomSheet({
           </View>
 
           {/* Content */}
-          <ScrollView 
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ 
-              paddingHorizontal: 10, 
-              paddingBottom: 20,
-            }}
-          >
-            {children}
-          </ScrollView>
+          {scrollable ? (
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+              contentContainerStyle={{
+                paddingHorizontal: 10,
+                paddingBottom: keyboardHeight > 0 ? keyboardHeight + 40 : 40,
+              }}
+            >
+              {children}
+            </ScrollView>
+          ) : (
+            <View style={{ flex: 1, paddingHorizontal: 10 }}>{children}</View>
+          )}
         </View>
       </View>
     </Modal>

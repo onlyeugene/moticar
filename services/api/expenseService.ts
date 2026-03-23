@@ -6,7 +6,8 @@ import {
   CategoriesResponse, 
   ValuationBreakdown, 
   PriceRecommendationInput, 
-  PriceRecommendation 
+  PriceRecommendation,
+  UpdateExpenseInput
 } from "@/types/expense";
 
 /**
@@ -24,6 +25,7 @@ export const expenseService = {
   /** Get standardized expense categories with budget tracking */
   getExpenseCategories: async (carId?: string): Promise<CategoriesResponse> => {
     const response = await apiClient.get(API_ROUTES.EXPENSES.CATEGORIES, { params: { carId } });
+    console.log("Categories Response:", JSON.stringify(response.data, null, 2));
     return response.data;
   },
 
@@ -36,6 +38,18 @@ export const expenseService = {
   /** Get AI-powered price recommendation for a category */
   getPriceRecommendation: async (data: PriceRecommendationInput): Promise<PriceRecommendation> => {
     const response = await apiClient.post(API_ROUTES.EXPENSES.RECOMMEND_PRICE, data);
+    return response.data;
+  },
+
+  /** Update an existing expense */
+  updateExpense: async (id: string, data: UpdateExpenseInput): Promise<{ message: string; expense: Expense }> => {
+    const response = await apiClient.patch(API_ROUTES.EXPENSES.DETAIL(id), data);
+    return response.data;
+  },
+
+  /** Delete an expense */
+  deleteExpense: async (id: string): Promise<{ message: string }> => {
+    const response = await apiClient.delete(API_ROUTES.EXPENSES.DETAIL(id));
     return response.data;
   },
 };

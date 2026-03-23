@@ -1,3 +1,11 @@
+export interface CategoryField {
+  _id?: string;
+  name: string;
+  type: 'text' | 'select' | 'number';
+  label: string;
+  options?: string[];
+}
+
 export interface ExpenseItem {
   id?: string;
   _id?: string;
@@ -41,8 +49,23 @@ export interface CreateExpenseInput {
   notes?: string;
 }
 
+export interface UpdateExpenseInput {
+  name?: string;
+  amount?: number;
+  date?: string;
+  category?: string;
+  currency?: string;
+  receiptUrl?: string;
+  technicianId?: string;
+  paymentMethod?: string;
+  items?: ExpenseItem[];
+  metadata?: Record<string, any>;
+  notes?: string;
+}
+
 export interface ExpenseCategory {
-  _id: string;
+  _id?: string;
+  id?: string;
   name: string;
   description: string;
   icon?: string;
@@ -52,6 +75,7 @@ export interface ExpenseCategory {
   budgetRecommended: number;
   budgetLeft: number;
   totalSpentThisMonth: number;
+  fields?: CategoryField[];
   lastSimilarExpense?: {
     amount: number;
     date: string;

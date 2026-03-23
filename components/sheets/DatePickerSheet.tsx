@@ -79,7 +79,13 @@ export default function DatePickerSheet({
   };
 
   const handleSave = () => {
-    onSelect(selectedDate);
+    // Preserve the current time (hours, mins, secs) from initialDate
+    const finalDate = new Date(selectedDate);
+    finalDate.setHours(initialDate.getHours());
+    finalDate.setMinutes(initialDate.getMinutes());
+    finalDate.setSeconds(initialDate.getSeconds());
+    
+    onSelect(finalDate);
     onClose();
   };
 

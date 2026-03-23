@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { View, Text, TextInput } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { SpendBreakdown } from "@/types/activity";
-import BottomSheet from "../shared/BottomSheet";
-import ExpenseListItem from "./ExpenseListItem";
 import { Expense } from "@/types/expense";
+import { Ionicons } from "@expo/vector-icons";
+import React, { useState } from "react";
+import { Text, TextInput, View } from "react-native";
+import ExpenseListItem from "../dashboard/ExpenseListItem";
+import BottomSheet from "../shared/BottomSheet";
 import ExpenseDetailSheet from "./ExpenseDetailSheet";
 
 interface ExpenseBreakdownSheetProps {

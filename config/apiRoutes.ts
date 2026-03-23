@@ -47,6 +47,11 @@ export const API_ROUTES = {
     CATEGORIES: "/expenses/categories",
     VALUATION: (carId: string) => `/expenses/valuation/${carId}`,
     RECOMMEND_PRICE: "/expenses/recommend-price",
+    DETAIL: (id: string) => `/expenses/${id}`,
+  },
+  TECHNICIANS: {
+    BASE: "/technicians",
+    DETAIL: (id: string) => `/technicians/${id}`,
   },
 };
 

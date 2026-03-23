@@ -1,6 +1,7 @@
 import React, { useState, useEffect, createElement } from "react";
-import { View, Text, TouchableOpacity, Image, TextInput } from "react-native";
+import { View, Text, TouchableOpacity, Image, TextInput, Alert } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useUpdateExpense, useDeleteExpense } from "@/hooks/useExpenses";
 import { Expense } from "@/types/expense";
 import BottomSheet from "../shared/BottomSheet";
 import { CATEGORY_COLORS } from "@/constants/Colors";
@@ -16,7 +17,7 @@ import Notes from "@/assets/new/notes.svg";
 import Wallet from "@/assets/new/wallet.svg";
 import DeleteIcon from "@/assets/new/delete.svg";
 
-import DatePickerSheet from "../shared/DatePickerSheet";
+import DatePickerSheet from "./DatePickerSheet";
 
 
 interface ExpenseDetailSheetProps {
@@ -35,6 +36,9 @@ export default function ExpenseDetailSheet({
   const [isEditing, setIsEditing] = useState(false);
   const [editedExpense, setEditedExpense] = useState<Expense | null>(null);
   const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
+
+  const updateMutation = useUpdateExpense();
+  const deleteMutation = useDeleteExpense();
 
   useEffect(() => {
     if (expense) {
@@ -121,8 +125,44 @@ export default function ExpenseDetailSheet({
   );
 
   const handleSave = () => {
-    // Mock save: in production this would hit the API
-    setIsEditing(false);
+    if (editedExpense && expense) {
+      updateMutation.mutate({
+        id: expense.id || (expense as any)._id,
+        data: {
+          name: editedExpense.name,
+          amount: editedExpense.amount,
+          date: editedExpense.date,
+          category: editedExpense.category,
+          notes: editedExpense.notes,
+          paymentMethod: editedExpense.paymentMethod,
+          items: editedExpense.items,
+          metadata: editedExpense.metadata,
+        }
+      }, {
+        onSuccess: () => {
+          setIsEditing(false);
+        }
+      });
+    }
+  };
+
+  const handleDelete = () => {
+    if (!expense) return;
+    
+    Alert.alert(
+      "Delete Expense",
+      "Are you sure you want to delete this expense?",
+      [
+        { text: "Cancel", style: "cancel" },
+        { 
+          text: "Delete", 
+          style: "destructive", 
+          onPress: () => deleteMutation.mutate(expense.id || (expense as any)._id, {
+            onSuccess: () => onClose()
+          }) 
+        },
+      ]
+    );
   };
 
   const handleDateSelect = (date: Date) => {
@@ -159,13 +199,15 @@ export default function ExpenseDetailSheet({
           onPress={() => setIsEditing(true)}
           className="bg-white p-2 rounded-full border border-gray-100"
         >
-          <View>
-            {createElement(Edit, { width: 24, height: 24, color: "#7A7A7C" })}
-          </View>
+          {createElement(Edit, { width: 24, height: 24, color: "#7A7A7C" })}
         </TouchableOpacity>
       )}
-      <TouchableOpacity className="bg-white p-2 rounded-full border border-gray-100">
-        <DeleteIcon width={24} height={24} />
+      <TouchableOpacity 
+        onPress={handleDelete}
+        disabled={deleteMutation.isPending}
+        className="bg-white p-2 rounded-full border border-gray-100"
+      >
+        <DeleteIcon width={24} height={24} color={deleteMutation.isPending ? "#CCC" : undefined} />
       </TouchableOpacity>
     </View>
   );

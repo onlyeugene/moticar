@@ -31,7 +31,7 @@ export default function MeScreen() {
   return (
     <ScreenBackground className="flex-1 items-center justify-center">
       <View className="items-center gap-2">
-        <View className="w-24 h-24 rounded-full bg-[#FDEF56] items-center justify-center mb-4 shadow-lg shadow-[#FDEF5666]">
+        <View className="w-24 h-24 rounded-full bg-[#FDEF56] items-center justify-center mb-4">
           <Text className="text-3xl font-lexendBold text-[#1F1F1F]">M</Text>
         </View>
         <Text className="text-2xl font-lexendBold text-white">Me Screen</Text>

@@ -10,6 +10,8 @@ export interface Car {
   entryMethod: "manual" | "scan" | "obd";
   monthlyBudget?: number;
   documents?: CarDocument[];
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface CarDocument {

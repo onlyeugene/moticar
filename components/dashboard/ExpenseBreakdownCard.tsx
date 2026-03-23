@@ -1,13 +1,13 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { SpendBreakdown } from "@/types/activity";
-import Sparkline from "./Sparkline";
-import ExpenseListItem from "./ExpenseListItem";
 import Empty from "@/assets/icons/empty.svg";
-import ExpenseBreakdownSheet from "./ExpenseBreakdownSheet";
+import { SpendBreakdown } from "@/types/activity";
 import { Expense } from "@/types/expense";
-import ExpenseDetailSheet from "./ExpenseDetailSheet";
+import { Ionicons } from "@expo/vector-icons";
+import React, { useMemo, useState } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+import ExpenseBreakdownSheet from "../sheets/ExpenseBreakdownSheet";
+import ExpenseDetailSheet from "../sheets/ExpenseDetailSheet";
+import ExpenseListItem from "./ExpenseListItem";
+import Sparkline from "./Sparkline";
 
 interface ExpenseBreakdownCardProps {
   spendData?: SpendBreakdown;
@@ -43,9 +43,9 @@ const ExpenseBreakdownCard: React.FC<ExpenseBreakdownCardProps> = ({
     const days = Object.keys(dailyTotals)
       .map(Number)
       .sort((a, b) => a - b);
-    
+
     if (days.length === 0) return [];
-    
+
     // Ensure at least two points for the chart to render properly
     if (days.length === 1) {
       return [0, dailyTotals[days[0]]];
@@ -53,7 +53,6 @@ const ExpenseBreakdownCard: React.FC<ExpenseBreakdownCardProps> = ({
 
     return days.map((d) => dailyTotals[d]);
   }, [spendData?.expenses]);
-
 
   return (
     <View className="mt-4">
