@@ -24,6 +24,7 @@ import { useExpenseCategories } from "@/hooks/useExpenses";
 import { ExpenseCategory } from "@/types/expense";
 
 import LogExpenseSheet from "../sheets/LogExpenseSheet";
+import SuccessModal from "./SuccessModal";
 
 // Import SVGs for FAB items
 import AccessoriesIcon from "@/assets/tabs/accesory.svg";
@@ -72,6 +73,7 @@ export default function TabBar({ state, descriptors, navigation }: any) {
   const [logSheetVisible, setLogSheetVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] =
     useState<ExpenseCategory | null>(null);
+  const [successVisible, setSuccessVisible] = useState(false);
   const [openedFromCategorySheet, setOpenedFromCategorySheet] = useState(false);
 
   const { data: categoriesData } = useExpenseCategories();
@@ -259,7 +261,7 @@ export default function TabBar({ state, descriptors, navigation }: any) {
 
       {/* FAB button */}
       <TouchableOpacity
-        className={`absolute bottom-28 right-4 w-14 h-14 rounded-full items-center justify-center z-30 ${
+        className={`absolute bottom-28 right-6 w-14 h-14 rounded-full items-center justify-center z-30 ${
           fabOpen
             ? "bg-transparent border border-brand-yellow"
             : "bg-primary shadow-lg"
@@ -386,8 +388,14 @@ export default function TabBar({ state, descriptors, navigation }: any) {
         onSuccess={() => {
           setLogSheetVisible(false);
           setOpenedFromCategorySheet(false);
+          setSuccessVisible(true);
           // Refresh data if needed
         }}
+      />
+
+      <SuccessModal
+        visible={successVisible}
+        onClose={() => setSuccessVisible(false)}
       />
     </>
   );

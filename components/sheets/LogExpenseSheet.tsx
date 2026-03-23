@@ -11,6 +11,7 @@ import {
   View,
 } from "react-native";
 import BottomSheet from "../shared/BottomSheet";
+import ScanIcon from '@/assets/icons/scan.svg'
 
 // Icons
 
@@ -23,6 +24,8 @@ import { Technician } from "@/types/technician";
 import { getCurrencySymbol } from "@/utils/currency";
 import DatePickerSheet from "./DatePickerSheet";
 import TechnicianSheet from "./TechnicianSheet";
+import AddTechnicianSheet from "./AddTechnicianSheet";
+import PriceRuler from "./PriceRuler";
 
 import { CategoryIcon } from "./ExpenseCategorySheet";
 
@@ -116,6 +119,8 @@ export default function LogExpenseSheet({
   const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
   const [isTechnicianSheetVisible, setIsTechnicianSheetVisible] =
     useState(false);
+  const [isAddTechnicianSheetVisible, setIsAddTechnicianSheetVisible] =
+    useState(false);
 
   useEffect(() => {
     if (visible && category) {
@@ -206,8 +211,10 @@ export default function LogExpenseSheet({
         <Text className="text-[#00343F] text-[18px] font-lexendBold">
           {category.name}
         </Text>
-        <Text className="text-[#29D7DE] text-[10px] font-lexendRegular">
-          Expense
+        <Text className="text-[#8B8B8B] text-[12px] font-lexendRegular">
+         Recommeded  <Text className="font-lexendBold text-[#29D7DE] text-[13px]">
+          {currencySymbol} {budgetRecommended.toLocaleString()}
+         </Text>
         </Text>
       </View>
     </View>
@@ -223,18 +230,18 @@ export default function LogExpenseSheet({
 
   const headerRight = (
     <View className="flex-row items-center gap-2">
-      <TouchableOpacity className="w-10 h-10 rounded-xl bg-white border border-[#F0F0F0] items-center justify-center">
-        <Ionicons name="scan-outline" size={20} color="#00343F" />
+      <TouchableOpacity className="w-12 h-12 rounded-full bg-white border border-[#E0E0E0] items-center justify-center">
+        <ScanIcon width={24}/>
       </TouchableOpacity>
       <TouchableOpacity
         onPress={handleSave}
         disabled={isPending || !isFormValid}
-        className={`bg-[#BBEFF2] px-6 py-2 rounded-full ${isPending || !isFormValid ? "opacity-30" : ""}`}
+        className={`bg-[#29D7DE] px-6 py-2 rounded-full ${isPending || !isFormValid ? "opacity-30" : ""}`}
       >
         {isPending ? (
           <ActivityIndicator size="small" color="#00343F" />
         ) : (
-          <Text className="text-[#00AEB5] font-lexendBold text-[14px]">
+          <Text className="text-[#00343F] font-lexendBold text-[14px]">
             Save
           </Text>
         )}
@@ -271,7 +278,7 @@ export default function LogExpenseSheet({
         </View>
 
         {/* Card 1: Core Details */}
-        <View className="bg-white px-4 mb-2 rounded-none pt-2">
+        <View className="bg-white px-4 mb-1 rounded-none pt-7">
           {/* Expense Name */}
           <View className="mt-2 flex-row gap-3">
             <TagIcon />
@@ -297,31 +304,22 @@ export default function LogExpenseSheet({
               placeholderTextColor="#B4B1B1"
               keyboardType="numeric"
               value={amount}
-              onChangeText={setAmount}
+              onChangeText={(val) => {
+                // Ensure only numbers and a single decimal point
+                const numericValue = val.replace(/[^0-9.]/g, "");
+                setAmount(numericValue);
+              }}
             />
 
-            {/* Placeholder for Scale/Slider */}
-            <View className="h-20 items-center justify-center mb-2">
-              <View className="flex-row items-end gap-1 h-12">
-                {[...Array(21)].map((_, i) => (
-                  <View
-                    key={i}
-                    className={`w-[1px] bg-gray-200 ${i % 5 === 0 ? "h-8" : "h-4"}`}
-                  />
-                ))}
-                <View className="absolute left-1/2 -ml-[1px] h-12 w-[2px] bg-[#29D7DE]" />
-              </View>
-              <View className="flex-row justify-between w-full px-2 mt-1">
-                <Text className="text-[10px] text-gray-300 font-lexendRegular">
-                  {currencySymbol} 49,000
-                </Text>
-                <Text className="text-[10px] text-gray-300 font-lexendRegular">
-                  {currencySymbol} 51,000
-                </Text>
-              </View>
+            {/* Price Ruler Section */}
+            <View className="h-24">
+              <PriceRuler
+                value={parseFloat(amount) || 0}
+                onValueChange={(val) => setAmount(val.toString())}
+              />
             </View>
 
-            <Text className="text-[#00AEB5] text-[10px] font-lexendRegular text-center mb-4">
+            <Text className="text-[#81B4B4] text-[12px] font-lexendRegular text-center mb-4">
               Last similar expense: {currencySymbol} 18,500 on 8 March
             </Text>
 
@@ -344,6 +342,7 @@ export default function LogExpenseSheet({
 
           {/* Date Field */}
           <FieldRow
+          noBorder
             label="Date"
             icon={CalendarIcon}
             onPress={() => setIsDatePickerVisible(true)}
@@ -368,7 +367,7 @@ export default function LogExpenseSheet({
 
   
         {/* Card 2: Receipt Upload */}
-        <View className="bg-white px-4 mb-2 rounded-none py-2">
+        <View className="bg-white px-4 mb-1 rounded-none py-2">
           <FieldRow
           noBorder
             label="Upload any image proof or receipt"
@@ -406,7 +405,7 @@ export default function LogExpenseSheet({
         </View>
 
         {/* Card 3: Technician */}
-        <View className="bg-white px-4 mb-2 rounded-none py-2">
+        <View className="bg-white px-4 mb-1 rounded-none py-2">
           <FieldRow
             noBorder
             label="Technician"
@@ -432,7 +431,7 @@ export default function LogExpenseSheet({
         </View>
 
         {/* Card 4: Method of Payment */}
-        <View className="bg-white px-4 mb-2 rounded-none py-4">
+        <View className="bg-white px-4 mb-1 rounded-none py-4">
           <FieldRow label="Method of Payment" icon={WalletIcon} noBorder />
           <View className="flex-row gap-2 mt-2 ml-8">
             {["Cash", "Bank Transfer", "Debit Card"].map((method) => (
@@ -460,7 +459,7 @@ export default function LogExpenseSheet({
         </View>
 
         {/* Card 5: Extra Costs */}
-        <View className="bg-white px-4 mb-2 rounded-none py-4">
+        <View className="bg-white px-4 mb-1 rounded-none py-4">
           <FieldRow
             label="Did you incur any extra cost?"
             icon={CostIcon}
@@ -534,7 +533,7 @@ export default function LogExpenseSheet({
         </View>
 
         {/* Card 6: Notes */}
-        <View className="bg-white px-4 mb-2 rounded-none py-4">
+        <View className="bg-white px-4 mb-1 rounded-none py-4">
           <FieldRow label="Notes/Description" icon={NotesIcon} noBorder />
           <TextInput
             className="text-[#00343F] font-lexendRegular text-[14px] pb-2 border-b border-[#F0F0F0] min-h-[60px]"
@@ -561,7 +560,18 @@ export default function LogExpenseSheet({
         onSelect={(tech) => {
           setSelectedTechnician(tech);
           setIsTechnicianSheetVisible(false);
-          setDynamicFields({ ...dynamicFields, technicianId: tech.id });
+        }}
+        onAdd={() => {
+          setIsTechnicianSheetVisible(false);
+          setIsAddTechnicianSheetVisible(true);
+        }}
+      />
+
+      <AddTechnicianSheet
+        visible={isAddTechnicianSheetVisible}
+        onClose={() => setIsAddTechnicianSheetVisible(false)}
+        onSuccess={() => {
+          // Success logic if needed, e.g. toast or refetch
         }}
       />
     </BottomSheet>

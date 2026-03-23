@@ -3,8 +3,8 @@ import { View, Text, FlatList, StyleSheet, Dimensions, NativeSyntheticEvent, Nat
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const ITEM_WIDTH = 12;
-const STEP = 500; // Each tick is 500 units
-const MAJOR_STEP = 10; // Label every 10 ticks (5,000 units)
+const STEP = 100; // Each tick is 100 units
+const MAJOR_STEP = 10; // Label every 10 ticks (1,000 units)
 const MAX_VALUE = 1000000;
 const TOTAL_ITEMS = MAX_VALUE / STEP;
 
@@ -31,6 +31,7 @@ const PriceRulerItem = memo(({ item, index }: { item: number; index: number }) =
 const PriceRuler: React.FC<PriceRulerProps> = ({ value, onValueChange }) => {
   const flatListRef = useRef<FlatList>(null);
   const isScrollingRef = useRef(false);
+  const isProgrammaticScrollRef = useRef(false);
   const lastEmittedValue = useRef(value);
 
   // Data for the ruler
@@ -39,10 +40,11 @@ const PriceRuler: React.FC<PriceRulerProps> = ({ value, onValueChange }) => {
   // Sync scroll position when external value changes
   useEffect(() => {
     if (!isScrollingRef.current) {
-      const index = Math.round(value / STEP);
-      if (index >= 0 && index <= TOTAL_ITEMS) {
+      if (value >= 0 && value <= MAX_VALUE) {
+        const offset = (value / STEP) * ITEM_WIDTH;
+        isProgrammaticScrollRef.current = true;
         flatListRef.current?.scrollToOffset({
-          offset: index * ITEM_WIDTH,
+          offset,
           animated: true,
         });
         lastEmittedValue.current = value;
@@ -51,11 +53,18 @@ const PriceRuler: React.FC<PriceRulerProps> = ({ value, onValueChange }) => {
   }, [value]);
 
   const handleScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    if (isProgrammaticScrollRef.current) {
+      // Ignore this scroll event as it was caused by the useEffect
+      return;
+    }
+
     const offset = event.nativeEvent.contentOffset.x;
-    const index = Math.round(offset / ITEM_WIDTH);
-    const newValue = index * STEP;
+    const rawValue = (offset / ITEM_WIDTH) * STEP;
     
-    if (newValue !== lastEmittedValue.current) {
+    // Allow single unit precision
+    const newValue = Math.round(rawValue);
+    
+    if (newValue !== lastEmittedValue.current && newValue >= 0 && newValue <= MAX_VALUE) {
       isScrollingRef.current = true;
       lastEmittedValue.current = newValue;
       onValueChange(newValue);
@@ -64,10 +73,12 @@ const PriceRuler: React.FC<PriceRulerProps> = ({ value, onValueChange }) => {
 
   const onMomentumScrollEnd = useCallback(() => {
     isScrollingRef.current = false;
+    isProgrammaticScrollRef.current = false;
   }, []);
 
   const onScrollBeginDrag = useCallback(() => {
     isScrollingRef.current = true;
+    isProgrammaticScrollRef.current = false;
   }, []);
 
   return (
