@@ -1,31 +1,312 @@
-import { StyleSheet } from 'react-native';
+// Dashboard screen with vehicle insights and expense tracking
+import DashboardCardSlider from "@/components/dashboard/DashboardCardSlider";
+import DashboardHeader from "@/components/dashboard/DashboardHeader";
+import { ScreenBackground } from "@/components/ScreenBackground";
+import LocationAlert from "@/components/shared/LocationAlert";
+import { useCheckLocation, useMe } from "@/hooks/useAuth";
+import { useUserCars } from "@/hooks/useCars";
+import { useTrips, useActivitySpends } from "@/hooks/useActivity";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useAppStore } from "@/store/useAppStore";
+import { getCurrencySymbol } from "@/utils/currency";
+import { Ionicons } from "@expo/vector-icons";
+import ExpenseBreakdownCard from "@/components/dashboard/ExpenseBreakdownCard";
+import Speedometer from "@/assets/icons/car/speedometer.svg";
+import React, { useEffect, useState } from "react";
+import {
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+  Pressable,
+} from "react-native";
+import DashboardInsights from "@/components/dashboard/DashboardInsights";
+import DashboardDocuments from "@/components/dashboard/DashboardDocuments";
+import StarIcon from "@/assets/icons/star.svg";
 
-import EditScreenInfo from '@/components/EditScreenInfo';
-import { Text, View } from '@/components/Themed';
+export default function Dashboard() {
+  const user = useAuthStore((state) => state.user);
+  const currencySymbol = getCurrencySymbol(user?.preferredCurrency);
+  useMe();
 
-export default function TabOneScreen() {
+  const [showLocationAlert, setShowLocationAlert] = useState(false);
+  const { selectedCarId } = useAppStore();
+  const { data: carsData } = useUserCars();
+  const userCar =
+    carsData?.cars?.find((c) => (c.id || (c as any)._id) === selectedCarId) ||
+    carsData?.cars?.[0];
+  const { data: locationData } = useCheckLocation();
+
+  useEffect(() => {
+    if (
+      locationData?.locationChanged &&
+      locationData.newCurrency !== user?.preferredCurrency
+    ) {
+      setShowLocationAlert(true);
+    }
+  }, [locationData, user?.preferredCurrency]);
+
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showYearPicker, setShowYearPicker] = useState(false);
+  const monthScrollRef = React.useRef<ScrollView>(null);
+
+  const handlePrevMonth = () => {
+    setSelectedDate(
+      (prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1),
+    );
+  };
+
+  const handleNextMonth = () => {
+    setSelectedDate(
+      (prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1),
+    );
+  };
+
+  const years = Array.from(
+    { length: 5 },
+    (_, i) => new Date().getFullYear() - i,
+  );
+
+  const monthsList = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  useEffect(() => {
+    const monthIndex = selectedDate.getMonth();
+    monthScrollRef.current?.scrollTo({ x: monthIndex * 70, animated: true });
+  }, [selectedDate]);
+
+  const { data: tripsData } = useTrips(
+    userCar?.id || (userCar as any)?._id || "",
+  );
+  const { data: spendData } = useActivitySpends(
+    userCar?.id || (userCar as any)?._id || "",
+    (selectedDate.getMonth() + 1).toString(),
+    selectedDate.getFullYear().toString(),
+  );
+
+  // Navigation context is provided by the TabLayout and root Stack.
+  // We can safely render the dashboard content here.
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
-    </View>
+    <ScreenBackground>
+      <View className="mt-10 z-50">
+        <DashboardHeader />
+      </View>
+
+      <ScrollView
+        className="flex-1 px-4"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 100 }}
+      >
+        <View className="p-2 bg-[#F0F0F0] rounded-3xl mt-4">
+          <View className="bg-[#A7E9E9] rounded-3xl">
+            {/* User Greeting & Year */}
+            <View className="flex-row items-center justify-between p-2 pt-4">
+              <View className="flex-row items-center gap-3">
+                <View className="w-12 h-12 rounded-full border-2 border-white shadow-sm overflow-hidden">
+                  <Image
+                    source={{ uri: "https://i.pravatar.cc/150?u=moticar" }}
+                    className="w-full h-full"
+                  />
+                </View>
+                <Text className="text-[#00232A] font-lexendBold text-[20px]">
+                  Hi, {user?.name?.split(" ")[0] || "User"}
+                </Text>
+              </View>
+
+              <View className="z-50">
+                {showYearPicker && (
+                  <Pressable
+                    onPress={() => setShowYearPicker(false)}
+                    className="absolute w-full h-full left-0 top-0 bg-transparent"
+                  />
+                )}
+                <TouchableOpacity
+                  onPress={() => setShowYearPicker(!showYearPicker)}
+                  className="flex-row items-center gap-2 bg-white/60 px-4 py-1.5 rounded-full border border-white/80"
+                >
+                  <Text className="text-[#00232A] font-lexendSemiBold text-[14px]">
+                    {selectedDate.getFullYear()}
+                  </Text>
+                  <Ionicons name="chevron-down" size={14} color="#00232A" />
+                </TouchableOpacity>
+
+                {showYearPicker && (
+                  <View className="absolute top-11 right-0 w-32 bg-[#00232A] rounded-2xl p-2 shadow-2xl border border-[#09515D] z-[100]">
+                    {years.map((y) => (
+                      <TouchableOpacity
+                        key={y}
+                        onPress={() => {
+                          setSelectedDate(
+                            new Date(y, selectedDate.getMonth(), 1),
+                          );
+                          setShowYearPicker(false);
+                        }}
+                        className={`py-2.5 px-4 rounded-xl mb-1 ${
+                          selectedDate.getFullYear() === y
+                            ? "bg-[#00AEB5]/20"
+                            : ""
+                        }`}
+                      >
+                        <Text
+                          className={`text-[14px] font-lexendSemiBold ${
+                            selectedDate.getFullYear() === y
+                              ? "text-[#00AEB5]"
+                              : "text-white"
+                          }`}
+                        >
+                          {y}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                )}
+              </View>
+            </View>
+
+            {/* Month Tabs */}
+            <View className="mt-8 flex-row items-center justify-between pb-1 p-2">
+              <TouchableOpacity onPress={handlePrevMonth} className="px-1 pr-3">
+                <Ionicons name="chevron-back" size={18} color="#9BBABB" />
+              </TouchableOpacity>
+
+              <View className="flex-1">
+                <ScrollView
+                  ref={monthScrollRef}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={{ gap: 24, paddingHorizontal: 10 }}
+                >
+                  {monthsList.map((mName, index) => {
+                    const isActive = selectedDate.getMonth() === index;
+                    return (
+                      <TouchableOpacity
+                        key={mName}
+                        onPress={() =>
+                          setSelectedDate(
+                            new Date(selectedDate.getFullYear(), index, 1),
+                          )
+                        }
+                        className={
+                          isActive ? "border-b-2 border-[#00AEB5] pb-2" : "pb-2"
+                        }
+                      >
+                        <Text
+                          className={`font-lexendSemiBold text-[13px] ${
+                            isActive ? "text-[#00AEB5]" : "text-[#9BBABB]"
+                          }`}
+                        >
+                          {mName}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </ScrollView>
+              </View>
+
+              <TouchableOpacity onPress={handleNextMonth} className="px-1 pl-3">
+                <Ionicons name="chevron-forward" size={18} color="#9BBABB" />
+              </TouchableOpacity>
+            </View>
+
+            {/* Swipable Analytics Cards */}
+            <DashboardCardSlider
+              carId={userCar?.id || (userCar as any)?._id}
+              month={selectedDate.getMonth() + 1}
+              year={selectedDate.getFullYear()}
+            />
+
+            {/* Mileage Tracker Section */}
+            <View className="border-t border-[#7BA0A3] my-4" />
+            <View className="px-4 mb-4">
+              <TouchableOpacity>
+                <View className="w-full">
+                  <View className="flex-row justify-between items-center">
+                    <View>
+                      <Text className="text-[#000000] font-lexendMedium text-[20px]">
+                        Mileage Tracker
+                      </Text>
+                      <Text className="text-[#4A8588] font-lexendRegular text-[12px] mt-1">
+                        No entry has been recorded
+                      </Text>
+                    </View>
+                    <View className="w-12 h-12 bg-white rounded-full items-center justify-center">
+                      <Ionicons name="add" size={24} color="#00AEB5" />
+                    </View>
+                  </View>
+
+                  <View className="mt-10 flex-row items-start justify-between">
+                    <View>
+                      <Speedometer />
+                    </View>
+                    <View className="w-5 h-[5px] bg-[#006C70]" />
+                  </View>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Expense Breakdown Section */}
+          <ExpenseBreakdownCard
+            spendData={spendData}
+            currencySymbol={currencySymbol}
+          />
+
+          {/* Insights Section */}
+          {/* <DashboardInsights carId={(userCar as any)?._id || userCar?.id} /> */}
+
+          {/* Documents Section */}
+          <View className="mt-4">
+            <DashboardDocuments
+              carId={(userCar as any)?._id || userCar?.id}
+              documents={userCar?.documents}
+            />
+          </View>
+        </View>
+
+        <View className="mt-4 bg-[#011C21] p-4 rounded-[12px]">
+          <View className="flex-row items-center gap-2">
+            <Text className="text-[#FFFFFF] font-lexendMedium text-[16px]">
+              Get a smart auto advice
+            </Text>
+            <StarIcon width={20} />
+          </View>
+
+          <Text className="text-[#F1F1F1] font-lexendRegular text-[12px] mt-2">
+            Enter up to 5 expenses and let our smart doc provide some {"\n"}auto
+            advice that can help prolong the lifetime of yor car
+          </Text>
+
+          <TouchableOpacity className="bg-[#29D7DE] p-4 rounded-full mt-5 w-[70%] items-center">
+            <Text className="text-[#00343F] font-lexendBold text-[16px]">
+              Get Car Advice
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Location Alert */}
+        {showLocationAlert && locationData && (
+          <LocationAlert
+            country={locationData.newCountry || "United States"}
+            suggestedCurrency={locationData.newCurrency || "USD"}
+            message={locationData.message}
+            onDismiss={() => setShowLocationAlert(false)}
+          />
+        )}
+      </ScrollView>
+    </ScreenBackground>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
-  },
-});

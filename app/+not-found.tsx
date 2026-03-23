@@ -1,40 +1,34 @@
-import { Link, Stack } from 'expo-router';
-import { StyleSheet } from 'react-native';
-
-import { Text, View } from '@/components/Themed';
+import { Link, Stack } from "expo-router";
+import { View, Text } from "react-native";
+import { ScreenBackground } from "@/components/ScreenBackground";
+import Container from "@/components/shared/container";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function NotFoundScreen() {
   return (
-    <>
-      <Stack.Screen options={{ title: 'Oops!' }} />
-      <View style={styles.container}>
-        <Text style={styles.title}>This screen doesn't exist.</Text>
+    <ScreenBackground>
+      <Stack.Screen options={{ title: "Oops!" }} />
+      <Container>
+        <View className="flex-1 items-center justify-center -mt-20">
+          <Ionicons name="alert-circle-outline" size={80} color="#43E4E9" />
+          
+          <Text className="text-white text-[28px] font-lexendBold mt-6 text-center">
+            Lost in the Clouds?
+          </Text>
+          
+          <Text className="text-[#9BBABB] font-lexendRegular text-[16px] mt-4 text-center px-8">
+            This screen doesn't exist or has been moved to another destination.
+          </Text>
 
-        <Link href="/" style={styles.link}>
-          <Text style={styles.linkText}>Go to home screen!</Text>
-        </Link>
-      </View>
-    </>
+          <Link href="/" className="mt-12">
+            <View className="bg-[#29D7DE] px-8 py-4 rounded-full active:opacity-90">
+              <Text className="text-[#00343F] font-lexendBold text-[16px]">
+                Go to home screen
+              </Text>
+            </View>
+          </Link>
+        </View>
+      </Container>
+    </ScreenBackground>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  link: {
-    marginTop: 15,
-    paddingVertical: 15,
-  },
-  linkText: {
-    fontSize: 14,
-    color: '#2e78b7',
-  },
-});

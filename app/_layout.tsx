@@ -1,57 +1,123 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from "@react-navigation/native";
+import { useFonts } from "expo-font";
+import { Stack } from "expo-router";
+import { useEffect, useState, useRef } from "react";
+import { Platform } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { PaperProvider } from "react-native-paper";
+import * as NavigationBar from "expo-navigation-bar";
+import * as SplashScreen from "expo-splash-screen";
+import { StatusBar } from "expo-status-bar";
+import { configureReanimatedLogger, ReanimatedLogLevel } from 'react-native-reanimated';
 
-import { useColorScheme } from '@/components/useColorScheme';
+import { useColorScheme } from "@/components/useColorScheme";
+import { LoadingModal } from "../components/ui/LoadingModal";
+import { SnackbarProvider } from "../providers/SnackbarProvider";
+import { QueryProvider } from "../providers/QueryProvider";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useAppStore } from "@/store/useAppStore";
+import "../global.css";
 
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from 'expo-router';
+configureReanimatedLogger({
+  level: ReanimatedLogLevel.warn,
+  strict: false,
+});
 
-export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(tabs)',
-};
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export default function RootLayout() {
-  const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+  const [isHydrated, setIsHydrated] = useState(false);
+  const [fontsLoaded, fontError] = useFonts({
+    "LexendDeca-Thin": require("../assets/fonts/LexendDeca-Thin.ttf"),
+    "LexendDeca-ExtraLight": require("../assets/fonts/LexendDeca-ExtraLight.ttf"),
+    "LexendDeca-Light": require("../assets/fonts/LexendDeca-Light.ttf"),
+    "LexendDeca-Regular": require("../assets/fonts/LexendDeca-Regular.ttf"),
+    "LexendDeca-Medium": require("../assets/fonts/LexendDeca-Medium.ttf"),
+    "LexendDeca-SemiBold": require("../assets/fonts/LexendDeca-SemiBold.ttf"),
+    "LexendDeca-Bold": require("../assets/fonts/LexendDeca-Bold.ttf"),
+    "LexendDeca-ExtraBold": require("../assets/fonts/LexendDeca-ExtraBold.ttf"),
+    "LexendDeca-Black": require("../assets/fonts/LexendDeca-Black.ttf"),
   });
 
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
-    if (error) throw error;
-  }, [error]);
+    const initStores = async () => {
+      try {
+        await Promise.all([
+          useAuthStore.persist.rehydrate(),
+          useAppStore.persist.rehydrate(),
+        ]);
+      } catch (error) {
+        console.error("❌ Hydration failed:", error);
+      } finally {
+        setIsHydrated(true);
+      }
+    };
+
+    initStores();
+  }, []);
 
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
+    if (fontError) throw fontError;
+  }, [fontError]);
+
+  const hasHiddenSplash = useRef(false);
+
+  useEffect(() => {
+    async function hideSplashScreen() {
+      if (fontsLoaded && isHydrated && !hasHiddenSplash.current) {
+        try {
+          hasHiddenSplash.current = true;
+          await SplashScreen.hideAsync();
+        } catch (e) {
+          // Silence 'No native splash screen registered' error
+        }
+      }
     }
-  }, [loaded]);
+    hideSplashScreen();
+  }, [fontsLoaded, isHydrated]);
 
-  if (!loaded) {
+  useEffect(() => {
+    if (Platform.OS === "android") {
+      NavigationBar.setBackgroundColorAsync("gray").catch(() => {});
+      NavigationBar.setButtonStyleAsync("dark").catch(() => {});
+    }
+  }, []);
+
+  const colorScheme = useColorScheme();
+
+  if (!fontsLoaded || !isHydrated) {
     return null;
   }
 
-  return <RootLayoutNav />;
-}
-
-function RootLayoutNav() {
-  const colorScheme = useColorScheme();
-
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-      </Stack>
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <StatusBar style="light" translucent backgroundColor="transparent" />
+      <PaperProvider>
+        <SnackbarProvider>
+          <QueryProvider>
+            <ThemeProvider
+              value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+            >
+              <Stack screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="index" />
+                <Stack.Screen name="(auth)" />
+                <Stack.Screen name="(tabs)" />
+                <Stack.Screen name="(onboarding)" />
+                <Stack.Screen name="screens" />
+                <Stack.Screen
+                  name="modal"
+                  options={{ presentation: "modal" }}
+                />
+              </Stack>
+            </ThemeProvider>
+          </QueryProvider>
+          <LoadingModal visible={false} />
+        </SnackbarProvider>
+      </PaperProvider>
+    </GestureHandlerRootView>
   );
 }

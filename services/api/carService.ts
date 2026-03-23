@@ -1,0 +1,112 @@
+import apiClient from "@/config/apiClient";
+import { API_ROUTES } from "@/config/apiRoutes";
+import { 
+  Car, 
+  CarCreateInput, 
+  CarSearchResponse, 
+  MakesResponse, 
+  ModelsResponse, 
+  TrimsResponse,
+  ScanPhotosInput,
+  ScanLicenseInput,
+  CarDetails,
+  CarUpdateInput
+} from "@/types/car";
+
+/**
+ * Car Service
+ * 
+ * Groups all car-related API calls in one place.
+ */
+export const carService = {
+  /** Create a car manually */
+  createCar: async (data: CarCreateInput): Promise<Car> => {
+    const response = await apiClient.post(API_ROUTES.CARS.CREATE, data);
+    return response.data;
+  },
+
+  /** Update car details */
+  updateCar: async (id: string, data: CarUpdateInput): Promise<Car> => {
+    const response = await apiClient.patch(API_ROUTES.CARS.UPDATE(id), data);
+    return response.data;
+  },
+
+  /** Get all cars for the authenticated user */
+  getUserCars: async (): Promise<{ count: number; cars: Car[] }> => {
+    const response = await apiClient.get(API_ROUTES.CARS.LIST);
+    return response.data;
+  },
+
+  /** AI image extraction from 3 photos */
+  scanPhotos: async (data: ScanPhotosInput): Promise<any> => {
+    const response = await apiClient.post(API_ROUTES.CARS.SCAN_PHOTOS, data);
+    return response.data;
+  },
+
+  /** OCR extraction from Vehicle License */
+  scanLicense: async (data: ScanLicenseInput): Promise<any> => {
+    const response = await apiClient.post(API_ROUTES.CARS.SCAN_LICENSE, data);
+    return response.data;
+  },
+
+  /** Get car makes (optionally filtered by year) */
+  getMakes: async (year?: number): Promise<MakesResponse> => {
+    const response = await apiClient.get(API_ROUTES.CARS.MAKES, { params: { year } });
+    return response.data;
+  },
+
+  /** Search for cars by name (make or model) */
+  searchCars: async (query: string): Promise<CarSearchResponse> => {
+    const response = await apiClient.get(API_ROUTES.CARS.SEARCH, { params: { q: query } });
+    return response.data;
+  },
+
+  /** Get car models for a make */
+  getModels: async (make: string, year?: number): Promise<ModelsResponse> => {
+    const response = await apiClient.get(API_ROUTES.CARS.MODELS, { params: { make, year } });
+    return response.data;
+  },
+
+  /** Get car trims for a model */
+  getTrims: async (make: string, model: string, year?: number): Promise<TrimsResponse> => {
+    const response = await apiClient.get(API_ROUTES.CARS.TRIMS, { params: { make, model, year } });
+    return response.data;
+  },
+
+  /** Get detailed car specs based on search results */
+  getCarDetails: async (params: { make: string; model: string; year: number; trim?: string }): Promise<CarDetails> => {
+    const response = await apiClient.get(API_ROUTES.CARS.DETAILS, { params });
+    return response.data;
+  },
+
+  /** Get specific car by its ID */
+  getCarById: async (id: string): Promise<Car> => {
+    const response = await apiClient.get(API_ROUTES.CARS.GET_BY_ID(id));
+    return response.data;
+  },
+
+  /** Upload and OCR a car document */
+  uploadDocument: async (carId: string, type: string, file: any): Promise<any> => {
+    const formData = new FormData();
+    formData.append("type", type);
+    
+    // Check if file is an object with uri (standard React Native file upload)
+    if (file.uri) {
+      const uriParts = file.uri.split('.');
+      const fileType = uriParts[uriParts.length - 1];
+
+      formData.append("file", {
+        uri: file.uri,
+        name: `document.${fileType}`,
+        type: `image/${fileType}`,
+      } as any);
+    }
+
+    const response = await apiClient.post(API_ROUTES.CARS.DOCUMENTS(carId), formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  },
+};
