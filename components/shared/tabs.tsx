@@ -1,3 +1,6 @@
+// Needs client rendering because it uses React state and navigation props.
+"use client";
+
 import React, { useRef, useState } from "react";
 import {
   Animated,
@@ -7,7 +10,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-// import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import HomeWhite from "@/assets/icons/tabs/Icon.svg";
 import ActivityIcon from "@/assets/icons/tabs/activity.svg";
 import ActivityWhite from "@/assets/icons/tabs/activityIcon.svg";
@@ -17,22 +19,17 @@ import HomeIcon from "@/assets/icons/tabs/homeIcon.svg";
 import MoreIcon from "@/assets/icons/tabs/more.svg";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
-// import MoreWhite from "@/assets/icons/tabs/moreIcon.svg";
-
 import LogoIcon from "@/assets/icons/logomark.svg";
-import { useExpenseCategories } from "@/hooks/useExpenses";
 import { ExpenseCategory } from "@/types/expense";
-
 import LogExpenseSheet from "../sheets/LogExpenseSheet";
 import SuccessModal from "./SuccessModal";
-
-// Import SVGs for FAB items
 import AccessoriesIcon from "@/assets/tabs/accesory.svg";
 import CarWashIcon from "@/assets/tabs/carwash.svg";
 import FuelIcon from "@/assets/tabs/fuel.svg";
 import MechanicalIcon from "@/assets/tabs/mechanic.svg";
 import TyresIcon from "@/assets/tabs/tyreguage.svg";
 import ExpenseCategorySheet from "../sheets/ExpenseCategorySheet";
+
 
 const FAB_ITEMS = [
   { label: "Accessories & Parts", icon: AccessoriesIcon },
@@ -67,7 +64,7 @@ const TAB_LABELS: Record<string, string> = {
   more: "More",
 };
 
-export default function TabBar({ state, descriptors, navigation }: any) {
+export default function TabBar({ state, descriptors, navigation, categories = [] }: any) {
   const [fabOpen, setFabOpen] = useState(false);
   const [categorySheetVisible, setCategorySheetVisible] = useState(false);
   const [logSheetVisible, setLogSheetVisible] = useState(false);
@@ -79,8 +76,7 @@ export default function TabBar({ state, descriptors, navigation }: any) {
   const currentRouteName = state.routes[state.index].name;
   const isCarRoute = currentRouteName === "car";
 
-  const { data: categoriesData } = useExpenseCategories();
-  const categories = categoriesData?.categories || [];
+  // categories is now passed as a prop from TabLayout (hoisted out of the nav context boundary)
 
   const overlayAnim = useRef(new Animated.Value(0)).current;
   const fabRotate = useRef(new Animated.Value(0)).current;
@@ -230,14 +226,15 @@ export default function TabBar({ state, descriptors, navigation }: any) {
                     } else {
                       // Find matching category
                       let matchingCategory = categories.find(
-                        (c) =>
+                        (c: ExpenseCategory) =>
                           c.name.toLowerCase() === item.label.toLowerCase(),
                       );
 
                       // Specific mapping for Tyre Guage (aligned spelling)
                       if (!matchingCategory && item.label === "Tyre Guage") {
                         matchingCategory = categories.find(
-                          (c) => c.name === "Balancing" || c.id === "balancing",
+                          (c: ExpenseCategory) =>
+                            c.name === "Balancing" || c.id === "balancing",
                         );
                       }
 

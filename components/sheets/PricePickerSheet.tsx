@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import PriceRuler from "../dashboard/PriceRuler";
+import PriceRuler from "./PriceRuler";
 import BottomSheet from "../shared/BottomSheet";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
