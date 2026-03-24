@@ -3,11 +3,12 @@ import { View, Text, TouchableOpacity, Image, TextInput, Alert } from "react-nat
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useUpdateExpense, useDeleteExpense } from "@/hooks/useExpenses";
 import { Expense } from "@/types/expense";
+import { Technician } from "@/types/technician";
 import BottomSheet from "../shared/BottomSheet";
 import { CATEGORY_COLORS } from "@/constants/Colors";
 import { getRelativeTime } from "@/utils/date";
 import Cost from "@/assets/new/cost.svg";
-import Technician from "@/assets/new/technician.svg";
+import TechnicianIcon from "@/assets/new/technician.svg";
 import Price from "@/assets/new/price.svg";
 import Edit from "@/assets/new/edit.svg";
 import Photo from "@/assets/new/image.svg";
@@ -18,6 +19,7 @@ import Wallet from "@/assets/new/wallet.svg";
 import DeleteIcon from "@/assets/new/delete.svg";
 
 import DatePickerSheet from "./DatePickerSheet";
+import TechnicianSheet from "./TechnicianSheet";
 
 
 interface ExpenseDetailSheetProps {
@@ -36,6 +38,7 @@ export default function ExpenseDetailSheet({
   const [isEditing, setIsEditing] = useState(false);
   const [editedExpense, setEditedExpense] = useState<Expense | null>(null);
   const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
+  const [isTechnicianSheetVisible, setIsTechnicianSheetVisible] = useState(false);
 
   const updateMutation = useUpdateExpense();
   const deleteMutation = useDeleteExpense();
@@ -137,6 +140,9 @@ export default function ExpenseDetailSheet({
           paymentMethod: editedExpense.paymentMethod,
           items: editedExpense.items,
           metadata: editedExpense.metadata,
+          technicianId: typeof editedExpense.technicianId === 'object' 
+            ? editedExpense.technicianId?._id || (editedExpense.technicianId as any)?.id 
+            : editedExpense.technicianId
         }
       }, {
         onSuccess: () => {
@@ -332,29 +338,25 @@ export default function ExpenseDetailSheet({
 
         {/* Technician Row */}
         <DetailRow 
-          icon={Technician} 
+          icon={TechnicianIcon} 
           label="Technician"
-          value={editedExpense.metadata?.workshopName || "--"}
+          value={
+            (typeof editedExpense.technicianId === "object"
+              ? editedExpense.technicianId?.name
+              : editedExpense.metadata?.workshopName) || "--"
+          }
           valueClassName="text-[14px]"
           alignRight
-          isEditable
-          onValueChange={(val: string) => updateMetadata("workshopName", val)}
           showChevron
+          onPress={isEditing ? () => setIsTechnicianSheetVisible(true) : undefined}
         >
            <View className="flex-row items-center justify-end gap-1 mt-1">
              <Ionicons name="phone-portrait-outline" size={14} color="#27AE60" />
-             {isEditing ? (
-               <TextInput
-                 value={editedExpense.metadata?.technicianPhone}
-                 onChangeText={(val) => updateMetadata("technicianPhone", val)}
-                 keyboardType="phone-pad"
-                 className="text-[#27AE60] text-[11px] font-lexendRegular border-b border-green-100"
-               />
-             ) : (
-               <Text className="text-[#27AE60] text-[11px] font-lexendRegular">
-                 {editedExpense.metadata?.technicianPhone || "--"}
-               </Text>
-             )}
+             <Text className="text-[#27AE60] text-[11px] font-lexendRegular">
+              {(typeof editedExpense.technicianId === "object"
+                ? editedExpense.technicianId?.phone
+                : editedExpense.metadata?.technicianPhone) || "--"}
+             </Text>
            </View>
         </DetailRow>
 
@@ -444,6 +446,20 @@ export default function ExpenseDetailSheet({
         onClose={() => setIsDatePickerVisible(false)}
         onSelect={handleDateSelect}
         initialDate={new Date(editedExpense.date)}
+      />
+
+      <TechnicianSheet
+        visible={isTechnicianSheetVisible}
+        onClose={() => setIsTechnicianSheetVisible(false)}
+        onSelect={(tech: Technician) => {
+          updateField("technicianId", tech);
+          setIsTechnicianSheetVisible(false);
+        }}
+        onAdd={() => {
+          setIsTechnicianSheetVisible(false);
+          // Assuming there's an AddTechnicianSheet we might want to open, 
+          // but for now just closing is fine or we can add the state if needed.
+        }}
       />
     </BottomSheet>
   );

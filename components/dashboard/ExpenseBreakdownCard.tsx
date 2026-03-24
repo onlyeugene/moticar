@@ -11,11 +11,13 @@ import Sparkline from "./Sparkline";
 
 interface ExpenseBreakdownCardProps {
   spendData?: SpendBreakdown;
+  expenses?: Expense[];
   currencySymbol: string;
 }
 
 const ExpenseBreakdownCard: React.FC<ExpenseBreakdownCardProps> = ({
   spendData,
+  expenses,
   currencySymbol,
 }) => {
   const [containerWidth, setContainerWidth] = useState(240);
@@ -30,11 +32,12 @@ const ExpenseBreakdownCard: React.FC<ExpenseBreakdownCardProps> = ({
 
   // Derive sparkline data from expenses
   const chartData = useMemo(() => {
-    if (!spendData?.expenses || spendData.expenses.length === 0) return [];
+    const listToUse = expenses || spendData?.expenses;
+    if (!listToUse || listToUse.length === 0) return [];
 
     // Group expenses by date and sum amounts
     const dailyTotals: Record<number, number> = {};
-    spendData.expenses.forEach((exp) => {
+    listToUse.forEach((exp) => {
       const date = new Date(exp.date);
       const day = date.getDate();
       dailyTotals[day] = (dailyTotals[day] || 0) + (exp.amount || 0);
@@ -74,7 +77,7 @@ const ExpenseBreakdownCard: React.FC<ExpenseBreakdownCardProps> = ({
           </TouchableOpacity>
         </View>
 
-        {spendData && spendData.count > 0 ? (
+        {spendData && (spendData.count > 0 || (expenses && expenses.length > 0)) ? (
           <>
             <View className="flex-row items-end justify-between mb-6">
               <View>
@@ -109,7 +112,7 @@ const ExpenseBreakdownCard: React.FC<ExpenseBreakdownCardProps> = ({
             </View>
 
             <View className="mt-4">
-              {spendData.expenses.slice(0, 4).map((expense, idx) => (
+              {(expenses || spendData?.expenses || []).slice(0, 4).map((expense, idx) => (
                 <ExpenseListItem
                   key={expense.id || expense._id || idx}
                   expense={expense}
@@ -133,6 +136,7 @@ const ExpenseBreakdownCard: React.FC<ExpenseBreakdownCardProps> = ({
         visible={isSheetVisible}
         onClose={() => setIsSheetVisible(false)}
         spendData={spendData}
+        expenses={expenses}
         currencySymbol={currencySymbol}
       />
 

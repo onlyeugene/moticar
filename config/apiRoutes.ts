@@ -48,6 +48,7 @@ export const API_ROUTES = {
     VALUATION: (carId: string) => `/expenses/valuation/${carId}`,
     RECOMMEND_PRICE: "/expenses/recommend-price",
     DETAIL: (id: string) => `/expenses/${id}`,
+    BY_CAR: (carId: string) => `/expenses/car/${carId}`,
   },
   TECHNICIANS: {
     BASE: "/technicians",

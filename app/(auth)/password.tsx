@@ -112,7 +112,7 @@ export default function Password() {
 
             <Pressable
               onPress={() => router.replace("/(auth)/login")}
-              className="w-[366px] h-[50px] bg-[#29D7DE] rounded-full items-center justify-center active:opacity-90"
+              className="w-full h-[50px] bg-[#29D7DE] rounded-full items-center justify-center active:opacity-90"
             >
               <Text className="font-lexendBold text-[16px] text-[#00343F]">
                 Log in
@@ -141,20 +141,17 @@ export default function Password() {
           </Text>
         </View>
 
-        <View className="mt-10">
-          <View className="relative">
-            <ControlledInput
-              placeholder="Password"
-              secureTextEntry
-              name="password"
-              control={control}
-              placeholderClassName="text-[#7BA0A3]"
-              className="px-2 text-white border-[#1A8798]"
-            />
-            <View className="absolute right-4 top-1/2 -mt-6">
-              <Ionicons name="help-circle-outline" size={24} color="#7BA0A3" />
-            </View>
-          </View>
+        <View className="mt-10 w-full">
+          <ControlledInput
+            placeholder="Password"
+            secureTextEntry
+            showPasswordToggle
+            name="password"
+            control={control}
+            placeholderClassName="text-[#7BA0A3]"
+            containerClassName="border-[#1A8798]"
+            className="px-2 text-white"
+          />
 
           <Text className="text-[#5E7A7C] font-lexendMedium text-[14px] mt-">
             Must be at least 8 characters
@@ -218,7 +215,7 @@ export default function Password() {
           <Pressable
             disabled={isButtonDisabled}
             onPress={handleSubmit(onSubmit)}
-            className={`w-[366px] h-[50px] rounded-full items-center justify-center active:opacity-90 ${isButtonDisabled ? "bg-[#09515D]/60" : "bg-[#29D7DE]"}`}
+            className={`w-full h-[50px] rounded-full items-center justify-center active:opacity-90 ${isButtonDisabled ? "bg-[#09515D]/60" : "bg-[#29D7DE]"}`}
           >
             {setPassword.isPending ? (
               <ActivityIndicator color="#00343F" />

@@ -3,11 +3,13 @@ import Container from "@/components/shared/container";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import CurrencySelector from "@/components/shared/CurrencySelector";
 import MotiBuddieIcon from "@/assets/icons/motibuddie.svg";
 import CarIcon from "@/assets/icons/takepic.svg";
 import ManualIcon from "@/assets/icons/manual.svg";
+import { useUpdateProfile } from "@/hooks/useAuth";
+import { useSnackbar } from "@/providers/SnackbarProvider";
 
 const options = [
   {
@@ -33,6 +35,26 @@ export default function AddCar() {
   const [selectedOption, setSelectedOption] = useState<number | null>(
     null,
   );
+  const updateProfile = useUpdateProfile();
+  const { showSnackbar } = useSnackbar();
+
+  const handleSkip = () => {
+    updateProfile.mutate(
+      { onboardingCompleted: true },
+      {
+        onSuccess: () => {
+          router.replace("/(tabs)");
+        },
+        onError: () => {
+          showSnackbar({
+            type: "error",
+            message: "Failed to skip onboarding",
+            description: "Please try again.",
+          });
+        },
+      }
+    );
+  };
 
   return (
     <ScreenBackground>
@@ -42,17 +64,23 @@ export default function AddCar() {
             <Pressable onPress={() => router.back()}>
               <Ionicons name="arrow-back" size={24} color="white" />
             </Pressable>
-
             <View className="flex-row items-center gap-4">
               <CurrencySelector variant="auth" />
               <Pressable
-                onPress={() => router.replace("/(tabs)")}
+                onPress={handleSkip}
+                disabled={updateProfile.isPending}
                 className="flex-row items-center gap-2"
               >
-                <Text className="text-[#00AEB5] font-lexendMedium text-[16px]">
-                  Skip
-                </Text>
-                <Ionicons name="chevron-forward" size={16} color="#00AEB5" />
+                {updateProfile.isPending ? (
+                  <ActivityIndicator size="small" color="#00AEB5" />
+                ) : (
+                  <>
+                    <Text className="text-[#00AEB5] font-lexendMedium text-[16px]">
+                      Skip
+                    </Text>
+                    <Ionicons name="chevron-forward" size={16} color="#00AEB5" />
+                  </>
+                )}
               </Pressable>
             </View>
           </View>

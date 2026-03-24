@@ -101,7 +101,7 @@ export function TechnicianSection({
         <View className="bg-white p-10 rounded-[24px] items-center">
           <EmptyIcon width={80} height={60} />
           <Text className="text-[#888282] text-[14px] font-lexendMedium mt-4">
-            No {selectedCategory} found
+            No details recorded
           </Text>
           <TouchableOpacity
             onPress={onAddTechnician}

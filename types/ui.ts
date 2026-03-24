@@ -19,6 +19,8 @@ export interface ControlledInputProps<T extends FieldValues> extends TextInputPr
   secureTextEntry?: boolean;
   showPasswordToggle?: boolean;
   leftIcon?: keyof typeof Ionicons.glyphMap;
+  containerClassName?: string;
+  inputClassName?: string;
 }
 
 export interface SocialAuthProps {

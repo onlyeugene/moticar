@@ -108,7 +108,7 @@ export default function ExpenseListItem({
 }: ExpenseListItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const deleteMutation = useDeleteExpense();
-  
+
   const color = CATEGORY_COLORS[expense.category] || CATEGORY_COLORS["Others"];
   const iconName = CATEGORY_ICONS[expense.category] || "cash";
   const SvgIcon = CATEGORY_SVG_ICONS[expense.category];
@@ -123,12 +123,13 @@ export default function ExpenseListItem({
       "Are you sure you want to delete this expense?",
       [
         { text: "Cancel", style: "cancel" },
-        { 
-          text: "Delete", 
-          style: "destructive", 
-          onPress: () => deleteMutation.mutate(expense.id || (expense as any)._id) 
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () =>
+            deleteMutation.mutate(expense.id || (expense as any)._id),
         },
-      ]
+      ],
     );
   };
 
@@ -165,21 +166,27 @@ export default function ExpenseListItem({
             <View className="flex-row items-start gap-2">
               <View className="items-start">
                 <Text className="text-[#1A3B41] font-lexendSemiBold text-[15px]">
-                  {expense.category || ''}
+                  {expense.category || ""}
                 </Text>
                 <Text className="text-[#9BBABB] font-lexendRegular text-[11px] mt-0.5">
                   {relativeDate} . {time}
                 </Text>
               </View>
-              {expense.metadata?.workshopName && (
+              {(expense.technicianId || expense.metadata?.workshopName) && (
                 <View className="bg-[#ECE6B7] px-2 py-0.5 rounded-full max-w-[120px]">
                   <Text
                     numberOfLines={1}
                     className="text-[#425658] font-lexendRegular text-[10px]"
                   >
-                    {expense.metadata.workshopName.length > 10
-                      ? `${expense.metadata.workshopName.slice(0, 10)}...`
-                      : expense.metadata.workshopName}
+                    {(() => {
+                      const name =
+                        (typeof expense.technicianId === "object"
+                          ? expense.technicianId?.name
+                          : expense.metadata?.workshopName) || "";
+                      return name.length > 10
+                        ? `${name.slice(0, 10)}...`
+                        : name;
+                    })()}
                   </Text>
                 </View>
               )}
@@ -207,7 +214,7 @@ export default function ExpenseListItem({
             </Text>
           </TouchableOpacity>
           <View className="w-[1px] h-4 bg-[#E0E0E0]" />
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={() => onPressDetails?.(expense)}
             className="flex-row items-center gap-1.5"
           >
@@ -217,17 +224,17 @@ export default function ExpenseListItem({
             </Text>
           </TouchableOpacity>
           <View className="w-[1px] h-4 bg-[#E0E0E0]" />
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={handleDelete}
             disabled={deleteMutation.isPending}
             className="flex-row items-center gap-1.5"
           >
-            <Ionicons 
-              name="trash-outline" 
-              size={16} 
-              color={deleteMutation.isPending ? "#CCC" : "#FF7A8D"} 
+            <Ionicons
+              name="trash-outline"
+              size={16}
+              color={deleteMutation.isPending ? "#CCC" : "#FF7A8D"}
             />
-            <Text 
+            <Text
               className={`font-lexendRegular text-[12px] ${
                 deleteMutation.isPending ? "text-[#CCC]" : "text-[#EE6969]"
               }`}

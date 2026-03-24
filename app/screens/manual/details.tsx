@@ -48,9 +48,9 @@ export default function CarDetailsScreen() {
     };
   }, []);
   const { data: detailsData, isLoading } = useCarDetails({
-    make: params.make,
-    model: params.model,
-    year: parseInt(params.year),
+    make: params.make || "",
+    model: params.model || "",
+    year: params.year ? parseInt(params.year) : 0,
   });
 
   const details = detailsData?.details;
@@ -114,10 +114,20 @@ export default function CarDetailsScreen() {
                 This is what we got
               </Text>
               <TouchableOpacity
-                onPress={() => router.back()}
+                onPress={() =>
+                  router.push({
+                    pathname: "/screens/manual/final",
+                    params: { carId: "" },
+                  })
+                }
                 className="flex-1 items-end"
               >
-                <Ionicons name="close" size={28} color="#000" />
+                <View className="flex-row items-center">
+                  <Text className="text-[#29D7DE] font-lexendMedium text-sm mr-1">
+                    Skip
+                  </Text>
+                  <Ionicons name="chevron-forward" size={16} color="#29D7DE" />
+                </View>
               </TouchableOpacity>
             </View>
 

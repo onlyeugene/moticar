@@ -52,4 +52,10 @@ export const expenseService = {
     const response = await apiClient.delete(API_ROUTES.EXPENSES.DETAIL(id));
     return response.data;
   },
+
+  /** Get all expenses for a specific car */
+  getExpensesByCarId: async (carId: string): Promise<{ count: number; expenses: Expense[] }> => {
+    const response = await apiClient.get(API_ROUTES.EXPENSES.BY_CAR(carId));
+    return response.data;
+  },
 };

@@ -29,10 +29,10 @@ export default function DashboardInsights({
 
   const insights = insightsData?.insights || [
     {
-      id: "default-1",
-      text: "Your Fuel spending increased 12% (N4,000) this month.",
-      category: "Fuel",
-      type: "neutral",
+      id: "",
+      text: "No insights available",
+      category: "",
+      type: "",
     },
   ];
 

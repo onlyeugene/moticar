@@ -1,18 +1,22 @@
-import React, { useState, useMemo } from "react";
-import { 
-  View, 
-  Text, 
-  TouchableOpacity, 
-  TextInput, 
-  ScrollView, 
-  Image, 
-  ActivityIndicator,
-  Platform
-} from "react-native";
+import { useTechnicians, useDeleteTechnician } from "@/hooks/useTechnicians";
+import {
+  Technician,
+  TECHNICIAN_CATEGORIES,
+  TechnicianCategory,
+} from "@/types/technician";
 import { Ionicons } from "@expo/vector-icons";
+import React, { useMemo, useState } from "react";
+import {
+  ActivityIndicator,
+  Image,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  Alert,
+} from "react-native";
 import BottomSheet from "../shared/BottomSheet";
-import { Technician, TECHNICIAN_CATEGORIES, TechnicianCategory } from "@/types/technician";
-import { useTechnicians } from "@/hooks/useTechnicians";
 
 interface TechnicianSheetProps {
   visible: boolean;
@@ -21,18 +25,43 @@ interface TechnicianSheetProps {
   onAdd: () => void;
 }
 
-export default function TechnicianSheet({ visible, onClose, onSelect, onAdd }: TechnicianSheetProps) {
+export default function TechnicianSheet({
+  visible,
+  onClose,
+  onSelect,
+  onAdd,
+}: TechnicianSheetProps) {
   const { data, isLoading } = useTechnicians();
+  const { mutate: deleteTechnician } = useDeleteTechnician();
   const technicians = data?.technicians || [];
 
   const [search, setSearch] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<TechnicianCategory | "All">("All");
+  const [selectedCategory, setSelectedCategory] = useState<
+    TechnicianCategory | "All"
+  >("All");
+
+  const handleDelete = (tech: Technician) => {
+    Alert.alert(
+      "Delete Technician",
+      `Are you sure you want to delete ${tech.name}?`,
+      [
+        { text: "Cancel", style: "cancel" },
+        { 
+          text: "Delete", 
+          style: "destructive",
+          onPress: () => deleteTechnician(tech.id || (tech as any)._id)
+        },
+      ]
+    );
+  };
 
   const filteredTechnicians = useMemo(() => {
-    return technicians.filter(tech => {
-      const matchesSearch = tech.name.toLowerCase().includes(search.toLowerCase()) || 
-                            tech.phone.includes(search);
-      const matchesCategory = selectedCategory === "All" || tech.specialty === selectedCategory;
+    return technicians.filter((tech) => {
+      const matchesSearch =
+        tech.name.toLowerCase().includes(search.toLowerCase()) ||
+        tech.phone.includes(search);
+      const matchesCategory =
+        selectedCategory === "All" || tech.specialty === selectedCategory;
       return matchesSearch && matchesCategory;
     });
   }, [technicians, search, selectedCategory]);
@@ -50,7 +79,7 @@ export default function TechnicianSheet({ visible, onClose, onSelect, onAdd }: T
         <View className="flex-1">
           {/* Search Bar */}
           <View className="flex-row items-center bg-[#F8F8F8] rounded-xl px-4 h-[50px] border border-[#D4D4D4] mb-4">
-            <TextInput 
+            <TextInput
               className="flex-1 font-lexend-regular text-[#00343F]"
               placeholder="Search technicians..."
               placeholderTextColor="#9A9A9A"
@@ -62,14 +91,20 @@ export default function TechnicianSheet({ visible, onClose, onSelect, onAdd }: T
 
           {/* Categories */}
           <View className="mb-4">
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ gap: 8 }}
+            >
               {["All", ...TECHNICIAN_CATEGORIES].map((item) => (
-                <TouchableOpacity 
+                <TouchableOpacity
                   key={item}
                   className={`px-4 py-2 rounded-full border ${selectedCategory === item ? "bg-[#7AE6EB] border-[#7AE6EB]" : "bg-white border-[#C1C3C3]"}`}
                   onPress={() => setSelectedCategory(item as any)}
                 >
-                  <Text className={`text-[11px] font-lexendRegular ${selectedCategory === item ? "text-[#425658]" : "text-[#425658]"}`}>
+                  <Text
+                    className={`text-[11px] font-lexendRegular ${selectedCategory === item ? "text-[#425658]" : "text-[#425658]"}`}
+                  >
                     {item}
                   </Text>
                 </TouchableOpacity>
@@ -83,44 +118,59 @@ export default function TechnicianSheet({ visible, onClose, onSelect, onAdd }: T
           ) : filteredTechnicians.length === 0 ? (
             <View className="flex-1 items-center justify-center mt-10 px-10">
               <Ionicons name="people-outline" size={60} color="#E0E0E0" />
-              <Text className="text-[18px] font-lexend-bold text-[#00343F] mt-4">No technicians found</Text>
+              <Text className="text-[18px] font-lexend-bold text-[#00343F] mt-4">
+                No technicians found
+              </Text>
               <Text className="text-[14px] font-lexend-regular text-[#9BBABB] text-center mt-2">
-                {search ? "Try adjusting your search" : "Start by adding your favorite technicians"}
+                {search
+                  ? "Try adjusting your search"
+                  : "Start by adding your favorite technicians"}
               </Text>
             </View>
           ) : (
             <View className="pb-56">
               {filteredTechnicians.map((item, index) => (
                 <View key={(item as any).id || (item as any)._id || index}>
-                  <TouchableOpacity 
-                    className="flex-row items-center py-4 border-b border-[#DFDFDF]"
+                  <TouchableOpacity
                     onPress={() => onSelect(item)}
+                    onLongPress={() => handleDelete(item)}
+                    delayLongPress={500}
+                    className="flex-row items-center py-4 border-b border-[#DFDFDF]"
                   >
                     {item.avatarUrl ? (
-                      <Image source={{ uri: item.avatarUrl }} className="w-11 h-11 rounded-full bg-gray-100" />
+                      <Image
+                        source={{ uri: item.avatarUrl }}
+                        className="w-11 h-11 rounded-full bg-gray-100"
+                      />
                     ) : (
                       <View className="w-11 h-11 rounded-full bg-gray-50 items-center justify-center border border-dashed border-gray-200">
                         <Ionicons name="person" size={20} color="#B4B1B1" />
                       </View>
                     )}
                     <View className="flex-1 ml-4">
-                      <Text className="text-[14px] font-lexendRegular text-[#101828]">{item.name}</Text>
+                      <Text className="text-[14px] font-lexendRegular text-[#101828]">
+                        {item.name}
+                      </Text>
+                      <Text className="text-[12px] font-lexendRegular text-[#9A9A9A]">
+                        {item.phone}
+                      </Text>
                     </View>
-                    <Text className="text-[14px] font-lexendRegualr text-[#00AEB5]">{item.phone}</Text>
                   </TouchableOpacity>
                   {index < filteredTechnicians.length - 1 && (
                     <View className="h-[1px] bg-[#F0F0F0]" />
                   )}
                 </View>
               ))}
-              
+
               {/* Add New Button */}
               <View className="bg-white bottom-0 absolute flex-1 w-full ">
-                <TouchableOpacity 
+                <TouchableOpacity
                   className="flex-row items-center justify-center gap-2 mt-6 py-6 bg-[#00343F] rounded-full"
                   onPress={onAdd}
                 >
-                  <Text className="text-[#FFFFFF] font-lexendBold text-[14px]">Add</Text>
+                  <Text className="text-[#FFFFFF] font-lexendBold text-[14px]">
+                    Add
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>

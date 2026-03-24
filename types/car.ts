@@ -134,3 +134,20 @@ export interface CarDetails {
   };
   recommendedBudget?: number;
 }
+
+
+export interface ValuationResponse {
+  estimatedValue: number;
+  highestValuationAvg: number;
+  aiReasoning: string;
+  currency: string;
+  scores: {
+    makeAndYear: string;
+    model: string;
+    mileageRecorded: string;
+    durationOfOwnership: string;
+    faultsHistory: string;
+    modifications: string;
+  };
+  assumptions: string[];
+}

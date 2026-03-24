@@ -118,6 +118,7 @@ export const authService = {
     country?: string; 
     preferredCurrency?: string;
     preferredLanguage?: string;
+    onboardingCompleted?: boolean;
   }): Promise<any> => {
     const response = await apiClient.patch(API_ROUTES.USER.PROFILE, data);
     return response.data;

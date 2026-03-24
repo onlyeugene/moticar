@@ -3,11 +3,12 @@ import { View, Text, TouchableOpacity, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useUserCars } from "@/hooks/useCars";
 import { useAppStore } from "@/store/useAppStore";
+import { router } from "expo-router";
 import { CarIcon } from "@/utils/carIconHelper";
 
 export default function DashboardHeader() {
-  const [showDropdown, setShowDropdown] = useState(false);
-  const { data: carsData } = useUserCars();
+  const [showDropdown, setShowDropdown] = React.useState(false);
+  const { data: carsData, isLoading } = useUserCars();
   const { selectedCarId, setSelectedCarId } = useAppStore();
 
   const cars = carsData?.cars || [];
@@ -25,17 +26,23 @@ export default function DashboardHeader() {
   return (
     <View className="flex-row items-center justify-between px-5 pt-4 pb-2 z-[1000]">
       <View className="flex-row items-center gap-3 flex-1">
-        <TouchableOpacity 
-          onPress={() => setShowDropdown(!showDropdown)}
+        <TouchableOpacity
+          onPress={() => {
+            if (cars.length === 0) {
+              router.push("/(onboarding)");
+            } else {
+              setShowDropdown(!showDropdown);
+            }
+          }}
           className="flex-row items-center gap-4 flex-1"
         >
           <CarIcon make={selectedCar?.make || ""} size={48} />
           <View>
             <Text className="text-white font-lexendBold text-[16px]">
-              {selectedCar?.make || "Loading..."}
+              {isLoading ? "Loading..." : selectedCar?.make || "Add a Car"}
             </Text>
             <Text className="text-[#7AE6EB] font-lexendSemiBold text-[14px]">
-              {selectedCar?.plate || "..."}
+              {selectedCar?.plate || "No car registered"}
             </Text>
           </View>
           <Ionicons name="chevron-down" size={24} color="#C1C3C3" />
@@ -71,9 +78,18 @@ export default function DashboardHeader() {
                   </TouchableOpacity>
                 );
               })}
-              {cars.length === 0 && (
-                <Text className="text-white/50 text-center py-4 font-lexendRegular">No cars found</Text>
-              )}
+              <TouchableOpacity
+                onPress={() => {
+                  setShowDropdown(false);
+                  router.push("/(onboarding)");
+                }}
+                className="py-3 px-4 rounded-xl mt-2 flex-row items-center gap-3 border border-dashed border-[#00AEB5]"
+              >
+                <Ionicons name="add" size={24} color="#00AEB5" />
+                <Text className="text-[#00AEB5] font-lexendSemiBold text-[15px]">
+                  Add New Car
+                </Text>
+              </TouchableOpacity>
             </View>
           </>
         )}

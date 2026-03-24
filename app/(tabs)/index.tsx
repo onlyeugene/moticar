@@ -6,6 +6,7 @@ import LocationAlert from "@/components/shared/LocationAlert";
 import { useCheckLocation, useMe } from "@/hooks/useAuth";
 import { useUserCars } from "@/hooks/useCars";
 import { useTrips, useActivitySpends } from "@/hooks/useActivity";
+import { useExpensesByCarId } from "@/hooks/useExpenses";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useAppStore } from "@/store/useAppStore";
 import { getCurrencySymbol } from "@/utils/currency";
@@ -95,6 +96,10 @@ export default function Dashboard() {
     userCar?.id || (userCar as any)?._id || "",
     (selectedDate.getMonth() + 1).toString(),
     selectedDate.getFullYear().toString(),
+  );
+  
+  const { data: expensesData } = useExpensesByCarId(
+    userCar?.id || (userCar as any)?._id || "",
   );
 
   // Navigation context is provided by the TabLayout and root Stack.
@@ -242,6 +247,7 @@ export default function Dashboard() {
           {/* Expense Breakdown Section */}
           <ExpenseBreakdownCard
             spendData={spendData}
+            expenses={expensesData?.expenses}
             currencySymbol={currencySymbol}
           />
 

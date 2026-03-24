@@ -17,8 +17,11 @@ export function ControlledInput<T extends FieldValues>({
   secureTextEntry = false,
   showPasswordToggle = false,
   leftIcon,
-  ...props
+  containerClassName,
+  inputClassName,
+  ...rest
 }: ControlledInputProps<T>) {
+  const { className = "", ...props } = rest;
   const [isPasswordVisible, setPasswordVisible] = React.useState(false);
 
   return (
@@ -29,11 +32,11 @@ export function ControlledInput<T extends FieldValues>({
         field: { onChange, onBlur, value },
         fieldState: { error },
       }) => (
-        <View className="mb-4">
+        <View className="mb-4 w-full">
           <View
             className={`rounded-xl border bg-[#012227] overflow-hidden ${
               error ? "border-[#ED5E5E]" : "border-[#09515D]"
-            }`}
+            } ${containerClassName}`}
           >
             <View className="flex-row items-center px-4 min-h-[52px]">
               {leftIcon && (
@@ -51,7 +54,7 @@ export function ControlledInput<T extends FieldValues>({
                 placeholder={placeholder}
                 placeholderTextColor="#356D75"
                 secureTextEntry={secureTextEntry && !isPasswordVisible}
-                className="flex-1 font-lexendRegular text-white py-3 h-full"
+                className={`flex-1 font-lexendRegular text-white py-3 h-full ${inputClassName || ""} ${className}`}
                 style={{ textAlignVertical: "center" }}
                 {...props}
               />
@@ -69,8 +72,8 @@ export function ControlledInput<T extends FieldValues>({
                 >
                   <Ionicons
                     name={isPasswordVisible ? "eye-outline" : "eye-off-outline"}
-                    size={18}
-                    color="#6C7278"
+                    size={20}
+                    color="#7BA0A3"
                   />
                 </TouchableOpacity>
               )}

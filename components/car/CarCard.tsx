@@ -2,7 +2,12 @@ import EmptyIcon from "@/assets/icons/empty.svg";
 import { CarIcon } from "@/utils/carIconHelper";
 import { Ionicons } from "@expo/vector-icons";
 import { format, formatDistanceToNow } from "date-fns";
-import { Text, TouchableOpacity, View } from "react-native";
+import { useValuation } from "@/hooks/useExpenses";
+import { useState } from "react";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import ValuationSheet from "../sheets/ValuationSheet";
+import { useMe } from "@/hooks/useAuth";
+import { getCurrencySymbol } from "@/utils/currency";
 
 interface CarCardProps {
   activeCar: any;
@@ -11,8 +16,13 @@ interface CarCardProps {
 }
 
 export function CarCard({ activeCar, onAddCar, onValuation }: CarCardProps) {
+  const { data: user } = useMe();
+  const currencySymbol = getCurrencySymbol(user?.preferredCurrency);
+
+  const { data: valuation } = useValuation(activeCar?._id || activeCar?.id || "", !!activeCar);
+
   const healthScore = activeCar?.healthScore;
-  const resaleValuation = activeCar?.resaleValuation;
+  const resaleValue = valuation?.estimatedValue || activeCar?.resaleValue;
 
   return (
     <View className="bg-white rounded-[24px] overflow-hidden mb-6 ">
@@ -76,14 +86,21 @@ export function CarCard({ activeCar, onAddCar, onValuation }: CarCardProps) {
         <TouchableOpacity onPress={onValuation}>
           <View className="flex-row items-center gap-2">
             <Text className="text-[#006C70] text-[14px] font-lexendRegular">
-              {resaleValuation
-                ? `₦${resaleValuation?.toLocaleString()}`
+              {resaleValue
+                ? `${currencySymbol}${resaleValue.toLocaleString()}`
                 : "N/A"}
             </Text>
             <Ionicons name="chevron-forward" size={16} color="#ADADAD" />
           </View>
         </TouchableOpacity>
       </View>
+
+{/* 
+      <ValuationSheet
+        visible={valuationVisible}
+        onClose={() => setValuationVisible(false)}
+        carId={carId}
+      /> */}
     </View>
   );
 }

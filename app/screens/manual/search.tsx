@@ -126,7 +126,14 @@ export default function Search() {
           <Pressable onPress={() => router.back()}>
             <Ionicons name="arrow-back" size={24} color="white" />
           </Pressable>
-          <TouchableOpacity onPress={() => router.replace("/(tabs)")}>
+          <TouchableOpacity
+            onPress={() =>
+              router.push({
+                pathname: "/screens/manual/details",
+                params: { make: "", model: "", year: "" },
+              })
+            }
+          >
             <View className="flex-row items-center">
               <Text className="text-[#29D7DE] font-lexendMedium text-lg mr-1">
                 Skip
