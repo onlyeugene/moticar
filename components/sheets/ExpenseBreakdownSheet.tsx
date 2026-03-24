@@ -11,6 +11,7 @@ interface ExpenseBreakdownSheetProps {
   visible: boolean;
   onClose: () => void;
   spendData?: SpendBreakdown;
+  expenses?: Expense[];
   currencySymbol: string;
 }
 
@@ -18,6 +19,7 @@ export default function ExpenseBreakdownSheet({
   visible,
   onClose,
   spendData,
+  expenses,
   currencySymbol,
 }: ExpenseBreakdownSheetProps) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -30,21 +32,20 @@ export default function ExpenseBreakdownSheet({
   };
 
   // Group expenses by date
-  const groupedExpenses = spendData?.expenses
-    ? spendData.expenses.reduce((acc: any, expense) => {
-        const date = new Date(expense.date);
-        const dateKey = date
-          .toLocaleDateString("en-GB", {
-            day: "2-digit",
-            month: "long",
-          })
-          .toUpperCase();
+  const expensesList = expenses || spendData?.expenses || [];
+  const groupedExpenses = expensesList.reduce((acc: any, expense) => {
+    const date = new Date(expense.date);
+    const dateKey = date
+      .toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "long",
+      })
+      .toUpperCase();
 
-        if (!acc[dateKey]) acc[dateKey] = [];
-        acc[dateKey].push(expense);
-        return acc;
-      }, {})
-    : {};
+    if (!acc[dateKey]) acc[dateKey] = [];
+    acc[dateKey].push(expense);
+    return acc;
+  }, {});
 
   const filteredGroupKeys = Object.keys(groupedExpenses).filter((key) => {
     return groupedExpenses[key].some((exp: any) =>

@@ -1,3 +1,5 @@
+import { Technician } from "./technician";
+
 export interface CategoryField {
   _id?: string;
   name: string;
@@ -19,19 +21,23 @@ export interface Expense {
   _id?: string;
   carId: string;
   category: string;
-// ... (rest same)
   name: string;
   amount: number;
   currency: string;
   date: string;
   receiptUrl?: string;
-  technicianId?: string;
+  technicianId?: string | Technician;
   paymentMethod: 'Cash' | 'Bank Transfer' | 'Debit Card';
   items?: ExpenseItem[];
   metadata?: Record<string, any>;
   notes?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface ExpensesResponse {
+  count: number;
+  expenses: Expense[];
 }
 
 export interface CreateExpenseInput {
@@ -86,6 +92,8 @@ export interface ExpenseCategory {
 export interface ValuationBreakdown {
   estimatedValue: number;
   highestValuationAvg: number;
+  aiReasoning?: string;
+  currency?: string;
   scores: {
     makeAndYear: string;
     model: string;

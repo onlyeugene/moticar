@@ -147,7 +147,7 @@ export default function CarScreen() {
       <ValuationSheet
         visible={isValuationSheetVisible}
         onClose={() => setIsValuationSheetVisible(false)}
-        activeCar={activeCar}
+        carId={activeCar?._id || activeCar?.id || ""}
       />
 
       <DiagnosticListSheet

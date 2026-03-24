@@ -234,7 +234,7 @@ export default function LogExpenseSheet({
     };
 
     if (selectedTechnician) {
-      payload.technicianId = selectedTechnician.id;
+      payload.technicianId = selectedTechnician.id || selectedTechnician._id;
     }
 
     logExpense(payload, {

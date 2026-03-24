@@ -1,179 +1,338 @@
+import React, { useState } from "react";
 import BottomSheet from "@/components/shared/BottomSheet";
+import { useMe } from "@/hooks/useAuth";
+import { useValuation } from "@/hooks/useExpenses";
+import { getCurrencySymbol } from "@/utils/currency";
 import { Ionicons } from "@expo/vector-icons";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  ScrollView,
+  Text,
+  View,
+  TouchableOpacity,
+  Modal,
+  Pressable,
+} from "react-native";
+import { BlurView } from "expo-blur";
 
 interface ValuationSheetProps {
   visible: boolean;
   onClose: () => void;
-  activeCar?: any;
+  carId: string;
 }
-
-const POSITIVE_ASSUMPTIONS = [
-  "All tyres have been fitted",
-  "All wheels are in good condition",
-  "The car has more than one key",
-  "Mechanical and electrical parts are fully functional",
-  "Exterior and glass are free from imperfections",
-];
-
-const NEGATIVE_ASSUMPTIONS = [
-  "The car is on import",
-  "The glass have any crack or damage",
-  "Limited duration left on the MOT",
-  "The car has been used as private hire taxi",
-  "Items missing from the car",
-];
-
-const VALUATION_FACTORS = [
-  {
-    label: "Make & Year of your Vehicle",
-    detail:
-      "Mercedes Benz is one of the premium and most desired brand of car in the market",
-    badge: "A",
-    badgeColor: "#00AEB5",
-  },
-  {
-    label: "Model of your Vehicle",
-    detail:
-      "In recent years, the ML 350 is a top model from the list of guys who sell these kind of cars.",
-    badge: "E",
-    badgeColor: "#FFA500",
-  },
-  {
-    label: "Mileage Recorded",
-    detail: "Key works",
-    badge: "B",
-    badgeColor: "#006064",
-  },
-  {
-    label: "Duration of Ownership",
-    detail:
-      "You seem to have used this car for over 6 years. This length of time might be a strong determinant of interest to the car value.",
-    badge: "F",
-    badgeColor: "#E53935",
-  },
-  {
-    label: "Faults, Accident History or Body Defects",
-    detail: "Key works",
-    badge: "D",
-    badgeColor: "#7B1FA2",
-  },
-  {
-    label: "Modifications, Add-ons & Options",
-    detail:
-      "From your expense record, it appears you have upgraded parts that aren't part of the manufacturer's original specification.",
-    badge: "C",
-    badgeColor: "#F57C00",
-  },
-];
 
 export default function ValuationSheet({
   visible,
   onClose,
-  activeCar,
+  carId,
 }: ValuationSheetProps) {
-  const resaleValuation = activeCar?.resaleValuation;
-  const highestValuation = resaleValuation
-    ? resaleValuation * 1.1
-    : null;
+  const [isAssumptionsVisible, setIsAssumptionsVisible] = useState(false);
+  const { data: user } = useMe();
+  const currencySymbol = getCurrencySymbol(user?.preferredCurrency);
+
+  const { data: valuation, isLoading, isError } = useValuation(carId, visible);
+
+  if (isLoading) {
+    return (
+      <BottomSheet
+        visible={visible}
+        onClose={onClose}
+        title="Estimated Valuation"
+        height="90%"
+      >
+        <View className="flex-1 items-center justify-center">
+          <Text className="text-[#888]">Loading latest valuation...</Text>
+        </View>
+      </BottomSheet>
+    );
+  }
+
+  if (isError || !valuation) {
+    return (
+      <BottomSheet
+        visible={visible}
+        onClose={onClose}
+        title="Estimated Valuation"
+        height="90%"
+      >
+        <View className="flex-1 items-center justify-center px-6">
+          <Text className="text-red-500 text-center">
+            Failed to load valuation
+          </Text>
+        </View>
+      </BottomSheet>
+    );
+  }
+
+  const estimatedValue = valuation.estimatedValue || 0;
+  const highestValuation =
+    valuation.highestValuationAvg || Math.round(estimatedValue * 1.15);
+
+  const factorConfigs: Record<string, { label: string; description: string }> =
+    {
+      makeAndYear: {
+        label: "Make & Year of your Vehicle",
+        description:
+          "Based on the brand reputation and the specific production year of your car's model.",
+      },
+      model: {
+        label: "Model of your Vehicle",
+        description:
+          "Evaluates the popularity and market demand for your specific model variant.",
+      },
+      mileageRecorded: {
+        label: "Mileage Recorded",
+        description:
+          "Reflects how much the vehicle has been driven compared to market averages.",
+      },
+      durationOfOwnership: {
+        label: "Duration of Ownership",
+        description:
+          "Considers the number of previous owners and how long you've maintained it.",
+      },
+      faultsHistory: {
+        label: "Faults, Accident History or Body Defects",
+        description:
+          "Analysis of recorded mechanical issues, body work, and historical repairs.",
+      },
+      modifications: {
+        label: "Modifications, Add-ons & Options",
+        description:
+          "Impact of aftermarket parts or upgraded features on the vehicle's resale value.",
+      },
+    };
+
+  const getFactorDescription = (key: string, defaultDesc: string) => {
+    if (!valuation?.aiReasoning) return defaultDesc;
+
+    const keywordMap: Record<string, string[]> = {
+      makeAndYear: ["year", "age", "make", "brand", "production", "generation"],
+      model: ["model", "corolla", "type", "variant", "engine", "market"],
+      mileageRecorded: ["mileage", "km", "driven", "odometer", "distance"],
+      durationOfOwnership: ["ownership", "owned", "previous", "owner"],
+      faultsHistory: [
+        "fault",
+        "accident",
+        "repair",
+        "service",
+        "mechanical",
+        "electrical",
+        "wear",
+        "condition",
+        "cosmetic",
+      ],
+      modifications: [
+        "modification",
+        "upgrade",
+        "aftermarket",
+        "add-on",
+        "parts",
+      ],
+    };
+
+    const keywords = keywordMap[key] || [];
+    const sentences = valuation.aiReasoning
+      .split(/[.!?]+/)
+      .map((s) => s.trim())
+      .filter((s) => s.length > 20);
+
+    // Score sentences by keyword matches
+    const scoredSentences = sentences.map((s) => {
+      const lowerS = s.toLowerCase();
+      const score = keywords.reduce(
+        (sum, kw) => sum + (lowerS.includes(kw.toLowerCase()) ? 1 : 0),
+        0,
+      );
+      return { sentence: s, score };
+    });
+
+    const bestMatch = scoredSentences.sort((a, b) => b.score - a.score)[0];
+    return bestMatch && bestMatch.score > 0
+      ? `${bestMatch.sentence}.`
+      : defaultDesc;
+  };
 
   return (
     <BottomSheet
       visible={visible}
       onClose={onClose}
-      title="Estimated Valuation"
+      title=""
       scrollable={true}
       height="90%"
       backgroundColor="#FFFFFF"
-      headerRight={
-        <TouchableOpacity>
-          <Ionicons name="download-outline" size={22} color="#555" />
-        </TouchableOpacity>
-      }
     >
-      <View className="px-4 pb-10">
-        {/* Top valuation card */}
-        <View className="bg-[#EAFCFD] rounded-[16px] p-5 mb-5 items-center">
-          <Text className="text-[#444] text-[12px] font-lexendRegular mb-1">
-            Up to
-          </Text>
-          <Text className="text-[#006C70] text-[32px] font-lexendBold mb-3">
-            {resaleValuation
-              ? `₦${resaleValuation.toLocaleString()}`
-              : "₦7,500,000"}
-          </Text>
+      <View className="mb-4 px-2 flex-row items-center justify-between">
+        <Text className="text-[#00343F] font-lexendSemiBold text-[22px] ">
+          Estimated Valuation
+        </Text>
 
-          {/* Highest valuation tag */}
-          <View className="bg-[#FEF597] px-3 py-1.5 rounded-full mb-3">
-            <Text className="text-[#444] text-[11px] font-lexendMedium">
-              Highest valuation is ₦
-              {highestValuation
-                ? highestValuation.toLocaleString()
-                : "12,905,000"}
+        <Ionicons name="download-outline" size={20} color="#344054" />
+      </View>
+      <ScrollView className="px-4 pb-10">
+        {/* Main Valuation Card */}
+        <View className="bg-[#DCF7F8] border-[#92BEC1] shadow-sm rounded-[8px] p-5 mb-6 items-center">
+          <View className="flex-row items-center mb-3 gap-2">
+            <Text className="text-[#202A2A] text-[12px] font-lexendRegular">
+              Up to
+            </Text>
+            <Text className="text-[#006C70] text-[32px] font-lexendBold">
+              {currencySymbol}
+              {estimatedValue.toLocaleString()}
+            </Text>
+          </View>
+          <View className="bg-[#F8E761] px-4 py-2 rounded-full mb-4">
+            <Text className="text-[#425658] text-[12px] font-lexendRegular">
+              Highest valutation is {currencySymbol}
+              {highestValuation.toLocaleString()}
             </Text>
           </View>
 
-          <View className="flex-row items-center gap-1">
-            <Ionicons
-              name="information-circle-outline"
-              size={13}
-              color="#888"
-            />
-            <Text className="text-[#888] text-[10px] font-lexendRegular">
+          <TouchableOpacity
+            onPress={() => setIsAssumptionsVisible(true)}
+            activeOpacity={0.7}
+            className="flex-row items-center gap-1"
+          >
+            <Ionicons name="alert-circle-outline" size={14} color="#00AEB5" />
+            <Text className="text-[#002D36] text-[10px] font-lexendRegular">
               This value is based on some assumptions
             </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Grades / Scores */}
+        {valuation.scores && (
+          <View className="mb-2">
+            {Object.entries(valuation.scores).map(([key, grade]) => {
+              const config = factorConfigs[key];
+              if (!config) return null;
+
+              return (
+                <View key={key} className="mb-2">
+                  <View className="flex-row justify-between items-start mb-2">
+                    <View className="flex-1">
+                      <Text className="text-[#006C70] text-[12px] font-lexendBold flex-1 mr-4">
+                      {config.label}
+                    </Text>
+                    <Text className="text-[#495353] text-[10px] font-lexendRegular leading-[19px]"
+                    numberOfLines={3}>
+                      {getFactorDescription(key, config.description)}
+                    </Text>
+                    </View>
+                    <View
+                      className="w-9 h-9 rounded-[8px] items-center justify-center -mt-1"
+                      style={{
+                        backgroundColor: getGradeColor(grade as string),
+                      }}
+                    >
+                      <Text className="text-white font-lexendSemiBold text-[18px]">
+                        {grade as string}
+                      </Text>
+                    </View>
+                  </View>
+
+                  <View className="h-[1px] bg-[#F5F5F5] mt-5" />
+                </View>
+              );
+            })}
           </View>
-        </View>
+        )}
 
-        {/* Assumptions */}
-        <View className="bg-[#012E35] rounded-[16px] p-4 mb-5">
-          {NEGATIVE_ASSUMPTIONS.map((a) => (
-            <View key={a} className="flex-row items-center gap-2 mb-2">
-              <Ionicons name="close" size={14} color="#FF6B6B" />
-              <Text className="text-[#B0CFCF] text-[11px] font-lexendRegular flex-1">
-                {a}
-              </Text>
-            </View>
-          ))}
-          {POSITIVE_ASSUMPTIONS.map((a) => (
-            <View key={a} className="flex-row items-center gap-2 mb-2">
-              <Ionicons name="checkmark" size={14} color="#29D7DE" />
-              <Text className="text-[#B0CFCF] text-[11px] font-lexendRegular flex-1">
-                {a}
-              </Text>
-            </View>
-          ))}
+        <View className="items-center ">
+          <Text className="text-[#006C70] text-[10px] font-lexendMedium mb-1">
+            This quote is only valid for 3 days.
+          </Text>
+          <Text className="text-[#C1C3C3] text-[10px] font-lexendRegular text-center leading-[15px]">
+            This is considering several factors provided here such as your
+            service{"\n"}
+            history, mileage, condition of the car and modifications
+          </Text>
         </View>
+      </ScrollView>
 
-        {/* Valuation factors */}
-        {VALUATION_FACTORS.map((factor) => (
-          <View key={factor.label} className="mb-4">
-            <View className="flex-row justify-between items-start mb-1">
-              <Text className="text-[#00343F] text-[13px] font-lexendMedium flex-1 mr-3">
-                {factor.label}
-              </Text>
-              <View
-                className="w-7 h-7 rounded-full items-center justify-center"
-                style={{ backgroundColor: factor.badgeColor }}
-              >
-                <Text className="text-white text-[11px] font-lexendBold">
-                  {factor.badge}
+      <Modal
+        visible={isAssumptionsVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setIsAssumptionsVisible(false)}
+      >
+        <Pressable
+          className="flex-1"
+          onPress={() => setIsAssumptionsVisible(false)}
+        >
+          <BlurView
+            intensity={20}
+            tint="dark"
+            className="flex-1 items-center justify-center px-6"
+          >
+            <Pressable
+              onPress={(e) => e.stopPropagation()}
+              className="bg-white rounded-[24px] w-full p-6 shadow-2xl"
+            >
+              <View className="flex-row justify-between items-center mb-6">
+                <Text className="text-[#00343F] font-lexendSemiBold text-[18px]">
+                  Key Assumptions
                 </Text>
+                <TouchableOpacity
+                  onPress={() => setIsAssumptionsVisible(false)}
+                >
+                  <Ionicons
+                    name="close-circle-outline"
+                    size={24}
+                    color="#C1C3C3"
+                  />
+                </TouchableOpacity>
               </View>
-            </View>
-            <Text className="text-[#888] text-[11px] font-lexendRegular leading-[17px]">
-              {factor.detail}
-            </Text>
-            <View className="h-[1px] bg-[#F0F0F0] mt-4" />
-          </View>
-        ))}
 
-        <Text className="text-[#ADADAD] text-[10px] font-lexendRegular text-center mt-2">
-          This quote is only valid for 3 days.{"\n"}
-          This is an estimated value based on your service history, mileage,
-          condition of the car and modifications.
-        </Text>
-      </View>
+              <View>
+                {valuation.assumptions && valuation.assumptions.length > 0 ? (
+                  valuation.assumptions.map((assumption, idx) => (
+                    <View key={idx} className="flex-row items-start gap-3 mb-5">
+                      <View className="w-5 h-5 rounded-full bg-[#E6F7F8] items-center justify-center mt-0.5">
+                        <Ionicons name="checkmark" size={12} color="#00AEB5" />
+                      </View>
+                      <Text className="text-[#00343F] text-[15px] font-lexendRegular flex-1 leading-[22px]">
+                        {assumption}
+                      </Text>
+                    </View>
+                  ))
+                ) : (
+                  <Text className="text-[#9BBABB] text-[14px] font-lexendRegular text-center py-10">
+                    No specific assumptions noted for this valuation.
+                  </Text>
+                )}
+              </View>
+
+              <TouchableOpacity
+                onPress={() => setIsAssumptionsVisible(false)}
+                className="bg-[#00AEB5] py-4 rounded-xl mt-4 items-center"
+              >
+                <Text className="text-white font-lexendBold text-[16px]">
+                  Got it!
+                </Text>
+              </TouchableOpacity>
+            </Pressable>
+          </BlurView>
+        </Pressable>
+      </Modal>
     </BottomSheet>
   );
 }
+
+// Helper function
+const getGradeColor = (grade: string): string => {
+  switch (grade) {
+    case "A":
+      return "#005F40";
+    case "B":
+      return "#19B059";
+    case "C":
+      return "#B89E41";
+    case "D":
+      return "#FFC700";
+    case "E":
+      return "#F78521";
+    case "F":
+      return "#EF1C39";
+    default:
+      return "#9E9E9E";
+  }
+};

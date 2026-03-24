@@ -4,7 +4,7 @@ import { CreateExpenseInput, UpdateExpenseInput } from "@/types/expense";
 
 /**
  * Expense Hooks
- * 
+ *
  * Provides React Query hooks for all expense-related actions.
  */
 
@@ -20,7 +20,7 @@ export const useExpenseCategories = (carId?: string, enabled = true) => {
 /** Log a new expense */
 export const useLogExpense = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (data: CreateExpenseInput) => expenseService.logExpense(data),
     onSuccess: (_, variables) => {
@@ -34,9 +34,9 @@ export const useLogExpense = () => {
 /** Update an existing expense */
 export const useUpdateExpense = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateExpenseInput }) => 
+    mutationFn: ({ id, data }: { id: string; data: UpdateExpenseInput }) =>
       expenseService.updateExpense(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["expenses"] });
@@ -48,12 +48,31 @@ export const useUpdateExpense = () => {
 /** Delete an expense */
 export const useDeleteExpense = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (id: string) => expenseService.deleteExpense(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["expenses"] });
       queryClient.invalidateQueries({ queryKey: ["activity"] });
     },
+  });
+};
+
+/** Get all expenses for a specific car */
+export const useExpensesByCarId = (carId: string, enabled = true) => {
+  return useQuery({
+    queryKey: ["expenses", "car", carId],
+    queryFn: () => expenseService.getExpensesByCarId(carId),
+    enabled: !!carId && enabled,
+  });
+};
+
+/** Get valuation of a car */
+export const useValuation = (carId: string, enabled = true) => {
+  return useQuery({
+    queryKey: ["expenses", "valuation", carId],
+    queryFn: () => expenseService.getEstimatedValuation(carId),
+    enabled: !!carId && enabled,
+    staleTime: 5 * 60 * 1000,
   });
 };
