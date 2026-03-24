@@ -77,7 +77,7 @@ export function CarFacts({ activeCar, onOpenDiagnostics, onSelectDiagnostic }: C
             <Text className="text-[#006C70] text-[24px] font-lexendRegular">
               {activeCar?.fuelSpec?.capacityLiters
                 ? `${activeCar.fuelSpec.capacityLiters}L`
-                : "93L"}
+                : "N/A"}
             </Text>
           </View>
           <Text className="text-[#006C70] text-[14px] font-lexendRegular ">
@@ -90,11 +90,9 @@ export function CarFacts({ activeCar, onOpenDiagnostics, onSelectDiagnostic }: C
             <View className="flex-row items-center ">
               <View className="bg-[#FEF597] px-2 py-0.5 rounded-full">
                 <Text className="text-[#425658] text-[8px] font-lexendRegular">
-                  Est. ₦
-                  {(
-                    (activeCar?.fuelSpec?.capacityLiters || 93) *
-                    (activeCar?.fuelSpec?.avgPriceRange || 650)
-                  )?.toLocaleString()}
+                  {activeCar?.fuelSpec?.capacityLiters 
+                    ? `Est. ₦${(activeCar.fuelSpec.capacityLiters * (activeCar.fuelSpec.avgPriceRange || 650)).toLocaleString()}`
+                    : "Est. ₦N/A"}
                 </Text>
               </View>
               <Ionicons name="chevron-forward" size={12} color="#888282" />
@@ -116,7 +114,7 @@ export function CarFacts({ activeCar, onOpenDiagnostics, onSelectDiagnostic }: C
               </View>
               <View className="">
                 <Text className="text-[#006C70] text-[24px] font-lexendRegular">
-                  {activeCar?.tyreSpec?.size || "265x45 R20"}
+                  {activeCar?.tyreSpec?.size || "N/A"}
                 </Text>
               </View>
             </View>
@@ -143,7 +141,7 @@ export function CarFacts({ activeCar, onOpenDiagnostics, onSelectDiagnostic }: C
             <Text className="text-[#006C70] text-[24px] font-lexendRegular">
               {activeCar?.brakePads?.thicknessMm
                 ? `${activeCar.brakePads.thicknessMm}mm`
-                : "10mm"}
+                : "N/A"}
             </Text>
           </View>
           <Text className="text-[#006C70] text-[14px] font-lexendRegular mb-1">
@@ -165,7 +163,7 @@ export function CarFacts({ activeCar, onOpenDiagnostics, onSelectDiagnostic }: C
           <View className="flex-row justify-between items-start mb-2">
             <BatteryIcon width={30} height={30} />
             <Text className="text-[#006C70] text-[24px] font-lexendRegular">
-              {activeCar?.batteryVoltage || "13.7V"}
+              {activeCar?.batteryVoltage || "N/A"}
             </Text>
           </View>
           <Text className="text-[#006C70] text-[14px] font-lexendRegular mb-1">

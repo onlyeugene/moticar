@@ -15,6 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { ControlledInput } from "@/components/shared/controlledInput";
 import { useUpdateCar } from "@/hooks/useCars";
+import { useUpdateProfile } from "@/hooks/useAuth";
 import { useSnackbar } from "@/providers/SnackbarProvider";
 import { useAuthStore } from "@/store/useAuthStore";
 import { AuthState } from "@/types/auth";
@@ -42,6 +43,7 @@ export default function FinalDetailsScreen() {
     : `${currencySymbol} 62,000`;
   const { showSnackbar } = useSnackbar();
   const { mutate: updateCar, isPending: isSubmitting } = useUpdateCar();
+  const { mutate: updateProfile, isPending: isUpdatingProfile } = useUpdateProfile();
   const updateUser = useAuthStore((state: AuthState) => state.updateUser);
 
   const {
@@ -117,10 +119,28 @@ export default function FinalDetailsScreen() {
             <View className="w-12 h-2 rounded-full bg-[#29D7DE]" />
           </View>
 
-          <TouchableOpacity onPress={() => router.replace("/(tabs)")}>
+          <TouchableOpacity
+            onPress={() => {
+              updateProfile({ onboardingCompleted: true }, {
+                onSettled: () => {
+                  updateUser({ onboardingCompleted: true });
+                  router.replace("/(tabs)");
+                }
+              });
+            }}
+            disabled={isUpdatingProfile}
+          >
             <View className="flex-row items-center">
-              <Text className="text-[#29D7DE] font-lexendRegular mr-1">Skip</Text>
-              <Ionicons name="chevron-forward" size={16} color="#29D7DE" />
+              {isUpdatingProfile ? (
+                <ActivityIndicator size="small" color="#29D7DE" />
+              ) : (
+                <>
+                  <Text className="text-[#29D7DE] font-lexendRegular mr-1">
+                    Skip
+                  </Text>
+                  <Ionicons name="chevron-forward" size={16} color="#29D7DE" />
+                </>
+              )}
             </View>
           </TouchableOpacity>
         </View>

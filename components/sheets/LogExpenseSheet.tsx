@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { format } from "date-fns";
 import BottomSheet from "../shared/BottomSheet";
 import ScanIcon from '@/assets/icons/scan.svg'
 
@@ -124,14 +125,59 @@ export default function LogExpenseSheet({
 
   useEffect(() => {
     if (visible && category) {
+      const budgetRecommendedValue =
+        category.budgetRecommended || category.recommendedBudget || 0;
+
       setName("");
-      setAmount("");
+      setAmount(
+        budgetRecommendedValue > 0 ? budgetRecommendedValue.toString() : "",
+      );
       setDate(null);
       setPaymentMethod(null);
       setNotes("");
       setExtraCosts([]);
       setDynamicFields({});
-      setSelectedTechnician(null);
+
+      // Auto-populate technician
+      const techField = category.fields?.find((f) => f.name === "technicianId");
+      if (category.lastTechnicianId) {
+        const lastTechOption = techField?.options?.find(
+          (opt) =>
+            typeof opt === "object" && opt.value === category.lastTechnicianId,
+        );
+
+        if (typeof lastTechOption === "object") {
+          setSelectedTechnician({
+            _id: lastTechOption.value,
+            id: lastTechOption.value,
+            name: lastTechOption.label,
+            specialty: "",
+            phone: "",
+          } as Technician);
+        } else {
+          setSelectedTechnician(null);
+        }
+      } else if (
+        techField &&
+        techField.options &&
+        techField.options.length === 1
+      ) {
+        const onlyTech = techField.options[0];
+        if (typeof onlyTech === "object" && "value" in onlyTech) {
+          setSelectedTechnician({
+            _id: onlyTech.value,
+            id: onlyTech.value,
+            name: onlyTech.label,
+            specialty: "",
+            phone: "",
+          } as Technician);
+        } else {
+          setSelectedTechnician(null);
+        }
+      } else {
+        setSelectedTechnician(null);
+      }
+
       setReceipts([]);
     }
   }, [visible, category]);
@@ -319,9 +365,17 @@ export default function LogExpenseSheet({
               />
             </View>
 
-            <Text className="text-[#81B4B4] text-[12px] font-lexendRegular text-center mb-4">
-              Last similar expense: {currencySymbol} 18,500 on 8 March
-            </Text>
+            {category.lastSimilarExpense ? (
+              <Text className="text-[#81B4B4] text-[12px] font-lexendRegular text-center mb-4">
+                Last similar expense: {currencySymbol}{" "}
+                {category.lastSimilarExpense.amount.toLocaleString()} on{" "}
+                {format(new Date(category.lastSimilarExpense.date), "d MMMM")}
+              </Text>
+            ) : (
+              <Text className="text-[#81B4B4] text-[12px] font-lexendRegular text-center mb-4">
+                No previous similar expenses recorded
+              </Text>
+            )}
 
             {/* Recommendation Box */}
             <View className="bg-[#FFFBE6] p-4 rounded-xl mb-4">
@@ -404,31 +458,58 @@ export default function LogExpenseSheet({
           />
         </View>
 
-        {/* Card 3: Technician */}
-        <View className="bg-white px-4 mb-1 rounded-none py-2">
-          <FieldRow
-            noBorder
-            label="Technician"
-            icon={TechnicianIcon}
-            onPress={() => setIsTechnicianSheetVisible(true)}
-            rightElement={
-              <View className="flex-row items-center gap-2">
-                {selectedTechnician ? (
-                  <View className="items-end">
-                    <Text className="text-[#00343F] font-lexendBold text-[14px]">
-                      {selectedTechnician.name}
+        {/* Dynamic Fields */}
+        {category.fields?.map((field) => {
+          if (field.name === "technicianId") return null;
+
+          return (
+            <View key={field._id || field.name} className="bg-white px-4 mb-1 rounded-none py-2">
+              <FieldRow
+                noBorder
+                label={field.label}
+                icon={field.name.toLowerCase().includes("station") ? TagIcon : TagIcon} // Simple logic for icons, can be improved
+              >
+                <TextInput
+                  className="text-[#00343F] font-lexendRegular text-[14px] pb-2 border-b border-[#F0F0F0]"
+                  placeholder={`Enter ${field.label}`}
+                  placeholderTextColor="#A0A0A0"
+                  value={dynamicFields[field.name] || ""}
+                  onChangeText={(val) =>
+                    setDynamicFields({ ...dynamicFields, [field.name]: val })
+                  }
+                />
+              </FieldRow>
+            </View>
+          );
+        })}
+
+        {/* Card 3: Technician (Conditional) */}
+        {category.fields?.some((f) => f.name === "technicianId") && (
+          <View className="bg-white px-4 mb-1 rounded-none py-2">
+            <FieldRow
+              noBorder
+              label="Technician"
+              icon={TechnicianIcon}
+              onPress={() => setIsTechnicianSheetVisible(true)}
+              rightElement={
+                <View className="flex-row items-center gap-2">
+                  {selectedTechnician ? (
+                    <View className="items-end">
+                      <Text className="text-[#00343F] font-lexendBold text-[14px]">
+                        {selectedTechnician.name}
+                      </Text>
+                    </View>
+                  ) : (
+                    <Text className="text-[#B4B1B1] font-lexendRegular text-[14px]">
+                      Select
                     </Text>
-                  </View>
-                ) : (
-                  <Text className="text-[#B4B1B1] font-lexendRegular text-[14px]">
-                    Select
-                  </Text>
-                )}
-                <Ionicons name="chevron-forward" size={18} color="#C1C3C3" />
-              </View>
-            }
-          />
-        </View>
+                  )}
+                  <Ionicons name="chevron-forward" size={18} color="#C1C3C3" />
+                </View>
+              }
+            />
+          </View>
+        )}
 
         {/* Card 4: Method of Payment */}
         <View className="bg-white px-4 mb-1 rounded-none py-4">
@@ -557,7 +638,7 @@ export default function LogExpenseSheet({
       <TechnicianSheet
         visible={isTechnicianSheetVisible}
         onClose={() => setIsTechnicianSheetVisible(false)}
-        onSelect={(tech) => {
+        onSelect={(tech: Technician) => {
           setSelectedTechnician(tech);
           setIsTechnicianSheetVisible(false);
         }}

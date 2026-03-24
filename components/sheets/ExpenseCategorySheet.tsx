@@ -1,3 +1,4 @@
+import { useAppStore } from "@/store/useAppStore";
 import { useExpenseCategories } from "@/hooks/useExpenses";
 import { ExpenseCategory } from "@/types/expense";
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -10,6 +11,8 @@ import {
   View,
 } from "react-native";
 import BottomSheet from "../shared/BottomSheet";
+
+// ... (SVGs same)
 
 // Asset imports for SVGs
 import KeyWorksIcon from "@/assets/expense/keyworks.svg";
@@ -81,7 +84,8 @@ export default function ExpenseCategorySheet({
   onSelect,
 }: ExpenseCategorySheetProps) {
   const [search, setSearch] = useState("");
-  const { data, isLoading } = useExpenseCategories(undefined, visible);
+  const { selectedCarId } = useAppStore();
+  const { data, isLoading } = useExpenseCategories(selectedCarId, visible);
 
   const categories = data?.categories || [];
 

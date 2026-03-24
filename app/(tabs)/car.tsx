@@ -16,17 +16,19 @@ import TechnicianDetailSheet, {
   type Technician,
 } from "@/components/sheets/TechnicianDetailSheet";
 import { useCarById, useUserCars } from "@/hooks/useCars";
-import { useTechnicians } from "@/hooks/useTechnicians";
+import { useTechnicians, useDeleteTechnician } from "@/hooks/useTechnicians";
 import { TECHNICIAN_CATEGORIES } from "@/types/technician";
 import { useAppStore } from "@/store/useAppStore";
+import { router } from "expo-router";
 import { useMemo, useState } from "react";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, ScrollView, Text, View, Alert } from "react-native";
 
 export default function CarScreen() {
   const { selectedCarId } = useAppStore();
   const { data: carsData, isLoading: isCarsLoading } = useUserCars();
   const { data: techniciansData } = useTechnicians();
-  const [selectedCategory, setSelectedCategory] = useState<string>("Mechanic");
+  const { mutate: deleteTechnician } = useDeleteTechnician();
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
 
   // Sheet states
   const [isAddTechnicianSheetVisible, setIsAddTechnicianSheetVisible] =
@@ -63,13 +65,14 @@ export default function CarScreen() {
   const isLoading =
     isCarsLoading || (hasCars && isDetailLoading && !carDetailData);
 
-  const filteredTechnicians = technicians.filter((t) =>
-    selectedCategory === "Others"
+  const filteredTechnicians = technicians.filter((t) => {
+    if (!selectedCategory) return true;
+    return selectedCategory === "Others"
       ? !TECHNICIAN_CATEGORIES.filter((c) => c !== "Others").includes(
           t.specialty as any,
         )
-      : t.specialty === selectedCategory,
-  );
+      : t.specialty === selectedCategory;
+  });
 
   const handleSelectDiagnosticByKey = (key: string) => {
     const items = getDiagnosticItems(activeCar);
@@ -99,7 +102,11 @@ export default function CarScreen() {
             <ActivityIndicator size="large" color="#00AEB5" />
           </View>
         ) : !hasCars ? (
-          <EmptyCarCard onAddCar={() => {}} />
+          <EmptyCarCard
+            onAddCar={() => {
+              router.push("/(onboarding)");
+            }}
+          />
         ) : (
           <CarCard
             activeCar={activeCar}
@@ -108,14 +115,18 @@ export default function CarScreen() {
         )}
 
         {/* ── Car Facts ── */}
-        <CarFacts
-          activeCar={activeCar}
-          onOpenDiagnostics={() => setIsDiagnosticListVisible(true)}
-          onSelectDiagnostic={handleSelectDiagnosticByKey}
-        />
+        {hasCars && (
+          <CarFacts
+            activeCar={activeCar}
+            onOpenDiagnostics={() => setIsDiagnosticListVisible(true)}
+            onSelectDiagnostic={handleSelectDiagnosticByKey}
+          />
+        )}
 
         {/* ── motiBuddie Status ── */}
-        <MotiBuddieStatus plate={activeCar?.plate} />
+        {hasCars && activeCar?.entryMethod === "obd" && (
+          <MotiBuddieStatus plate={activeCar?.plate} />
+        )}
 
         {/* ── Technicians ── */}
         <TechnicianSection
@@ -161,6 +172,26 @@ export default function CarScreen() {
         visible={!!selectedTechnician}
         onClose={() => setSelectedTechnician(null)}
         technician={selectedTechnician}
+        onDelete={() => {
+          if (!selectedTechnician) return;
+          Alert.alert(
+            "Delete Technician",
+            `Are you sure you want to delete ${selectedTechnician.name}?`,
+            [
+              { text: "Cancel", style: "cancel" },
+              {
+                text: "Delete",
+                style: "destructive",
+                onPress: () => {
+                  deleteTechnician(
+                    selectedTechnician._id || (selectedTechnician as any).id,
+                  );
+                  setSelectedTechnician(null);
+                },
+              },
+            ],
+          );
+        }}
       />
     </View>
   );

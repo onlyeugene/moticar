@@ -1,9 +1,9 @@
 export interface CategoryField {
   _id?: string;
   name: string;
-  type: 'text' | 'select' | 'number';
+  type: "text" | "select" | "number";
   label: string;
-  options?: string[];
+  options?: (string | { label: string; value: string })[];
 }
 
 export interface ExpenseItem {
@@ -76,6 +76,7 @@ export interface ExpenseCategory {
   budgetLeft: number;
   totalSpentThisMonth: number;
   fields?: CategoryField[];
+  lastTechnicianId?: string;
   lastSimilarExpense?: {
     amount: number;
     date: string;

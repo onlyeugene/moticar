@@ -148,6 +148,7 @@ export const useUpdateProfile = () => {
       country?: string; 
       preferredCurrency?: string;
       preferredLanguage?: string;
+      onboardingCompleted?: boolean;
     }) => authService.updateProfile(data),
     onSuccess: (data, variables) => {
       console.log("🔄 [useUpdateProfile] Success:", { data, variables });
