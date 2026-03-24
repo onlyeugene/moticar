@@ -106,12 +106,6 @@ export default function AddTechnicianSheet({ visible, onClose, onSuccess }: AddT
           )}
         </TouchableOpacity>
         
-        <TouchableOpacity 
-          className="h-12 items-center justify-center" 
-          onPress={onClose}
-        >
-          <Text className="text-[#7A7A7C] text-[14px] font-lexend-medium">Cancel</Text>
-        </TouchableOpacity>
       </View>
     </BottomSheet>
   );

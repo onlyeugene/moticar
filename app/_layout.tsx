@@ -1,8 +1,8 @@
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
+// Ensures this layout is rendered on the client (Expo Router).
+"use client";
+
+// ThemeProvider removed - in React Navigation v7 it calls useNavigation() internally
+// which causes "Couldn't find a navigation context" during API-driven re-renders
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { useEffect, useState, useRef } from "react";
@@ -14,7 +14,6 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { configureReanimatedLogger, ReanimatedLogLevel } from 'react-native-reanimated';
 
-import { useColorScheme } from "@/components/useColorScheme";
 import { LoadingModal } from "../components/ui/LoadingModal";
 import { SnackbarProvider } from "../providers/SnackbarProvider";
 import { QueryProvider } from "../providers/QueryProvider";
@@ -87,7 +86,6 @@ export default function RootLayout() {
     }
   }, []);
 
-  const colorScheme = useColorScheme();
 
   if (!fontsLoaded || !isHydrated) {
     return null;
@@ -99,9 +97,6 @@ export default function RootLayout() {
       <PaperProvider>
         <SnackbarProvider>
           <QueryProvider>
-            <ThemeProvider
-              value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-            >
               <Stack screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="index" />
                 <Stack.Screen name="(auth)" />
@@ -113,7 +108,6 @@ export default function RootLayout() {
                   options={{ presentation: "modal" }}
                 />
               </Stack>
-            </ThemeProvider>
           </QueryProvider>
           <LoadingModal visible={false} />
         </SnackbarProvider>

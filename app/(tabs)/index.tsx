@@ -246,7 +246,7 @@ export default function Dashboard() {
           />
 
           {/* Insights Section */}
-          {/* <DashboardInsights carId={(userCar as any)?._id || userCar?.id} /> */}
+          <DashboardInsights carId={(userCar as any)?._id || userCar?.id} />
 
           {/* Documents Section */}
           <View className="mt-4">
