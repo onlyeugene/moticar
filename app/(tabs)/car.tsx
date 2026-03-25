@@ -133,7 +133,12 @@ export default function CarScreen() {
         ) : (
           <CarCard
             activeCar={activeCar}
-            onValuation={() => setIsValuationSheetVisible(true)}
+            onValuation={() => {
+              setIsValuationSheetVisible(true);
+              queryClient.refetchQueries({
+                queryKey: ["cars", "details", activeCar?._id || activeCar?.id],
+              });
+            }}
           />
         )}
 

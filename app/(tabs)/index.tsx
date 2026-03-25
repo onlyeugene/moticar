@@ -7,6 +7,7 @@ import DashboardInsights from "@/components/dashboard/DashboardInsights";
 import ExpenseBreakdownCard from "@/components/dashboard/ExpenseBreakdownCard";
 import MileageTracker from "@/components/dashboard/MileageTracker";
 import LocationAlert from "@/components/shared/LocationAlert";
+import { RulerPicker } from "@/components/shared/RulerPicker";
 import { ScreenBackground } from "@/components/ui/ScreenBackground";
 import { useActivitySpends, useTrips } from "@/hooks/useActivity";
 import { useCheckLocation, useMe } from "@/hooks/useAuth";
@@ -262,6 +263,7 @@ export default function Dashboard() {
             />
 
             {/* Mileage Tracker Section */}
+            <RulerPicker onValueChange={() => {}} />
             <View className="border-t border-[#8acece] my-4" />
             <MileageTracker
               mileage={userCar?.mileage}

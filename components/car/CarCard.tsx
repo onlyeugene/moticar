@@ -2,7 +2,6 @@ import EmptyIcon from "@/assets/icons/empty.svg";
 import { CarIcon } from "@/utils/carIconHelper";
 import { Ionicons } from "@expo/vector-icons";
 import { format, formatDistanceToNow } from "date-fns";
-import { useValuation } from "@/hooks/useExpenses";
 import { useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import ValuationSheet from "../sheets/ValuationSheet";
@@ -19,10 +18,8 @@ export function CarCard({ activeCar, onAddCar, onValuation }: CarCardProps) {
   const { data: user } = useMe();
   const currencySymbol = getCurrencySymbol(user?.preferredCurrency);
 
-  const { data: valuation } = useValuation(activeCar?._id || activeCar?.id || "", !!activeCar);
-
   const healthScore = activeCar?.healthScore;
-  const resaleValue = valuation?.estimatedValue || activeCar?.resaleValue;
+  const resaleValue = activeCar?.resaleValue;
 
   return (
     <View className="bg-white rounded-[24px] overflow-hidden mb-6 ">
@@ -32,7 +29,7 @@ export function CarCard({ activeCar, onAddCar, onValuation }: CarCardProps) {
           <View className=" flex-1">
             <CarIcon make={activeCar?.make || ""} size={32} />
           </View>
-          <View className="bg-white border border-dashed border-[#E5E5E5] px-4 h-[44px] w-[110px] items-center justify-center rounded-lg">
+          <View className="bg-white border border-dashed border-[#E5E5E5] px-4 h-[44px] items-center justify-center rounded-lg">
             <Text className="text-[#00343F] text-[18px] font-lexendBold uppercase">
               {activeCar?.plate || "-"}
             </Text>

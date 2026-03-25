@@ -23,6 +23,11 @@ import {
   View,
 } from "react-native";
 import * as z from "zod";
+import Animated, {
+  FadeInDown,
+  FadeOutUp,
+  LinearTransition,
+} from "react-native-reanimated";
 
 const finalSchema = z.object({
   monthlyBudget: z.number().optional(),
@@ -181,9 +186,6 @@ export default function FinalDetailsScreen() {
 
           {/* Monthly Budget Section */}
           <View className="mb-10 items-center">
-            <Text className="text-[#29D7DE] font-lexendMedium text-sm mb-2">
-              Estimated monthly budget
-            </Text>
             <RulerPicker
               value={watch("monthlyBudget")}
               onValueChange={(val) => setValue("monthlyBudget", val)}
@@ -197,7 +199,7 @@ export default function FinalDetailsScreen() {
 
           {/* Current Car Mileage */}
           <View className="mb-8">
-            <Text className="text-[#29D7DE] font-lexendRegular text-[10px] mb-2 uppercase tracking-widest">
+            <Text className="text-[#4FB8C8] font-lexendRegular text-[12px] mb-2 ">
               Current Car Mileage
             </Text>
             <ControlledInput<FinalFormData>
@@ -207,14 +209,14 @@ export default function FinalDetailsScreen() {
               keyboardType="numeric"
               inputClassName="text-center text-[18px] font-lexendBold"
             />
-            <Text className="text-[#9BBABB] font-lexendRegular text-[10px] text-center -mt-2">
+            <Text className="text-[#9BBABB] font-lexendRegular text-[12px] text-center -mt-2">
               You can find this on your dashboard
             </Text>
           </View>
 
           {/* Car Number Plate */}
           <View className="mb-8">
-            <Text className="text-[#29D7DE] font-lexendRegular text-[10px] mb-2 uppercase tracking-widest">
+            <Text className="text-[#4FB8C8] font-lexendRegular text-[12px] mb-2">
               Car Number Plate
             </Text>
             <ControlledInput<FinalFormData>
@@ -224,14 +226,11 @@ export default function FinalDetailsScreen() {
               autoCapitalize="characters"
               inputClassName="text-center text-[18px] font-lexendBold"
             />
-            <Text className="text-[#9BBABB] font-lexendRegular text-[10px] text-center -mt-2">
-              You can find this on your dashboard
-            </Text>
           </View>
 
           {/* Chasis Number */}
           <View className="mb-8">
-            <Text className="text-[#29D7DE] font-lexendRegular text-[10px] mb-2 uppercase tracking-widest">
+            <Text className="text-[#4FB8C8] font-lexendRegular text-[12px] mb-2">
               Chasis Number
             </Text>
             <ControlledInput<FinalFormData>
@@ -241,16 +240,16 @@ export default function FinalDetailsScreen() {
               autoCapitalize="characters"
               inputClassName="text-center text-[18px] font-lexendBold"
             />
-            <Text className="text-[#9BBABB] font-lexendRegular text-[10px] text-center -mt-2">
-              You can find this on your windscreen, drivers side door, under the
-              passengers floor mat or engine bay
+            <Text className="text-[#9BBABB] font-lexendRegular text-[12px] text-center -mt-2">
+              You can find this on your windscreen, drivers side door, under{" "}
+              {"\n"}the passengers floor mat or engine bay
             </Text>
           </View>
 
           {/* Date of Car Purchase */}
-          <View className="mb-10">
-            <View className="flex-row justify-between items-center mb-4">
-              <Text className="text-[#29D7DE] font-lexendRegular text-[10px] uppercase tracking-widest">
+          <Animated.View layout={LinearTransition} className="mb-5">
+            <View className="flex-row justify-between items-center mb-2">
+              <Text className="text-[#4FB8C8] font-lexendRegular text-[12px]">
                 Date of Purchase
               </Text>
               <Pressable
@@ -262,77 +261,80 @@ export default function FinalDetailsScreen() {
                   size={18}
                   color="#29D7DE"
                 />
-                <Text className="text-[#9BBABB] font-lexendRegular text-[10px] ml-2">
+                <Text className="text-[#FFFFFF] font-lexendRegular text-[12px] ml-2">
                   I dont remember
                 </Text>
               </Pressable>
             </View>
 
             {!dontRememberDate && (
-              <WheelDatePicker
-                initialDate={watch("purchaseDate")}
-                onDateChange={(val) => setValue("purchaseDate", val)}
-              />
+              <Animated.View
+                entering={FadeInDown.duration(300)}
+                exiting={FadeOutUp.duration(300)}
+              >
+                <WheelDatePicker
+                  initialDate={watch("purchaseDate")}
+                  onDateChange={(val) => setValue("purchaseDate", val)}
+                />
+              </Animated.View>
             )}
-          </View>
+          </Animated.View>
 
           {/* Condition */}
           <View className="mb-10">
-            <Text className="text-[#29D7DE] font-lexendRegular text-[10px] mb-4 uppercase tracking-widest">
+            <Text className="text-[#4FB8C8] font-lexendRegular text-[12px] mb-4 ">
               Condition at the time of purchase
             </Text>
 
-            <View className="gap-4">
+            <View className="rounded-xl border border-[#09515D] overflow-hidden">
               <Pressable
                 onPress={() => setValue("condition", "Newly Purchased")}
-                className={`flex-row items-center justify-between p-4 rounded-xl border ${
-                  condition === "Newly Purchased"
-                    ? "border-[#29D7DE] bg-[#012227]"
-                    : "border-[#09515D] bg-[#012227]"
-                }`}
+                className={`flex-row items-center justify-between p-5 ${condition === "Newly Purchased" ? "bg-[#043F48]" : ""}`}
               >
                 <Text
-                  className={`font-lexendMedium ${condition === "Newly Purchased" ? "text-white" : "text-[#9BBABB]"}`}
+                  className={`font-lexendMedium text-[14px] ${condition === "Newly Purchased" ? "text-[#FFFFFF]" : "text-[#899B9B]"}`}
                 >
                   Newly Purchased
                 </Text>
                 <View
-                  className={`w-6 h-6 rounded-full border items-center justify-center ${
+                  className={`w-[26px] h-[26px] rounded-full items-center justify-center ${
                     condition === "Newly Purchased"
-                      ? "bg-[#29D7DE] border-[#29D7DE]"
-                      : "border-[#356D75]"
+                      ? "bg-[#00AEB5]"
+                      : " bg-[#012227]"
                   }`}
                 >
-                  {condition === "Newly Purchased" && (
-                    <Ionicons name="checkmark" size={16} color="#002E35" />
+                  {condition === "Newly Purchased" ? (
+                    <Ionicons name="checkmark" size={16} color="#FFFFFF" />
+                  ) : (
+                    <Ionicons name="checkmark" color="#013037" />
                   )}
                 </View>
               </Pressable>
+
+              <View className="h-[1px] bg-[#09515D]" />
 
               <Pressable
                 onPress={() =>
                   setValue("condition", "Already had an existing user")
                 }
-                className={`flex-row items-center justify-between p-4 rounded-xl border ${
-                  condition === "Already had an existing user"
-                    ? "border-[#29D7DE] bg-[#012227]"
-                    : "border-[#09515D] bg-[#012227]"
-                }`}
+                className="flex-row items-center justify-between p-5"
               >
                 <Text
-                  className={`font-lexendMedium ${condition === "Already had an existing user" ? "text-white" : "text-[#9BBABB]"}`}
+                  className={`font-lexendMedium text-[14px] ${condition === "Already had an existing user" ? "text-[#FFFFFF]" : "text-[#899B9B]"}`}
                 >
                   Already had an existing user
                 </Text>
                 <View
-                  className={`w-6 h-6 rounded-full border items-center justify-center ${
+                  className={`w-[26px] h-[26px] rounded-full items-center justify-center ${
                     condition === "Already had an existing user"
-                      ? "bg-[#29D7DE] border-[#29D7DE]"
-                      : "border-[#356D75]"
+                      ? "bg-[#00AEB5]"
+                      : "bg-[#012328]"
                   }`}
                 >
-                  {condition === "Already had an existing user" && (
-                    <Ionicons name="checkmark" size={16} color="#002E35" />
+                  {condition === "Already had an existing user" ? (
+                    <Ionicons name="checkmark" size={16} color="#FFFFFF" />
+                  ) : (
+                    <Ionicons name="checkmark" color="#013037" />
                   )}
                 </View>
               </Pressable>
@@ -347,14 +349,14 @@ export default function FinalDetailsScreen() {
             disabled={isSubmitting || !isValid}
             activeOpacity={0.8}
             className={`h-16 rounded-full items-center justify-center ${
-              !isValid || isSubmitting ? "bg-[#29D7DE]/30" : "bg-[#29D7DE]"
+              !isValid || isSubmitting ? "bg-[#29D7DE]/10" : "bg-[#29D7DE]"
             }`}
           >
             {isSubmitting ? (
               <ActivityIndicator color="#00343F" />
             ) : (
               <Text
-                className={`font-lexendBold text-lg ${!isValid ? "text-[#356D75]" : "text-[#00343F]"}`}
+                className={`font-lexendBold text-lg ${!isValid ? "text-[#00343F]" : "text-[#00343F]"}`}
               >
                 Save
               </Text>

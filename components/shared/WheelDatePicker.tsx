@@ -55,7 +55,7 @@ const WheelPicker = ({ data, initialValue, onValueChange, width = 80 }: WheelPic
           height: ITEM_HEIGHT,
           borderTopWidth: 1,
           borderBottomWidth: 1,
-          borderColor: "#1A8798",
+          borderColor: "#00AEB5",
         }}
       />
       <ScrollView
@@ -82,10 +82,11 @@ const WheelPicker = ({ data, initialValue, onValueChange, width = 80 }: WheelPic
               }}
             >
               <Text
+              className={` ${isSelected ? "font-lexendMedium" : "font-lexendRegular"} `}
                 style={{
-                  color: isSelected ? "#FFFFFF" : "#356D75",
-                  fontSize: isSelected ? 18 : 16,
-                  fontFamily: isSelected ? "LexendBold" : "LexendRegular",
+                  color: isSelected ? "#FFFFFF" : "#899B9B",
+                  fontSize: isSelected ? 16 : 14,
+
                 }}
               >
                 {item}

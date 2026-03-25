@@ -8,90 +8,102 @@ import {
   Dimensions,
   TextInput,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
-// Matching the screenshot density: 4 sub-ticks (5 intervals) between unitSteps
-const TICK_WIDTH = 10;
-const TICKS_PER_STEP = 5;
-const STEP_WIDTH = TICK_WIDTH * TICKS_PER_STEP;
+
+// Each item in FlatList = step units (passed via prop)
+const SUB_TICK_WIDTH = 8;
+const STEP_WIDTH = SUB_TICK_WIDTH; // Fixed width per step for smooth scrolling
 const CENTER_OFFSET = SCREEN_WIDTH / 2;
 
 interface RulerPickerProps {
   min?: number;
   max?: number;
-  step?: number; // Major step for labels (e.g. 5000)
-  unitStep?: number; // Distance between each tick (e.g. 500)
   value?: number;
   initialValue?: number;
   onValueChange: (value: number) => void;
   unitPrefix?: string;
+  title?: string;
+  step?: number;
+  unitStep?: number;
 }
 
 export const RulerPicker = ({
   min = 0,
-  max = 1000000,
-  step = 5000,
-  unitStep = 500,
+  max = 2000000,
   value,
   initialValue = 50000,
   onValueChange,
-  unitPrefix = "",
+  unitPrefix = "₦",
+  title = "Estimated monthly budget",
+  step = 50,
+  unitStep = 500,
 }: RulerPickerProps) => {
   const flatListRef = useRef<FlatList>(null);
   const [currentValue, setCurrentValue] = useState(value ?? initialValue);
-  const [inputValue, setInputValue] = useState((value ?? initialValue).toString());
+  const [inputValue, setInputValue] = useState(
+    (value ?? initialValue).toLocaleString()
+  );
   const [isEditing, setIsEditing] = useState(false);
   const isScrolling = useRef(false);
   const isProgrammaticScroll = useRef(false);
 
-  // Generate discrete major units for FlatList (rendering only labels)
-  const steps = React.useMemo(() => {
-    const s = [];
-    for (let i = min; i <= max; i += unitStep) {
-      s.push(i);
+  // Each item in FlatList = step units, so total items = (max - min) / step
+  const ticks = React.useMemo(() => {
+    const t = [];
+    for (let i = min; i <= max; i += step) {
+      t.push(i);
     }
-    return s;
-  }, [min, max, unitStep]);
+    return t;
+  }, [min, max, step]);
 
-  const scrollToValue = useCallback((val: number, animated = true) => {
-    const offset = ((val - min) / unitStep) * STEP_WIDTH;
-    if (flatListRef.current) {
-      isProgrammaticScroll.current = true;
-      flatListRef.current.scrollToOffset({
-        offset,
-        animated,
-      });
-      // Reset after a short delay
-      setTimeout(() => {
-        isProgrammaticScroll.current = false;
-      }, 500);
-    }
-  }, [min, unitStep]);
+  const scrollToValue = useCallback(
+    (val: number, animated = true) => {
+      const clampedVal = Math.max(min, Math.min(max, val));
+      const offset = ((clampedVal - min) / step) * STEP_WIDTH;
+      if (flatListRef.current) {
+        isProgrammaticScroll.current = true;
+        flatListRef.current.scrollToOffset({ offset, animated });
+        setTimeout(() => {
+          isProgrammaticScroll.current = false;
+        }, 600);
+      }
+    },
+    [min, max, step]
+  );
 
-  // Sync with external value
   useEffect(() => {
-    if (value !== undefined && value !== currentValue && !isScrolling.current && !isEditing) {
+    if (
+      value !== undefined &&
+      value !== currentValue &&
+      !isScrolling.current &&
+      !isEditing
+    ) {
       setCurrentValue(value);
-      setInputValue(value.toString());
+      setInputValue(value.toLocaleString());
       scrollToValue(value);
     }
   }, [value, isEditing]);
 
-  // Initial position
   useEffect(() => {
-    scrollToValue(currentValue, false);
+    const timer = setTimeout(() => {
+      scrollToValue(currentValue, false);
+    }, 100);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     if (isProgrammaticScroll.current && !isScrolling.current) return;
-    
     const offsetX = event.nativeEvent.contentOffset.x;
-    // Continuous value calculation: value = min + (offset / STEP_WIDTH) * unitStep
-    const val = Math.round(min + (offsetX / STEP_WIDTH) * unitStep);
-    
+
+    // Snap to nearest index relative to min
+    const index = Math.round(offsetX / STEP_WIDTH);
+    const val = min + index * step;
+
     if (val !== currentValue && val >= min && val <= max) {
       setCurrentValue(val);
-      if (!isEditing) setInputValue(val.toString());
+      if (!isEditing) setInputValue(val.toLocaleString());
       onValueChange(val);
     }
   };
@@ -99,117 +111,168 @@ export const RulerPicker = ({
   const handleInputChange = (text: string) => {
     const numericText = text.replace(/[^0-9]/g, "");
     setInputValue(numericText);
-    
     const val = parseInt(numericText) || 0;
+    // We update current value immediately to show text,
+    // but snapping happens on blur/submit
     if (val !== currentValue) {
       setCurrentValue(val);
-      onValueChange(val);
     }
   };
 
   const handleInputBlur = () => {
     setIsEditing(false);
-    const val = parseInt(inputValue) || 0;
-    scrollToValue(val);
+    const val = parseInt(inputValue.replace(/,/g, "")) || 0;
+    // Snap to nearest step
+    const snapped = Math.round(val / step) * step;
+    const clamped = Math.max(min, Math.min(max, snapped));
+
+    setCurrentValue(clamped);
+    setInputValue(clamped.toLocaleString());
+    onValueChange(clamped);
+    scrollToValue(clamped);
   };
 
   const renderItem = ({ item }: { item: number }) => {
-    const isMajor = item % step === 0;
+    // Major tick every unitStep units
+    const isMajor = item % unitStep === 0;
+    // Mid tick every half of unitStep units
+    const isMid = item % (unitStep / 2) === 0 && !isMajor;
+
+    const tickHeight = isMajor ? 48 : isMid ? 28 : 18;
+    const tickWidth = isMajor ? 2 : 1;
+    const tickColor = isMajor ? "#7A9A9B" : "#4A6A6B";
 
     return (
       <View
+        key={item}
         style={{
           width: STEP_WIDTH,
           alignItems: "center",
           justifyContent: "flex-end",
-          height: 120,
+          height: 80,
         }}
       >
         {isMajor && (
           <Text
             style={{
-              color: "#9BBABB",
+              color: "#6A9A9B",
               fontSize: 10,
               position: "absolute",
-              top: 10,
-              width: 100,
+              top: 0,
+              width: 80,
               textAlign: "center",
-              fontFamily: "LexendRegular",
+              fontFamily: "LexendDeca-Regular",
+              letterSpacing: -0.3,
             }}
           >
             {unitPrefix} {item.toLocaleString()}
           </Text>
         )}
-        <View className="flex-row items-end justify-between w-full px-[1px] mb-4">
-          <View
-            style={{
-              width: 1,
-              height: isMajor ? 50 : 35,
-              backgroundColor: isMajor ? "#356D75" : "#1A4147",
-              borderRadius: 1,
-            }}
-          />
-          {/* Exactly 4 sub-ticks to create 5 intervals */}
-          <View style={{ width: 1, height: 15, backgroundColor: "#063036" }} />
-          <View style={{ width: 1, height: 15, backgroundColor: "#063036" }} />
-          <View style={{ width: 1, height: 15, backgroundColor: "#063036" }} />
-          <View style={{ width: 1, height: 15, backgroundColor: "#063036" }} />
-        </View>
+        <View
+          style={{
+            width: tickWidth,
+            height: tickHeight,
+            backgroundColor: tickColor,
+            marginBottom: 8,
+            borderRadius: 1,
+          }}
+        />
       </View>
     );
   };
 
   return (
-    <View className="items-center justify-center py-6 relative">
-      {/* Dashed background line through the budget text */}
-      <View 
-        pointerEvents="none"
+    <View
+      style={{
+        alignItems: "center",
+        justifyContent: "center",
+        paddingTop: 8,
+      }}
+    >
+      {/* Title */}
+      <Text
         style={{
-          position: "absolute",
-          top: 0,
-          bottom: 60, // Restricting it so it's not "one long line" through everything
-          left: CENTER_OFFSET,
-          width: 0.5,
-          borderStyle: "dashed",
-          borderWidth: 1,
-          borderColor: "#29D7DE",
-          opacity: 0.3,
-          zIndex: 0,
+          color: "#4FB8C8",
+          fontFamily: "LexendDeca-Medium",
+          fontSize: 12,
+          marginBottom: 4,
         }}
-      />
+      >
+        {title}
+      </Text>
 
-      {/* Main Budget Display Area */}
-      <View className="flex-row items-baseline justify-center mb-10 z-20 px-10">
-        <Text className="text-white font-lexendBold text-[48px]">
+      {/* Value display */}
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "baseline",
+          justifyContent: "center",
+          marginBottom: 24,
+          paddingHorizontal: 40,
+        }}
+      >
+        <Text
+          style={{
+            color: "white",
+            fontFamily: "LexendDeca-Bold",
+            fontSize: 32,
+          }}
+        >
           {unitPrefix}
         </Text>
         <TextInput
           value={isEditing ? inputValue : currentValue.toLocaleString()}
           onChangeText={handleInputChange}
-          onFocus={() => setIsEditing(true)}
+          onFocus={() => {
+            setIsEditing(true);
+            setInputValue(currentValue.toString());
+          }}
           onBlur={handleInputBlur}
+          onSubmitEditing={handleInputBlur}
           keyboardType="numeric"
-          className="text-white font-lexendBold text-[48px] p-0 min-w-[200px] text-center"
+          keyboardAppearance="dark"
+          returnKeyType="done"
+          style={{
+            color: "white",
+            fontFamily: "LexendDeca-Bold",
+            fontSize: 32,
+            padding: 0,
+            textAlign: "center",
+          }}
           placeholder="0"
           placeholderTextColor="#356D75"
           maxLength={12}
         />
       </View>
 
-      <View style={{ height: 120, width: SCREEN_WIDTH, zIndex: 10 }}>
+      {/* Ruler */}
+      <View style={{ height: 80, width: SCREEN_WIDTH }}>
         <FlatList
           ref={flatListRef}
-          data={steps}
+          data={ticks}
           renderItem={renderItem}
           keyExtractor={(item) => item.toString()}
           horizontal
           showsHorizontalScrollIndicator={false}
           onScroll={handleScroll}
-          onScrollBeginDrag={() => (isScrolling.current = true)}
-          onScrollEndDrag={() => (isScrolling.current = false)}
-          onMomentumScrollEnd={() => (isScrolling.current = false)}
+          onScrollBeginDrag={() => {
+            isScrolling.current = true;
+          }}
+          onMomentumScrollBegin={() => {
+            isScrolling.current = true;
+          }}
+          onScrollEndDrag={(e) => {
+            if (e.nativeEvent.velocity?.x === 0) {
+              isScrolling.current = false;
+            }
+          }}
+          onMomentumScrollEnd={() => {
+            isScrolling.current = false;
+          }}
           scrollEventThrottle={16}
-          decelerationRate="normal"
+          decelerationRate="fast"
+          snapToInterval={STEP_WIDTH}
+          snapToAlignment="start"
           contentContainerStyle={{
             paddingHorizontal: CENTER_OFFSET,
           }}
@@ -219,17 +282,48 @@ export const RulerPicker = ({
             index,
           })}
         />
-        {/* Continuous Center Indicator Line (The cyan solid line on ruler) */}
+
+        {/* Center indicator */}
         <View
           pointerEvents="none"
           style={{
             position: "absolute",
-            left: CENTER_OFFSET - 2.5,
-            bottom: 25,
-            width: 5,
-            height: 60,
-            backgroundColor: "#29D7DE",
-            borderRadius: 2.5,
+            left: CENTER_OFFSET - 2,
+            bottom: -4,
+            width: 3,
+            height: 88,
+            backgroundColor: "#00AEB5",
+            borderRadius: 2,
+          }}
+        />
+
+        {/* Left fade */}
+        <LinearGradient
+          colors={["#000", "transparent"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          pointerEvents="none"
+          style={{
+            position: "absolute",
+            left: 0,
+            top: 0,
+            width: CENTER_OFFSET * 0.7,
+            height: 80,
+          }}
+        />
+
+        {/* Right fade */}
+        <LinearGradient
+          colors={["transparent", "#000"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          pointerEvents="none"
+          style={{
+            position: "absolute",
+            right: 0,
+            top: 0,
+            width: CENTER_OFFSET * 0.7,
+            height: 80,
           }}
         />
       </View>

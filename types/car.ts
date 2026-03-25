@@ -22,20 +22,27 @@ export interface Car {
   engineOil?: {
     capacityLiters: number;
     recommendedGrade: string;
+    reputableBrands?: string[];
   };
   fuelSpec?: {
     capacityLiters: number;
     avgPriceRange: number;
+    reputableStations?: string[];
   };
   tyreSpec?: {
     size: string;
     recommendedPressurePsi: string;
+    manufacturers?: string[];
   };
   brakePads?: {
     thicknessMm: number;
     estLifespanMiles: string;
+    reputableBrands?: string[];
   };
-  batteryVoltage?: string;
+  batterySpec?: {
+    voltage: string;
+    providers: string[];
+  };
   bodyStyle?: string;
   fuelType?: string;
 }
