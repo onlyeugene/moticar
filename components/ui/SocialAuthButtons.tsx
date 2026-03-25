@@ -1,7 +1,6 @@
 import React from "react";
 import { View, Text, Pressable } from "react-native";
-import AppleIcon from "../assets/icons/apple.svg";
-import GoogleIcon from "../assets/icons/google.svg";
+import GoogleIcon from "@/assets/icons/google.svg";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { SocialAuthProps } from "@/types/ui";

@@ -1,7 +1,8 @@
-import { ScreenBackground } from "@/components/ScreenBackground";
 import Container from "@/components/shared/container";
 import { ControlledInput } from "@/components/shared/controlledInput";
-import { SocialAuthButtons } from "@/components/SocialAuthButtons";
+import CurrencySelector from "@/components/shared/CurrencySelector";
+import { ScreenBackground } from "@/components/ui/ScreenBackground";
+import { SocialAuthButtons } from "@/components/ui/SocialAuthButtons";
 import { useLogin } from "@/hooks/useAuth";
 import { useSnackbar } from "@/providers/SnackbarProvider";
 import { emailSchema, passwordSchema } from "@/utils/validation";
@@ -9,7 +10,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "expo-router";
 import React from "react";
-import CurrencySelector from "@/components/shared/CurrencySelector";
 import { useForm } from "react-hook-form";
 import {
   ActivityIndicator,
@@ -61,7 +61,7 @@ export default function Login() {
             message: "Welcome back!",
             description: "You've successfully signed in.",
           });
-          
+
           if (data.user?.onboardingCompleted) {
             router.replace("/(tabs)");
           } else {
@@ -72,10 +72,12 @@ export default function Login() {
           showSnackbar({
             type: "error",
             message: "Sign in failed",
-            description: error.response?.data?.message || "Invalid credentials. Please try again.",
+            description:
+              error.response?.data?.message ||
+              "Invalid credentials. Please try again.",
           });
         },
-      }
+      },
     );
   };
 
@@ -93,7 +95,8 @@ export default function Login() {
             Sign in
           </Text>
           <Text className="text-[#9BBABB] font-lexendRegular text-[16px] mt-2 leading-6">
-            Start by adding the details of your personal car for a rich user experience
+            Start by adding the details of your personal car for a rich user
+            experience
           </Text>
         </View>
 
@@ -135,9 +138,7 @@ export default function Login() {
             {login.isPending ? (
               <ActivityIndicator color="#00343F" />
             ) : (
-              <Text
-                className={`font-lexendBold text-[16px] text-[#00343F]`}
-              >
+              <Text className={`font-lexendBold text-[16px] text-[#00343F]`}>
                 Sign in
               </Text>
             )}
@@ -146,8 +147,10 @@ export default function Login() {
 
         <View className="mt-5">
           <Pressable disabled={login.isPending}>
-            <Text className={`text-[#9BBABB] font-lexendMedium text-[14px] text-center ${login.isPending ? "opacity-50" : ""}`}>
-                Forgot Password?
+            <Text
+              className={`text-[#9BBABB] font-lexendMedium text-[14px] text-center ${login.isPending ? "opacity-50" : ""}`}
+            >
+              Forgot Password?
             </Text>
           </Pressable>
         </View>
@@ -179,12 +182,14 @@ export default function Login() {
             <Text className="text-[#FFFFFF] text-[16px] font-lexendMedium">
               New to moticar?
             </Text>
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => router.push("/(auth)/create")}
               disabled={login.isPending}
             >
-              <Text className={`text-[#00AEB5] font-lexendBold text-[16px] ${login.isPending ? "opacity-50" : ""}`}>
-               Create an account
+              <Text
+                className={`text-[#00AEB5] font-lexendBold text-[16px] ${login.isPending ? "opacity-50" : ""}`}
+              >
+                Create an account
               </Text>
             </TouchableOpacity>
           </View>

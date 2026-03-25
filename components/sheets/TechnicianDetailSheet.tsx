@@ -60,7 +60,7 @@ export default function TechnicianDetailSheet({
       title="Your Auto-Technician"
       scrollable={true}
       height="70%"
-      backgroundColor="#FFFFFF"
+      backgroundColor="#F0F0F0"
       headerRight={
         <View className="flex-row gap-3">
           <TouchableOpacity onPress={onEdit}>

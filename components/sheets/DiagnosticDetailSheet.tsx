@@ -2,6 +2,7 @@ import { DiagnosticItem } from "./DiagnosticListSheet";
 import BottomSheet from "@/components/shared/BottomSheet";
 import { Ionicons } from "@expo/vector-icons";
 import { Text, TouchableOpacity, View } from "react-native";
+import HomeIcon from "@/assets/icons/home.svg";
 
 interface Station {
   name: string;
@@ -52,8 +53,7 @@ function getDetails(item: DiagnosticItem | null, activeCar: any) {
         { label: "Size", value: activeCar?.tyreSpec?.size || "265x45 R20" },
         {
           label: "Recommended Pressure",
-          value:
-            activeCar?.tyreSpec?.recommendedPressurePsi || "32–35 psi",
+          value: activeCar?.tyreSpec?.recommendedPressurePsi || "32–35 psi",
         },
       ];
     case "brakePads":
@@ -102,39 +102,38 @@ export default function DiagnosticDetailSheet({
     <BottomSheet
       visible={visible}
       onClose={onClose}
-      title={
-        <View className="flex-row items-center gap-2">
-          <View className="w-5 h-5 rounded-full bg-[#29D7DE]/20 items-center justify-center">
-            <View className="w-2 h-2 rounded-full bg-[#29D7DE]" />
-          </View>
-          <Text className="text-[#00343F] text-[16px] font-lexendBold">
-            Diagnostic Checklist
-          </Text>
-        </View>
-      }
+      title=""
       scrollable={true}
       height="75%"
-      backgroundColor="#FFFFFF"
+      backgroundColor="#EEF5F5"
     >
-      <View className="px-4 pb-10">
+      <View className="flex-row items-center gap-2 px-2">
+        <HomeIcon width={20} height={20} />
+        <Text className="text-[#00AEB5] text-[14px] font-lexendSemiBold">
+          Diagnostic Checklist
+        </Text>
+      </View>
+      <View className=" pb-10 px-2">
         {/* Item header */}
         <View className="flex-row justify-between items-center mb-6 mt-2">
-          <Text className="text-[#00343F] text-[22px] font-lexendBold">
+          <Text className="text-[#00343F] text-[22px] font-lexendSemiBold">
             {item?.label}
           </Text>
-          {item && <item.Icon width={40} height={40} />}
+          <View className="bg-[#FFFFFF] w-[96px] h-[100px] rounded-lg flex items-center justify-center">
+            {item && <item.Icon width={40} height={40} />}
+          </View>
         </View>
 
         {/* Spec rows */}
         {details.map((d) => (
           <View
             key={d.label}
-            className="flex-row justify-between items-center py-4 border-b border-[#F5F5F5]"
+            className="flex-row justify-between items-center py-4 border-b border-[#C1C3C3]"
           >
-            <Text className="text-[#888] text-[13px] font-lexendRegular">
+            <Text className="text-[#001A1F] text-[14px] font-lexendRegular">
               {d.label}
             </Text>
-            <Text className="text-[#00343F] text-[13px] font-lexendMedium">
+            <Text className="text-[#006C70] text-[20px] font-lexendSemiBold">
               {d.value}
             </Text>
           </View>
@@ -143,7 +142,7 @@ export default function DiagnosticDetailSheet({
         {/* Fuel stations */}
         {showFuelStations && (
           <View className="py-4 border-b border-[#F5F5F5]">
-            <Text className="text-[#888] text-[13px] font-lexendRegular mb-3">
+            <Text className="text-[#001A1F] text-[14px] font-lexendRegular mb-3">
               Reputable Stations
             </Text>
             <View className="flex-row gap-2 flex-wrap">
@@ -167,29 +166,35 @@ export default function DiagnosticDetailSheet({
           onPress={onRecordExpense}
           className="bg-[#29D7DE] h-[52px] rounded-full items-center justify-center mt-6 mb-4"
         >
-          <Text className="text-[#00343F] text-[15px] font-lexendBold">
+          <Text className="text-[#00343F] text-[16px] font-lexendBold">
             Record an Expense
           </Text>
         </TouchableOpacity>
 
         {/* What next */}
-        <Text className="text-[#00343F] text-[14px] font-lexendMedium mb-3">
+        <Text className="text-[#00343F] text-[14px] font-lexendSemiBold mb-3 mt-3">
           What next?
         </Text>
 
         <TouchableOpacity className="flex-row justify-between items-center mb-3">
-          <Text className="text-[#444] text-[13px] font-lexendRegular">
-            Set a reminder
-          </Text>
-          <Ionicons name="open-outline" size={16} color="#ADADAD" />
+          <View className="flex-row items-center gap-2">
+            <Ionicons name="alarm-outline" size={24} color="#29D7DE" />
+            <Text className="text-[#006C70] text-[14px] font-lexendRegular">
+              Set a reminder
+            </Text>
+          </View>
+          <Ionicons name="open-outline" size={24} color="#C1C3C3" />
         </TouchableOpacity>
 
         {showFuelStations && (
           <TouchableOpacity className="flex-row justify-between items-center mb-4">
-            <Text className="text-[#444] text-[13px] font-lexendRegular">
-              Find a fuel station near you
-            </Text>
-            <Ionicons name="open-outline" size={16} color="#ADADAD" />
+            <View className="flex-row items-center gap-2">
+              <Ionicons name="location-outline" size={24} color="#29D7DE" />
+              <Text className="text-[#006C70] text-[14px] font-lexendRegular">
+                Find a fuel station near you
+              </Text>
+            </View>
+            <Ionicons name="open-outline" size={24} color="#C1C3C3" />
           </TouchableOpacity>
         )}
 

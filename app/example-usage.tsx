@@ -1,14 +1,20 @@
-import React from "react";
-import { View, Text, ActivityIndicator, TouchableOpacity, ScrollView } from "react-native";
-import { useQuery } from "@tanstack/react-query";
+import { ScreenBackground } from "@/components/ui/ScreenBackground";
 import apiClient from "@/config/apiClient";
 import { API_ROUTES } from "@/config/apiRoutes";
 import { useAppStore } from "@/store/useAppStore";
-import { ScreenBackground } from "@/components/ScreenBackground";
+import { useQuery } from "@tanstack/react-query";
+import React from "react";
+import {
+  ActivityIndicator,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 /**
  * Example Usage Screen
- * 
+ *
  * Demonstrates:
  * 1. Fetching data from an API using React Query and Axios.
  * 2. Accessing and updating global state using Zustand.
@@ -19,7 +25,13 @@ export default function ExampleUsageScreen() {
   const { theme, setTheme } = useAppStore();
 
   // --- REACT QUERY DATA FETCHING ---
-  const { data: cars, isLoading, isError, error, refetch } = useQuery({
+  const {
+    data: cars,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: ["cars"],
     queryFn: async () => {
       // Using the pre-configured apiClient and routes
@@ -45,9 +57,12 @@ export default function ExampleUsageScreen() {
             1. Zustand (Client State)
           </Text>
           <Text className="text-white/60 mb-4">
-            Current Theme: <Text className="text-[#FDEF56] font-lexendBold capitalize">{theme}</Text>
+            Current Theme:{" "}
+            <Text className="text-[#FDEF56] font-lexendBold capitalize">
+              {theme}
+            </Text>
           </Text>
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={toggleTheme}
             className="bg-[#FDEF56] py-3 rounded-lg items-center"
           >
@@ -74,15 +89,21 @@ export default function ExampleUsageScreen() {
           ) : isError ? (
             <View className="py-10 items-center">
               <Text className="text-red-400">Error fetching data</Text>
-              <Text className="text-white/40 text-xs mt-1">{(error as Error).message}</Text>
+              <Text className="text-white/40 text-xs mt-1">
+                {(error as Error).message}
+              </Text>
             </View>
           ) : (
             <View>
               {cars && cars.length > 0 ? (
                 cars.map((car: any, index: number) => (
                   <View key={index} className="bg-black/20 p-3 rounded-lg mb-2">
-                    <Text className="text-white font-lexendMedium">{car.make} {car.model}</Text>
-                    <Text className="text-white/40 text-xs">{car.year} • {car.color}</Text>
+                    <Text className="text-white font-lexendMedium">
+                      {car.make} {car.model}
+                    </Text>
+                    <Text className="text-white/40 text-xs">
+                      {car.year} • {car.color}
+                    </Text>
                   </View>
                 ))
               ) : (

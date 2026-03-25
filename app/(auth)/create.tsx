@@ -1,18 +1,24 @@
-import { ScreenBackground } from "@/components/ScreenBackground";
-import { ControlledInput } from "@/components/shared/controlledInput";
 import Container from "@/components/shared/container";
-import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
-import React from "react";
+import { ControlledInput } from "@/components/shared/controlledInput";
 import CurrencySelector from "@/components/shared/CurrencySelector";
-import { useForm } from "react-hook-form";
-import { ActivityIndicator, Pressable, Text, TouchableOpacity, View } from "react-native";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { emailSchema } from "@/utils/validation";
-import { SocialAuthButtons } from "@/components/SocialAuthButtons";
+import { ScreenBackground } from "@/components/ui/ScreenBackground";
+import { SocialAuthButtons } from "@/components/ui/SocialAuthButtons";
 import { useSignup } from "@/hooks/useAuth";
 import { useSnackbar } from "@/providers/SnackbarProvider";
+import { emailSchema } from "@/utils/validation";
+import { Ionicons } from "@expo/vector-icons";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { router } from "expo-router";
+import React from "react";
+import { useForm } from "react-hook-form";
+import {
+  ActivityIndicator,
+  Pressable,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import * as z from "zod";
 
 const schema = z.object({
   email: emailSchema,
@@ -59,7 +65,9 @@ export default function Login() {
         showSnackbar({
           type: "error",
           message: "Signup failed",
-          description: error.response?.data?.message || "Something went wrong. Please try again.",
+          description:
+            error.response?.data?.message ||
+            "Something went wrong. Please try again.",
         });
       },
     });
@@ -99,7 +107,7 @@ export default function Login() {
           />
         </View>
 
-        <Pressable 
+        <Pressable
           onPress={() => setIsAgreed(!isAgreed)}
           className={`mt-2 flex-row items-center ${signup.isPending ? "opacity-50" : ""}`}
           disabled={signup.isPending}
@@ -125,9 +133,7 @@ export default function Login() {
             {signup.isPending ? (
               <ActivityIndicator color="#00343F" />
             ) : (
-              <Text
-                className={`font-lexendBold text-[16px] text-[#00343F]`}
-              >
+              <Text className={`font-lexendBold text-[16px] text-[#00343F]`}>
                 Signup
               </Text>
             )}
@@ -169,11 +175,13 @@ export default function Login() {
             <Text className="text-[#FFFFFF] text-[16px] font-lexendMedium">
               Already have an account?
             </Text>
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => router.push("/(auth)/login")}
               disabled={signup.isPending}
             >
-              <Text className={`text-[#00AEB5] font-lexendBold text-[16px] ${signup.isPending ? "opacity-50" : ""}`}>
+              <Text
+                className={`text-[#00AEB5] font-lexendBold text-[16px] ${signup.isPending ? "opacity-50" : ""}`}
+              >
                 Sign in
               </Text>
             </TouchableOpacity>

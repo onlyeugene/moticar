@@ -16,6 +16,7 @@ export const API_ROUTES = {
     RESET_PASSWORD: "/auth/reset-password",
     CHANGE_PASSWORD: "/auth/change-password",
     RESEND_OTP: "/auth/resend-otp",
+    SET_NAME: "/auth/set-name",
   },
   USER: {
     ME: "/users/me",

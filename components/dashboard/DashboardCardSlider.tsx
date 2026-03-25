@@ -219,7 +219,7 @@ export default function DashboardCardSlider({ carId, month, year }: DashboardCar
         {cards.map((_, i) => (
           <View
             key={i}
-            className={`w-2 h-2 rounded-full ${activeIndex === i ? 'bg-[#00AEB5]' : 'bg-[#00AEB5]/30'}`}
+            className={`w-2 h-2 rounded-full ${activeIndex === i ? 'bg-[#7AE6EB]' : 'bg-[#00343F]'}`}
           />
         ))}
       </View>

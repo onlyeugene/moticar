@@ -66,7 +66,7 @@ export default function BottomSheet({
           <View className="flex-row justify-between items-center mb-6 px-4 pt-6">
             <View className="flex-row items-center gap-4">
               <TouchableOpacity onPress={onClose}>
-                <Ionicons name="close" size={24} color="#7A7A7C" />
+                <Ionicons name="close" size={24} color="#101828" />
               </TouchableOpacity>
               {typeof title === "string" ? (
                 <Text className="text-[#00343F] text-[16px] font-lexendBold">

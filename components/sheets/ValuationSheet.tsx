@@ -265,31 +265,16 @@ export default function ValuationSheet({
           >
             <Pressable
               onPress={(e) => e.stopPropagation()}
-              className="bg-white rounded-[24px] w-full p-6 shadow-2xl"
+              className="bg-[#000000D9] rounded-[24px] w-full p-6 shadow-2xl"
             >
-              <View className="flex-row justify-between items-center mb-6">
-                <Text className="text-[#00343F] font-lexendSemiBold text-[18px]">
-                  Key Assumptions
-                </Text>
-                <TouchableOpacity
-                  onPress={() => setIsAssumptionsVisible(false)}
-                >
-                  <Ionicons
-                    name="close-circle-outline"
-                    size={24}
-                    color="#C1C3C3"
-                  />
-                </TouchableOpacity>
-              </View>
-
               <View>
                 {valuation.assumptions && valuation.assumptions.length > 0 ? (
                   valuation.assumptions.map((assumption, idx) => (
                     <View key={idx} className="flex-row items-start gap-3 mb-5">
-                      <View className="w-5 h-5 rounded-full bg-[#E6F7F8] items-center justify-center mt-0.5">
-                        <Ionicons name="checkmark" size={12} color="#00AEB5" />
+                      <View className="">
+                        <Ionicons name="checkmark" size={16} color="#29D7DE" />
                       </View>
-                      <Text className="text-[#00343F] text-[15px] font-lexendRegular flex-1 leading-[22px]">
+                      <Text className="text-[#9A9B9B] text-[10px] font-lexendRegular flex-1 leading-[22px]">
                         {assumption}
                       </Text>
                     </View>
@@ -305,7 +290,7 @@ export default function ValuationSheet({
                 onPress={() => setIsAssumptionsVisible(false)}
                 className="bg-[#00AEB5] py-4 rounded-xl mt-4 items-center"
               >
-                <Text className="text-white font-lexendBold text-[16px]">
+                <Text className="text-white font-lexendBold text-[14px]">
                   Got it!
                 </Text>
               </TouchableOpacity>

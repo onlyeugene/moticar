@@ -1,8 +1,8 @@
-import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
-import { ScreenBackground } from "@/components/ScreenBackground";
+import { ScreenBackground } from "@/components/ui/ScreenBackground";
 import { useLogout } from "@/hooks/useAuth";
 import { useSnackbar } from "@/providers/SnackbarProvider";
 import { router } from "expo-router";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 
 export default function MeScreen() {
   const logout = useLogout();
@@ -35,7 +35,9 @@ export default function MeScreen() {
           <Text className="text-3xl font-lexendBold text-[#1F1F1F]">M</Text>
         </View>
         <Text className="text-2xl font-lexendBold text-white">Me Screen</Text>
-        <Text className="text-sm font-lexendRegular text-white/60">Profile and Settings</Text>
+        <Text className="text-sm font-lexendRegular text-white/60">
+          Profile and Settings
+        </Text>
       </View>
 
       <View className="mt-20 w-full px-10">
@@ -47,7 +49,9 @@ export default function MeScreen() {
           {logout.isPending ? (
             <ActivityIndicator color="#ef4444" />
           ) : (
-            <Text className="text-red-500 font-lexendBold text-[16px]">Logout</Text>
+            <Text className="text-red-500 font-lexendBold text-[16px]">
+              Logout
+            </Text>
           )}
         </TouchableOpacity>
       </View>

@@ -1,5 +1,5 @@
-import { ScreenBackground } from '@/components/ScreenBackground';
-import { View, Text } from 'react-native';
+import { ScreenBackground } from "@/components/ui/ScreenBackground";
+import { Text } from "react-native";
 export default function MoreScreen() {
   return (
     <ScreenBackground className="flex-1 justify-center items-center">

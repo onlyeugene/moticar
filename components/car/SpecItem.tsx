@@ -26,20 +26,20 @@ const SpecItem = ({
       <View className=" ">
         <View className="items-center gap-2 flex-row">
           {Icon && <Icon width={20} height={20} />}
-          <Text className="text-[#9BBABB] font-lexendRegular text-[12px]">
+          <Text className="text-[#C1C3C3] font-lexendRegular text-[12px]">
             {label}
           </Text>
         </View>
 
         <View className="flex-row items-center ml-8">
           <Text
-            className={`font-lexendBold text-[14px] mr-1 ${hasDropdown ? "text-[#00343F]" : "text-[#616161]"}`}
+            className={`font-lexendMedium text-[14px] mr-1 ${hasDropdown ? "text-[#202A2A]" : "text-[#616161]"}`}
             numberOfLines={1}
           >
             {value || "---"}
           </Text>
           {hasDropdown && (
-            <Ionicons name="chevron-down" size={14} color="#29D7DE" />
+            <Ionicons name="chevron-down" size={14} color="#7BA0A3" />
           )}
         </View>
       </View>

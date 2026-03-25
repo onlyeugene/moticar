@@ -118,9 +118,16 @@ export const authService = {
     country?: string; 
     preferredCurrency?: string;
     preferredLanguage?: string;
+    preferredName?: string;
     onboardingCompleted?: boolean;
   }): Promise<any> => {
     const response = await apiClient.patch(API_ROUTES.USER.PROFILE, data);
+    return response.data;
+  },
+
+  /** Set user name during auth flow and complete registration */
+  setName: async (data: { email: string; name: string; preferredName?: string }): Promise<AuthResponse> => {
+    const response = await apiClient.post(API_ROUTES.AUTH.SET_NAME, data);
     return response.data;
   },
 };

@@ -1,18 +1,15 @@
-import { ScreenBackground } from "@/components/ScreenBackground";
 import Container from "@/components/shared/container";
-import { ControlledInput } from "@/components/shared/controlledInput";
-import { Ionicons } from "@expo/vector-icons";
-import { useLocalSearchParams } from "expo-router";
-import { router } from "expo-router";
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { OtpInput } from "@/components/shared/OtpInput";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller } from "react-hook-form";
-import { otpSchema } from "@/utils/validation";
-import { useVerifyEmail, useResendOtp } from "@/hooks/useAuth";
+import { ScreenBackground } from "@/components/ui/ScreenBackground";
+import { useResendOtp, useVerifyEmail } from "@/hooks/useAuth";
 import { useSnackbar } from "@/providers/SnackbarProvider";
+import { otpSchema } from "@/utils/validation";
+import { Ionicons } from "@expo/vector-icons";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { router, useLocalSearchParams } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
 interface OtpFormData {
   otp: string;
@@ -51,47 +48,56 @@ export default function Otp() {
   }, [timer]);
 
   const onSubmit = (data: OtpFormData) => {
-    verifyEmail.mutate({ email: email!, otp: data.otp }, {
-      onSuccess: () => {
-        showSnackbar({
-          type: "success",
-          message: "Email verified!",
-          description: "Now set your account password.",
-        });
-        router.push({
-          pathname: "/(auth)/password",
-          params: { email, otp: data.otp },
-        });
-      },
-      onError: (error: any) => {
-        showSnackbar({
-          type: "error",
-          message: "Verification failed",
-          description: error.response?.data?.message || "Invalid OTP code. Please try again.",
-        });
-      },
-    });
-  };
-
-  const handleResend = () => {
-    if (timer === 0 && !resendOtp.isPending) {
-      resendOtp.mutate({ email: email!, reason: "signup" }, {
+    verifyEmail.mutate(
+      { email: email!, otp: data.otp },
+      {
         onSuccess: () => {
-          setTimer(59);
           showSnackbar({
             type: "success",
-            message: "OTP Resent",
-            description: "A new code has been sent to your email.",
+            message: "Email verified!",
+            description: "Now set your account password.",
+          });
+          router.push({
+            pathname: "/(auth)/password",
+            params: { email, otp: data.otp },
           });
         },
         onError: (error: any) => {
           showSnackbar({
             type: "error",
-            message: "Failed to resend OTP",
-            description: error.response?.data?.message || "Please try again later.",
+            message: "Verification failed",
+            description:
+              error.response?.data?.message ||
+              "Invalid OTP code. Please try again.",
           });
         },
-      });
+      },
+    );
+  };
+
+  const handleResend = () => {
+    if (timer === 0 && !resendOtp.isPending) {
+      resendOtp.mutate(
+        { email: email!, reason: "signup" },
+        {
+          onSuccess: () => {
+            setTimer(59);
+            showSnackbar({
+              type: "success",
+              message: "OTP Resent",
+              description: "A new code has been sent to your email.",
+            });
+          },
+          onError: (error: any) => {
+            showSnackbar({
+              type: "error",
+              message: "Failed to resend OTP",
+              description:
+                error.response?.data?.message || "Please try again later.",
+            });
+          },
+        },
+      );
     }
   };
 
@@ -108,7 +114,8 @@ export default function Otp() {
             Verify Email
           </Text>
           <Text className="text-[#9BBABB] font-lexendRegular text-[16px] mt-2 leading-6">
-            We just sent 5-digit code to {email || "your email"}, enter it below:
+            We just sent 5-digit code to {email || "your email"}, enter it
+            below:
           </Text>
 
           <View className="mt-5">
@@ -142,12 +149,16 @@ export default function Otp() {
 
           <View className="mt-6 items-center">
             <Text className="text-[#7BA0A3] font-lexendRegular text-[16px]">
-             Didn't get code?{' '}
+              Didn't get code?{" "}
               <Text
                 onPress={handleResend}
                 className={`text-[#FDEF56] font-lexendSemiBold ${timer > 0 ? "opacity-50" : ""}`}
               >
-                {resendOtp.isPending ? "Sending..." : timer > 0 ? `Resend in ${timer}s` : "Resend OTP"}
+                {resendOtp.isPending
+                  ? "Sending..."
+                  : timer > 0
+                    ? `Resend in ${timer}s`
+                    : "Resend OTP"}
               </Text>
             </Text>
           </View>

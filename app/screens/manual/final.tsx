@@ -1,49 +1,54 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  ActivityIndicator,
-  Pressable,
-} from "react-native";
-import { useLocalSearchParams, router } from "expo-router";
-import { ScreenBackground } from "@/components/ScreenBackground";
-import { Ionicons } from "@expo/vector-icons";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import Container from "@/components/shared/container";
 import { ControlledInput } from "@/components/shared/controlledInput";
-import { useUpdateCar } from "@/hooks/useCars";
+import { RulerPicker } from "@/components/shared/RulerPicker";
+import { WheelDatePicker } from "@/components/shared/WheelDatePicker";
+import { ScreenBackground } from "@/components/ui/ScreenBackground";
 import { useUpdateProfile } from "@/hooks/useAuth";
+import { useUpdateCar } from "@/hooks/useCars";
 import { useSnackbar } from "@/providers/SnackbarProvider";
 import { useAuthStore } from "@/store/useAuthStore";
 import { AuthState } from "@/types/auth";
-import Container from "@/components/shared/container";
 import { getCurrencySymbol } from "@/utils/currency";
+import { Ionicons } from "@expo/vector-icons";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { router, useLocalSearchParams } from "expo-router";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import * as z from "zod";
 
 const finalSchema = z.object({
-  monthlyBudget: z.string().optional(),
+  monthlyBudget: z.number().optional(),
   mileage: z.string().min(1, "Mileage is required"),
   plate: z.string().min(1, "Plate number is required"),
   vin: z.string().min(1, "Chassis number is required"),
-  purchaseDate: z.string().min(1, "Purchase date is required"),
-  condition: z.enum(["Newly Purchased", "Pre-owned"]),
+  purchaseDate: z.string().optional(),
+  dontRememberDate: z.boolean(),
+  condition: z.enum(["Newly Purchased", "Already had an existing user"]),
 });
 
 type FinalFormData = z.infer<typeof finalSchema>;
 
 export default function FinalDetailsScreen() {
-  const params = useLocalSearchParams<{ carId: string, recommendedBudget: string }>();
+  const params = useLocalSearchParams<{
+    carId: string;
+    recommendedBudget: string;
+  }>();
   const user = useAuthStore((state: AuthState) => state.user);
   const currencySymbol = getCurrencySymbol(user?.preferredCurrency);
   const carId = params.carId;
-  const formattedBudget = params.recommendedBudget 
-    ? `${currencySymbol} ${Number(params.recommendedBudget).toLocaleString()}` 
-    : `${currencySymbol} 62,000`;
+
   const { showSnackbar } = useSnackbar();
   const { mutate: updateCar, isPending: isSubmitting } = useUpdateCar();
-  const { mutate: updateProfile, isPending: isUpdatingProfile } = useUpdateProfile();
+  const { mutate: updateProfile, isPending: isUpdatingProfile } =
+    useUpdateProfile();
   const updateUser = useAuthStore((state: AuthState) => state.updateUser);
 
   const {
@@ -51,14 +56,22 @@ export default function FinalDetailsScreen() {
     handleSubmit,
     setValue,
     watch,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<FinalFormData>({
     resolver: zodResolver(finalSchema),
+    mode: "onChange",
     defaultValues: {
       condition: "Newly Purchased",
-      purchaseDate: "11.02.2026", // Default from design
+      purchaseDate: "12.02.2025",
+      dontRememberDate: false,
+      monthlyBudget: params.recommendedBudget
+        ? parseInt(params.recommendedBudget)
+        : 50000,
     },
   });
+
+  const condition = watch("condition");
+  const dontRememberDate = watch("dontRememberDate");
 
   const onSave = (data: FinalFormData) => {
     if (!carId) {
@@ -70,6 +83,12 @@ export default function FinalDetailsScreen() {
       return;
     }
 
+    let purchaseDate: Date | null = null;
+    if (!data.dontRememberDate && data.purchaseDate) {
+      const [d, m, y] = data.purchaseDate.split(".");
+      purchaseDate = new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
+    }
+
     updateCar(
       {
         id: carId,
@@ -77,16 +96,14 @@ export default function FinalDetailsScreen() {
           mileage: parseInt(data.mileage),
           plate: data.plate,
           vin: data.vin,
-          purchaseDate: data.purchaseDate,
+          purchaseDate,
           condition: data.condition,
-          monthlyBudget: data.monthlyBudget ? parseInt(data.monthlyBudget) : 0,
+          monthlyBudget: data.monthlyBudget || 0,
         },
       },
       {
         onSuccess: () => {
-          // Mark onboarding as completed in local store to prevent redirects
           updateUser({ onboardingCompleted: true });
-          
           showSnackbar({
             type: "success",
             message: "Onboarding complete!",
@@ -98,22 +115,23 @@ export default function FinalDetailsScreen() {
           showSnackbar({
             type: "error",
             message: "Failed to update details",
-            description: error?.response?.data?.message || "Something went wrong",
+            description:
+              error?.response?.data?.message || "Something went wrong",
           });
         },
-      }
+      },
     );
   };
 
   return (
     <ScreenBackground withSafeArea>
-      <Container>
+      <View className="flex-1 mt-20 px-4">
         {/* Header */}
         <View className="flex-row items-center justify-between mb-8">
           <TouchableOpacity onPress={() => router.back()}>
             <Ionicons name="arrow-back" size={24} color="white" />
           </TouchableOpacity>
-          
+
           <View className="flex-row gap-2">
             <View className="w-12 h-2 rounded-full bg-[#00343F]" />
             <View className="w-12 h-2 rounded-full bg-[#29D7DE]" />
@@ -121,12 +139,15 @@ export default function FinalDetailsScreen() {
 
           <TouchableOpacity
             onPress={() => {
-              updateProfile({ onboardingCompleted: true }, {
-                onSettled: () => {
-                  updateUser({ onboardingCompleted: true });
-                  router.replace("/(tabs)");
-                }
-              });
+              updateProfile(
+                { onboardingCompleted: true },
+                {
+                  onSettled: () => {
+                    updateUser({ onboardingCompleted: true });
+                    router.replace("/(tabs)");
+                  },
+                },
+              );
             }}
             disabled={isUpdatingProfile}
           >
@@ -145,111 +166,202 @@ export default function FinalDetailsScreen() {
           </TouchableOpacity>
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
-          <Text className="text-white font-lexendBold text-3xl mb-2">Final Details</Text>
-          <Text className="text-[#9BBABB] font-lexendRegular text-sm mb-8">
-            These details are used to verify your identity and keep your details safe
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 150 }}
+          className="flex-1"
+        >
+          <Text className="text-white font-lexendMedium text-[26px] mb-2">
+            Final Details
+          </Text>
+          <Text className="text-[#9BBABB] font-lexendRegular text-[14px] mb-8">
+            These details are used to verify your identity and keep {"\n"}your
+            details safe
           </Text>
 
-          {/* Monthly Budget */}
-          <Text className="text-[#356D75] font-lexendRegular text-xs mb-2 uppercase">Estimated monthly budget</Text>
-          <ControlledInput
-            control={control}
-            name="monthlyBudget"
-            placeholder={`eg ${currencySymbol}4,000`}
-            keyboardType="numeric"
-          />
-
-          {/* Recommendation Box */}
-          <View className="bg-[#01353D]/50 border border-[#29D7DE]/30 rounded-xl p-4 mb-8">
-            <View className="flex-row justify-between items-center mb-1">
-              <Text className="text-[#29D7DE] font-lexendRegular text-xs">Recommendation</Text>
-              <Text className="text-[#29D7DE] font-lexendBold text-lg">{formattedBudget}</Text>
-            </View>
-            <Text className="text-[#9BBABB] font-lexendRegular text-[10px] leading-4">
-              From similar car riders who own your kind of vehicle. This might vary from yours based on the frequency and purpose of your use.
+          {/* Monthly Budget Section */}
+          <View className="mb-10 items-center">
+            <Text className="text-[#29D7DE] font-lexendMedium text-sm mb-2">
+              Estimated monthly budget
             </Text>
+            <RulerPicker
+              value={watch("monthlyBudget")}
+              onValueChange={(val) => setValue("monthlyBudget", val)}
+              unitPrefix={currencySymbol}
+              min={1000}
+              max={1000000}
+              step={500}
+              unitStep={500}
+            />
           </View>
 
           {/* Current Car Mileage */}
-          <View className="mb-6">
-            <Text className="text-[#356D75] font-lexendRegular text-xs mb-2 uppercase">Current Car Mileage</Text>
-            <ControlledInput
+          <View className="mb-8">
+            <Text className="text-[#29D7DE] font-lexendRegular text-[10px] mb-2 uppercase tracking-widest">
+              Current Car Mileage
+            </Text>
+            <ControlledInput<FinalFormData>
               control={control}
               name="mileage"
-              placeholder="eg 14,000"
+              placeholder="----"
               keyboardType="numeric"
+              inputClassName="text-center text-[18px] font-lexendBold"
             />
-            <Text className="text-[#356D75] font-lexendRegular text-[10px] -mt-2">You can find this on your dashboard</Text>
+            <Text className="text-[#9BBABB] font-lexendRegular text-[10px] text-center -mt-2">
+              You can find this on your dashboard
+            </Text>
           </View>
 
           {/* Car Number Plate */}
-          <View className="mb-6">
-            <Text className="text-[#356D75] font-lexendRegular text-xs mb-2 uppercase">Car Number Plate</Text>
-            <ControlledInput
+          <View className="mb-8">
+            <Text className="text-[#29D7DE] font-lexendRegular text-[10px] mb-2 uppercase tracking-widest">
+              Car Number Plate
+            </Text>
+            <ControlledInput<FinalFormData>
               control={control}
               name="plate"
-              placeholder="eg YU 34 ANL"
+              placeholder="-- --- ---"
               autoCapitalize="characters"
+              inputClassName="text-center text-[18px] font-lexendBold"
             />
-            <Text className="text-[#356D75] font-lexendRegular text-[10px] -mt-2">You can find this on your dashboard</Text>
+            <Text className="text-[#9BBABB] font-lexendRegular text-[10px] text-center -mt-2">
+              You can find this on your dashboard
+            </Text>
           </View>
 
           {/* Chasis Number */}
-          <View className="mb-6">
-            <Text className="text-[#356D75] font-lexendRegular text-xs mb-2 uppercase">Chasis Number</Text>
-            <ControlledInput
+          <View className="mb-8">
+            <Text className="text-[#29D7DE] font-lexendRegular text-[10px] mb-2 uppercase tracking-widest">
+              Chasis Number
+            </Text>
+            <ControlledInput<FinalFormData>
               control={control}
               name="vin"
-              placeholder="eg 9821ndasuhi101"
+              placeholder="-----------------"
               autoCapitalize="characters"
+              inputClassName="text-center text-[18px] font-lexendBold"
             />
-            <Text className="text-[#356D75] font-lexendRegular text-[10px] -mt-2">You can find this on your dashboard</Text>
+            <Text className="text-[#9BBABB] font-lexendRegular text-[10px] text-center -mt-2">
+              You can find this on your windscreen, drivers side door, under the
+              passengers floor mat or engine bay
+            </Text>
           </View>
 
           {/* Date of Car Purchase */}
-          <View className="mb-6">
-            <Text className="text-[#356D75] font-lexendRegular text-xs mb-2 uppercase">Date of Car Purchase</Text>
-            <ControlledInput
-              control={control}
-              name="purchaseDate"
-              placeholder="DD.MM.YYYY"
-              leftIcon="calendar-outline"
-            />
+          <View className="mb-10">
+            <View className="flex-row justify-between items-center mb-4">
+              <Text className="text-[#29D7DE] font-lexendRegular text-[10px] uppercase tracking-widest">
+                Date of Purchase
+              </Text>
+              <Pressable
+                onPress={() => setValue("dontRememberDate", !dontRememberDate)}
+                className="flex-row items-center"
+              >
+                <Ionicons
+                  name={dontRememberDate ? "checkbox" : "square-outline"}
+                  size={18}
+                  color="#29D7DE"
+                />
+                <Text className="text-[#9BBABB] font-lexendRegular text-[10px] ml-2">
+                  I dont remember
+                </Text>
+              </Pressable>
+            </View>
+
+            {!dontRememberDate && (
+              <WheelDatePicker
+                initialDate={watch("purchaseDate")}
+                onDateChange={(val) => setValue("purchaseDate", val)}
+              />
+            )}
           </View>
 
           {/* Condition */}
           <View className="mb-10">
-            <Text className="text-[#356D75] font-lexendRegular text-xs mb-2 uppercase">Condition at the time of purchase</Text>
-            <Pressable 
-              className="flex-row items-center justify-between border border-[#09515D] bg-[#012227] rounded-xl px-4 h-14"
-              onPress={() => {
-                const current = watch("condition");
-                setValue("condition", current === "Newly Purchased" ? "Pre-owned" : "Newly Purchased");
-              }}
-            >
-              <Text className="text-white font-lexendRegular">{watch("condition")}</Text>
-              <Ionicons name="chevron-down" size={20} color="#356D75" />
-            </Pressable>
-          </View>
+            <Text className="text-[#29D7DE] font-lexendRegular text-[10px] mb-4 uppercase tracking-widest">
+              Condition at the time of purchase
+            </Text>
 
-          {/* Save Button */}
+            <View className="gap-4">
+              <Pressable
+                onPress={() => setValue("condition", "Newly Purchased")}
+                className={`flex-row items-center justify-between p-4 rounded-xl border ${
+                  condition === "Newly Purchased"
+                    ? "border-[#29D7DE] bg-[#012227]"
+                    : "border-[#09515D] bg-[#012227]"
+                }`}
+              >
+                <Text
+                  className={`font-lexendMedium ${condition === "Newly Purchased" ? "text-white" : "text-[#9BBABB]"}`}
+                >
+                  Newly Purchased
+                </Text>
+                <View
+                  className={`w-6 h-6 rounded-full border items-center justify-center ${
+                    condition === "Newly Purchased"
+                      ? "bg-[#29D7DE] border-[#29D7DE]"
+                      : "border-[#356D75]"
+                  }`}
+                >
+                  {condition === "Newly Purchased" && (
+                    <Ionicons name="checkmark" size={16} color="#002E35" />
+                  )}
+                </View>
+              </Pressable>
+
+              <Pressable
+                onPress={() =>
+                  setValue("condition", "Already had an existing user")
+                }
+                className={`flex-row items-center justify-between p-4 rounded-xl border ${
+                  condition === "Already had an existing user"
+                    ? "border-[#29D7DE] bg-[#012227]"
+                    : "border-[#09515D] bg-[#012227]"
+                }`}
+              >
+                <Text
+                  className={`font-lexendMedium ${condition === "Already had an existing user" ? "text-white" : "text-[#9BBABB]"}`}
+                >
+                  Already had an existing user
+                </Text>
+                <View
+                  className={`w-6 h-6 rounded-full border items-center justify-center ${
+                    condition === "Already had an existing user"
+                      ? "bg-[#29D7DE] border-[#29D7DE]"
+                      : "border-[#356D75]"
+                  }`}
+                >
+                  {condition === "Already had an existing user" && (
+                    <Ionicons name="checkmark" size={16} color="#002E35" />
+                  )}
+                </View>
+              </Pressable>
+            </View>
+          </View>
+        </ScrollView>
+
+        {/* Anchored Save Button */}
+        <View className="absolute bottom-0 left-0 right-0 pt-4 pb-8 px-4">
           <TouchableOpacity
             onPress={handleSubmit(onSave)}
-            disabled={isSubmitting}
+            disabled={isSubmitting || !isValid}
             activeOpacity={0.8}
             className={`h-16 rounded-full items-center justify-center ${
-              isSubmitting ? "bg-[#FBE74C]/60" : "bg-[#FBE74C]"
+              !isValid || isSubmitting ? "bg-[#29D7DE]/30" : "bg-[#29D7DE]"
             }`}
           >
             {isSubmitting ? (
               <ActivityIndicator color="#00343F" />
             ) : (
-              <Text className="text-[#00343F] font-lexendBold text-lg">Save</Text>
+              <Text
+                className={`font-lexendBold text-lg ${!isValid ? "text-[#356D75]" : "text-[#00343F]"}`}
+              >
+                Save
+              </Text>
             )}
           </TouchableOpacity>
-        </ScrollView>
-      </Container>
+        </View>
+      </View>
     </ScreenBackground>
   );
 }

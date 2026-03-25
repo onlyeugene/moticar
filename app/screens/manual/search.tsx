@@ -1,36 +1,38 @@
-import React, { useState, useMemo } from "react";
-import {
-  Pressable,
-  Text,
-  View,
-  TextInput,
-  FlatList,
-  ActivityIndicator,
-  TouchableOpacity,
-  Keyboard,
-  ScrollView,
-} from "react-native";
-import { ScreenBackground } from "@/components/ScreenBackground";
 import Container from "@/components/shared/container";
+import { CarLogo } from "@/components/shared/CarLogo";
+import { ScreenBackground } from "@/components/ui/ScreenBackground";
+import { useSearchCars } from "@/hooks/useCars";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { useSearchCars } from "@/hooks/useCars";
+import React, { useMemo, useState } from "react";
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 interface CarResult {
   make: string;
   model: string;
-  year: number;
+  year?: number;
   class: string;
-  fuelType: string;
+  fuelType?: string;
   engine?: string;
   transmission?: string;
   brandKeys?: string;
+  availableYears?: number[];
+  availableFuelTypes?: string[];
 }
 
 export default function Search() {
   const [query, setQuery] = useState("");
   const [selectedCar, setSelectedCar] = useState<CarResult | null>(null);
-  const { data, isLoading } = useSearchCars(query);
+
+  const { data, isLoading, isError, refetch } = useSearchCars(query);
 
   // Group cars by make
   const groupedCars = useMemo(() => {
@@ -46,76 +48,76 @@ export default function Search() {
   const handleNext = () => {
     if (selectedCar) {
       router.push({
-        pathname: "/screens/manual/details",
+        pathname: "/screens/manual/selection",
         params: {
           make: selectedCar.make,
           model: selectedCar.model,
-          year: selectedCar.year,
+          class: selectedCar.class || "SUV",
           brandKeys: selectedCar.brandKeys,
+          availableYears: JSON.stringify(selectedCar.availableYears || []),
+          availableFuelTypes: JSON.stringify(selectedCar.availableFuelTypes || []),
         },
       });
     }
   };
 
+  const handleRetry = () => {
+    refetch();
+  };
+
   const isSelected = (car: CarResult) =>
-    selectedCar?.model === car.model &&
-    selectedCar?.year === car.year &&
-    selectedCar?.fuelType === car.fuelType &&
-    selectedCar?.engine === car.engine &&
-    selectedCar?.transmission === car.transmission;
+    selectedCar?.model === car.model && selectedCar?.make === car.make;
 
   const renderCarCard = (car: CarResult) => {
     const active = isSelected(car);
-    const carKey = `${car.model}-${car.year}-${car.fuelType}-${car.engine}-${car.transmission}`;
+    const carKey = `${car.make}-${car.model}`;
+
     return (
-      <TouchableOpacity
-        key={carKey}
-        onPress={() => setSelectedCar(car)}
-        className={`flex-row items-center p-4 rounded-xl mb-3 border ${
-          active ? "border-2 border-[#1A8798]" : " border-[#09515D]"
-        }`}
-      >
-        <View className="w-10 h-10 rounded-full bg-white/10 items-center justify-center mr-4">
-          <Ionicons
-            name="car-outline"
-            size={24}
-            color={active ? "#29D7DE" : "#9BBABB"}
-          />
-        </View>
-
-        <View className="flex-1">
-          <View className="flex-row justify-between items-center mb-1">
-            <Text
-              className={`font-lexendMedium text-[12px] ${active ? "text-[#FFFFFF]" : "text-[#466A6A]"}`}
-            >
-              {car.model}
-            </Text>
-            <Text className={`font-lexendMedium text-[12px] text-[#FDEF56]`}>
-              {car.year}
-            </Text>
-          </View>
-
-          <View className="flex-row gap-2 mt-1">
-            {[car.class, car.year.toString(), car.fuelType]
-              .filter(Boolean)
-              .map((tag, i) => (
-                <View key={i} className="bg-[#5E9597] px-2 py-0.5 rounded">
-                  <Text className="text-[#002E35] font-lexendRegular text-[8px]">
-                    {tag}
-                  </Text>
-                </View>
-              ))}
-          </View>
-        </View>
-
-        <View
-          className={`ml-4 w-6 h-6 rounded-full border items-center justify-center ${
-            active ? "bg-[#29D7DE] border-[#29D7DE]" : "border-white/20"
+      <View key={carKey} className="mb-4">
+        <TouchableOpacity
+          onPress={() => {
+            if (active) {
+              setSelectedCar(null);
+            } else {
+              setSelectedCar(car);
+            }
+          }}
+          className={`flex-row items-center p-4 rounded-xl bg-[#002E35]  ${
+            active ? "border-2 border-[#1A8798]" : "border border-[#09515D]"
           }`}
         >
-          {active && <Ionicons name="checkmark" size={16} color="#002E35" />}
-        </View>
-      </TouchableOpacity>
+          <View className="w-10 h-10 rounded-full bg-white items-center justify-center mr-4">
+            <CarLogo
+              make={car.make}
+              size={24}
+              color={active ? "#29D7DE" : "#9BBABB"}
+            />
+          </View>
+
+          <View className="flex-1">
+            <View className="flex-row justify-between items-center">
+              <Text
+                className={`font-lexendRegular text-[14px] ${active ? "text-[#FFFFFF]" : "text-[#94ADAD]"}`}
+              >
+                {car.model}
+              </Text>
+              <View className="bg-[#5E9597] px-2 py-0.5 rounded">
+                <Text className="text-[#002E35] font-lexendMedium text-[8px] uppercase">
+                  {car.class || "SUV"}
+                </Text>
+              </View>
+            </View>
+          </View>
+
+          <View
+            className={`ml-4 w-[26px] h-[26px] rounded-full items-center justify-center ${
+              active ? "bg-[#00AEB5]" : "bg-[#012328]"
+            }`}
+          >
+            {active ? <Ionicons name="checkmark" size={16} color="#FFFFFF" /> : <Ionicons name="checkmark" size={16} color="#013037" />}
+          </View>
+        </TouchableOpacity>
+      </View>
     );
   };
 
@@ -144,7 +146,7 @@ export default function Search() {
         </View>
 
         <View className="mt-8">
-          <Text className="text-white text-[32px] font-lexendBold">
+          <Text className="text-white text-[32px] font-lexendMedium">
             Search for your car
           </Text>
           <Text className="text-[#9BBABB] font-lexendRegular text-[14px] mt-2 leading-6">
@@ -162,7 +164,7 @@ export default function Search() {
             value={query}
             onChangeText={(text) => {
               setQuery(text);
-              setSelectedCar(null); // Clear selection on new search
+              setSelectedCar(null);
             }}
             autoFocus
             clearButtonMode="while-editing"
@@ -176,6 +178,27 @@ export default function Search() {
             <View className="flex-1 items-center justify-center">
               <ActivityIndicator color="#FDEF56" />
             </View>
+          ) : isError ? (
+            <View className="flex-1 items-center justify-center">
+              <Ionicons
+                name="cloud-offline-outline"
+                size={48}
+                color="#ED5E5E"
+              />
+              <Text className="text-white font-lexendBold text-[18px] mt-4">
+                Network Error
+              </Text>
+              <Text className="text-[#9BBABB] font-lexendRegular text-center mt-2 px-6">
+                Something went wrong. Please check your connection and try
+                again.
+              </Text>
+              <TouchableOpacity
+                onPress={handleRetry}
+                className="mt-6 px-8 py-3 bg-[#29D7DE] rounded-full"
+              >
+                <Text className="text-[#00343F] font-lexendBold">Retry</Text>
+              </TouchableOpacity>
+            </View>
           ) : query.length > 2 && Object.keys(groupedCars).length === 0 ? (
             <View className="flex-1 items-center justify-center">
               <Text className="text-[#9BBABB] font-lexendRegular text-center">
@@ -185,13 +208,13 @@ export default function Search() {
           ) : (
             <ScrollView
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: 100 }}
+              contentContainerStyle={{ paddingBottom: 120 }}
             >
               {Object.entries(groupedCars).map(([make, cars]) => (
                 <View key={make} className="mb-6">
                   <View className="flex-row items-center mb-4">
                     <Text className="text-[#99C1C7] font-lexendMedium text-lg uppercase mr-3">
-                      {make}
+                      {make} 
                     </Text>
                     <View className="flex-1 h-[1px] bg-[#06454F]" />
                   </View>
@@ -208,13 +231,13 @@ export default function Search() {
             disabled={!selectedCar}
             onPress={handleNext}
             activeOpacity={0.8}
-            className={`h-16 rounded-full items-center justify-center w-10/12 mx-auto ${
-              selectedCar ? "bg-[#29D7DE]" : "bg-[#004648]"
+            className={`h-16 rounded-full items-center justify-center w-[90%] mx-auto ${
+              selectedCar
+                ? "bg-[#29D7DE]"
+                : "bg-[#004648]"
             }`}
           >
-            <Text
-              className={`font-lexendBold text-lg ${selectedCar ? "text-[#00343F]" : "text-[#00343F]"}`}
-            >
+            <Text className={`font-lexendBold text-lg text-[#00343F]`}>
               Next
             </Text>
           </TouchableOpacity>

@@ -44,8 +44,9 @@ apiClient.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     // 🟢 Debug log for development
     if (__DEV__) {
+      const params = config.params ? `?${new URLSearchParams(config.params).toString()}` : "";
       console.log(
-        `🚀 [API Request] ${config.method?.toUpperCase()} ${config.url}`,
+        `🚀 [API Request] ${config.method?.toUpperCase()} ${config.url}${params}`,
         config.data ? safeStringify(config.data) : ""
       );
     }
