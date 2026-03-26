@@ -1,19 +1,17 @@
-import { View, Text, Pressable, ActivityIndicator } from "react-native";
-import React, { useState } from "react";
-import { ScreenBackground } from "@/components/ScreenBackground";
 import Container from "@/components/shared/container";
-import { router, useLocalSearchParams } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
 import { ControlledInput } from "@/components/shared/controlledInput";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { passwordSchema } from "@/utils/validation";
+import { ScreenBackground } from "@/components/ui/ScreenBackground";
 import { useSetPassword } from "@/hooks/useAuth";
 import { useSnackbar } from "@/providers/SnackbarProvider";
 import { useAuthStore } from "@/store/useAuthStore";
-import { AuthState } from "@/types/auth";
-import DoneIcon from "@/assets/icons/done.svg";
+import { passwordSchema } from "@/utils/validation";
+import { Ionicons } from "@expo/vector-icons";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { router, useLocalSearchParams } from "expo-router";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import * as z from "zod";
 
 const schema = z.object({
   password: passwordSchema,
@@ -70,16 +68,19 @@ export default function Password() {
   const user = useAuthStore((state) => state.user);
   const onSubmit = (data: PasswordFormData) => {
     setPassword.mutate(
-      { 
-        email: email!, 
-        otp: otp!, 
+      {
+        email: email!,
+        otp: otp!,
         password: data.password,
         preferredCurrency: user?.preferredCurrency,
-        country: user?.country
+        country: user?.country,
       },
       {
         onSuccess: () => {
-          setShowSuccess(true);
+          router.replace({
+            pathname: "/(auth)/name",
+            params: { email: email! },
+          });
         },
         onError: (error: any) => {
           showSnackbar({
@@ -92,37 +93,6 @@ export default function Password() {
       },
     );
   };
-
-  if (showSuccess) {
-    return (
-      <ScreenBackground>
-        <Container>
-          <View className="flex-1 items-center justify-center -mt-10">
-            <View className="w-24 h-24 items-center justify-center mb-10">
-              <DoneIcon />
-            </View>
-
-            <Text className="text-white text-[26px] font-lexendBold text-center mb-4">
-              Your account {"\n"} was successfully created!
-            </Text>
-
-            <Text className="text-[#9BBABB] font-lexendRegular text-[14px] text-center mb-12">
-              Only one click to explore online education.
-            </Text>
-
-            <Pressable
-              onPress={() => router.replace("/(auth)/login")}
-              className="w-full h-[50px] bg-[#29D7DE] rounded-full items-center justify-center active:opacity-90"
-            >
-              <Text className="font-lexendBold text-[16px] text-[#00343F]">
-                Log in
-              </Text>
-            </Pressable>
-          </View>
-        </Container>
-      </ScreenBackground>
-    );
-  }
 
   return (
     <ScreenBackground>

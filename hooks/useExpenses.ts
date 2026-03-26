@@ -13,7 +13,9 @@ export const useExpenseCategories = (carId?: string, enabled = true) => {
   return useQuery({
     queryKey: ["expenses", "categories", carId],
     queryFn: () => expenseService.getExpenseCategories(carId),
-    enabled,
+    // 🛡️ Guard: Only fetch when carId is available as the backend 
+    // requires a car context to return enriched budget/spend data.
+    enabled: !!carId && enabled,
   });
 };
 

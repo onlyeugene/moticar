@@ -23,6 +23,7 @@ export default function ExpenseBreakdownSheet({
   currencySymbol,
 }: ExpenseBreakdownSheetProps) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const [isDetailVisible, setIsDetailVisible] = useState(false);
 
@@ -116,6 +117,16 @@ export default function ExpenseBreakdownSheet({
                     key={expense.id || expense._id || idx}
                     expense={expense}
                     currencySymbol={currencySymbol}
+                    isExpanded={
+                      expandedId === (expense.id || (expense as any)._id)
+                    }
+                    onToggle={() =>
+                      setExpandedId(
+                        expandedId === (expense.id || (expense as any)._id)
+                          ? null
+                          : expense.id || (expense as any)._id,
+                      )
+                    }
                     onPressDetails={handlePressDetails}
                   />
                 ))}

@@ -1,20 +1,19 @@
-import {
-  View,
-  Text,
-  Dimensions,
-  Image,
-  FlatList,
-  TouchableOpacity,
-  SafeAreaView,
-} from "react-native";
-import React, { useState, useRef, useEffect } from "react";
-import { router } from "expo-router";
-import { LinearGradient } from "expo-linear-gradient";
 import LogoIcon from "@/assets/icons/logo.svg";
-import { SocialAuthButtons } from "../../components/SocialAuthButtons";
 import { useSocialLogin } from "@/hooks/useAuth";
-import { useAuthStore } from "@/store/useAuthStore";
 import { useSnackbar } from "@/providers/SnackbarProvider";
+import { useAuthStore } from "@/store/useAuthStore";
+import { LinearGradient } from "expo-linear-gradient";
+import { router } from "expo-router";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  Dimensions,
+  FlatList,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SocialAuthButtons } from "../../components/ui/SocialAuthButtons";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -87,7 +86,7 @@ export default function WelcomeScreen() {
       providerId: `mock_${provider}_id`,
       name: "Social User",
       preferredCurrency: user?.preferredCurrency,
-      country: user?.country
+      country: user?.country,
     };
 
     socialLogin(mockData, {
@@ -105,7 +104,7 @@ export default function WelcomeScreen() {
           message: "Social Login Failed",
           description: error.response?.data?.message || "Something went wrong",
         });
-      }
+      },
     });
   };
 

@@ -1,43 +1,58 @@
 // Dashboard screen with vehicle insights and expense tracking
+import StarIcon from "@/assets/icons/star.svg";
 import DashboardCardSlider from "@/components/dashboard/DashboardCardSlider";
+import DashboardDocuments from "@/components/dashboard/DashboardDocuments";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
-import { ScreenBackground } from "@/components/ScreenBackground";
-import LocationAlert from "@/components/shared/LocationAlert";
-import { useCheckLocation, useMe } from "@/hooks/useAuth";
-import { useUserCars } from "@/hooks/useCars";
-import { useTrips, useActivitySpends } from "@/hooks/useActivity";
-import { useExpensesByCarId } from "@/hooks/useExpenses";
-import { useAuthStore } from "@/store/useAuthStore";
-import { useAppStore } from "@/store/useAppStore";
-import { getCurrencySymbol } from "@/utils/currency";
-import { Ionicons } from "@expo/vector-icons";
+import DashboardInsights from "@/components/dashboard/DashboardInsights";
 import ExpenseBreakdownCard from "@/components/dashboard/ExpenseBreakdownCard";
 import MileageTracker from "@/components/dashboard/MileageTracker";
+import LocationAlert from "@/components/shared/LocationAlert";
+import { RulerPicker } from "@/components/shared/RulerPicker";
+import { ScreenBackground } from "@/components/ui/ScreenBackground";
+import { useActivitySpends, useTrips } from "@/hooks/useActivity";
+import { useCheckLocation, useMe } from "@/hooks/useAuth";
+import { useUserCars } from "@/hooks/useCars";
+import { useExpensesByCarId } from "@/hooks/useExpenses";
+import { useAppStore } from "@/store/useAppStore";
+import { useAuthStore } from "@/store/useAuthStore";
+import { getCurrencySymbol } from "@/utils/currency";
+import { Ionicons } from "@expo/vector-icons";
+import { useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import {
   Image,
+  Pressable,
+  RefreshControl,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
-  Pressable,
 } from "react-native";
-import DashboardInsights from "@/components/dashboard/DashboardInsights";
-import DashboardDocuments from "@/components/dashboard/DashboardDocuments";
-import StarIcon from "@/assets/icons/star.svg";
 
 export default function Dashboard() {
   const user = useAuthStore((state) => state.user);
   const currencySymbol = getCurrencySymbol(user?.preferredCurrency);
-  useMe();
+  const queryClient = useQueryClient();
+  const { data: userData, isLoading: userLoading } = useMe();
 
   const [showLocationAlert, setShowLocationAlert] = useState(false);
   const { selectedCarId } = useAppStore();
-  const { data: carsData } = useUserCars();
+  const { data: carsData, isLoading: carsLoading } = useUserCars();
   const userCar =
     carsData?.cars?.find((c) => (c.id || (c as any)._id) === selectedCarId) ||
     carsData?.cars?.[0];
   const { data: locationData } = useCheckLocation();
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await queryClient.invalidateQueries();
+    } finally {
+      setRefreshing(false);
+    }
+  }, [queryClient]);
 
   useEffect(() => {
     if (
@@ -97,7 +112,7 @@ export default function Dashboard() {
     (selectedDate.getMonth() + 1).toString(),
     selectedDate.getFullYear().toString(),
   );
-  
+
   const { data: expensesData } = useExpensesByCarId(
     userCar?.id || (userCar as any)?._id || "",
   );
@@ -115,9 +130,17 @@ export default function Dashboard() {
         className="flex-1 px-4"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 100 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#29D7DE"
+            colors={["#29D7DE"]}
+          />
+        }
       >
         <View className="p-2 bg-[#F0F0F0] rounded-3xl mt-4">
-          <View className="bg-[#A7E9E9] rounded-3xl">
+          <View className="bg-[#C4FFFF] rounded-3xl">
             {/* User Greeting & Year */}
             <View className="flex-row items-center justify-between p-2 pt-4">
               <View className="flex-row items-center gap-3">
@@ -141,12 +164,12 @@ export default function Dashboard() {
                 )}
                 <TouchableOpacity
                   onPress={() => setShowYearPicker(!showYearPicker)}
-                  className="flex-row items-center gap-2 bg-white/60 px-4 py-1.5 rounded-full border border-white/80"
+                  className="flex-row items-center gap-2 bg-[#00282B] px-4 py-1.5 rounded-full"
                 >
-                  <Text className="text-[#00232A] font-lexendSemiBold text-[14px]">
+                  <Text className="text-[#FFFFFF] font-lexendSemiBold text-[12px]">
                     {selectedDate.getFullYear()}
                   </Text>
-                  <Ionicons name="chevron-down" size={14} color="#00232A" />
+                  <Ionicons name="chevron-down" size={20} color="#FFFFFF" />
                 </TouchableOpacity>
 
                 {showYearPicker && (
@@ -183,9 +206,9 @@ export default function Dashboard() {
             </View>
 
             {/* Month Tabs */}
-            <View className="mt-8 flex-row items-center justify-between pb-1 p-2">
+            <View className="mt-2 flex-row items-center justify-between pb-1 p-2">
               <TouchableOpacity onPress={handlePrevMonth} className="px-1 pr-3">
-                <Ionicons name="chevron-back" size={18} color="#9BBABB" />
+                <Ionicons name="chevron-back" size={24} color="#7BA0A3" />
               </TouchableOpacity>
 
               <View className="flex-1">
@@ -205,17 +228,22 @@ export default function Dashboard() {
                             new Date(selectedDate.getFullYear(), index, 1),
                           )
                         }
-                        className={
-                          isActive ? "border-b-2 border-[#00AEB5] pb-2" : "pb-2"
-                        }
+                        className={`relative ${
+                          isActive ? "border-b border-[#00AEB5] pb-1" : "pb-1"
+                        }`}
                       >
                         <Text
-                          className={`font-lexendSemiBold text-[13px] ${
-                            isActive ? "text-[#00AEB5]" : "text-[#9BBABB]"
+                          className={` text-[13px] ${
+                            isActive
+                              ? "text-[#00AEB5] font-lexendSemiBold"
+                              : "text-[#81B4B4] font-lexendRegular"
                           }`}
                         >
                           {mName}
                         </Text>
+                        {isActive && (
+                          <View className="w-1 h-1 rounded-full bg-[#293536] absolute  -right-2" />
+                        )}
                       </TouchableOpacity>
                     );
                   })}
@@ -223,7 +251,7 @@ export default function Dashboard() {
               </View>
 
               <TouchableOpacity onPress={handleNextMonth} className="px-1 pl-3">
-                <Ionicons name="chevron-forward" size={18} color="#9BBABB" />
+                <Ionicons name="chevron-forward" size={24} color="#7BA0A3" />
               </TouchableOpacity>
             </View>
 
@@ -235,6 +263,7 @@ export default function Dashboard() {
             />
 
             {/* Mileage Tracker Section */}
+            <RulerPicker onValueChange={() => {}} />
             <View className="border-t border-[#8acece] my-4" />
             <MileageTracker
               mileage={userCar?.mileage}
@@ -283,7 +312,7 @@ export default function Dashboard() {
           </TouchableOpacity>
         </View>
 
-        {/* Location Alert */}
+        {/* Location Alert
         {showLocationAlert && locationData && (
           <LocationAlert
             country={locationData.newCountry || "United States"}
@@ -291,7 +320,7 @@ export default function Dashboard() {
             message={locationData.message}
             onDismiss={() => setShowLocationAlert(false)}
           />
-        )}
+        )} */}
       </ScrollView>
     </ScreenBackground>
   );

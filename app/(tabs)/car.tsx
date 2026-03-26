@@ -20,15 +20,30 @@ import { useTechnicians, useDeleteTechnician } from "@/hooks/useTechnicians";
 import { TECHNICIAN_CATEGORIES } from "@/types/technician";
 import { useAppStore } from "@/store/useAppStore";
 import { router } from "expo-router";
-import { useMemo, useState } from "react";
-import { ActivityIndicator, ScrollView, Text, View, Alert } from "react-native";
+import { useMemo, useState, useCallback } from "react";
+import { ActivityIndicator, ScrollView, Text, View, Alert, RefreshControl } from "react-native";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function CarScreen() {
+  const queryClient = useQueryClient();
   const { selectedCarId } = useAppStore();
   const { data: carsData, isLoading: isCarsLoading } = useUserCars();
   const { data: techniciansData } = useTechnicians();
   const { mutate: deleteTechnician } = useDeleteTechnician();
   const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["cars"] }),
+        queryClient.invalidateQueries({ queryKey: ["technicians"] }),
+      ]);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [queryClient]);
 
   // Sheet states
   const [isAddTechnicianSheetVisible, setIsAddTechnicianSheetVisible] =
@@ -95,6 +110,14 @@ export default function CarScreen() {
         keyboardDismissMode="on-drag"
         scrollEventThrottle={16}
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 100 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#00AEB5"
+            colors={["#00AEB5"]}
+          />
+        }
       >
         {/* ── Car Card ── */}
         {isLoading ? (
@@ -110,7 +133,12 @@ export default function CarScreen() {
         ) : (
           <CarCard
             activeCar={activeCar}
-            onValuation={() => setIsValuationSheetVisible(true)}
+            onValuation={() => {
+              setIsValuationSheetVisible(true);
+              queryClient.refetchQueries({
+                queryKey: ["cars", "details", activeCar?._id || activeCar?.id],
+              });
+            }}
           />
         )}
 

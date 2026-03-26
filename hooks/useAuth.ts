@@ -174,3 +174,11 @@ export const useUpdateProfile = () => {
     }
   });
 };
+
+
+
+export const useSetName = () => {
+  return useMutation({
+    mutationFn: authService.setName,
+  });
+};

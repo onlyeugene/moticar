@@ -22,20 +22,27 @@ export interface Car {
   engineOil?: {
     capacityLiters: number;
     recommendedGrade: string;
+    reputableBrands?: string[];
   };
   fuelSpec?: {
     capacityLiters: number;
     avgPriceRange: number;
+    reputableStations?: string[];
   };
   tyreSpec?: {
     size: string;
     recommendedPressurePsi: string;
+    manufacturers?: string[];
   };
   brakePads?: {
     thicknessMm: number;
     estLifespanMiles: string;
+    reputableBrands?: string[];
   };
-  batteryVoltage?: string;
+  batterySpec?: {
+    voltage: string;
+    providers: string[];
+  };
   bodyStyle?: string;
   fuelType?: string;
 }
@@ -57,9 +64,24 @@ export interface CarCreateInput {
   fuelType?: string;
   color?: string;
   purchaseDate?: string;
-  condition?: "Newly Purchased" | "Pre-owned";
+  condition?: "Newly Purchased" | "Used";
   monthlyBudget?: number;
   deviceId?: string;
+  // Technical Specs
+  bodyStyle?: string;
+  engineDesc?: string;
+  transmission?: string;
+  driveType?: string;
+  segment?: string;
+  cylinder?: string;
+  horsepower?: string;
+  fuelCapacity?: string;
+  tireSize?: string;
+  topSpeed?: string;
+  acceleration?: string;
+  brakesFront?: string;
+  brakesRear?: string;
+  yearRange?: string;
 }
 
 export interface CarUpdateInput {
@@ -67,8 +89,22 @@ export interface CarUpdateInput {
   plate?: string;
   vin?: string;
   purchaseDate?: string;
-  condition?: "Newly Purchased" | "Pre-owned";
+  condition?: "Newly Purchased" | "Used";
   monthlyBudget?: number;
+  bodyStyle?: string;
+  engineDesc?: string;
+  transmission?: string;
+  driveType?: string;
+  segment?: string;
+  cylinder?: string;
+  horsepower?: string;
+  fuelCapacity?: string;
+  tireSize?: string;
+  topSpeed?: string;
+  acceleration?: string;
+  brakesFront?: string;
+  brakesRear?: string;
+  yearRange?: string;
 }
 
 export interface CarSearchResponse {
@@ -79,6 +115,8 @@ export interface CarSearchResponse {
     model: string;
     year?: number;
     brandKeys?: string;
+    availableYears?: number[];
+    availableFuelTypes?: string[];
     [key: string]: any;
   }>;
 }

@@ -1,15 +1,15 @@
-import { ScreenBackground } from "@/components/ScreenBackground";
+import ManualIcon from "@/assets/icons/manual.svg";
+import MotiBuddieIcon from "@/assets/icons/motibuddie.svg";
+import CarIcon from "@/assets/icons/takepic.svg";
 import Container from "@/components/shared/container";
+import CurrencySelector from "@/components/shared/CurrencySelector";
+import { ScreenBackground } from "@/components/ui/ScreenBackground";
+import { useUpdateProfile } from "@/hooks/useAuth";
+import { useSnackbar } from "@/providers/SnackbarProvider";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
-import CurrencySelector from "@/components/shared/CurrencySelector";
-import MotiBuddieIcon from "@/assets/icons/motibuddie.svg";
-import CarIcon from "@/assets/icons/takepic.svg";
-import ManualIcon from "@/assets/icons/manual.svg";
-import { useUpdateProfile } from "@/hooks/useAuth";
-import { useSnackbar } from "@/providers/SnackbarProvider";
 
 const options = [
   {
@@ -32,9 +32,7 @@ const options = [
   },
 ];
 export default function AddCar() {
-  const [selectedOption, setSelectedOption] = useState<number | null>(
-    null,
-  );
+  const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const updateProfile = useUpdateProfile();
   const { showSnackbar } = useSnackbar();
 
@@ -52,7 +50,7 @@ export default function AddCar() {
             description: "Please try again.",
           });
         },
-      }
+      },
     );
   };
 
@@ -78,7 +76,11 @@ export default function AddCar() {
                     <Text className="text-[#00AEB5] font-lexendMedium text-[16px]">
                       Skip
                     </Text>
-                    <Ionicons name="chevron-forward" size={16} color="#00AEB5" />
+                    <Ionicons
+                      name="chevron-forward"
+                      size={16}
+                      color="#00AEB5"
+                    />
                   </>
                 )}
               </Pressable>
@@ -86,7 +88,7 @@ export default function AddCar() {
           </View>
 
           <View className="mt-8">
-            <Text className="text-white text-[26px] font-lexendBold">
+            <Text className="text-white text-[26px] font-lexendMedium">
               Add your car details
             </Text>
             <Text className="text-[#9BBABB] font-lexendRegular text-[14px] mt-2 leading-6">

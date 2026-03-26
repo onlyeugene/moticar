@@ -9,6 +9,7 @@ export interface User {
   preferredCurrency?: string;
   country?: string;
   preferredLanguage?: string;
+  preferredName?: string;
 }
 
 export interface AuthState {

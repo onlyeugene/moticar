@@ -50,6 +50,13 @@ export default function AuthLayout() {
           gestureDirection: 'horizontal',
         }}
       />
+      <Stack.Screen 
+        name="name"
+        options={{
+          gestureEnabled: true,
+          gestureDirection: 'horizontal',
+        }}
+      />
     </Stack>
   );
 }
