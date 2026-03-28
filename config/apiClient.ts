@@ -32,7 +32,7 @@ const safeStringify = (data: any) => {
  */
 const apiClient = axios.create({
   baseURL: process.env.EXPO_PUBLIC_API_URL || "https://api.moticar.com/v1",
-  timeout: 15000,
+  timeout: 30000,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
