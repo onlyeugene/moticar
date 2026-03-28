@@ -59,3 +59,6 @@ export const useActivityInsights = (carId: string, month?: string, year?: string
     enabled: !!carId,
   });
 };
+
+
+

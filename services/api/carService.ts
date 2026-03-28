@@ -38,14 +38,22 @@ export const carService = {
   },
 
   /** AI image extraction from 3 photos */
-  scanPhotos: async (data: ScanPhotosInput): Promise<any> => {
-    const response = await apiClient.post(API_ROUTES.CARS.SCAN_PHOTOS, data);
+  scanPhotos: async (formData: FormData): Promise<any> => {
+    const response = await apiClient.post(API_ROUTES.CARS.SCAN_PHOTOS, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return response.data;
   },
 
   /** OCR extraction from Vehicle License */
-  scanLicense: async (data: ScanLicenseInput): Promise<any> => {
-    const response = await apiClient.post(API_ROUTES.CARS.SCAN_LICENSE, data);
+  scanLicense: async (formData: FormData): Promise<any> => {
+    const response = await apiClient.post(API_ROUTES.CARS.SCAN_LICENSE, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return response.data;
   },
 

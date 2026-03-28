@@ -12,13 +12,28 @@ export const useAppStore = create<AppState>()(
       isAppReady: false,
       theme: "system",
       selectedCarId: undefined,
+      scanningProgress: {
+        picturesCompleted: false,
+        licenseCompleted: false,
+      },
+      tempCapturedImage: null,
       setAppReady: (ready) => set({ isAppReady: ready }),
       setTheme: (theme) => set({ theme }),
       setSelectedCarId: (id) => set({ selectedCarId: id }),
+      setScanningProgress: (progress) =>
+        set((state) => ({
+          scanningProgress: { ...state.scanningProgress, ...progress },
+        })),
+      setTempCapturedImage: (uri) => set({ tempCapturedImage: uri }),
     }),
     {
       name: "moticar-app-storage",
       storage: createJSONStorage(() => AsyncStorage),
+      partialize: (state) => ({
+        scanningProgress: state.scanningProgress,
+        theme: state.theme,
+        selectedCarId: state.selectedCarId,
+      }),
     }
   )
 );

@@ -83,13 +83,13 @@ export default function Sparkline({
   };
 
   return (
-    <View style={{ width, height, overflow: "visible" }}>
+    <View style={{ width, height, overflow: "hidden" }}>
       <Svg
         width={width}
         height={height}
         onPressIn={handleTouch}
         onPressOut={() => setActiveIndex(null)}
-        style={{ overflow: "visible" }}
+        style={{ overflow: "hidden" }}
       >
         <Defs>
           <LinearGradient id="gradient" x1="0" y1="0" x2="0" y2="1">

@@ -190,7 +190,7 @@ export default function AddCar() {
               } else if (selectedOption === 3) {
                 router.push("/screens/manual/search");
               } else {
-                router.replace("/(tabs)");
+                
               }
             }}
             className={`w-full h-[54px] rounded-full items-center justify-center ${

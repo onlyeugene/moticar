@@ -91,7 +91,7 @@ export default function Login() {
           <CurrencySelector variant="auth" />
         </View>
         <View className="mt-10">
-          <Text className="text-white text-[32px] font-lexendBold">
+          <Text className="text-white text-[32px] font-lexendMedium">
             Sign in
           </Text>
           <Text className="text-[#9BBABB] font-lexendRegular text-[16px] mt-2 leading-6">
