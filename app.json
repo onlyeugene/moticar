@@ -13,7 +13,8 @@
       "backgroundColor": "#FBE74C"
     },
     "ios": {
-      "supportsTablet": false
+      "supportsTablet": false,
+      "backgroundColor": "#F0F0F0"
     },
     "android": {
       "adaptiveIcon": {

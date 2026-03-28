@@ -85,15 +85,8 @@ export default function SetName() {
       },
       {
         onSuccess: (response: any) => {
-          // Update the auth store with the tokens and user from the response
-          const token = response.token || response.accessToken || response.access_token;
-          if (token && response.refreshToken && response.user) {
-            setAuth(token, response.refreshToken, response.user);
-            setShowSuccess(true);
-          } else {
-            // Fallback to success screen if tokens aren't returned (though they should be)
-            setShowSuccess(true);
-          }
+          // Success screen will be shown, user will then go to login
+          setShowSuccess(true);
         },
         onError: (error: any) => {
           showSnackbar({
@@ -121,7 +114,7 @@ export default function SetName() {
             </Text>
 
             <Text className="text-[#9BBABB] font-lexendRegular text-[14px] text-center mb-12">
-              Only one click to explore online education.
+              Just one more step! Sign in to start tracking your car expenses.
             </Text>
 
             <Pressable
@@ -129,7 +122,7 @@ export default function SetName() {
               className="w-full h-[50px] bg-[#29D7DE] rounded-full items-center justify-center active:opacity-90"
             >
               <Text className="font-lexendBold text-[16px] text-[#00343F]">
-                Next
+                Go to Login
               </Text>
             </Pressable>
           </View>

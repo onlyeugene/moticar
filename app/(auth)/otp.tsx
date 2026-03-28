@@ -110,7 +110,7 @@ export default function Otp() {
           </Pressable>
         </View>
         <View className="mt-10">
-          <Text className="text-white text-[32px] font-lexendBold">
+          <Text className="text-white text-[32px] font-lexendMedium">
             Verify Email
           </Text>
           <Text className="text-[#9BBABB] font-lexendRegular text-[16px] mt-2 leading-6">

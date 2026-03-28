@@ -103,7 +103,7 @@ export default function Password() {
           </Pressable>
         </View>
         <View className="mt-10">
-          <Text className="text-white text-[26px] font-lexendBold">
+          <Text className="text-white text-[26px] font-lexendMedium">
             Enter Password
           </Text>
           <Text className="text-[#9BBABB] font-lexendRegular text-[14px] mt-2 leading-6">

@@ -70,7 +70,7 @@ export default function MileageTracker({
               <Text className="text-[#000000] font-lexendBold text-[20px]">
                 Mileage Tracker
               </Text>
-              <Text className="text-[#4A8588] font-lexendRegular text-[12px]">
+              <Text className="text-[#4A8588] font-lexendRegular text-[12px] mt-0.5">
                 {getDaysAgo(updatedAt)}
               </Text>
             </View>
@@ -82,24 +82,24 @@ export default function MileageTracker({
           </View>
 
           {/* Main Content */}
-          <View className="flex-row justify-between items-end flex-1 relative mt-5">
+          <View className="flex-row justify-between items-center mt-6">
             <View className="">
-              <Speedometer width={45} height={45} />
+              <Speedometer width={42} height={42} />
             </View>
 
-            <View className="flex-1 items-end">
-              <View className="flex-row items-center gap-1">
-                <Ionicons name="warning-outline" size={14} color="#F8953A" />
-                <Text className="text-[#006C70] font-lexendBold text-[32px] leading-[54px] tracking-tight">
+            <View className="items-end">
+              <View className="flex-row items-center gap-1.5">
+                <Ionicons name="warning-outline" size={16} color="#F8953A" />
+                <Text className="text-[#006C70] font-lexendBold text-[32px] leading-[38px] tracking-tight">
                   {mileage.toLocaleString()}
                 </Text>
               </View>
 
-              <View className="flex-row items-center gap-3 mt-1">
+              <View className="flex-row items-center gap-2.5 mt-1.5">
                 <Text className="text-[#00AEB5] font-lexendMedium text-[14px]">
                   approx. {approxKm}km
                 </Text>
-                <View className="bg-[#F8E761] px-3 py-1 rounded-full items-center justify-center">
+                <View className="bg-[#F8E761] px-2.5 py-1 rounded-full items-center justify-center">
                   <Text className="text-[#425658] font-lexendBold text-[10px] uppercase tracking-wider">
                     {entriesCount} Entries
                   </Text>

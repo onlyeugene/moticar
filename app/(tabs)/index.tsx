@@ -28,6 +28,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import ActivityScreen from "./activity";
 
 export default function Dashboard() {
   const user = useAuthStore((state) => state.user);
@@ -263,7 +264,6 @@ export default function Dashboard() {
             />
 
             {/* Mileage Tracker Section */}
-            <RulerPicker onValueChange={() => {}} />
             <View className="border-t border-[#8acece] my-4" />
             <MileageTracker
               mileage={userCar?.mileage}
@@ -272,6 +272,9 @@ export default function Dashboard() {
               entriesCount={tripsData?.count || 0}
             />
           </View>
+
+
+          {/* <ActivityScreen /> */}
 
           {/* Expense Breakdown Section */}
           <ExpenseBreakdownCard

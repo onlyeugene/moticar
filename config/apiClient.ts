@@ -32,7 +32,7 @@ const safeStringify = (data: any) => {
  */
 const apiClient = axios.create({
   baseURL: process.env.EXPO_PUBLIC_API_URL || "https://api.moticar.com/v1",
-  timeout: 15000,
+  timeout: 30000,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
@@ -42,20 +42,26 @@ const apiClient = axios.create({
 // Request interceptor for adding the auth token
 apiClient.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
+    // 🟢 Retrieve token directly from Zustand state
+    const token = useAuthStore.getState().token;
+
     // 🟢 Debug log for development
     if (__DEV__) {
       const params = config.params ? `?${new URLSearchParams(config.params).toString()}` : "";
       console.log(
         `🚀 [API Request] ${config.method?.toUpperCase()} ${config.url}${params}`,
-        config.data ? safeStringify(config.data) : ""
+        {
+          hasToken: !!token,
+          hasAuthHeader: !!config.headers.Authorization,
+          data: config.data ? safeStringify(config.data) : ""
+        }
       );
     }
 
-    // 🟢 Retrieve token directly from Zustand state
-    const token = useAuthStore.getState().token;
-    if (token && !config.headers.Authorization) {
+    if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
     return config;
   },
   (error: AxiosError) => {
@@ -126,8 +132,7 @@ apiClient.interceptors.response.use(
         }
 
         const response = await axios.post(refreshUrl, {
-          token: refreshToken,
-          refreshToken: refreshToken, // Send both just in case the backend expects a different key
+          token: refreshToken, // Backend specifically expects 'token' field
         });
 
         if (__DEV__) {

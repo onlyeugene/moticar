@@ -48,7 +48,7 @@ export const ScreenBackground: React.FC<ScreenBackgroundProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#002E35",
+    backgroundColor: "#013037",
     flex: 1,
   },
   glowContainer: {
