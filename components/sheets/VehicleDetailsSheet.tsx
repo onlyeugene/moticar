@@ -1,28 +1,13 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, TouchableOpacity, Image, TextInput } from "react-native";
 import BottomSheet from "@/components/shared/BottomSheet";
 import { Ionicons, MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
 
 interface VehicleDetailsSheetProps {
   visible: boolean;
-  carData?: {
-    make?: string;
-    model?: string;
-    year?: string;
-    plateNumber?: string;
-    fuelType?: string;
-    transmission?: string;
-    engineSize?: string;
-    cylinders?: string;
-    horsepower?: string;
-    driveType?: string;
-    bodyStyle?: string;
-    segment?: string;
-    color?: string;
-    doors?: string;
-  };
+  carData?: any;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: (updatedData: any) => void;
 }
 
 export default function VehicleDetailsSheet({
@@ -31,71 +16,94 @@ export default function VehicleDetailsSheet({
   onClose,
   onConfirm,
 }: VehicleDetailsSheetProps) {
+  const [localData, setLocalData] = React.useState<any>(carData || {});
+
+  React.useEffect(() => {
+    if (visible && carData) {
+      setLocalData(carData);
+    }
+  }, [visible, carData]);
+
+  const updateField = (field: string, value: string) => {
+    setLocalData((prev: any) => ({ ...prev, [field]: value }));
+  };
+
   const detailItems = [
     {
       label: "Year of Production",
-      value: carData?.year || "N/A",
+      value: localData?.year || "",
+      field: "year",
       icon: "calendar-outline",
       iconType: "Ionicons",
       hasChevron: true,
     },
     {
       label: "Fuel Type",
-      value: carData?.fuelType || "N/A",
+      value: localData?.fuelType || "",
+      field: "fuelType",
       icon: "fuel",
       iconType: "MaterialCommunityIcons",
     },
     {
       label: "Gearbox",
-      value: carData?.transmission || "N/A",
+      value: localData?.transmission || "",
+      field: "transmission",
       icon: "gearbox-selector",
       iconType: "MaterialCommunityIcons",
     },
     {
       label: "Engine",
-      value: carData?.engineSize || "N/A",
+      value: localData?.engineSize || "",
+      field: "engineSize",
       icon: "engine-outline",
       iconType: "MaterialCommunityIcons",
     },
     {
       label: "Cylinder",
-      value: carData?.cylinders || "N/A",
+      value: localData?.cylinders || "",
+      field: "cylinders",
       icon: "cylinder",
       iconType: "MaterialCommunityIcons",
     },
     {
       label: "Horse Power",
-      value: carData?.horsepower || "N/A",
+      value: localData?.horsepower || "",
+      field: "horsepower",
       icon: "speedometer-outline",
       iconType: "Ionicons",
     },
     {
       label: "Drive Type",
-      value: carData?.driveType || "N/A",
+      value: localData?.driveType || "",
+      field: "driveType",
       icon: "car-settings",
       iconType: "MaterialCommunityIcons",
     },
     {
       label: "Body Style",
-      value: carData?.bodyStyle || "N/A",
+      value: localData?.bodyStyle || "",
+      field: "bodyStyle",
       icon: "car-side",
       iconType: "FontAwesome5",
     },
     {
       label: "Segment",
-      value: carData?.segment || "N/A",
+      value: localData?.segment || "",
+      field: "segment",
       icon: "car-outline",
       iconType: "Ionicons",
     },
     {
       label: "Body Color",
-      value: carData?.color || "N/A",
+      value: localData?.color || "",
+      field: "color",
       icon: "palette-outline",
       iconType: "Ionicons",
     },
     {
       label: "Doors",
-      value: carData?.doors || "N/A",
+      value: localData?.doors || "",
+      field: "doors",
       icon: "car-door",
       iconType: "MaterialCommunityIcons",
     },
@@ -119,14 +127,29 @@ export default function VehicleDetailsSheet({
           <MaterialCommunityIcons name="car-sports" size={32} color="#101828" />
         </View>
 
-        <Text className="text-[#00343F] font-lexendBold text-[20px] mb-2 text-center">
-          {carData?.make || "Unknown"} {carData?.model || "Vehicle"}
-        </Text>
+        <View className="flex-row items-center mb-2 text-center gap-2">
+          <TextInput
+            className="text-[#00343F] font-lexendBold text-[20px] text-center"
+            value={localData?.make || ""}
+            onChangeText={(val) => updateField("make", val)}
+            placeholder="Make"
+          />
+          <TextInput
+            className="text-[#00343F] font-lexendBold text-[20px] text-center"
+            value={localData?.model || ""}
+            onChangeText={(val) => updateField("model", val)}
+            placeholder="Model"
+          />
+        </View>
 
         <View className="border border-[#D0D5DD] rounded-[4px] px-3 py-1 mb-6">
-          <Text className="text-[#00343F] font-lexendBold text-[16px]">
-            {carData?.plateNumber || "NO PLATE"}
-          </Text>
+          <TextInput
+            className="text-[#00343F] font-lexendBold text-[16px] min-w-[80px] text-center"
+            value={localData?.plateNumber || ""}
+            onChangeText={(val) => updateField("plateNumber", val)}
+            placeholder="PLATE NUMBER"
+            autoCapitalize="characters"
+          />
         </View>
 
         <View className="w-full h-[1px] bg-[#F2F4F7] mb-4" />
@@ -167,12 +190,12 @@ export default function VehicleDetailsSheet({
                   {item.label}:
                 </Text>
                 <View className="flex-row items-center">
-                  <Text
-                    className="text-[#00232A] font-lexendBold text-[13px]"
-                    numberOfLines={1}
-                  >
-                    {item.value}
-                  </Text>
+                  <TextInput
+                    className="text-[#00232A] font-lexendBold text-[13px] flex-1"
+                    value={item.value}
+                    onChangeText={(val) => updateField(item.field, val)}
+                    placeholder="N/A"
+                  />
                   {item.hasChevron && (
                     <Ionicons
                       name="chevron-down"
@@ -189,7 +212,7 @@ export default function VehicleDetailsSheet({
 
         {/* Confirmation Button */}
         <TouchableOpacity
-          onPress={onConfirm}
+          onPress={() => onConfirm(localData)}
           className="w-full h-[56px] bg-[#FBE74C] rounded-[12px] items-center justify-center mt-4 mb-10"
         >
           <Text className="text-[#00343F] font-lexendBold text-[16px]">

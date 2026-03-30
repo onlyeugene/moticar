@@ -34,6 +34,8 @@ export default function Pictures() {
   const setScanningProgress = useAppStore((state) => state.setScanningProgress);
   const tempCapturedImage = useAppStore((state) => state.tempCapturedImage);
   const setTempCapturedImage = useAppStore((state) => state.setTempCapturedImage);
+  const setScannedCarData = useAppStore((state) => state.setScannedCarData);
+  const scannedCarData = useAppStore((state) => state.scannedCarData);
   
   const { isLoading, scanCarPhotos } = useCarScanning();
 
@@ -136,7 +138,7 @@ export default function Pictures() {
 
     try {
       const data = await scanCarPhotos({ images, additionalImages });
-      setCarData(data);
+      setScannedCarData(data);
       setIsDetailsVisible(true);
     } catch (error: any) {
       console.error("Scanning Error:", error);
@@ -144,7 +146,8 @@ export default function Pictures() {
     }
   };
 
-  const handleConfirmDetails = () => {
+  const handleConfirmDetails = (updatedData: any) => {
+    setScannedCarData(updatedData);
     setIsDetailsVisible(false);
     setScanningProgress({ picturesCompleted: true });
     router.push("/screens/scan/car-confirmed");
@@ -271,7 +274,7 @@ export default function Pictures() {
 
         <VehicleDetailsSheet
           visible={isDetailsVisible}
-          carData={carData}
+          carData={scannedCarData}
           onClose={() => setIsDetailsVisible(false)}
           onConfirm={handleConfirmDetails}
         />

@@ -1,9 +1,18 @@
 import Container from "@/components/shared/container";
 import { ScreenBackground } from "@/components/ui/ScreenBackground";
+import { useAppStore } from "@/store/useAppStore";
+import { useCreateCar } from "@/hooks/useCars";
+import { useSnackbar } from "@/providers/SnackbarProvider";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
-import { Pressable, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 const scanOptions = [
   {
@@ -21,7 +30,76 @@ const scanOptions = [
 ];
 export default function Scan() {
   const [isConfirmed, setIsConfirmed] = React.useState(false);
+  const { scanningProgress, scannedCarData, setScanningProgress } = useAppStore();
+  const { mutate: createCar, isPending: isSubmitting } = useCreateCar();
+  const { showSnackbar } = useSnackbar();
 
+  const handleFinalize = () => {
+    if (!scannedCarData) {
+      showSnackbar({
+        type: "error",
+        message: "Missing car details",
+        description: "Please complete the scanning steps first.",
+      });
+      return;
+    }
+
+    createCar(
+      {
+        make: scannedCarData.make || "",
+        carModel: scannedCarData.model || "",
+        year: parseInt(scannedCarData.year) || 0,
+        mileage: 0,
+        plate: scannedCarData.plateNumber || "",
+        vin: scannedCarData.vin || "",
+        fuelType: scannedCarData.fuelType,
+        color: scannedCarData.color,
+        transmission: scannedCarData.transmission,
+        engineDesc: scannedCarData.engineSize,
+        bodyStyle: scannedCarData.bodyStyle,
+        condition: "Used",
+      },
+      {
+        onSuccess: (data: any) => {
+          showSnackbar({
+            type: "success",
+            message: "Car Added",
+            description: "Your vehicle has been successfully registered.",
+          });
+          // Reset progress and redirect
+          setScanningProgress({
+            picturesCompleted: false,
+            licenseCompleted: false,
+          });
+          router.replace("/(tabs)");
+        },
+        onError: (error: any) => {
+          showSnackbar({
+            type: "error",
+            message: "Upload Failed",
+            description: error?.response?.data?.message || "Something went wrong.",
+          });
+        },
+      },
+    );
+  };
+
+  const options = [
+    {
+      id: 1,
+      title: "Take a picture of your car",
+      description:
+        "We will try to make it very easy to get \nonly the needed details",
+      completed: scanningProgress.picturesCompleted,
+    },
+    {
+      id: 2,
+      title: "Capture your primary Vehicle paper",
+      description:
+        "Cutting down the time to manually \nenter the details of your car only",
+      completed: scanningProgress.licenseCompleted,
+    },
+  ];
   return (
     <ScreenBackground>
       <Container>
@@ -52,32 +130,43 @@ export default function Scan() {
         </View>
 
         <View className="flex-1">
-          <View className="px-2 mt-5">
-            <Text className="text-[26px] font-lexendMedium text-[#FFFFFF]">
-              Add your first car!
-            </Text>
-            <Text className="text-[14px] font-lexendRegular text-[#9BBABB] mt-2">
-              Start by adding the details of your personal car for a rich user
-              experience
-            </Text>
-          </View>
-
           <View className="gap-3 mt-5">
-            {scanOptions.map((scan) => (
-              <View
+            {options.map((scan) => (
+              <TouchableOpacity
                 key={scan.id}
-                className="border rounded-[10px] px-[10px] py-[20px] border-[#2D5157] flex-row justify-between items-center"
+                disabled={scan.completed}
+                onPress={() => {
+                  if (scan.id === 1) router.push("/screens/scan/pictures");
+                  if (scan.id === 2) router.push("/screens/scan/license");
+                }}
+                className={`border rounded-[10px] px-[10px] py-[20px] flex-row justify-between items-center ${
+                  scan.completed
+                    ? "border-[#29D7DE]/30 bg-[#29D7DE]/5"
+                    : "border-[#2D5157]"
+                }`}
               >
                 <View className="flex-row items-start gap-2">
-                  <View className="rounded-full border border-[#9BBABB]  w-[24px] h-[24px] items-center justify-center">
-                    <Text className="text-[#FFFFFF] font-lexendBold text-[11px]">
-                      {scan.id}
-                    </Text>
+                  <View
+                    className={`rounded-full border w-[24px] h-[24px] items-center justify-center ${
+                      scan.completed
+                        ? "border-[#29D7DE] bg-[#29D7DE]"
+                        : "border-[#9BBABB]"
+                    }`}
+                  >
+                    {scan.completed ? (
+                      <Ionicons name="checkmark" size={16} color="#00232A" />
+                    ) : (
+                      <Text className="text-[#FFFFFF] font-lexendBold text-[11px]">
+                        {scan.id}
+                      </Text>
+                    )}
                   </View>
                   <View>
                     <Text
-                      className="text-[#87ECF0] text-[16px] font-lexendSemiBold"
-                      numberOfLines={2}
+                      className={`text-[16px] font-lexendSemiBold ${
+                        scan.completed ? "text-[#29D7DE]" : "text-[#87ECF0]"
+                      }`}
+                      numberOfLines={1}
                     >
                       {scan.title}
                     </Text>
@@ -89,8 +178,10 @@ export default function Scan() {
                     </Text>
                   </View>
                 </View>
-                <Ionicons name="chevron-forward" color="#506D72" />
-              </View>
+                {!scan.completed && (
+                  <Ionicons name="chevron-forward" color="#506D72" />
+                )}
+              </TouchableOpacity>
             ))}
           </View>
         </View>
@@ -108,15 +199,34 @@ export default function Scan() {
             </Text>
           </Pressable>
           
-          <Pressable 
-            disabled={!isConfirmed}
-            className={`w-full h-[50px] rounded-full items-center justify-center ${isConfirmed ? 'bg-[#29D7DE]' : 'bg-[#29D7DE]/10'}`}
-            onPress={() => router.push("/screens/scan/pictures")}
+          <TouchableOpacity
+            disabled={
+              !isConfirmed ||
+              isSubmitting ||
+              (!scanningProgress.picturesCompleted &&
+                !scanningProgress.licenseCompleted)
+            }
+            className={`w-full h-[50px] rounded-full items-center justify-center ${
+              isConfirmed && !isSubmitting ? "bg-[#29D7DE]" : "bg-[#29D7DE]/10"
+            }`}
+            onPress={
+              scanningProgress.picturesCompleted &&
+              scanningProgress.licenseCompleted
+                ? handleFinalize
+                : () => router.push("/screens/scan/pictures")
+            }
           >
-            <Text className={`font-lexendBold text-[16px] ${isConfirmed ? 'text-[#00343F]' : 'text-[#00343F]'}`}>
-              Next
-            </Text>
-          </Pressable>
+            {isSubmitting ? (
+              <ActivityIndicator color="#00343F" />
+            ) : (
+              <Text className="font-lexendBold text-[16px] text-[#00343F]">
+                {scanningProgress.picturesCompleted &&
+                scanningProgress.licenseCompleted
+                  ? "Finalize Analysis"
+                  : "Next"}
+              </Text>
+            )}
+          </TouchableOpacity>
         </View>
       </Container>
     </ScreenBackground>

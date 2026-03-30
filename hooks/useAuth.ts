@@ -80,9 +80,12 @@ export const useLogout = () => {
 
 export const useDeleteAccount = () => {
   const queryClient = useQueryClient();
+  const clearAuth = useAuthStore((state) => state.clearAuth);
   return useMutation({
     mutationFn: authService.deleteAccount,
     onSuccess: () => {
+      // Clear store and cache on deletion
+      clearAuth();
       queryClient.clear();
     },
   });

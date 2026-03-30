@@ -17,6 +17,7 @@ export const useAppStore = create<AppState>()(
         licenseCompleted: false,
       },
       tempCapturedImage: null,
+      scannedCarData: null,
       setAppReady: (ready) => set({ isAppReady: ready }),
       setTheme: (theme) => set({ theme }),
       setSelectedCarId: (id) => set({ selectedCarId: id }),
@@ -25,6 +26,7 @@ export const useAppStore = create<AppState>()(
           scanningProgress: { ...state.scanningProgress, ...progress },
         })),
       setTempCapturedImage: (uri) => set({ tempCapturedImage: uri }),
+      setScannedCarData: (data) => set({ scannedCarData: data }),
     }),
     {
       name: "moticar-app-storage",
@@ -33,6 +35,7 @@ export const useAppStore = create<AppState>()(
         scanningProgress: state.scanningProgress,
         theme: state.theme,
         selectedCarId: state.selectedCarId,
+        scannedCarData: state.scannedCarData,
       }),
     }
   )
