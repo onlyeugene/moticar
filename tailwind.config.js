@@ -32,6 +32,7 @@ module.exports = {
         lexendThin: ["LexendDeca-Thin"],
         lexendExtraLight: ["LexendDeca-ExtraLight"],
         lexendExtraBold: ["LexendDeca-ExtraBold"],
+        ukNumberPlate: ["UkNumberPlate"],
       },
     },
   },

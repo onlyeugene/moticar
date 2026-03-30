@@ -163,7 +163,7 @@ export function CarFacts({ activeCar, onOpenDiagnostics, onSelectDiagnostic }: C
           <View className="flex-row justify-between items-start mb-2">
             <BatteryIcon width={30} height={30} />
             <Text className="text-[#006C70] text-[24px] font-lexendRegular">
-              {activeCar?.batteryVoltage || "N/A"}
+              {activeCar?.batterySpec?.voltage || "N/A"}
             </Text>
           </View>
           <Text className="text-[#006C70] text-[14px] font-lexendRegular mb-1">

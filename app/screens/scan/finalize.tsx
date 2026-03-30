@@ -1,16 +1,17 @@
+import Container from "@/components/shared/container";
 import { ControlledInput } from "@/components/shared/controlledInput";
 import { RulerPicker } from "@/components/shared/RulerPicker";
 import { WheelDatePicker } from "@/components/shared/WheelDatePicker";
 import { ScreenBackground } from "@/components/ui/ScreenBackground";
-import { useUpdateProfile } from "@/hooks/useAuth";
 import { useCreateCar } from "@/hooks/useCars";
 import { useSnackbar } from "@/providers/SnackbarProvider";
+import { useAppStore } from "@/store/useAppStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { AuthState } from "@/types/auth";
 import { getCurrencySymbol } from "@/utils/currency";
 import { Ionicons } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { router, useLocalSearchParams } from "expo-router";
+import { router } from "expo-router";
 import React from "react";
 import { useForm } from "react-hook-form";
 import {
@@ -31,8 +32,6 @@ import * as z from "zod";
 const finalSchema = z.object({
   monthlyBudget: z.number().optional(),
   mileage: z.string().min(1, "Mileage is required"),
-  plate: z.string().min(1, "Plate number is required"),
-  vin: z.string().min(1, "Chassis number is required"),
   purchaseDate: z.string().optional(),
   dontRememberDate: z.boolean(),
   condition: z.enum(["Newly Purchased", "Already had an existing user"]),
@@ -40,22 +39,19 @@ const finalSchema = z.object({
 
 type FinalFormData = z.infer<typeof finalSchema>;
 
-export default function FinalDetailsScreen() {
-  const params = useLocalSearchParams<{
-    carDataJson: string;
-    recommendedBudget: string;
-  }>();
+export default function FinalizeScan() {
+  const {
+    scannedCarData,
+    scannedLicenseData,
+    setScanningProgress,
+    setScannedCarData,
+    setScannedLicenseData,
+  } = useAppStore();
+
   const user = useAuthStore((state: AuthState) => state.user);
   const currencySymbol = getCurrencySymbol(user?.preferredCurrency);
-
-  const initialCarData = params.carDataJson
-    ? JSON.parse(params.carDataJson)
-    : null;
-
   const { showSnackbar } = useSnackbar();
   const { mutate: createCar, isPending: isSubmitting } = useCreateCar();
-  const { mutate: updateProfile, isPending: isUpdatingProfile } =
-    useUpdateProfile();
   const updateUser = useAuthStore((state: AuthState) => state.updateUser);
 
   const {
@@ -71,25 +67,34 @@ export default function FinalDetailsScreen() {
       condition: "Newly Purchased",
       purchaseDate: "12.02.2025",
       dontRememberDate: false,
-      monthlyBudget: params.recommendedBudget
-        ? parseInt(params.recommendedBudget)
-        : 50000,
+      monthlyBudget: 50000,
     },
   });
 
   const condition = watch("condition");
   const dontRememberDate = watch("dontRememberDate");
 
-  const onSave = (data: FinalFormData) => {
-    if (!initialCarData) {
-      showSnackbar({
-        type: "error",
-        message: "Missing car data",
-        description: "Please complete the previous step first.",
-      });
-      return;
-    }
+  if (!scannedCarData) {
+    return (
+      <ScreenBackground>
+        <Container>
+          <View className="flex-1 items-center justify-center">
+            <Text className="text-white font-lexendMedium text-center mb-4">
+              No vehicle data found. Please complete the scan steps.
+            </Text>
+            <TouchableOpacity
+              onPress={() => router.replace("/screens/scan/scan")}
+              className="px-6 py-3 bg-[#29D7DE] rounded-full"
+            >
+              <Text className="text-[#00343F] font-lexendBold">Go Back</Text>
+            </TouchableOpacity>
+          </View>
+        </Container>
+      </ScreenBackground>
+    );
+  }
 
+  const onSave = (data: FinalFormData) => {
     let purchaseDateStr: string | undefined = undefined;
     if (!data.dontRememberDate && data.purchaseDate) {
       const [d, m, y] = data.purchaseDate.split(".");
@@ -99,32 +104,59 @@ export default function FinalDetailsScreen() {
 
     createCar(
       {
-        ...initialCarData,
-        mileage: parseInt(data.mileage.replace(/,/g, "")) || 0,
-        plate: data.plate,
-        vin: data.vin,
+        make: scannedCarData.make || "",
+        carModel: scannedCarData.carModel || scannedCarData.model || "",
+        year: parseInt(scannedCarData.year) || 0,
+        yearRange: scannedCarData.yearRange,
+        mileage: parseInt(data.mileage.replace(/,/g, "")),
+        plate: (
+          scannedCarData.plate ||
+          scannedCarData.plateNumber ||
+          ""
+        ).replace(/-/g, " "),
+        vin: scannedCarData.vin || scannedLicenseData?.vin || "",
+        fuelType: scannedCarData.fuelType,
+        color: scannedCarData.color,
+        transmission: scannedCarData.transmission,
+        engineDesc:
+          scannedCarData.engineDesc ||
+          scannedCarData.engine ||
+          scannedCarData.engineSize,
+        cylinder: scannedCarData.cylinder || scannedCarData.cylinders,
+        horsepower: scannedCarData.horsepower,
+        driveType: scannedCarData.driveType,
+        bodyStyle: scannedCarData.bodyStyle,
+        segment: scannedCarData.segment,
+        doors: scannedCarData.doors,
         condition:
           data.condition === "Newly Purchased" ? "Newly Purchased" : "Used",
         monthlyBudget: data.monthlyBudget || 0,
         purchaseDate: purchaseDateStr,
-        entryMethod: "manual",
+        entryMethod: "ai_scan",
       },
       {
         onSuccess: () => {
-          updateUser({ onboardingCompleted: true });
           showSnackbar({
             type: "success",
-            message: "Onboarding complete!",
-            description: "Your car details have been finalized.",
+            message: "Car Added",
+            description: "Your vehicle has been successfully registered.",
           });
+          // Reset progress and store
+          setScanningProgress({
+            picturesCompleted: false,
+            licenseCompleted: false,
+          });
+          setScannedCarData(null);
+          setScannedLicenseData(null);
+          updateUser({ onboardingCompleted: true });
           router.replace("/(tabs)");
         },
         onError: (error: any) => {
           showSnackbar({
             type: "error",
-            message: "Failed to create car",
+            message: "Upload Failed",
             description:
-              error?.response?.data?.message || "Something went wrong",
+              error?.response?.data?.message || "Something went wrong.",
           });
         },
       },
@@ -141,35 +173,22 @@ export default function FinalDetailsScreen() {
           </TouchableOpacity>
 
           <View className="flex-row gap-2">
-            <View className="w-12 h-2 rounded-full bg-[#00343F]" />
-            <View className="w-12 h-2 rounded-full bg-[#29D7DE]" />
+            <View className="w-[42px] h-[10px] rounded-full bg-[#00343F]" />
+            <View className="w-[42px] h-[10px] rounded-full bg-[#29D7DE]" />
           </View>
 
           <TouchableOpacity
             onPress={() => {
-              updateProfile(
-                { onboardingCompleted: true },
-                {
-                  onSettled: () => {
-                    updateUser({ onboardingCompleted: true });
-                    router.replace("/(tabs)");
-                  },
-                },
-              );
+              // Same skip logic as manual
+              updateUser({ onboardingCompleted: true });
+              router.replace("/(tabs)");
             }}
-            disabled={isUpdatingProfile}
           >
             <View className="flex-row items-center">
-              {isUpdatingProfile ? (
-                <ActivityIndicator size="small" color="#29D7DE" />
-              ) : (
-                <>
-                  <Text className="text-[#29D7DE] font-lexendRegular mr-1">
-                    Skip
-                  </Text>
-                  <Ionicons name="chevron-forward" size={16} color="#29D7DE" />
-                </>
-              )}
+              <Text className="text-[#29D7DE] font-lexendRegular mr-1">
+                Skip
+              </Text>
+              <Ionicons name="chevron-forward" size={16} color="#29D7DE" />
             </View>
           </TouchableOpacity>
         </View>
@@ -210,42 +229,10 @@ export default function FinalDetailsScreen() {
               name="mileage"
               placeholder="----"
               keyboardType="numeric"
-              inputClassName="text-center text-[18px] font-lexendBold"
+              inputClassName="text-center text-[24px] font-lexendRegular"
             />
             <Text className="text-[#9BBABB] font-lexendRegular text-[12px] text-center -mt-2">
               You can find this on your dashboard
-            </Text>
-          </View>
-
-          {/* Car Number Plate */}
-          <View className="mb-8">
-            <Text className="text-[#4FB8C8] font-lexendRegular text-[12px] mb-2">
-              Car Number Plate
-            </Text>
-            <ControlledInput<FinalFormData>
-              control={control}
-              name="plate"
-              placeholder="-- --- ---"
-              autoCapitalize="characters"
-              inputClassName="text-center text-[18px] font-lexendBold"
-            />
-          </View>
-
-          {/* Chasis Number */}
-          <View className="mb-8">
-            <Text className="text-[#4FB8C8] font-lexendRegular text-[12px] mb-2">
-              Chasis Number
-            </Text>
-            <ControlledInput<FinalFormData>
-              control={control}
-              name="vin"
-              placeholder="-----------------"
-              autoCapitalize="characters"
-              inputClassName="text-center text-[18px] font-lexendBold"
-            />
-            <Text className="text-[#9BBABB] font-lexendRegular text-[12px] text-center -mt-2">
-              You can find this on your windscreen, drivers side door, under{" "}
-              {"\n"}the passengers floor mat or engine bay
             </Text>
           </View>
 
@@ -320,7 +307,7 @@ export default function FinalDetailsScreen() {
                 onPress={() =>
                   setValue("condition", "Already had an existing user")
                 }
-                className="flex-row items-center justify-between p-5"
+                className={`flex-row items-center justify-between p-5 ${condition === "Already had an existing user" ? "bg-[#043F48]" : ""}`}
               >
                 <Text
                   className={`font-lexendMedium text-[14px] ${condition === "Already had an existing user" ? "text-[#FFFFFF]" : "text-[#899B9B]"}`}
@@ -345,8 +332,8 @@ export default function FinalDetailsScreen() {
           </View>
         </ScrollView>
 
-        {/* Anchored Save Button */}
-        <View className="absolute bottom-0 left-0 right-0 pt-4 pb-8 px-4">
+        {/* Save Button */}
+        <View className="absolute bottom-0 left-0 right-0 pt-4 pb-8 px-4 bg-transparent">
           <TouchableOpacity
             onPress={handleSubmit(onSave)}
             disabled={isSubmitting || !isValid}
@@ -358,9 +345,7 @@ export default function FinalDetailsScreen() {
             {isSubmitting ? (
               <ActivityIndicator color="#00343F" />
             ) : (
-              <Text
-                className={`font-lexendBold text-lg ${!isValid ? "text-[#00343F]" : "text-[#00343F]"}`}
-              >
+              <Text className="font-lexendBold text-[#00343F] text-lg">
                 Save
               </Text>
             )}

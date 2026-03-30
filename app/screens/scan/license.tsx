@@ -20,23 +20,30 @@ import {
 export default function LicenseScan() {
   const [image, setImage] = useState<string | null>(null);
   const { isLicenseLoading: isLoading, scanVehicleLicense } = useCarScanning();
+  const setScannedLicenseData = useAppStore(
+    (state) => state.setScannedLicenseData,
+  );
   const setScanningProgress = useAppStore((state) => state.setScanningProgress);
 
   const handleImageSourceSelection = () => {
-    Alert.alert("Select Photo", "Choose how you want to add the license picture", [
-      {
-        text: "Take Photo",
-        onPress: () => pickImage("camera"),
-      },
-      {
-        text: "Choose from Gallery",
-        onPress: () => pickImage("gallery"),
-      },
-      {
-        text: "Cancel",
-        style: "cancel",
-      },
-    ]);
+    Alert.alert(
+      "Select Photo",
+      "Choose how you want to add the license picture",
+      [
+        {
+          text: "Take Photo",
+          onPress: () => pickImage("camera"),
+        },
+        {
+          text: "Choose from Gallery",
+          onPress: () => pickImage("gallery"),
+        },
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+      ],
+    );
   };
 
   const pickImage = async (source: "camera" | "gallery") => {
@@ -50,7 +57,7 @@ export default function LicenseScan() {
         "Permission Required",
         `Permission to access ${
           source === "camera" ? "camera" : "media library"
-        } is required!`
+        } is required!`,
       );
       return;
     }
@@ -76,15 +83,35 @@ export default function LicenseScan() {
     if (!image || isLoading) return;
 
     try {
-      await scanVehicleLicense(image);
-      
-      setScanningProgress({ licenseCompleted: true });
-      Alert.alert("Success", "License paper scanned successfully!", [
-        {
-          text: "Continue",
-          onPress: () => router.push("/screens/scan/scan"),
-        },
-      ]);
+      const response = await scanVehicleLicense(image);
+
+      if (response && response.licenseData) {
+        // 1. Validation: Check if it's a valid document
+        if (response.licenseData.isDocument === false) {
+          Alert.alert(
+            "Invalid Document",
+            response.licenseData.error || "The uploaded image is not a valid vehicle license. Please try again."
+          );
+          return;
+        }
+
+        // 2. Formatting: Replace - with spaces in plate number as requested
+        const formattedData = { ...response.licenseData };
+        if (formattedData.plate) {
+          formattedData.plate = formattedData.plate.replace(/-/g, " ");
+        }
+        if (formattedData.plateNumber) {
+          formattedData.plateNumber = formattedData.plateNumber.replace(/-/g, " ");
+        }
+
+        setScannedLicenseData({
+          ...formattedData,
+          photoUrl: response.photoUrl || image,
+        });
+        router.push("/screens/scan/license-details");
+      } else {
+        throw new Error("Could not extract data from the license.");
+      }
     } catch (error: any) {
       console.error("License Scanning Error:", error);
       Alert.alert("Scanning Failed", error.message);
@@ -102,8 +129,7 @@ export default function LicenseScan() {
 
           <View className="items-center justify-center flex-1 flex-row gap-4">
             <View className="w-[42px] h-[10px] rounded-full bg-[#29D7DE]" />
-            <View className="w-[15px] h-[10px] rounded-full bg-[#29D7DE]" />
-            <View className="w-[42px] h-[10px] rounded-full bg-[#09515D]" />
+            <View className="w-[42px] h-[10px] rounded-full bg-[#29D7DE]" />
           </View>
         </View>
 
@@ -113,41 +139,44 @@ export default function LicenseScan() {
         >
           {/* Title and Subtitle */}
           <View className="px-2">
-            <Text className="text-[32px] font-lexendMedium text-[#FFFFFF]">
-              Vehicle setup
+            <Text className="text-[26px] font-lexendMedium text-[#FFFFFF]">
+              Capture your primary{"\n"}vehicle license
             </Text>
             <Text className="text-[14px] font-lexendRegular text-[#9BBABB] mt-2 leading-5">
-              Upload your vehicle primary paper to extract details like your chassis number, engine number etc
+              You would typically find it pasted on the right side of{"\n"}your
+              windscreen or your compartment section.
             </Text>
           </View>
 
           {/* Main Upload Slot */}
-          <View className="items-center mt-12 px-2">
+          <View className="items-center relative mt-12">
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={handleImageSourceSelection}
-              className="w-full h-[220px] border-2 border-dashed border-[#506D72] rounded-[16px] items-center justify-center bg-white/5 overflow-hidden"
+              className="w-[320px] h-[230px] border-2 border-dashed border-[#506D72] rounded-[12px] items-center justify-center"
             >
               {image ? (
-                <Image
+                 <Image
                   source={{ uri: image }}
-                  className="w-full h-full"
+                  className="w-full h-full p-3 bg-black rounded-[12px]"
                   resizeMode="cover"
                 />
               ) : (
                 <View className="items-center">
-                  <Ionicons name="document-text-outline" size={48} color="#506D72" />
-                  <Text className="text-[#506D72] font-lexendMedium mt-4">
-                    Tap to upload vehicle paper
-                  </Text>
+                  <Ionicons name="image" size={24} color="#506D72" />
                 </View>
               )}
 
               {/* Camera Icon Overlay */}
-              <View className="absolute bottom-4 right-4 w-12 h-12 rounded-full bg-[#FBE74C] items-center justify-center">
-                <Ionicons name="camera" size={24} color="#00232A" />
+              <View className="absolute -bottom-4 -right-4 w-[32px] h-[32px] rounded-full bg-[#FBE74C] items-center justify-center">
+                <Ionicons name="camera-outline" size={16} color="#00232A" />
               </View>
             </TouchableOpacity>
+            <View className="mt-2">
+              <Text className="text-[#FFFFFF] font-lexendRegular text-[12px]">
+                Front
+              </Text>
+            </View>
           </View>
         </ScrollView>
 
@@ -155,7 +184,7 @@ export default function LicenseScan() {
         <View className="pb-8">
           <Pressable
             disabled={!image || isLoading}
-            className={`w-full h-[56px] rounded-full items-center justify-center active:opacity-80 ${
+            className={`w-11/12 mx-auto h-[56px] rounded-full items-center justify-center active:opacity-80 ${
               image && !isLoading ? "bg-[#29D7DE]" : "bg-[#093D45]"
             }`}
             onPress={handleNext}
@@ -174,7 +203,7 @@ export default function LicenseScan() {
           </Pressable>
         </View>
       </Container>
-      
+
       {/* Loading Overlay */}
       {isLoading && (
         <View className="absolute inset-0 bg-black/40 items-center justify-center z-50">

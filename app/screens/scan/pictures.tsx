@@ -1,5 +1,4 @@
 import Container from "@/components/shared/container";
-import VehicleDetailsSheet from "@/components/sheets/VehicleDetailsSheet";
 import { ScreenBackground } from "@/components/ui/ScreenBackground";
 import { useAppStore } from "@/store/useAppStore";
 import { useCarScanning } from "@/hooks/useCarScanning";
@@ -27,16 +26,16 @@ const uploadOptions = [
 export default function Pictures() {
   const [images, setImages] = useState<Record<string, string>>({});
   const [additionalImages, setAdditionalImages] = useState<string[]>([]);
-  const [isDetailsVisible, setIsDetailsVisible] = useState(false);
-  const [carData, setCarData] = useState<any>(null);
   const [activeSlot, setActiveSlot] = useState<string | null>(null);
 
   const setScanningProgress = useAppStore((state) => state.setScanningProgress);
   const tempCapturedImage = useAppStore((state) => state.tempCapturedImage);
-  const setTempCapturedImage = useAppStore((state) => state.setTempCapturedImage);
+  const setTempCapturedImage = useAppStore(
+    (state) => state.setTempCapturedImage,
+  );
   const setScannedCarData = useAppStore((state) => state.setScannedCarData);
   const scannedCarData = useAppStore((state) => state.scannedCarData);
-  
+
   const { isLoading, scanCarPhotos } = useCarScanning();
 
   // Handle image handoff from Custom Camera
@@ -56,7 +55,10 @@ export default function Pictures() {
   const pickFromGallery = async (id: string | "more") => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (permission.status !== "granted") {
-      Alert.alert("Permission Required", "Permission to access media library is required!");
+      Alert.alert(
+        "Permission Required",
+        "Permission to access media library is required!",
+      );
       return;
     }
 
@@ -100,17 +102,21 @@ export default function Pictures() {
     } else if (id === "more") {
       type = "perspective";
       label = "Additional view";
-      step = (Object.keys(images).length + additionalImages.length + 1).toString();
+      step = (
+        Object.keys(images).length +
+        additionalImages.length +
+        1
+      ).toString();
     }
 
     router.push({
       pathname: "/screens/scan/camera",
-      params: { 
-        type, 
-        label, 
-        step, 
-        totalSteps: "4" 
-      }
+      params: {
+        type,
+        label,
+        step,
+        totalSteps: "4",
+      },
     });
   };
 
@@ -139,18 +145,11 @@ export default function Pictures() {
     try {
       const data = await scanCarPhotos({ images, additionalImages });
       setScannedCarData(data);
-      setIsDetailsVisible(true);
+      router.push("/screens/scan/details");
     } catch (error: any) {
       console.error("Scanning Error:", error);
       Alert.alert("Scanning Failed", error.message);
     }
-  };
-
-  const handleConfirmDetails = (updatedData: any) => {
-    setScannedCarData(updatedData);
-    setIsDetailsVisible(false);
-    setScanningProgress({ picturesCompleted: true });
-    router.push("/screens/scan/car-confirmed");
   };
 
   return (
@@ -168,7 +167,10 @@ export default function Pictures() {
           </View>
         </View>
 
-        <ScrollView className="flex-1 mt-10" showsVerticalScrollIndicator={false}>
+        <ScrollView
+          className="flex-1 mt-10"
+          showsVerticalScrollIndicator={false}
+        >
           {/* Title and Subtitle */}
           <View className="px-2">
             <Text className="text-[32px] font-lexendMedium text-[#FFFFFF]">
@@ -263,21 +265,15 @@ export default function Pictures() {
           {isNextEnabled && !isLoading && (
             <TouchableOpacity
               onPress={() => handleImageSourceSelection("more")}
-              className="w-full h-[56px] border border-[#29D7DE] rounded-full items-center justify-center"
+              className="w-full h-[56px] border border-[#29D7DE] rounded-full flex-row items-center gap-1 justify-center"
             >
+              <Ionicons name="add" size={16} color="#29D7DE" />
               <Text className="text-[#29D7DE] font-lexendBold text-[16px]">
                 Add more
               </Text>
             </TouchableOpacity>
           )}
         </View>
-
-        <VehicleDetailsSheet
-          visible={isDetailsVisible}
-          carData={scannedCarData}
-          onClose={() => setIsDetailsVisible(false)}
-          onConfirm={handleConfirmDetails}
-        />
       </Container>
 
       {/* Loading Overlay */}

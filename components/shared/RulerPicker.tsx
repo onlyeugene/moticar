@@ -43,7 +43,7 @@ export const RulerPicker = ({
   const flatListRef = useRef<FlatList>(null);
   const [currentValue, setCurrentValue] = useState(value ?? initialValue);
   const [inputValue, setInputValue] = useState(
-    (value ?? initialValue).toLocaleString()
+    (value ?? initialValue).toLocaleString(),
   );
   const [isEditing, setIsEditing] = useState(false);
   const isScrolling = useRef(false);
@@ -70,7 +70,7 @@ export const RulerPicker = ({
         }, 600);
       }
     },
-    [min, max, step]
+    [min, max, step],
   );
 
   useEffect(() => {
@@ -294,36 +294,6 @@ export const RulerPicker = ({
             height: 88,
             backgroundColor: "#00AEB5",
             borderRadius: 2,
-          }}
-        />
-
-        {/* Left fade */}
-        <LinearGradient
-          colors={["#000", "transparent"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          pointerEvents="none"
-          style={{
-            position: "absolute",
-            left: 0,
-            top: 0,
-            width: CENTER_OFFSET * 0.7,
-            height: 80,
-          }}
-        />
-
-        {/* Right fade */}
-        <LinearGradient
-          colors={["transparent", "#000"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          pointerEvents="none"
-          style={{
-            position: "absolute",
-            right: 0,
-            top: 0,
-            width: CENTER_OFFSET * 0.7,
-            height: 80,
           }}
         />
       </View>

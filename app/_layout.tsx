@@ -40,6 +40,7 @@ export default function RootLayout() {
     "LexendDeca-Bold": require("../assets/fonts/LexendDeca-Bold.ttf"),
     "LexendDeca-ExtraBold": require("../assets/fonts/LexendDeca-ExtraBold.ttf"),
     "LexendDeca-Black": require("../assets/fonts/LexendDeca-Black.ttf"),
+    "UkNumberPlate": require("../assets/fonts/UKNumberPlate.ttf")
   });
 
   useEffect(() => {

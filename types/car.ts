@@ -82,6 +82,8 @@ export interface CarCreateInput {
   brakesFront?: string;
   brakesRear?: string;
   yearRange?: string;
+  doors?: number;
+  entryMethod?: "manual" | "ai_scan";
 }
 
 export interface CarUpdateInput {

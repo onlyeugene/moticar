@@ -66,7 +66,7 @@ export default function DashboardHeader() {
                 )}
               </View>
 
-              <Text className="text-[#7AE6EB] font-lexendMedium uppercase text-[14px] mb-3">
+              <Text className="text-[#7AE6EB] font-ukNumberPlate uppercase text-[14px] mb-3">
                 {car.plate}
               </Text>
 
@@ -175,7 +175,7 @@ export default function DashboardHeader() {
                     ? "Loading..."
                     : `${selectedCar?.make || "Add a Car"} ${selectedCar?.carModel || ""}`}
                 </Text>
-                <View className="mt-2 flex-row gap-2">
+                <View className="mt-2 flex-row gap-1 px-2">
                   <View
                     className={`w-[6px] h-[6px] rounded-full shrink-0 ${
                       selectedCar?.entryMethod === "obd" ? "bg-[#78FF25]" : "bg-[#3F8E8E]"
@@ -192,7 +192,7 @@ export default function DashboardHeader() {
 
               {/* Plate + PRO badge */}
               <View className="flex-row items-center gap-1.5">
-                <Text className="text-[#7AE6EB] font-lexendSemiBold text-[12px] uppercase">
+                <Text className="text-[#7AE6EB] font-ukNumberPlate text-[14px] uppercase">
                   {selectedCar?.plate || "No plate registered"}
                 </Text>
                 {selectedCar && (
