@@ -1,10 +1,9 @@
-import Container from "@/components/shared/container";
 import { ControlledInput } from "@/components/shared/controlledInput";
 import { RulerPicker } from "@/components/shared/RulerPicker";
 import { WheelDatePicker } from "@/components/shared/WheelDatePicker";
 import { ScreenBackground } from "@/components/ui/ScreenBackground";
 import { useUpdateProfile } from "@/hooks/useAuth";
-import { useUpdateCar } from "@/hooks/useCars";
+import { useCreateCar } from "@/hooks/useCars";
 import { useSnackbar } from "@/providers/SnackbarProvider";
 import { useAuthStore } from "@/store/useAuthStore";
 import { AuthState } from "@/types/auth";
@@ -12,7 +11,7 @@ import { getCurrencySymbol } from "@/utils/currency";
 import { Ionicons } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router, useLocalSearchParams } from "expo-router";
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import {
   ActivityIndicator,
@@ -22,12 +21,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import * as z from "zod";
 import Animated, {
   FadeInDown,
   FadeOutUp,
   LinearTransition,
 } from "react-native-reanimated";
+import * as z from "zod";
 
 const finalSchema = z.object({
   monthlyBudget: z.number().optional(),
@@ -43,15 +42,18 @@ type FinalFormData = z.infer<typeof finalSchema>;
 
 export default function FinalDetailsScreen() {
   const params = useLocalSearchParams<{
-    carId: string;
+    carDataJson: string;
     recommendedBudget: string;
   }>();
   const user = useAuthStore((state: AuthState) => state.user);
   const currencySymbol = getCurrencySymbol(user?.preferredCurrency);
-  const carId = params.carId;
+
+  const initialCarData = params.carDataJson
+    ? JSON.parse(params.carDataJson)
+    : null;
 
   const { showSnackbar } = useSnackbar();
-  const { mutate: updateCar, isPending: isSubmitting } = useUpdateCar();
+  const { mutate: createCar, isPending: isSubmitting } = useCreateCar();
   const { mutate: updateProfile, isPending: isUpdatingProfile } =
     useUpdateProfile();
   const updateUser = useAuthStore((state: AuthState) => state.updateUser);
@@ -61,7 +63,7 @@ export default function FinalDetailsScreen() {
     handleSubmit,
     setValue,
     watch,
-    formState: { errors, isValid },
+    formState: { isValid },
   } = useForm<FinalFormData>({
     resolver: zodResolver(finalSchema),
     mode: "onChange",
@@ -79,32 +81,33 @@ export default function FinalDetailsScreen() {
   const dontRememberDate = watch("dontRememberDate");
 
   const onSave = (data: FinalFormData) => {
-    if (!carId) {
+    if (!initialCarData) {
       showSnackbar({
         type: "error",
-        message: "Missing car information",
-        description: "We couldn't find the car record to update.",
+        message: "Missing car data",
+        description: "Please complete the previous step first.",
       });
       return;
     }
 
-    let purchaseDate: Date | null = null;
+    let purchaseDateStr: string | undefined = undefined;
     if (!data.dontRememberDate && data.purchaseDate) {
       const [d, m, y] = data.purchaseDate.split(".");
-      purchaseDate = new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
+      const date = new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
+      purchaseDateStr = date.toISOString();
     }
 
-    updateCar(
+    createCar(
       {
-        id: carId,
-        data: {
-          mileage: parseInt(data.mileage),
-          plate: data.plate,
-          vin: data.vin,
-          purchaseDate,
-          condition: data.condition,
-          monthlyBudget: data.monthlyBudget || 0,
-        },
+        ...initialCarData,
+        mileage: parseInt(data.mileage.replace(/,/g, "")) || 0,
+        plate: data.plate,
+        vin: data.vin,
+        condition:
+          data.condition === "Newly Purchased" ? "Newly Purchased" : "Used",
+        monthlyBudget: data.monthlyBudget || 0,
+        purchaseDate: purchaseDateStr,
+        entryMethod: "manual",
       },
       {
         onSuccess: () => {
@@ -119,7 +122,7 @@ export default function FinalDetailsScreen() {
         onError: (error: any) => {
           showSnackbar({
             type: "error",
-            message: "Failed to update details",
+            message: "Failed to create car",
             description:
               error?.response?.data?.message || "Something went wrong",
           });

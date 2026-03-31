@@ -12,6 +12,7 @@ import { ScreenBackground } from "@/components/ui/ScreenBackground";
 import { useCarDetails, useCreateCar } from "@/hooks/useCars";
 import { useSnackbar } from "@/providers/SnackbarProvider";
 import { Ionicons } from "@expo/vector-icons";
+import SpeedometerIcon from "@/assets/icons/car/speedometer.svg";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -59,7 +60,7 @@ export default function CarDetailsScreen() {
   const [editingField, setEditingField] = useState<{
     key: string;
     label: string;
-    type: "text" | "picker";
+    type: "text" | "picker" | "numeric";
     options?: string[];
   } | null>(null);
   const [tempValue, setTempValue] = useState("");
@@ -95,72 +96,47 @@ export default function CarDetailsScreen() {
     }
   }, [detailsData]);
 
-  const { mutate: createCar, isPending: isSubmitting } = useCreateCar();
-
   const handleConfirm = () => {
-    createCar(
-      {
-        make: params.make || "",
-        carModel: params.model || "",
-        year: parseInt(carData.year),
-        mileage: 0,
-        plate: "",
-        vin: "",
-        fuelType: carData.fuelType,
-        color: carData.bodyColor === "---" ? "" : carData.bodyColor,
-        condition: "Newly Purchased",
-        // Technical specs
-        bodyStyle: carData.bodyStyle,
-        engineDesc: carData.engine,
-        transmission: carData.transmission,
-        driveType: carData.driveType,
-        segment: carData.segment,
-        cylinder: carData.cylinder,
-        horsepower: carData.horsepower,
-        // These might come from detailsData if not in carData state yet
-        fuelCapacity: detailsData?.details?.features?.fuelCapacity,
-        tireSize: detailsData?.details?.features?.tireSize,
-        topSpeed: detailsData?.details?.features?.topSpeed,
-        acceleration: detailsData?.details?.features?.acceleration,
-        brakesFront: detailsData?.details?.features?.brakesFront,
-        brakesRear: detailsData?.details?.features?.brakesRear,
-        yearRange: detailsData?.details?.features?.yearRange,
+    const fullCarData = {
+      make: params.make || "",
+      carModel: params.model || "",
+      year: parseInt(carData.year),
+      color: carData.bodyColor === "---" ? "" : carData.bodyColor,
+      // Technical specs
+      bodyStyle: carData.bodyStyle,
+      engineDesc: carData.engine,
+      transmission: carData.transmission,
+      driveType: carData.driveType,
+      segment: carData.segment,
+      cylinder: carData.cylinder,
+      horsepower: carData.horsepower,
+      fuelCapacity: detailsData?.details?.features?.fuelCapacity,
+      tireSize: detailsData?.details?.features?.tireSize,
+      topSpeed: detailsData?.details?.features?.topSpeed,
+      acceleration: detailsData?.details?.features?.acceleration,
+      brakesFront: detailsData?.details?.features?.brakesFront,
+      brakesRear: detailsData?.details?.features?.brakesRear,
+      yearRange: detailsData?.details?.features?.yearRange,
+    };
+
+    router.replace({
+      pathname: "/screens/manual/final",
+      params: {
+        carDataJson: JSON.stringify(fullCarData),
+        recommendedBudget: detailsData?.recommendedBudget || 0,
       },
-      {
-        onSuccess: (data: any) => {
-          const finalId = data?.car?._id || data?.id;
-          if (isMounted.current && finalId) {
-            router.replace({
-              pathname: "/screens/manual/final",
-              params: {
-                carId: finalId,
-                recommendedBudget: detailsData?.recommendedBudget || 0,
-              },
-            });
-          }
-        },
-        onError: (error: any) => {
-          if (isMounted.current) {
-            showSnackbar({
-              type: "error",
-              message: "Failed to add car",
-              description:
-                error?.response?.data?.message || "Something went wrong",
-            });
-          }
-        },
-      },
-    );
+    });
   };
 
   const openEditor = (
     key: string,
     label: string,
-    type: "text" | "picker",
+    type: "text" | "picker" | "numeric",
     options?: string[],
   ) => {
     setEditingField({ key, label, type, options });
-    setTempValue(carData[key as keyof typeof carData] || "");
+    const val = carData[key as keyof typeof carData] || "";
+    setTempValue(String(val).replace(/,/g, ""));
     setModalVisible(true);
   };
 
@@ -295,7 +271,26 @@ export default function CarDetailsScreen() {
                 label="Body Color"
                 value={carData.bodyColor}
                 hasDropdown={true}
-                onPress={() => openEditor("bodyColor", "Body Color", "text")}
+                onPress={() =>
+                  openEditor("bodyColor", "Body Color", "picker", [
+                    "White",
+                    "Black",
+                    "Grey",
+                    "Silver",
+                    "Blue",
+                    "Red",
+                    "Green",
+                    "Brown/Beige",
+                    "Yellow",
+                    "Orange",
+                    "Gold",
+                    "Bronze",
+                    "Purple",
+                    "Turquoise/Teal",
+                    "Maroon",
+                    "Pink",
+                  ])
+                }
               />
             </View>
           </ScrollView>
@@ -303,17 +298,12 @@ export default function CarDetailsScreen() {
           <View className="absolute bottom-10 left-6 right-6">
             <TouchableOpacity
               onPress={handleConfirm}
-              disabled={isSubmitting}
               activeOpacity={0.8}
-              className={`h-16 rounded-full items-center justify-center ${isSubmitting ? "bg-[#FBE74C]/60" : "bg-[#FBE74C]"}`}
+              className="h-16 rounded-full items-center justify-center bg-[#FBE74C]"
             >
-              {isSubmitting ? (
-                <ActivityIndicator color="#00343F" />
-              ) : (
-                <Text className="text-[#00343F] font-lexendBold text-lg">
-                  That's correct
-                </Text>
-              )}
+              <Text className="text-[#00343F] font-lexendBold text-lg">
+                That's correct
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -334,12 +324,13 @@ export default function CarDetailsScreen() {
                 Edit {editingField?.label}
               </Text>
 
-              {editingField?.type === "text" ? (
+              {editingField?.type === "text" || editingField?.type === "numeric" ? (
                 <View className="border border-[#D0CCA6] rounded-xl px-4 py-2 mb-6">
                   <TextInput
                     value={tempValue}
                     onChangeText={setTempValue}
                     autoFocus={true}
+                    keyboardType={editingField?.type === "numeric" ? "numeric" : "default"}
                     className="text-[#00343F] font-lexendMedium py-2 text-[16px]"
                     placeholderTextColor="#9BBABB"
                   />
@@ -349,10 +340,10 @@ export default function CarDetailsScreen() {
                   {editingField?.options?.map((opt, idx) => (
                     <TouchableOpacity
                       key={idx}
-                      className={`py-4 border-b border-[#9BBABB]/10 ${tempValue === opt ? "bg-[#29D7DE]/10" : ""}`}
+                      className={`py-4 border-b border-[#9BBABB]/10 ${tempValue === opt ? "bg-[#29D7DE]/10 rounded-[4px]" : ""}`}
                       onPress={() => setTempValue(opt)}
                     >
-                      <Text className={`font-lexendMedium ${tempValue === opt ? "text-[#29D7DE]" : "text-[#00343F]"}`}>
+                      <Text className={`font-lexendMedium px-2 ${tempValue === opt ? "text-[#29D7DE]" : "text-[#00343F]"}`}>
                         {opt}
                       </Text>
                     </TouchableOpacity>

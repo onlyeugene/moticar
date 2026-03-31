@@ -3,19 +3,7 @@ import BottomSheet from "@/components/shared/BottomSheet";
 import { Ionicons } from "@expo/vector-icons";
 import { Text, TouchableOpacity, View } from "react-native";
 import HomeIcon from "@/assets/icons/home.svg";
-
-interface Station {
-  name: string;
-  color: string;
-}
-
-const FUEL_STATIONS: Station[] = [
-  { name: "RAMEN", color: "#E53935" },
-  { name: "elf", color: "#006064" },
-  { name: "SHELL", color: "#FDD835" },
-  { name: "Total", color: "#E65100" },
-  { name: "Mobil", color: "#1565C0" },
-];
+import { BrandTags } from "@/lib";
 
 function getDetails(item: DiagnosticItem | null, activeCar: any) {
   if (!item) return [];
@@ -139,25 +127,13 @@ export default function DiagnosticDetailSheet({
           </View>
         ))}
 
-        {/* Fuel stations */}
-        {showFuelStations && (
-          <View className="py-4 border-b border-[#F5F5F5]">
+        {/* Brands/Manufacturers Section */}
+        {item?.brands && item.brands.length > 0 && (
+          <View className="py-4 border-b border-[#C1C3C3]">
             <Text className="text-[#001A1F] text-[14px] font-lexendRegular mb-3">
-              Reputable Stations
+              {item.key === "tyres" ? "Manufacturers" : "Reputable Brands"}
             </Text>
-            <View className="flex-row gap-2 flex-wrap">
-              {FUEL_STATIONS.map((s) => (
-                <View
-                  key={s.name}
-                  className="px-3 py-1.5 rounded-full"
-                  style={{ backgroundColor: s.color }}
-                >
-                  <Text className="text-white text-[10px] font-lexendBold">
-                    {s.name}
-                  </Text>
-                </View>
-              ))}
-            </View>
+            <BrandTags width={60} height={15} brands={item.brands} />
           </View>
         )}
 

@@ -3,7 +3,13 @@ import { useUploadDocument } from "@/hooks/useCars";
 import { CarDocument } from "@/types/car";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
-import { ActivityIndicator, Alert, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import DocumentManagementSheet from "../sheets/DocumentManagementSheet";
 // Using expo-image-picker if available, otherwise fallback to Alert
 import * as ImagePicker from "expo-image-picker";
@@ -14,9 +20,9 @@ interface DashboardDocumentsProps {
 }
 
 const DOC_ICON_MAP: Record<string, React.FC<any>> = {
-  "MOT": Body,
+  MOT: Body,
   "Vehicle License": Body,
-  "Tax": Body,
+  Tax: Body,
   "Insurance Status": Body,
 };
 
@@ -84,8 +90,45 @@ export default function DashboardDocuments({
     const doc = documents.find((d) => d.type === type);
     const hasData = !!doc;
     const isUploading = uploadingType === type;
-    const isExpired = doc?.status === "expired";
     const IconComp = DOC_ICON_MAP[type] || Body;
+
+    let statusText = "No data recorded";
+    let statusColor = "text-[#B4B1B1]";
+    let StatusIcon = null;
+
+    if (hasData) {
+      const expiryDate = new Date(doc.expiryDate);
+      // Ensure we clear time portions for an accurate day difference
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const expire = new Date(expiryDate);
+      expire.setHours(0, 0, 0, 0);
+
+      const diffTime = expire.getTime() - today.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      const formattedDate = expiryDate.toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      });
+
+      if (diffDays < 0) {
+        statusText = `Inactive `;
+        statusColor = "text-[#B30303]";
+        StatusIcon = <Ionicons name="close" size={16} color="#B30303" />;
+      } else if (diffDays <= 30) {
+        statusText = `Expires in ${diffDays} days`;
+        statusColor = "text-[#EAA535]";
+        StatusIcon = <Ionicons name="checkmark" size={16} color="#1ED760" />;
+      } else {
+        statusText = `Active • ${formattedDate}`;
+        statusColor = "text-[#1ED760]";
+        StatusIcon = (
+          <Ionicons name="checkmark" size={16} color="#1ED760" />
+        );
+      }
+    }
 
     return (
       <View
@@ -99,7 +142,7 @@ export default function DashboardDocuments({
           <TouchableOpacity
             onPress={() => handlePickDocument(type)}
             disabled={!!uploadingType}
-            className={`rounded-full bg-white p-3 ${uploadingType ? "opacity-50" : ""}`}
+            className={`rounded-full ${hasData ? "" : "bg-white"} p-3 ${uploadingType ? "opacity-50" : ""}`}
           >
             {isUploading ? (
               <ActivityIndicator size="small" color="#00AEB5" />
@@ -116,17 +159,12 @@ export default function DashboardDocuments({
           <Text className="text-[#050505] text-[16px] font-lexendRegular">
             {label}
           </Text>
-          <Text 
-            className={`text-[12px] font-lexendRegular ${isExpired ? "text-[#FF4D4D]" : "text-[#B4B1B1]"}`}
-          >
-            {hasData
-              ? `Expires: ${new Date(doc.expiryDate).toLocaleDateString("en-GB", {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                })}`
-              : "No data recorded"}
-          </Text>
+          <View className="flex-row items-center mt-1">
+            <Text className={`text-[12px] font-lexendMedium ${statusColor}`}>
+              {statusText}
+            </Text>
+            {StatusIcon}
+          </View>
         </View>
       </View>
     );
@@ -151,6 +189,8 @@ export default function DashboardDocuments({
         visible={isSheetVisible}
         onClose={() => setIsSheetVisible(false)}
         documents={documents}
+        onUpload={(type) => handlePickDocument(type)}
+        uploadingType={uploadingType}
       />
     </View>
   );
