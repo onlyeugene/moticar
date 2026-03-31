@@ -4,16 +4,28 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useLogout, useDeleteAccount, useUpdateProfile } from "@/hooks/useAuth";
 import CurrencySelectionSheet, { CURRENCIES } from "@/components/sheets/CurrencySelectionSheet";
 import React, { useState } from "react";
+import BookIcon from "@/assets/more/book.svg";
+import CoinStack from "@/assets/more/coinstack.svg";
+import Headset from "@/assets/more/headphones.svg";
+import Command from "@/assets/more/command.svg";
+import HelpIcon from "@/assets/more/help-circle.svg";
+import KeyIcon from "@/assets/more/key.svg";
+import Logout from "@/assets/more/logout.svg";
+import Translate from "@/assets/more/translate.svg";
+import Inbox from "@/assets/more/inbox.svg";
+
+
+
 
 interface SettingItemProps {
-  icon: string;
+  icon: React.FC<any>;
   label: string;
   value?: string;
   onPress?: () => void;
   isLast?: boolean;
 }
 
-function SettingItem({ icon, label, value, onPress, isLast }: SettingItemProps) {
+function SettingItem({ icon: Icon, label, value, onPress, isLast }: SettingItemProps) {
   return (
     <TouchableOpacity
       className={`flex-row items-center justify-between py-4 ${
@@ -22,8 +34,8 @@ function SettingItem({ icon, label, value, onPress, isLast }: SettingItemProps) 
       onPress={onPress}
     >
       <View className="flex-row items-center gap-3">
-        <Ionicons name={icon as any} size={20} color="#006C70" />
-        <Text className="text-[#00343F] text-[14px] font-lexendRegular">
+        <Icon width={18} height={18} />
+        <Text className="text-[#001A1F] text-[14px] font-lexendRegular">
           {label}
         </Text>
       </View>
@@ -33,7 +45,7 @@ function SettingItem({ icon, label, value, onPress, isLast }: SettingItemProps) 
             {value}
           </Text>
         )}
-        <Ionicons name="chevron-forward" size={16} color="#ADADAD" />
+        <Ionicons name="chevron-forward" size={16} color="#7BA0A3" />
       </View>
     </TouchableOpacity>
   );
@@ -79,16 +91,16 @@ export default function MoreScreen() {
         contentContainerStyle={{ paddingTop: 60, paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >
-        <Text className="text-[#00343F] text-[28px] font-lexendBold mb-6">
+        <Text className="text-[#00343F] text-[26px] font-lexendMedium mb-6">
           More
         </Text>
 
         {/* Profile Card */}
-        <TouchableOpacity className="bg-[#FEF9C3] rounded-[16px] p-4 flex-row items-center justify-between mb-8 border border-[#FDE68A]">
+        <TouchableOpacity className="bg-[#ECE6B7] rounded-[8px] p-4 flex-row items-center justify-between mb-8 border border-[#F8E761]">
           <View className="flex-row items-center gap-4">
             <View>
-              <View className="w-[64px] h-[64px] rounded-full bg-[#E5E7EB] items-center justify-center border-2 border-white overflow-hidden">
-                <View className="bg-[#29D7DE]/20 w-full h-full items-center justify-center">
+              <View className="w-[64px] h-[64px] rounded-full bg-[#F4EBFF] items-center justify-center border-2 border-[#F4EBFF] overflow-hidden">
+                <View className="bg-white w-full h-full items-center justify-center">
                   <Text className="text-[#006C70] text-[24px] font-lexendBold">
                     {user?.name?.charAt(0) || user?.username?.charAt(0) || "U"}
                   </Text>
@@ -97,37 +109,37 @@ export default function MoreScreen() {
               <View className="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-[#22C55E] border-2 border-[#FEF9C3]" />
             </View>
             <View>
-              <Text className="text-[#00343F] text-[14px] font-lexendRegular">
-                {user?.preferredName || user?.name || "Bamidele Akeem"}
+              <Text className="text-[#00343F] text-[14px] font-lexendMedium">
+                {user?.preferredName || user?.name || ""}
               </Text>
               <Text className="text-[#00343F] text-[20px] font-lexendBold">
-                {user?.username || "Keemson"}
+                {user?.email || ""}
               </Text>
-              <View className="bg-[#29D7DE] px-2 py-0.5 rounded-md mt-1 self-start">
-                <Text className="text-[#00343F] text-[10px] font-lexendRegular">
-                  userID: {user?.id?.slice(-8) || "123324244"}
+              <View className="bg-[#29D7DE] px-2 py-2 rounded-md mt-1 self-start">
+                <Text className="text-[#00343F] text-[12px] font-lexendRegular">
+                  userID: {user?.id?.slice(-8) || ""}
                 </Text>
               </View>
             </View>
           </View>
-          <Ionicons name="chevron-forward" size={20} color="#00343F" opacity={0.5} />
+          <Ionicons name="chevron-forward" size={24} color="#7BA0A3" opacity={0.5} />
         </TouchableOpacity>
 
         {/* SETTINGS */}
-        <Text className="text-[#879090] text-[12px] font-lexendBold tracking-widest mb-2 px-1">
+        <Text className="text-[#6C6C70] text-[14px] font-lexendMedium mb-2 px-1">
           SETTINGS
         </Text>
         <View className="bg-white rounded-[16px] px-4 mb-8">
-          <SettingItem icon="key-outline" label="Change Password" />
-          <SettingItem icon="mail-outline" label="Email Subscriptions" />
+          <SettingItem icon={KeyIcon} label="Change Password" />
+          <SettingItem icon={Inbox} label="Email Subscriptions" />
           <SettingItem
-            icon="cash-outline"
+            icon={CoinStack}
             label="Currency"
             value={`${currentCurrency.code} [ ${currentCurrency.symbol} ]`}
             onPress={() => setShowCurrencySheet(true)}
           />
           <SettingItem
-            icon="language-outline"
+            icon={Translate}
             label="Language"
             value="English"
             isLast={true}
@@ -135,28 +147,28 @@ export default function MoreScreen() {
         </View>
 
         {/* SUPPORT */}
-        <Text className="text-[#879090] text-[12px] font-lexendBold tracking-widest mb-2 px-1">
+        <Text className="text-[#6C6C70] text-[14px] font-lexendMedium mb-2 px-1">
           SUPPORT
         </Text>
         <View className="bg-white rounded-[16px] px-4 mb-8">
-          <SettingItem icon="headset-outline" label="Contact Us" />
-          <SettingItem icon="help-circle-outline" label="FAQ" />
-          <SettingItem icon="document-text-outline" label="Terms & Policy" />
-          <SettingItem icon="people-outline" label="Community" isLast={true} />
+          <SettingItem icon={Headset} label="Contact Us" />
+          <SettingItem icon={HelpIcon} label="FAQ" />
+          <SettingItem icon={BookIcon} label="Terms & Policy" />
+          <SettingItem icon={Command} label="Community" isLast={true} />
         </View>
 
         {/* YOUR ACCOUNT */}
-        <Text className="text-[#879090] text-[12px] font-lexendBold tracking-widest mb-2 px-1">
+        <Text className="text-[#6C6C70] text-[14px] font-lexendMedium mb-2 px-1">
           YOUR ACCOUNT
         </Text>
         <View className="bg-white rounded-[16px] px-4 mb-8">
           <SettingItem
-            icon="log-out-outline"
+            icon={Logout}
             label="Logout"
             onPress={handleLogout}
           />
           <SettingItem
-            icon="alert-circle-outline"
+            icon={HelpIcon}
             label="Delete Account"
             onPress={handleDeleteAccount}
             isLast={true}
