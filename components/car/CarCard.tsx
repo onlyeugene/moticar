@@ -30,7 +30,7 @@ export function CarCard({ activeCar, onAddCar, onValuation }: CarCardProps) {
             <CarIcon make={activeCar?.make || ""} size={32} />
           </View>
           <View className="bg-white border border-dashed border-[#E5E5E5] px-4 h-[44px] items-center justify-center rounded-lg">
-            <Text className="text-[#00343F] text-[18px] font-lexendBold uppercase">
+            <Text className="text-[#00343F] text-[18px] font-ukNumberPlate">
               {activeCar?.plate || "-"}
             </Text>
           </View>

@@ -1,3 +1,4 @@
+import { BrandTags } from "@/lib";
 import BrakesIcon from "@/assets/facts/brake.svg";
 import BatteryIcon from "@/assets/facts/battery.svg";
 import EngineOilIcon from "@/assets/facts/oil.svg";
@@ -7,20 +8,6 @@ import BottomSheet from "@/components/shared/BottomSheet";
 import { Ionicons } from "@expo/vector-icons";
 import { Text, TouchableOpacity, View } from "react-native";
 
-const PART_BRANDS = ["BOSCH", "STARK", "RIDEX"];
-
-function BrandTags() {
-  return (
-    <View className="flex-row gap-1 mt-1">
-      {PART_BRANDS.map((brand) => (
-        <View key={brand} className="bg-[#F0F0F0] px-1.5 py-0.5 rounded">
-          <Text className="text-[7px] font-lexendBold text-[#555]">{brand}</Text>
-        </View>
-      ))}
-    </View>
-  );
-}
-
 interface DiagnosticItem {
   key: string;
   label: string;
@@ -28,6 +15,7 @@ interface DiagnosticItem {
   sub: string;
   Icon: React.FC<{ width: number; height: number }>;
   hasBrands?: boolean;
+  brands?: string[];
   tag?: string;
 }
 
@@ -46,7 +34,8 @@ export function getDiagnosticItems(activeCar: any): DiagnosticItem[] {
       value: activeCar?.tyreSpec?.size || "265x45 R20",
       sub: `Recommended tyre pressure is between ${activeCar?.tyreSpec?.recommendedPressurePsi || "40–44 psi"}`,
       Icon: TyresIcon,
-      hasBrands: true,
+      hasBrands: !!activeCar?.tyreSpec?.manufacturers?.length,
+      brands: activeCar?.tyreSpec?.manufacturers,
     },
     {
       key: "engineOil",
@@ -56,6 +45,7 @@ export function getDiagnosticItems(activeCar: any): DiagnosticItem[] {
         : "8L",
       sub: `Recommended grades: ${activeCar?.engineOil?.recommendedGrade || "5W-30, 10W-40"}`,
       Icon: EngineOilIcon,
+      brands: activeCar?.engineOil?.reputableBrands,
     },
     {
       key: "fuel",
@@ -66,6 +56,7 @@ export function getDiagnosticItems(activeCar: any): DiagnosticItem[] {
       sub: "Full Tank",
       Icon: FuelIcon,
       tag: `Est. ₦${((activeCar?.fuelSpec?.capacityLiters || 93) * (activeCar?.fuelSpec?.avgPriceRange || 650)).toLocaleString()}`,
+      brands: activeCar?.fuelSpec?.reputableStations,
     },
     {
       key: "brakePads",
@@ -75,6 +66,7 @@ export function getDiagnosticItems(activeCar: any): DiagnosticItem[] {
         : "10mm",
       sub: `Est. last between ${activeCar?.brakePads?.estLifespanMiles || "30,000–70,000 miles"}`,
       Icon: BrakesIcon,
+      brands: activeCar?.brakePads?.reputableBrands,
     },
     {
       key: "battery",
@@ -82,7 +74,8 @@ export function getDiagnosticItems(activeCar: any): DiagnosticItem[] {
       value: activeCar?.batteryVoltage || "13.7V",
       sub: "Normal operating voltage",
       Icon: BatteryIcon,
-      hasBrands: true,
+      hasBrands: !!activeCar?.batterySpec?.providers?.length,
+      brands: activeCar?.batterySpec?.providers,
     },
   ];
 }
@@ -132,7 +125,9 @@ export default function DiagnosticListSheet({
                       {item.value}
                     </Text>
                   </View>
-                  {item.hasBrands && <BrandTags />}
+                  {item.hasBrands && (
+                    <BrandTags size="small" brands={item.brands || []} />
+                  )}
                   <View className="flex-row justify-between items-center mt-1">
                     <Text className="text-[#879090] text-[10px] font-lexendRegular flex-1 mr-2">
                       {item.sub}

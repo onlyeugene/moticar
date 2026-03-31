@@ -210,16 +210,16 @@ export default function ScanDetailsScreen() {
           </View>
 
           <View className="flex-row items-center justify-center gap-2 mb-8 px-6 pt-6">
-            <View className="h-[1px] flex-1 bg-[#D0CCA6]" />
-            <Text className="text-[#D0CCA6] font-lexendMedium text-[10px] uppercase tracking-widest">
+            {/* <View className="h-[1px] flex-1 bg-[#D0CCA6]" /> */}
+            <Text className="text-[#A8A477] font-lexendMedium text-[12px]">
               Expected Features
             </Text>
-            <View className="h-[1px] flex-1 bg-[#D0CCA6]" />
+            {/* <View className="h-[1px] flex-1 bg-[#D0CCA6]" /> */}
           </View>
 
           <ScrollView
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 120 }}
+            contentContainerStyle={{ paddingBottom: 10 }}
           >
             <View className="flex-row flex-wrap px-6">
               {detailItems.map((item, index) => (
