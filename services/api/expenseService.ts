@@ -7,7 +7,8 @@ import {
   ValuationBreakdown, 
   PriceRecommendationInput, 
   PriceRecommendation,
-  UpdateExpenseInput
+  UpdateExpenseInput,
+  ScanReceiptResponse
 } from "@/types/expense";
 
 /**
@@ -22,10 +23,83 @@ export const expenseService = {
     return response.data;
   },
 
+  /** Scan a receipt and extract details (AI scan) */
+  scanReceipt: async (file: any): Promise<ScanReceiptResponse> => {
+    const formData = new FormData();
+    const filename = file.uri.split("/").pop();
+    const match = /\.(\w+)$/.exec(filename || "");
+    const type = match ? `image/${match[1]}` : "image";
+
+    formData.append("receipt", {
+      uri: file.uri,
+      name: filename,
+      type,
+    } as any);
+
+    const response = await apiClient.post(API_ROUTES.EXPENSES.SCAN_RECEIPT, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
+    return response.data;
+  },
+
+  /** Upload multiple receipts for an expense */
+  uploadReceipts: async (files: any[]): Promise<{ urls: string[] }> => {
+    const formData = new FormData();
+    
+    files.forEach((file, index) => {
+      const filename = file.uri.split("/").pop();
+      const match = /\.(\w+)$/.exec(filename || "");
+      const type = match ? `image/${match[1]}` : "image";
+      
+      formData.append("files", {
+        uri: file.uri,
+        name: filename || `receipt_${index}.jpg`,
+        type,
+      } as any);
+    });
+
+    const response = await apiClient.post(API_ROUTES.EXPENSES.UPLOAD_RECEIPT, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
+    return response.data;
+  },
+
+  /** Upload a receipt as proof (No AI scan) */
+  uploadReceipt: async (file: any, carId?: string): Promise<ScanReceiptResponse> => {
+    const formData = new FormData();
+    
+    if (file.uri) {
+      const uriParts = file.uri.split('.');
+      let fileType = uriParts[uriParts.length - 1].toLowerCase();
+      if (fileType === 'jpg') fileType = 'jpeg';
+
+      formData.append("file", {
+        uri: file.uri,
+        name: `receipt.${fileType}`,
+        type: `image/${fileType}`,
+      } as any);
+    } else {
+      formData.append("file", file);
+    }
+
+    if (carId) {
+      formData.append("carId", carId);
+    }
+
+    const response = await apiClient.post(API_ROUTES.EXPENSES.UPLOAD_RECEIPT, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  },
+
   /** Get standardized expense categories with budget tracking */
   getExpenseCategories: async (carId?: string): Promise<CategoriesResponse> => {
     const response = await apiClient.get(API_ROUTES.EXPENSES.CATEGORIES, { params: { carId } });
-    console.log("Categories Response:", JSON.stringify(response.data, null, 2));
+    // console.log("Categories Response:", JSON.stringify(response.data, null, 2));
     return response.data;
   },
 

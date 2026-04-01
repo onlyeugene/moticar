@@ -4,12 +4,15 @@ import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Image,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 import { format } from "date-fns";
 import BottomSheet from "../shared/BottomSheet";
 import ScanIcon from '@/assets/icons/scan.svg'
@@ -18,9 +21,11 @@ import ScanIcon from '@/assets/icons/scan.svg'
 
 // Dynamic Icons (Fallback mapping)
 
-import { useLogExpense } from "@/hooks/useExpenses";
+import { useLogExpense, useScanReceipt, useUploadReceipts } from "@/hooks/useExpenses";
 import { useAppStore } from "@/store/useAppStore";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useUserCars } from "@/hooks/useCars";
+import { useActivitySpends } from "@/hooks/useActivity";
 import { Technician } from "@/types/technician";
 import { getCurrencySymbol } from "@/utils/currency";
 import DatePickerSheet from "./DatePickerSheet";
@@ -99,7 +104,12 @@ export default function LogExpenseSheet({
   const { selectedCarId } = useAppStore();
   const currencySymbol = getCurrencySymbol(user?.preferredCurrency);
 
+  const { data: carsData } = useUserCars();
+  const selectedCar = carsData?.cars?.find((c: any) => (c.id || c._id) === selectedCarId);
+
   const { mutate: logExpense, isPending } = useLogExpense();
+  const { mutate: scanReceipt, isPending: isScanning } = useScanReceipt();
+  const { mutate: uploadReceipts, isPending: isUploading } = useUploadReceipts();
 
   // Form State
   const [name, setName] = useState("");
@@ -112,6 +122,15 @@ export default function LogExpenseSheet({
   const [extraCosts, setExtraCosts] = useState<ExpenseItem[]>([]);
   const [dynamicFields, setDynamicFields] = useState<Record<string, string>>(
     {},
+  );
+
+  const currentMonth = date ? (date.getMonth() + 1).toString() : (new Date().getMonth() + 1).toString();
+  const currentYear = date ? date.getFullYear().toString() : new Date().getFullYear().toString();
+
+  const { data: spendData } = useActivitySpends(
+    selectedCarId || "",
+    currentMonth,
+    currentYear
   );
   const [selectedTechnician, setSelectedTechnician] =
     useState<Technician | null>(null);
@@ -186,8 +205,14 @@ export default function LogExpenseSheet({
 
   const budgetRecommended =
     category.budgetRecommended || category.recommendedBudget || 0;
-  const spent = category.totalSpentThisMonth || 0;
-  const budgetLeft = budgetRecommended - spent;
+
+  // Use car's monthly budget as primary, fallback to category recommendation
+  const totalBudget = selectedCar?.monthlyBudget || budgetRecommended;
+  const spentSoFar = spendData?.totalSpend || 0;
+  const currentAmount = parseFloat(amount) || 0;
+
+  // Budget left = Total Budget - (Already Spent + Current Input)
+  const budgetLeft = totalBudget - (spentSoFar + currentAmount);
   const isOverBudget = budgetLeft < 0;
 
   const handleAddExtraCost = () => {
@@ -213,6 +238,101 @@ export default function LogExpenseSheet({
     0,
   );
 
+  const showImageSourceOptions = (onSelect: (source: "camera" | "library") => void) => {
+    Alert.alert(
+      "Select Receipt Source",
+      "Would you like to take a photo or choose from your gallery?",
+      [
+        {
+          text: "Take Photo",
+          onPress: () => onSelect("camera"),
+        },
+        {
+          text: "Choose from Gallery",
+          onPress: () => onSelect("library"),
+        },
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+      ],
+    );
+  };
+
+  const pickImage = async (source: "camera" | "library") => {
+    let result;
+    if (source === "camera") {
+      const permission = await ImagePicker.requestCameraPermissionsAsync();
+      if (!permission.granted) {
+        Alert.alert("Permission Required", "Please allow camera access to take a photo.");
+        return null;
+      }
+      result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        quality: 1,
+      });
+    } else {
+      result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        quality: 1,
+      });
+    }
+
+    if (!result.canceled && result.assets && result.assets[0]) {
+      return result.assets[0];
+    }
+    return null;
+  };
+
+  const triggerScan = () => {
+    showImageSourceOptions(async (source) => {
+      const asset = await pickImage(source);
+      if (asset) {
+        scanReceipt(asset, {
+          onSuccess: (data) => {
+            if (data.name) setName(data.name);
+            if (data.amount) setAmount(data.amount.toString());
+            if (data.date) setDate(new Date(data.date));
+            if (data.notes) setNotes(data.notes);
+            if (data.receiptUrl) {
+              setReceipts((prev) => [...prev, data.receiptUrl!]);
+            }
+          },
+          onError: (err: any) => {
+            console.error("Failed to scan receipt:", err);
+            const errorMessage = err.response?.data?.message || err.message || "Failed to process the receipt.";
+            Alert.alert("Error", errorMessage);
+          },
+        });
+      }
+    });
+  };
+
+  const triggerUpload = () => {
+    showImageSourceOptions(async (source) => {
+      const asset = await pickImage(source);
+      if (asset) {
+        uploadReceipts([asset], {
+          onSuccess: (data) => {
+            if (data.urls && data.urls.length > 0) {
+              setReceipts((prev) => [...prev, ...data.urls]);
+            }
+          },
+          onError: (err: any) => {
+            console.error("Failed to upload receipt:", err);
+            const errorMessage = err.response?.data?.message || err.message || "Failed to upload the receipt.";
+            Alert.alert("Error", errorMessage);
+          },
+        });
+      }
+    });
+  };
+
+  const removeReceipt = (index: number) => {
+    setReceipts((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const handleSave = () => {
     if (!selectedCarId || !name || !amount || !paymentMethod || !date) {
       // Basic validation
@@ -230,7 +350,7 @@ export default function LogExpenseSheet({
       notes,
       items: extraCosts.filter((item) => item.name && item.price),
       metadata: { ...dynamicFields },
-      receiptUrl: receipts[0],
+      receipts,
     };
 
     if (selectedTechnician) {
@@ -276,8 +396,16 @@ export default function LogExpenseSheet({
 
   const headerRight = (
     <View className="flex-row items-center gap-2">
-      <TouchableOpacity className="w-12 h-12 rounded-full bg-white border border-[#E0E0E0] items-center justify-center">
-        <ScanIcon width={24}/>
+      <TouchableOpacity 
+        onPress={triggerScan}
+        disabled={isScanning}
+        className="w-12 h-12 rounded-full bg-white border border-[#E0E0E0] items-center justify-center"
+      >
+        {isScanning ? (
+           <ActivityIndicator size="small" color="#29D7DE" />
+        ) : (
+          <ScanIcon width={24}/>
+        )}
       </TouchableOpacity>
       <TouchableOpacity
         onPress={handleSave}
@@ -318,7 +446,7 @@ export default function LogExpenseSheet({
             {isOverBudget ? "-" : ""} {currencySymbol}{" "}
             {Math.abs(budgetLeft).toLocaleString()} of{" "}
             <Text className="text-[#C5BF8A] line-through">
-              {currencySymbol} {budgetRecommended.toLocaleString()}
+              {currencySymbol} {totalBudget.toLocaleString()}
             </Text>
           </Text>
         </View>
@@ -344,18 +472,23 @@ export default function LogExpenseSheet({
             <Text className="text-[#9BBABB] text-[12px] font-lexendRegular text-center mb-2">
               Enter amount
             </Text>
-            <TextInput
-              className="text-[#00343F] font-lexendBold text-center text-[32px] mb-2"
-              placeholder={`${currencySymbol} 0`}
-              placeholderTextColor="#B4B1B1"
-              keyboardType="numeric"
-              value={amount}
-              onChangeText={(val) => {
-                // Ensure only numbers and a single decimal point
-                const numericValue = val.replace(/[^0-9.]/g, "");
-                setAmount(numericValue);
-              }}
-            />
+            <View className="flex-row items-center justify-center gap-2 mb-2">
+              <Text className="text-[#00343F] font-lexendBold text-[32px]">
+                {currencySymbol}
+              </Text>
+              <TextInput
+                className="text-[#00343F] font-lexendBold text-center text-[32px]"
+                placeholder="0"
+                placeholderTextColor="#B4B1B1"
+                keyboardType="numeric"
+                value={amount}
+                onChangeText={(val) => {
+                  // Ensure only numbers and a single decimal point
+                  const numericValue = val.replace(/[^0-9.]/g, "");
+                  setAmount(numericValue);
+                }}
+              />
+            </View>
 
             {/* Price Ruler Section */}
             <View className="h-24">
@@ -423,36 +556,43 @@ export default function LogExpenseSheet({
         {/* Card 2: Receipt Upload */}
         <View className="bg-white px-4 mb-1 rounded-none py-2">
           <FieldRow
-          noBorder
+            noBorder
             label="Upload any image proof or receipt"
             icon={PhotoIcon}
-            onPress={() => console.log("Upload receipt")}
+            onPress={triggerUpload}
             rightElement={
               <View className="flex-row items-center gap-2">
-               {receipts.length > 0 ? (
-                <View className="flex-row justify-between items-center h-[50px]">
+                <View >
                   <View className="flex-row gap-2">
-                    {receipts.slice(0, 4).map((uri, i) => (
-                      <View
-                        key={i}
-                        className="w-12 h-12 bg-gray-50 rounded-lg border border-gray-100 overflow-hidden"
-                      >
-                        <Image source={{ uri }} className="w-full h-full" />
+                    {receipts.map((uri, index) => (
+                      <View key={`${uri}-${index}`} className="relative">
+                        <View className="w-12 h-12 bg-gray-50 rounded-lg border border-gray-100 overflow-hidden">
+                          <Image source={{ uri }} className="w-full h-full" />
+                        </View>
+                        <TouchableOpacity 
+                          onPress={() => removeReceipt(index)}
+                          className="absolute -top-1 -right-1 bg-white rounded-full shadow-sm z-10"
+                        >
+                          <Ionicons name="close-circle" size={18} color="#EE6969" />
+                        </TouchableOpacity>
                       </View>
                     ))}
+                    
+                    {isUploading ? (
+                       <View className="w-12 h-12 bg-[#F5F5F5] rounded-lg items-center justify-center">
+                          <ActivityIndicator size="small" color="#29D7DE" />
+                       </View>
+                    ) : receipts.length < 5 ? (
+                      <TouchableOpacity 
+                        onPress={triggerUpload}
+                        className="w-12 h-12 bg-[#F5F5F5] rounded-lg items-center justify-center border border-dashed border-[#D0D0D0]"
+                      >
+                        <CameraPlusIcon width={20} height={20} />
+                      </TouchableOpacity>
+                    ) : null}
                   </View>
-                  <Ionicons name="chevron-forward" size={18} color="#C1C3C3" />
                 </View>
-              ) : (
-                <View className="flex-row items-center gap-2">
-                  <View className="w-20 h-20 bg-[#F5F5F5] rounded-xl items-center justify-center">
-                    <View className="bg-white w-[60px] h-[60px] rounded-xl border border-dashed border-[#D0D0D0] items-center justify-center">
-                     <CameraPlusIcon />
-                    </View>
-                  </View>
-                  <Ionicons name="chevron-forward" size={18} color="#C1C3C3" />
-                </View>
-              )}
+                <Ionicons name="chevron-forward" size={18} color="#C1C3C3" className="ml-2" />
               </View>
             }
           />

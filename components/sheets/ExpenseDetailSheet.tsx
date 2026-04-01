@@ -1,7 +1,8 @@
 import React, { useState, useEffect, createElement } from "react";
-import { View, Text, TouchableOpacity, Image, TextInput, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Image, TextInput, Alert, ScrollView, Modal, ActivityIndicator } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useUpdateExpense, useDeleteExpense } from "@/hooks/useExpenses";
+import * as ImagePicker from "expo-image-picker";
+import { useUpdateExpense, useDeleteExpense, useUploadReceipts } from "@/hooks/useExpenses";
 import { Expense } from "@/types/expense";
 import { Technician } from "@/types/technician";
 import BottomSheet from "../shared/BottomSheet";
@@ -17,6 +18,7 @@ import Calendar from "@/assets/icons/calendar.svg";
 import Notes from "@/assets/new/notes.svg";
 import Wallet from "@/assets/new/wallet.svg";
 import DeleteIcon from "@/assets/new/delete.svg";
+import CameraPlusIcon from "@/assets/icons/cameraplus.svg";
 
 import DatePickerSheet from "./DatePickerSheet";
 import TechnicianSheet from "./TechnicianSheet";
@@ -39,9 +41,12 @@ export default function ExpenseDetailSheet({
   const [editedExpense, setEditedExpense] = useState<Expense | null>(null);
   const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
   const [isTechnicianSheetVisible, setIsTechnicianSheetVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const updateMutation = useUpdateExpense();
   const deleteMutation = useDeleteExpense();
+  const { mutate: uploadReceipts } = useUploadReceipts();
 
   useEffect(() => {
     if (expense) {
@@ -140,6 +145,7 @@ export default function ExpenseDetailSheet({
           paymentMethod: editedExpense.paymentMethod,
           items: editedExpense.items,
           metadata: editedExpense.metadata,
+          receipts: editedExpense.receipts,
           technicianId: typeof editedExpense.technicianId === 'object' 
             ? editedExpense.technicianId?._id || (editedExpense.technicianId as any)?.id 
             : editedExpense.technicianId
@@ -179,6 +185,82 @@ export default function ExpenseDetailSheet({
     if (editedExpense) {
       setEditedExpense({ ...editedExpense, [field]: value });
     }
+  };
+
+  const showImageSourceOptions = (onSelect: (source: "camera" | "library") => void) => {
+    Alert.alert(
+      "Select Receipt Source",
+      "Would you like to take a photo or choose from your gallery?",
+      [
+        {
+          text: "Take Photo",
+          onPress: () => onSelect("camera"),
+        },
+        {
+          text: "Choose from Gallery",
+          onPress: () => onSelect("library"),
+        },
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+      ],
+    );
+  };
+
+  const pickImage = async (source: "camera" | "library") => {
+    let result;
+    if (source === "camera") {
+      const permission = await ImagePicker.requestCameraPermissionsAsync();
+      if (!permission.granted) {
+        Alert.alert("Permission Required", "Please allow camera access to take a photo.");
+        return null;
+      }
+      result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        quality: 1,
+      });
+    } else {
+      result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        quality: 1,
+      });
+    }
+
+    if (!result.canceled && result.assets && result.assets[0]) {
+      return result.assets[0];
+    }
+    return null;
+  };
+
+  const handleAddReceipt = () => {
+    showImageSourceOptions(async (source) => {
+      const asset = await pickImage(source);
+      if (asset) {
+        setIsUploading(true);
+        uploadReceipts([asset], {
+          onSuccess: (data: any) => {
+            if (data.urls && data.urls.length > 0) {
+              const currentReceipts = editedExpense.receipts || [];
+              updateField("receipts", [...currentReceipts, ...data.urls]);
+            }
+            setIsUploading(false);
+          },
+          onError: (err: any) => {
+            console.error("Failed to upload receipt:", err);
+            const errorMessage = err.response?.data?.message || err.message || "Failed to upload the receipt.";
+            Alert.alert("Error", errorMessage);
+            setIsUploading(false);
+          },
+        });
+      }
+    });
+  };
+
+  const handleRemoveReceipt = (index: number) => {
+    const currentReceipts = editedExpense.receipts || [];
+    updateField("receipts", currentReceipts.filter((_, i) => i !== index));
   };
 
   const updateMetadata = (field: string, value: any) => {
@@ -313,26 +395,49 @@ export default function ExpenseDetailSheet({
           icon={Photo} 
           label={isEditing ? "Upload any image proof or receipt" : "Image proof or receipt"}
           value=""
-          showChevron
+          showChevron={isEditing}
         >
-          <View className="flex-row gap-2 mt-2">
-            {editedExpense.receiptUrl ? (
-              <View className="flex-row gap-2">
-                {[1, 2, 3].map((i) => (
-                  <View key={i} className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
-                    <Image 
-                      source={{ uri: editedExpense.receiptUrl }} 
-                      className="w-full h-full"
-                    />
+          <View className="flex-row items-center gap-2 mt-2">
+            <View >
+              <View className="flex-row gap-1">
+                {(editedExpense.receipts || []).map((uri, index) => (
+                  <View key={`${uri}-${index}`} className="relative">
+                    <TouchableOpacity 
+                      onPress={() => setSelectedImage(uri)}
+                      activeOpacity={0.8}
+                      className="w-12 h-12 bg-gray-50 rounded-lg border border-gray-100 overflow-hidden"
+                    >
+                      <Image source={{ uri }} className="w-full h-full" />
+                    </TouchableOpacity>
+                    {isEditing && (
+                      <TouchableOpacity 
+                        onPress={() => handleRemoveReceipt(index)}
+                        className="absolute -top-1 -right-1 bg-white rounded-full shadow-sm z-10"
+                      >
+                        <Ionicons name="close-circle" size={20} color="#EE6969" />
+                      </TouchableOpacity>
+                    )}
                   </View>
                 ))}
+                
+                {isEditing && (
+                  <>
+                    {isUploading ? (
+                      <View className="w-16 h-16 bg-[#F5F5F5] rounded-lg items-center justify-center">
+                        <ActivityIndicator size="small" color="#29D7DE" />
+                      </View>
+                    ) : (editedExpense.receipts || []).length < 5 ? (
+                      <TouchableOpacity 
+                        onPress={handleAddReceipt}
+                        className="w-16 h-16 bg-[#F5F5F5] rounded-lg items-center justify-center border border-dashed border-[#D0D0D0]"
+                      >
+                        <CameraPlusIcon width={24} height={24} />
+                      </TouchableOpacity>
+                    ) : null}
+                  </>
+                )}
               </View>
-            ) : null}
-            {isEditing && (
-               <View className="w-12 h-12 bg-white rounded-lg border border-dashed border-gray-300 items-center justify-center">
-                 <Ionicons name="add" size={24} color="#C1C3C3" />
-               </View>
-            )}
+            </View>
           </View>
         </DetailRow>
 
@@ -440,6 +545,30 @@ export default function ExpenseDetailSheet({
           </TouchableOpacity>
         )}
       </View>
+
+      {/* Full-screen Image Preview Modal */}
+      <Modal
+        visible={!!selectedImage}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setSelectedImage(null)}
+      >
+        <View className="flex-1 bg-black/90 items-center justify-center">
+          <TouchableOpacity 
+            onPress={() => setSelectedImage(null)}
+            className="absolute top-12 right-6 z-10 bg-white/10 p-2 rounded-full"
+          >
+            <Ionicons name="close" size={32} color="white" />
+          </TouchableOpacity>
+          {selectedImage && (
+            <Image 
+              source={{ uri: selectedImage }} 
+              className="w-full h-full" 
+              resizeMode="contain" 
+            />
+          )}
+        </View>
+      </Modal>
 
       <DatePickerSheet
         visible={isDatePickerVisible}

@@ -62,7 +62,10 @@ export default function TabBar({ state, descriptors, navigation, categories = []
   const [openedFromCategorySheet, setOpenedFromCategorySheet] = useState(false);
 
   const currentRouteName = state.routes[state.index].name;
+  const isHomeRoute = currentRouteName === "index";
+  const isActivityRoute = currentRouteName === "activity";
   const isCarRoute = currentRouteName === "car";
+  const showFab = isHomeRoute || isActivityRoute;
 
   const overlayAnim = useRef(new Animated.Value(0)).current;
   const fabRotate = useRef(new Animated.Value(0)).current;
@@ -212,7 +215,7 @@ export default function TabBar({ state, descriptors, navigation, categories = []
       )}
 
       {/* FAB menu items — also pointerEvents none when closing */}
-      {fabOpen && !isCarRoute && (
+      {fabOpen && isHomeRoute && (
         <View
           style={{
             position: "absolute",
@@ -283,7 +286,7 @@ export default function TabBar({ state, descriptors, navigation, categories = []
       )}
 
       {/* FAB button */}
-      {!isCarRoute && (
+      {showFab && (
         <TouchableOpacity
           style={{
             position: "absolute",
@@ -307,9 +310,10 @@ export default function TabBar({ state, descriptors, navigation, categories = []
         >
           <Animated.View style={{ transform: [{ rotate: fabRotateDeg }] }}>
             <Ionicons
-              name="add"
-              size={26}
+              name={isActivityRoute ? "play" : "add"}
+              size={isActivityRoute ? 22 : 28}
               color={fabOpen ? "#FBE74C" : "#0D2B2B"}
+              style={isActivityRoute ? { marginLeft: 2 } : {}}
             />
           </Animated.View>
         </TouchableOpacity>

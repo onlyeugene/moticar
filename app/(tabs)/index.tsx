@@ -279,7 +279,7 @@ export default function Dashboard() {
           {/* Expense Breakdown Section */}
           <ExpenseBreakdownCard
             spendData={spendData}
-            expenses={expensesData?.expenses}
+            // expenses={expensesData?.expenses}
             currencySymbol={currencySymbol}
           />
 

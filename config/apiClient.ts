@@ -32,7 +32,7 @@ const safeStringify = (data: any) => {
  */
 const apiClient = axios.create({
   baseURL: process.env.EXPO_PUBLIC_API_URL || "https://api.moticar.com/v1",
-  timeout: 30000,
+  timeout: 60000,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
@@ -76,12 +76,12 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => {
     // 🟢 Debug log for development
-    if (__DEV__) {
-      console.log(
-        `✅ [API Response] ${response.config.method?.toUpperCase()} ${response.config.url}`,
-        safeStringify(response.data)
-      );
-    }
+    // if (__DEV__) {
+    //   console.log(
+    //     `✅ [API Response] ${response.config.method?.toUpperCase()} ${response.config.url}`,
+    //     safeStringify(response.data)
+    //   );
+    // }
     return response;
   },
   async (error: AxiosError) => {

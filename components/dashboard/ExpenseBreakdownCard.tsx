@@ -55,7 +55,7 @@ const ExpenseBreakdownCard: React.FC<ExpenseBreakdownCardProps> = ({
     }
 
     return days.map((d) => dailyTotals[d]);
-  }, [spendData?.expenses]);
+  }, [expenses, spendData?.expenses]);
 
   return (
     <View className="mt-4">

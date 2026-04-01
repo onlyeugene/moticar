@@ -25,7 +25,7 @@ export interface Expense {
   amount: number;
   currency: string;
   date: string;
-  receiptUrl?: string;
+  receipts?: string[];
   technicianId?: string | Technician;
   paymentMethod: 'Cash' | 'Bank Transfer' | 'Debit Card';
   items?: ExpenseItem[];
@@ -47,7 +47,7 @@ export interface CreateExpenseInput {
   amount: number;
   date: string;
   currency?: string;
-  receiptUrl?: string;
+  receipts?: string[];
   technicianId?: string;
   paymentMethod: string;
   items?: ExpenseItem[];
@@ -61,7 +61,7 @@ export interface UpdateExpenseInput {
   date?: string;
   category?: string;
   currency?: string;
-  receiptUrl?: string;
+  receipts?: string[];
   technicianId?: string;
   paymentMethod?: string;
   items?: ExpenseItem[];
@@ -125,4 +125,14 @@ export interface PriceRecommendation {
 export interface CategoriesResponse {
   count: number;
   categories: ExpenseCategory[];
+}
+
+export interface ScanReceiptResponse {
+  name: string;
+  amount: number;
+  date: string;
+  currency: string;
+  category?: string;
+  notes?: string;
+  receiptUrl: string;
 }
