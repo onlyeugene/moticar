@@ -51,7 +51,7 @@
         "credentialsSource": "remote"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://api.moticar.com/v1"
+        "EXPO_PUBLIC_API_URL": "https://api-moticar.onrender.com/api/v1"
       }
     },
     "production-apk": {
@@ -64,7 +64,7 @@
         "credentialsSource": "remote"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://api.moticar.com/v1"
+        "EXPO_PUBLIC_API_URL": "https://api-moticar.onrender.com/api/v1"
       }
     },
     "production-both": {
@@ -78,7 +78,15 @@
         "credentialsSource": "remote"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://api.moticar.com/v1"
+        "EXPO_PUBLIC_API_URL": "https://api-moticar.onrender.com/api/v1"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "appleId": "app.hootperch@gmail.com",
+        "appleTeamId": "5RZ2GZ8X54"
       }
     }
   }

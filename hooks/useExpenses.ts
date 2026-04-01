@@ -33,6 +33,28 @@ export const useLogExpense = () => {
   });
 };
 
+/** Scan a receipt */
+export const useScanReceipt = () => {
+  return useMutation({
+    mutationFn: (file: any) => expenseService.scanReceipt(file),
+  });
+};
+
+/** Upload many receipts (no OCR) */
+export const useUploadReceipts = () => {
+  return useMutation({
+    mutationFn: (files: any[]) => expenseService.uploadReceipts(files),
+  });
+};
+
+/** Upload a receipt (No AI) */
+export const useUploadReceipt = () => {
+  return useMutation({
+    mutationFn: ({ file, carId }: { file: any; carId?: string }) => 
+      expenseService.uploadReceipt(file, carId),
+  });
+};
+
 /** Update an existing expense */
 export const useUpdateExpense = () => {
   const queryClient = useQueryClient();

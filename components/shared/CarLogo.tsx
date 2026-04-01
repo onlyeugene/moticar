@@ -37,7 +37,7 @@ import LamborghiniSvg from "@/assets/carIcons/lamborghini.svg";
 import FerrariSvg from "@/assets/carIcons/ferrari.svg";
 import AlfaRomeoSvg from "@/assets/carIcons/alfa-romeo.svg";
 import VolvoSvg from "@/assets/carIcons/volvo.svg";
-import SkodaSvg from "@/assets/carIcons/škoda.svg";
+import SkodaSvg from "@/assets/carIcons/skoda.svg";
 import MiniSvg from "@/assets/carIcons/mini-cooper.svg";
 
 interface CarLogoProps {
@@ -88,7 +88,6 @@ const brandLogos: Record<string, React.FC<SvgProps>> = {
   "alfa-romeo": AlfaRomeoSvg,
   volvo: VolvoSvg,
   skoda: SkodaSvg,
-  škoda: SkodaSvg,
   mini: MiniSvg,
   "mini cooper": MiniSvg,
 };

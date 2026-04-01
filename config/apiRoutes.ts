@@ -46,6 +46,8 @@ export const API_ROUTES = {
   EXPENSES: {
     BASE: "/expenses",
     CATEGORIES: "/expenses/categories",
+    SCAN_RECEIPT: "/expenses/scan-receipt",
+    UPLOAD_RECEIPT: "/expenses/upload",
     VALUATION: (carId: string) => `/expenses/valuation/${carId}`,
     RECOMMEND_PRICE: "/expenses/recommend-price",
     DETAIL: (id: string) => `/expenses/${id}`,

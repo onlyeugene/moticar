@@ -69,7 +69,7 @@ const ICON_MAP: Record<string, any> = {
   ram: require("@/assets/carIcons/ram.svg").default,
   renault: require("@/assets/carIcons/renault.svg").default,
   saab: require("@/assets/carIcons/saab.svg").default,
-  skoda: require("@/assets/carIcons/škoda.svg").default,
+  skoda: require("@/assets/carIcons/skoda.svg").default,
   smart: require("@/assets/carIcons/smart.svg").default,
   ssangyong: require("@/assets/carIcons/ssangyong.svg").default,
   subaru: require("@/assets/carIcons/subaru.svg").default,
