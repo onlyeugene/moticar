@@ -19,6 +19,7 @@ export const useAppStore = create<AppState>()(
       tempCapturedImage: null,
       scannedCarData: null,
       scannedLicenseData: null,
+      activeActivityTab: "Trips",
       setAppReady: (ready) => set({ isAppReady: ready }),
       setTheme: (theme) => set({ theme }),
       setSelectedCarId: (id) => set({ selectedCarId: id }),
@@ -29,6 +30,7 @@ export const useAppStore = create<AppState>()(
       setTempCapturedImage: (uri) => set({ tempCapturedImage: uri }),
       setScannedCarData: (data) => set({ scannedCarData: data }),
       setScannedLicenseData: (data) => set({ scannedLicenseData: data }),
+      setActiveActivityTab: (tab) => set({ activeActivityTab: tab }),
       resetScanningState: () =>
         set({
           scanningProgress: {
@@ -49,6 +51,7 @@ export const useAppStore = create<AppState>()(
         selectedCarId: state.selectedCarId,
         scannedCarData: state.scannedCarData,
         scannedLicenseData: state.scannedLicenseData,
+        activeActivityTab: state.activeActivityTab,
       }),
     }
   )

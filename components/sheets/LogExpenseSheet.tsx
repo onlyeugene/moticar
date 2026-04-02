@@ -771,7 +771,8 @@ export default function LogExpenseSheet({
       <DatePickerSheet
         visible={isDatePickerVisible}
         onClose={() => setIsDatePickerVisible(false)}
-        initialDate={date || new Date()}
+        initialDate={date || undefined}
+        maxDate={new Date()}
         onSelect={(newDate) => setDate(newDate)}
       />
 

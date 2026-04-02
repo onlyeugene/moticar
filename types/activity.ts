@@ -6,11 +6,18 @@ export interface TripInsights {
   idleDurationMins?: number;
 }
 
+export interface Location {
+  address: string;
+  lat?: number;
+  lng?: number;
+}
+
 export interface Trip {
   id: string;
   carId: string;
-  origin: string;
-  destination: string;
+  origin: Location;
+  destination: Location;
+  category?: 'Work' | 'Leisure' | 'Family' | 'Misc';
   description?: string;
   distanceKm: number;
   durationMins?: number;
@@ -24,11 +31,13 @@ export interface Trip {
 
 export interface CreateTripInput {
   carId: string;
-  origin: string;
-  destination: string;
+  origin: Location;
+  destination: Location;
   distanceKm: number;
   description?: string;
   startTime?: string;
+  endTime?: string;
+  category?: string;
 }
 
 export interface Reminder {

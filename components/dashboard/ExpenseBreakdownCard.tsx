@@ -98,17 +98,15 @@ const ExpenseBreakdownCard: React.FC<ExpenseBreakdownCardProps> = ({
               </View>
             </View>
 
-            <View className="flex-1">
-              <View className="">
-                <Sparkline
-                  data={chartData}
-                  width={containerWidth}
-                  height={100}
-                  currencySymbol={currencySymbol}
-                  label={spendData.comparison?.label}
-                  trend={spendData.comparison?.trend}
-                />
-              </View>
+            <View className="my-2">
+              <Sparkline
+                data={chartData}
+                width={containerWidth}
+                height={100}
+                currencySymbol={currencySymbol}
+                label={spendData.comparison?.label}
+                trend={spendData.comparison?.trend}
+              />
             </View>
 
             <View className="mt-4">
