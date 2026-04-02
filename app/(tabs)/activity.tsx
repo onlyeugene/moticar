@@ -1,7 +1,9 @@
 import ActivityEmptyState from "@/components/activity/ActivityEmptyState";
 import SpendsTab from "@/components/activity/SpendsTab";
 import TripsTab from "@/components/activity/TripsTab";
+import RemindersTab from "@/components/activity/RemindersTab";
 import AddTripSheet from "@/components/sheets/AddTripSheet";
+import AddReminderSheet from "@/components/sheets/AddReminderSheet";
 import { ScreenBackground } from "@/components/ui/ScreenBackground";
 import { useReminders, useTrips, useActivitySpends } from "@/hooks/useActivity";
 import { useAppStore } from "@/store/useAppStore";
@@ -20,16 +22,14 @@ const TABS = ["Trips", "Mileage Milestones", "Spends", "Reminder"];
 export default function ActivityScreen() {
   const { selectedCarId, activeActivityTab, setActiveActivityTab } = useAppStore();
   const [isAddTripVisible, setIsAddTripVisible] = useState(false);
+  const [isAddReminderVisible, setIsAddReminderVisible] = useState(false);
+  const [selectedReminderCategory, setSelectedReminderCategory] = useState("Toll Fee");
   const user = useAuthStore((state) => state.user);
   const currencySymbol = getCurrencySymbol(user?.preferredCurrency);
 
   // Fetch real data using hooks
   const { data: tripsData } = useTrips(selectedCarId || "");
-  const { data: spendData } = useActivitySpends(
-    selectedCarId || "",
-    (new Date().getMonth() + 1).toString(),
-    new Date().getFullYear().toString()
-  );
+  const { data: spendData } = useActivitySpends(selectedCarId || "");
   const { data: remindersData } = useReminders(selectedCarId || "");
 
   return (
@@ -102,14 +102,13 @@ export default function ActivityScreen() {
           )}
 
           {activeActivityTab === "Reminder" && (
-            remindersData?.count && remindersData.count > 0 ? (
-              <View className="px-4">
-                 {/* Logic for rendering reminders can be added here */}
-                 <Text>Reminders found: {remindersData.count}</Text>
-              </View>
-            ) : (
-              <ActivityEmptyState tabName={activeActivityTab} />
-            )
+            <RemindersTab 
+              summary={remindersData?.summary} 
+              onAdd={(cat) => {
+                setSelectedReminderCategory(cat);
+                setIsAddReminderVisible(true);
+              }} 
+            />
           )}
         </ScrollView>
       </View>
@@ -117,6 +116,13 @@ export default function ActivityScreen() {
       <AddTripSheet 
         visible={isAddTripVisible}
         onClose={() => setIsAddTripVisible(false)}
+        carId={selectedCarId || ""}
+      />
+
+      <AddReminderSheet 
+        visible={isAddReminderVisible}
+        onClose={() => setIsAddReminderVisible(false)}
+        category={selectedReminderCategory}
         carId={selectedCarId || ""}
       />
     </View>
