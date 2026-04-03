@@ -49,11 +49,24 @@ const SpendStatsCard: React.FC<SpendStatsCardProps> = ({
         const prevEnd = endOfMonth(subMonths(d, 1));
 
         const currentTotal = expenses
-          .filter(e => isWithinInterval(new Date(e.date), { start, end }))
+          .filter(e => {
+            const expenseDate = new Date(e.date);
+            return (
+              expenseDate.getMonth() === d.getMonth() &&
+              expenseDate.getFullYear() === d.getFullYear()
+            );
+          })
           .reduce((sum, e) => sum + e.amount, 0);
 
         const prevTotal = expenses
-          .filter(e => isWithinInterval(new Date(e.date), { start: prevStart, end: prevEnd }))
+          .filter(e => {
+            const expenseDate = new Date(e.date);
+            const prevMonth = subMonths(d, 1);
+            return (
+              expenseDate.getMonth() === prevMonth.getMonth() &&
+              expenseDate.getFullYear() === prevMonth.getFullYear()
+            );
+          })
           .reduce((sum, e) => sum + e.amount, 0);
 
         labels.push(format(d, "MMM"));

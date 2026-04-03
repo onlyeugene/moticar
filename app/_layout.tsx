@@ -17,6 +17,7 @@ import { configureReanimatedLogger, ReanimatedLogLevel } from 'react-native-rean
 import { LoadingModal } from "../components/ui/LoadingModal";
 import { SnackbarProvider } from "../providers/SnackbarProvider";
 import { QueryProvider } from "../providers/QueryProvider";
+import { OfflineBanner } from "../components/ui/OfflineBanner";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useAppStore } from "@/store/useAppStore";
 import "../global.css";
@@ -109,6 +110,7 @@ export default function RootLayout() {
                   options={{ presentation: "modal" }}
                 />
               </Stack>
+              {/* <OfflineBanner /> */}
           </QueryProvider>
           <LoadingModal visible={false} />
         </SnackbarProvider>
