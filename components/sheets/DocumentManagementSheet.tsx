@@ -32,7 +32,7 @@ export default function DocumentManagementSheet({
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
 
   const documentTypes = [
-    { name: "Vehicle License", type: "Vehicle License" },
+    { name: "Vehicle Licence", type: "Vehicle Licence" },
     { name: "Tax", type: "Tax" },
     { name: "Insurance Status", type: "Insurance Status" },
     { name: "MOT", type: "MOT" },

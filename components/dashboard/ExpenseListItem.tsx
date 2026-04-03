@@ -148,7 +148,7 @@ export default function ExpenseListItem({
       <TouchableOpacity
         onPress={toggleExpand}
         activeOpacity={0.7}
-        className="bg-white mt-5 rounded-xl flex-row items-center justify-between"
+        className="bg-white mt-3 rounded-xl flex-row items-center justify-between"
       >
         <View className="flex-1 flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">

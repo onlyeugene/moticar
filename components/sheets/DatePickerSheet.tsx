@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   View,
   Text,
@@ -14,6 +14,7 @@ interface DatePickerSheetProps {
   onClose: () => void;
   onSelect: (date: Date) => void;
   initialDate?: Date;
+  maxDate?: Date;
   title?: string;
 }
 
@@ -28,11 +29,21 @@ export default function DatePickerSheet({
   visible,
   onClose,
   onSelect,
-  initialDate = new Date(),
+  initialDate,
+  maxDate,
   title = "Add Date of Expense",
 }: DatePickerSheetProps) {
-  const [selectedDate, setSelectedDate] = useState(initialDate);
-  const [viewDate, setViewDate] = useState(new Date(initialDate.getFullYear(), initialDate.getMonth(), 1));
+  const [selectedDate, setSelectedDate] = useState(initialDate || new Date());
+  const [viewDate, setViewDate] = useState(new Date((initialDate || new Date()).getFullYear(), (initialDate || new Date()).getMonth(), 1));
+
+  // Sync internal state when initialDate changes or sheet becomes visible
+  useEffect(() => {
+    if (visible) {
+      const baseDate = initialDate || new Date();
+      setSelectedDate(baseDate);
+      setViewDate(new Date(baseDate.getFullYear(), baseDate.getMonth(), 1));
+    }
+  }, [visible, initialDate?.getTime()]);
 
   const calendarDays = useMemo(() => {
     const year = viewDate.getFullYear();
@@ -79,11 +90,12 @@ export default function DatePickerSheet({
   };
 
   const handleSave = () => {
-    // Preserve the current time (hours, mins, secs) from initialDate
+    // Preserve the current time (hours, mins, secs) from initialDate or today
+    const baseDate = initialDate || new Date();
     const finalDate = new Date(selectedDate);
-    finalDate.setHours(initialDate.getHours());
-    finalDate.setMinutes(initialDate.getMinutes());
-    finalDate.setSeconds(initialDate.getSeconds());
+    finalDate.setHours(baseDate.getHours());
+    finalDate.setMinutes(baseDate.getMinutes());
+    finalDate.setSeconds(baseDate.getSeconds());
     
     onSelect(finalDate);
     onClose();
@@ -100,6 +112,14 @@ export default function DatePickerSheet({
     return date.getDate() === today.getDate() &&
            date.getMonth() === today.getMonth() &&
            date.getFullYear() === today.getFullYear();
+  };
+
+  const isFuture = (date: Date) => {
+    if (!maxDate) return false;
+    // Strip time for comparison
+    const compareDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const limitDate = new Date(maxDate.getFullYear(), maxDate.getMonth(), maxDate.getDate());
+    return compareDate > limitDate;
   };
 
   return (
@@ -155,17 +175,22 @@ export default function DatePickerSheet({
             <View className="flex-row flex-wrap justify-around">
               {calendarDays.map((dateObj, idx) => {
                 const selected = isSelected(dateObj.fullDate);
+                const disabled = isFuture(dateObj.fullDate);
+                
                 return (
                   <TouchableOpacity
                     key={idx}
-                    onPress={() => setSelectedDate(dateObj.fullDate)}
+                    onPress={() => !disabled && setSelectedDate(dateObj.fullDate)}
+                    disabled={disabled}
                     className="w-[40px] h-[40px] items-center justify-center mb-2"
                   >
                     <View className={`w-[36px] h-[36px] items-center justify-center rounded-full ${selected ? 'bg-[#FBE74C]' : ''}`}>
                       <Text className={`font-lexendRegular text-[12px] ${
-                        dateObj.type === 'current' 
-                          ? (selected ? 'text-[#202A2A]' : 'text-[#202A2A]') 
-                          : 'text-[#92BEC1]'
+                        disabled
+                          ? 'text-[#C1C3C3]'
+                          : dateObj.type === 'current' 
+                            ? (selected ? 'text-[#202A2A]' : 'text-[#202A2A]') 
+                            : 'text-[#92BEC1]'
                       }`}>
                         {dateObj.day}
                       </Text>

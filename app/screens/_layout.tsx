@@ -33,6 +33,31 @@ export default function ScreensLayout() {
           presentation: "transparentModal",
         }} 
       />
+      <Stack.Screen 
+        name="motibuddie/plug" 
+        options={{ 
+          animation: "slide_from_right",
+        }} 
+      />
+      <Stack.Screen 
+        name="motibuddie/imei" 
+        options={{ 
+          animation: "slide_from_right",
+        }} 
+      />
+      <Stack.Screen 
+        name="motibuddie/connecting" 
+        options={{ 
+          animation: "fade",
+        }} 
+      />
+      <Stack.Screen 
+        name="motibuddie/details" 
+        options={{ 
+          animation: "slide_from_bottom",
+          presentation: "transparentModal",
+        }} 
+      />
     </Stack>
   );
 }

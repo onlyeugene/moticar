@@ -39,6 +39,7 @@ export default function DashboardDocuments({
     { name: "Vehicle Licence", type: "Vehicle License" },
     { name: "Tax", type: "Tax" },
     { name: "Insurance Status", type: "Insurance Status" },
+    // { name: 'Others', type: 'Others'}
   ];
 
   const handlePickDocument = async (type: string) => {

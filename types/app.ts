@@ -23,6 +23,7 @@ export interface AppState {
   tempCapturedImage: string | null;
   scannedCarData: any | null;
   scannedLicenseData: ScannedLicenseData | null;
+  activeActivityTab: string;
   setAppReady: (ready: boolean) => void;
   setTheme: (theme: "light" | "dark" | "system") => void;
   setSelectedCarId: (id: string) => void;
@@ -30,5 +31,6 @@ export interface AppState {
   setTempCapturedImage: (uri: string | null) => void;
   setScannedCarData: (data: any | null) => void;
   setScannedLicenseData: (data: ScannedLicenseData | null) => void;
+  setActiveActivityTab: (tab: string) => void;
   resetScanningState: () => void;
 }

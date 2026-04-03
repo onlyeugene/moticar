@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { activityService } from "@/services/api/activityService";
+import { expenseService } from "@/services/api/expenseService";
 import { CreateTripInput, CreateReminderInput } from "@/types/activity";
 
 /**
@@ -47,7 +48,15 @@ export const useCreateReminder = () => {
 export const useActivitySpends = (carId: string, month?: string, year?: string) => {
   return useQuery({
     queryKey: ["activity", "spends", carId, month, year],
-    queryFn: () => activityService.getSpendsChart(carId, month, year),
+    queryFn: async () => {
+      const breakdown = await activityService.getSpendsChart(carId, month, year);
+      // Fetch all expenses to ensure the trend chart has data for previous months
+      const allExpenses = await expenseService.getExpensesByCarId(carId);
+      return {
+        ...breakdown,
+        expenses: allExpenses.expenses
+      };
+    },
     enabled: !!carId,
   });
 };
@@ -59,6 +68,7 @@ export const useActivityInsights = (carId: string, month?: string, year?: string
     enabled: !!carId,
   });
 };
+
 
 
 
