@@ -21,6 +21,8 @@ export interface ControlledInputProps<T extends FieldValues> extends TextInputPr
   leftIcon?: keyof typeof Ionicons.glyphMap;
   containerClassName?: string;
   inputClassName?: string;
+  rightIcon?: keyof typeof Ionicons.glyphMap;
+  onRightIconPress?: () => void;
 }
 
 export interface SocialAuthProps {

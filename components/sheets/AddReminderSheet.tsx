@@ -11,9 +11,10 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import BottomSheet from "../shared/BottomSheet";
 import DatePickerSheet from "./DatePickerSheet";
+import TimePickerSheet from "./TimePickerSheet";
 import { useCreateReminder } from "@/hooks/useActivity";
 import { useAuthStore } from "@/store/useAuthStore";
-import { format } from "date-fns";
+import { format, setHours, setMinutes } from "date-fns";
 
 interface AddReminderSheetProps {
   visible: boolean;
@@ -22,7 +23,7 @@ interface AddReminderSheetProps {
   carId: string;
 }
 
-const FREQUENCIES = ["One-Time", "Repeat"];
+const FREQUENCIES = ["One-Time", "Weekly", "Monthly", "Yearly"];
 const SEVERITIES = ["Urgent", "Mid", "Low"];
 
 export default function AddReminderSheet({
@@ -34,11 +35,13 @@ export default function AddReminderSheet({
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState(new Date());
-  const [frequency, setFrequency] = useState("");
-  const [severity, setSeverity] = useState("");
+  const [time, setTime] = useState(format(new Date(), "HH:mm"));
+  const [frequency, setFrequency] = useState("One-Time");
+  const [severity, setSeverity] = useState("Mid");
   const [emailNotify, setEmailNotify] = useState(true);
   const [notes, setNotes] = useState("");
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
 
   const user = useAuthStore((state) => state.user);
   const { mutate: createReminder, isPending } = useCreateReminder();
@@ -46,16 +49,21 @@ export default function AddReminderSheet({
   const handleSave = () => {
     if (!name || !amount || !date) return;
 
+    // Combine date and time
+    const [hours, minutes] = time.split(":").map(Number);
+    const combinedDate = setMinutes(setHours(new Date(date), hours), minutes);
+
     createReminder(
       {
         carId,
         category,
         name,
         amount: parseFloat(amount),
-        date: date.toISOString(),
+        date: combinedDate.toISOString(),
         frequency,
         severity,
         emailNotify,
+        time,
         notes,
       },
       {
@@ -65,9 +73,11 @@ export default function AddReminderSheet({
           setName("");
           setAmount("");
           setDate(new Date());
+          setTime(format(new Date(), "HH:mm"));
           setFrequency("One-Time");
           setSeverity("Mid");
           setEmailNotify(true);
+          setTime("12:00");
           setNotes("");
         },
       },
@@ -164,6 +174,24 @@ export default function AddReminderSheet({
                 <Ionicons name="chevron-forward" size={24} color="#ADADAD" />
               </TouchableOpacity>
             </View>
+
+            {/* Time Selector */}
+            <View className="mb-6 flex-row justify-between items-center">
+              <Text className="text-[#8B8B8B] font-lexendRegular text-[12px]  px-1">
+                Time to be reminded
+              </Text>
+              <TouchableOpacity
+                onPress={() => setShowTimePicker(true)}
+                className=" flex-row items-center justify-between"
+                style={styles.inputShadow}
+              >
+                <Text className="text-[#ACB7B7] text-[14px] font-lexendRegular">
+                  {time || "Select time"}
+                </Text>
+                <Ionicons name="chevron-forward" size={24} color="#ADADAD" />
+              </TouchableOpacity>
+            </View>
+
           </View>
 
           {/* Frequency Toggle */}
@@ -272,6 +300,14 @@ export default function AddReminderSheet({
           onSelect={setDate}
           initialDate={date}
           title="Select Date"
+        />
+
+        <TimePickerSheet
+          visible={showTimePicker}
+          onClose={() => setShowTimePicker(false)}
+          onSelect={setTime}
+          initialTime={time}
+          title="Select Time"
         />
       </BottomSheet>
     </>

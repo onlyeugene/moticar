@@ -57,6 +57,11 @@ export const API_ROUTES = {
     BASE: "/technicians",
     DETAIL: (id: string) => `/technicians/${id}`,
   },
+  OBD: {
+    PAIR: "/obd/pair",
+    STATUS: (deviceId: string) => `/obd/device/${deviceId}/status`,
+    DIAGNOSTIC: (carId: string) => `/obd/car/${carId}/diagnostic`,
+  },
 };
 
 export type ApiRoutes = typeof API_ROUTES;

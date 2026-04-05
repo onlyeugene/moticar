@@ -24,6 +24,7 @@ export interface AppState {
   scannedCarData: any | null;
   scannedLicenseData: ScannedLicenseData | null;
   activeActivityTab: string;
+  isDiagnosticActive: boolean;
   setAppReady: (ready: boolean) => void;
   setTheme: (theme: "light" | "dark" | "system") => void;
   setSelectedCarId: (id: string) => void;
@@ -32,5 +33,6 @@ export interface AppState {
   setScannedCarData: (data: any | null) => void;
   setScannedLicenseData: (data: ScannedLicenseData | null) => void;
   setActiveActivityTab: (tab: string) => void;
+  setDiagnosticActive: (active: boolean) => void;
   resetScanningState: () => void;
 }

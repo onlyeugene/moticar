@@ -104,6 +104,7 @@ export default function ActivityScreen() {
           {activeActivityTab === "Reminder" && (
             <RemindersTab 
               summary={remindersData?.summary} 
+              reminders={remindersData?.reminders}
               onAdd={(cat) => {
                 setSelectedReminderCategory(cat);
                 setIsAddReminderVisible(true);

@@ -40,6 +40,8 @@ interface ExpenseListItemProps {
   expense: Expense;
   currencySymbol: string;
   onPressDetails?: (expense: Expense) => void;
+  isExpanded?: boolean;
+  onToggle?: () => void;
 }
 
 const CATEGORY_ICONS: Record<string, any> = {
@@ -105,8 +107,9 @@ export default function ExpenseListItem({
   expense,
   currencySymbol,
   onPressDetails,
+  isExpanded = false,
+  onToggle,
 }: ExpenseListItemProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
   const deleteMutation = useDeleteExpense();
 
   const color = CATEGORY_COLORS[expense.category] || CATEGORY_COLORS["Others"];
@@ -114,7 +117,7 @@ export default function ExpenseListItem({
   const SvgIcon = CATEGORY_SVG_ICONS[expense.category];
 
   const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
+    onToggle?.();
   };
 
   const handleDelete = () => {

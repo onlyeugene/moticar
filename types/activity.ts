@@ -42,6 +42,7 @@ export interface CreateTripInput {
 
 export interface Reminder {
   id: string;
+  _id?: string;
   carId: string;
   category: 'Toll Fee' | 'Servicing' | 'Dues & Levies' | 'Penalties' | 'Planned Trips' | 'Others';
   name: string;
@@ -50,6 +51,7 @@ export interface Reminder {
   frequency: 'One-Time' | 'Repeat';
   severity: 'Urgent' | 'Mid' | 'Low';
   emailNotify: boolean;
+  time?: string;
   notes?: string;
   createdAt: string;
   updatedAt: string;
@@ -64,6 +66,7 @@ export interface CreateReminderInput {
   frequency: string;
   severity: string;
   emailNotify?: boolean;
+  time?: string;
   notes?: string;
 }
 

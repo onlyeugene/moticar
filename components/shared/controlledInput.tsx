@@ -17,6 +17,8 @@ export function ControlledInput<T extends FieldValues>({
   secureTextEntry = false,
   showPasswordToggle = false,
   leftIcon,
+  rightIcon,
+  onRightIconPress,
   containerClassName,
   inputClassName,
   ...rest
@@ -75,6 +77,15 @@ export function ControlledInput<T extends FieldValues>({
                     size={20}
                     color="#7BA0A3"
                   />
+                </TouchableOpacity>
+              )}
+              {rightIcon && !error && (
+                <TouchableOpacity
+                  onPress={onRightIconPress}
+                  activeOpacity={0.7}
+                  disabled={!onRightIconPress}
+                >
+                  <Ionicons name={rightIcon} size={22} color="#29D7DE" />
                 </TouchableOpacity>
               )}
             </View>

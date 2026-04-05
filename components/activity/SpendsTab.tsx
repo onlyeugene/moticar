@@ -5,8 +5,9 @@ import { SpendBreakdown } from "@/types/activity";
 import SpendStatsCard from "./SpendStatsCard";
 import ActivityEmptyState from "./ActivityEmptyState";
 import { Expense } from "@/types/expense";
-import { format } from "date-fns";
+import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear } from "date-fns";
 import Calendar from "@/assets/icons/calendar.svg";
+import ExpenseBreakdownSheet from "../sheets/ExpenseBreakdownSheet";
 
 interface SpendsTabProps {
   spendData?: SpendBreakdown;
@@ -22,6 +23,7 @@ const ExpenseGroupItem = ({
   currencySymbol,
   isFirst,
   isLast,
+  onPress,
 }: {
   date: string;
   totalAmount: number;
@@ -30,13 +32,20 @@ const ExpenseGroupItem = ({
   currencySymbol: string;
   isFirst?: boolean;
   isLast?: boolean;
+  onPress?: () => void;
 }) => {
   const formattedDate = new Date(date);
-  const day = format(formattedDate, "dd/MM");
-  const time = format(formattedDate, "HH:mm");
+  
+  // Custom label formatting based on whether it's a specific date or a period
+  const isSpecificTime = date.includes('T') || date.includes(':');
+  const day = isSpecificTime ? format(formattedDate, "dd/MM") : format(formattedDate, "dd/MM");
+  const time = isSpecificTime ? format(formattedDate, "HH:mm") : "";
 
   return (
-    <TouchableOpacity className="bg-white border border-[#F0F0F0] rounded-[12px] p-4 flex-row items-center mb-4">
+    <TouchableOpacity 
+      onPress={onPress}
+      className="bg-white border border-[#F0F0F0] rounded-[12px] p-4 flex-row items-center mb-4"
+    >
       <View className="items-center justify-center mr-4 w-[50px]">
         {!isFirst && (
           <View 
@@ -52,13 +61,15 @@ const ExpenseGroupItem = ({
         )}
         <View className="w-[50px] h-[50px] rounded-full border border-[#D1D5D4] bg-white items-center justify-center z-10">
           <View className="items-center">
-            <Calendar width={24} height={24} />
-            <Text className="text-[#006C70] text-[8px] font-lexendRegular">
+            <Calendar width={20} height={20} />
+            <Text className="text-[#006C70] text-[8px] font-lexendRegular mt-0.5">
               {day}
             </Text>
-            <Text className="text-[#006C70] text-[8px] font-lexendRegular">
-              {time}
-            </Text>
+            {time !== "" && (
+              <Text className="text-[#006C70] text-[8px] font-lexendRegular">
+                {time}
+              </Text>
+            )}
           </View>
         </View>
       </View>
@@ -108,6 +119,7 @@ const TechnicianGroupItem = ({
   entriesCount,
   currencySymbol,
   color,
+  onPress,
 }: {
   name: string;
   specialty?: string;
@@ -115,9 +127,13 @@ const TechnicianGroupItem = ({
   entriesCount: number;
   currencySymbol: string;
   color: string;
+  onPress?: () => void;
 }) => {
   return (
-    <TouchableOpacity className="bg-white border border-[#F0F0F0] rounded-[16px] p-4 flex-row gap-3 items-start mb-4">
+    <TouchableOpacity 
+      onPress={onPress}
+      className="bg-white border border-[#F0F0F0] rounded-[16px] p-4 flex-row gap-3 items-start mb-4"
+    >
       <View
         style={{ backgroundColor: color }}
         className="w-2.5 h-2.5 rounded-full "
@@ -162,6 +178,11 @@ const SpendsTab: React.FC<SpendsTabProps> = ({
   onShareExpense,
 }) => {
   const [filterType, setFilterType] = useState("Show All");
+  const [timeFilter, setTimeFilter] = useState<'Weekly' | 'Monthly' | 'Yearly'>('Monthly');
+  
+  const [isBreakdownVisible, setIsBreakdownVisible] = useState(false);
+  const [selectedExpenses, setSelectedExpenses] = useState<Expense[]>([]);
+
   const isByTechnician = filterType === "By Car Technicians";
   const hasExpenses =
     spendData && spendData.expenses && spendData.expenses.length > 0;
@@ -176,7 +197,7 @@ const SpendsTab: React.FC<SpendsTabProps> = ({
     if (isByTechnician) {
       const groups: Record<
         string,
-        { name: string; specialty?: string; total: number; entries: number }
+        { name: string; specialty?: string; total: number; entries: number; expenses: any[] }
       > = {};
 
       spendData.expenses.forEach((exp: any) => {
@@ -195,10 +216,12 @@ const SpendsTab: React.FC<SpendsTabProps> = ({
             specialty: specialty,
             total: 0,
             entries: 0,
+            expenses: [],
           };
         }
         groups[techName].total += exp.amount;
         groups[techName].entries += 1;
+        groups[techName].expenses.push(exp);
       });
 
       return Object.values(groups).sort((a, b) => b.total - a.total);
@@ -210,29 +233,48 @@ const SpendsTab: React.FC<SpendsTabProps> = ({
           total: number;
           entries: number;
           categories: Set<string>;
+          expenses: any[];
         }
       > = {};
 
       spendData.expenses.forEach((exp: any) => {
-        const dateKey = format(new Date(exp.date), "yyyy-MM-dd");
+        let dateKey: string;
+        let displayDate: string;
+
+        if (timeFilter === 'Monthly') {
+          dateKey = format(new Date(exp.date), "yyyy-MM");
+          displayDate = format(startOfMonth(new Date(exp.date)), "yyyy-MM-dd");
+        } else if (timeFilter === 'Weekly') {
+          dateKey = format(startOfWeek(new Date(exp.date)), "'Week' w, yyyy");
+          displayDate = format(startOfWeek(new Date(exp.date)), "yyyy-MM-dd");
+        } else if (timeFilter === 'Yearly') {
+          dateKey = format(new Date(exp.date), "yyyy");
+          displayDate = format(startOfYear(new Date(exp.date)), "yyyy-MM-dd");
+        } else {
+          dateKey = format(new Date(exp.date), "yyyy-MM-dd HH:mm");
+          displayDate = exp.date;
+        }
+
         if (!groups[dateKey]) {
           groups[dateKey] = {
-            date: exp.date,
+            date: displayDate,
             total: 0,
             entries: 0,
             categories: new Set(),
+            expenses: [],
           };
         }
         groups[dateKey].total += exp.amount;
         groups[dateKey].entries += 1;
         groups[dateKey].categories.add(exp.category);
+        groups[dateKey].expenses.push(exp);
       });
 
       return Object.values(groups).sort(
         (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
       );
     }
-  }, [spendData?.expenses, isByTechnician]);
+  }, [spendData?.expenses, isByTechnician, timeFilter]);
 
   return (
     <View className="pb-20">
@@ -275,6 +317,8 @@ const SpendsTab: React.FC<SpendsTabProps> = ({
         spendData={spendData}
         currencySymbol={currencySymbol}
         filterType={filterType}
+        timeFilter={timeFilter}
+        setTimeFilter={setTimeFilter}
       />
 
       <TouchableOpacity
@@ -298,6 +342,10 @@ const SpendsTab: React.FC<SpendsTabProps> = ({
                 entriesCount={group.entries}
                 currencySymbol={currencySymbol}
                 color={TECH_COLORS[idx % TECH_COLORS.length]}
+                onPress={() => {
+                  setSelectedExpenses(group.expenses);
+                  setIsBreakdownVisible(true);
+                }}
               />
             ) : (
               <ExpenseGroupItem
@@ -309,6 +357,10 @@ const SpendsTab: React.FC<SpendsTabProps> = ({
                 currencySymbol={currencySymbol}
                 isFirst={idx === 0}
                 isLast={idx === groupedData.length - 1}
+                onPress={() => {
+                    setSelectedExpenses(group.expenses);
+                    setIsBreakdownVisible(true);
+                }}
               />
             ),
           )}
@@ -323,6 +375,13 @@ const SpendsTab: React.FC<SpendsTabProps> = ({
           </Text>
         </View>
       )}
+
+      <ExpenseBreakdownSheet 
+        visible={isBreakdownVisible}
+        onClose={() => setIsBreakdownVisible(false)}
+        expenses={selectedExpenses}
+        currencySymbol={currencySymbol}
+      />
     </View>
   );
 };

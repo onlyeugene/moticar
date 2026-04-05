@@ -21,14 +21,17 @@ interface SpendStatsCardProps {
   spendData?: SpendBreakdown;
   currencySymbol: string;
   filterType: string;
+  timeFilter: 'Weekly' | 'Monthly' | 'Yearly';
+  setTimeFilter: (filter: 'Weekly' | 'Monthly' | 'Yearly') => void;
 }
 
 const SpendStatsCard: React.FC<SpendStatsCardProps> = ({ 
   spendData, 
   currencySymbol,
-  filterType 
+  filterType,
+  timeFilter,
+  setTimeFilter
 }) => {
-  const [timeFilter, setTimeFilter] = useState<'Weekly' | 'Monthly' | 'Yearly'>('Monthly');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const totalSpend = spendData?.totalSpend || 0;

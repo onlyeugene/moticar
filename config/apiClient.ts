@@ -76,12 +76,12 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => {
     // 🟢 Debug log for development
-    // if (__DEV__) {
-    //   console.log(
-    //     `✅ [API Response] ${response.config.method?.toUpperCase()} ${response.config.url}`,
-    //     safeStringify(response.data)
-    //   );
-    // }
+    if (__DEV__) {
+      console.log(
+        `✅ [API Response] ${response.config.method?.toUpperCase()} ${response.config.url}`,
+        safeStringify(response.data)
+      );
+    }
     return response;
   },
   async (error: AxiosError) => {

@@ -17,6 +17,7 @@ import { configureReanimatedLogger, ReanimatedLogLevel } from 'react-native-rean
 import { LoadingModal } from "../components/ui/LoadingModal";
 import { SnackbarProvider } from "../providers/SnackbarProvider";
 import { QueryProvider } from "../providers/QueryProvider";
+import { SocketProvider } from "../providers/SocketProvider";
 import { OfflineBanner } from "../components/ui/OfflineBanner";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useAppStore } from "@/store/useAppStore";
@@ -99,6 +100,7 @@ export default function RootLayout() {
       <PaperProvider>
         <SnackbarProvider>
           <QueryProvider>
+            <SocketProvider>
               <Stack screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="index" />
                 <Stack.Screen name="(auth)" />
@@ -110,7 +112,8 @@ export default function RootLayout() {
                   options={{ presentation: "modal" }}
                 />
               </Stack>
-              {/* <OfflineBanner /> */}
+            </SocketProvider>
+            {/* <OfflineBanner /> */}
           </QueryProvider>
           <LoadingModal visible={false} />
         </SnackbarProvider>

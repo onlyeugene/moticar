@@ -5,6 +5,7 @@ import DashboardDocuments from "@/components/dashboard/DashboardDocuments";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import DashboardInsights from "@/components/dashboard/DashboardInsights";
 import ExpenseBreakdownCard from "@/components/dashboard/ExpenseBreakdownCard";
+import DiagnosticView from "@/components/dashboard/diagnostic/DiagnosticView";
 import MileageTracker from "@/components/dashboard/MileageTracker";
 import LocationAlert from "@/components/shared/LocationAlert";
 import { RulerPicker } from "@/components/shared/RulerPicker";
@@ -37,7 +38,7 @@ export default function Dashboard() {
   const { data: userData, isLoading: userLoading } = useMe();
 
   const [showLocationAlert, setShowLocationAlert] = useState(false);
-  const { selectedCarId } = useAppStore();
+  const { selectedCarId, isDiagnosticActive } = useAppStore();
   const { data: carsData, isLoading: carsLoading } = useUserCars();
   const userCar =
     carsData?.cars?.find((c) => (c.id || (c as any)._id) === selectedCarId) ||
@@ -127,6 +128,7 @@ export default function Dashboard() {
         <DashboardHeader />
       </View>
 
+     
       <ScrollView
         className="flex-1 px-4"
         showsVerticalScrollIndicator={false}
@@ -138,8 +140,10 @@ export default function Dashboard() {
             tintColor="#29D7DE"
             colors={["#29D7DE"]}
           />
+          
         }
       >
+         {isDiagnosticActive && <DiagnosticView />}
         <View className="p-2 bg-[#F0F0F0] rounded-3xl mt-4">
           <View className="bg-[#C4FFFF] rounded-3xl">
             {/* User Greeting & Year */}
@@ -273,7 +277,6 @@ export default function Dashboard() {
             />
           </View>
 
-
           {/* <ActivityScreen /> */}
 
           {/* Expense Breakdown Section */}
@@ -281,6 +284,7 @@ export default function Dashboard() {
             spendData={spendData}
             // expenses={expensesData?.expenses}
             currencySymbol={currencySymbol}
+            monthlyBudget={userCar?.monthlyBudget}
           />
 
           {/* Insights Section */}
