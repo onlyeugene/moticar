@@ -21,6 +21,7 @@ import { SocketProvider } from "../providers/SocketProvider";
 import { OfflineBanner } from "../components/ui/OfflineBanner";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useAppStore } from "@/store/useAppStore";
+import { usePushNotifications } from "../hooks/usePushNotifications";
 import "../global.css";
 
 configureReanimatedLogger({
@@ -88,6 +89,9 @@ export default function RootLayout() {
       NavigationBar.setButtonStyleAsync("dark").catch(() => {});
     }
   }, []);
+
+  // Initialize Push Notifications
+  usePushNotifications();
 
 
   if (!fontsLoaded || !isHydrated) {

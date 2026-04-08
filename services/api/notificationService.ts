@@ -27,5 +27,9 @@ export const notificationService = {
     await apiClient.patch(`${API_ROUTES.NOTIFICATIONS.BASE}/mark-all-read`, null, {
       params: { type }
     });
+  },
+  
+  registerPushToken: async (token: string): Promise<void> => {
+    await apiClient.patch(API_ROUTES.USER.PUSH_TOKEN, { token });
   }
 };

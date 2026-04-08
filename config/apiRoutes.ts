@@ -22,6 +22,7 @@ export const API_ROUTES = {
     ME: "/users/me",
     PROFILE: "/users/profile",
     CHECK_LOCATION: "/users/check-location",
+    PUSH_TOKEN: "/users/push-token",
   },
   CARS: {
     CREATE: "/cars",
