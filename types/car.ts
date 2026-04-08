@@ -9,7 +9,7 @@ export interface Car {
   plate: string;
   vin: string;
   mileage: number;
-  entryMethod: "manual" | "scan" | "obd";
+  entryMethod: "manual" | "scan" | "ai_scan" | "obd" | "obd_pull";
   monthlyBudget?: number;
   documents?: CarDocument[];
   createdAt?: string;
@@ -19,6 +19,12 @@ export interface Car {
   status?: string;
   purchaseDate?: string;
   currency?: string;
+  transmission?: string;
+  engine?: string;
+  driveType?: string;
+  segment?: string;
+  imei?: string;
+  deviceId?: string;
   engineOil?: {
     capacityLiters: number;
     recommendedGrade: string;

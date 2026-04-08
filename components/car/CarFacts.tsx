@@ -7,8 +7,6 @@ import TyresIcon from "@/assets/facts/tyre.svg";
 import BatteryIcon from "@/assets/facts/battery.svg";
 import { BrandTags } from "@/lib";
 
-
-
 import { useAppStore } from "@/store/useAppStore";
 
 interface CarFactsProps {
@@ -85,12 +83,11 @@ export function CarFacts({
           <View className="flex-row justify-between items-start mb-2">
             <FuelIcon width={30} height={30} />
             <Text className="text-[#006C70] text-[24px] font-lexendRegular">
-              {obdData?.fuelLevel !== undefined 
-                ? `${obdData.fuelLevel}%` 
+              {obdData?.fuelLevel !== undefined
+                ? `${obdData.fuelLevel}%`
                 : activeCar?.fuelSpec?.capacityLiters
                   ? `${activeCar.fuelSpec.capacityLiters}L`
-                  : "N/A"
-              }
+                  : "N/A"}
             </Text>
           </View>
           <Text className="text-[#006C70] text-[14px] font-lexendRegular mb-2">
@@ -132,7 +129,7 @@ export function CarFacts({
                 </Text>
               </View>
             </View>
-            <BrandTags brands={activeCar?.tyreSpec?.manufacturers} />
+            {/* <BrandTags brands={activeCar?.tyreSpec?.manufacturers} /> */}
             <View className="flex-1 flex-row justify-between items-center">
               <Text className="text-[#879090] text-[10px] font-lexendRegular">
                 Recommended tyre pressure is between{" "}
@@ -189,16 +186,18 @@ export function CarFacts({
           <View className="flex-row justify-between items-start mb-2">
             <BatteryIcon width={30} height={30} />
             <Text className="text-[#006C70] text-[24px] font-lexendRegular">
-              {obdData?.voltage 
-                ? `${obdData.voltage}V` 
-                : (activeCar?.batterySpec?.voltage ? '12V': "N/A")}
+              {obdData?.voltage
+                ? `${obdData.voltage}V`
+                : activeCar?.batterySpec?.voltage
+                  ? "12V"
+                  : "N/A"}
             </Text>
           </View>
           <Text className="text-[#006C70] text-[14px] font-lexendRegular mb-1">
             Battery {obdData?.voltage && "(Live)"}
           </Text>
           <View className="mt-4 flex-row justify-between items-center">
-          <BrandTags brands={activeCar?.batterySpec?.providers} />
+            {/* <BrandTags brands={activeCar?.batterySpec?.providers} /> */}
             <Ionicons name="chevron-forward" size={12} color="#7BA0A3" />
           </View>
         </TouchableOpacity>

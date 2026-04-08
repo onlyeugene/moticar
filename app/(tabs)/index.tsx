@@ -265,6 +265,7 @@ export default function Dashboard() {
               carId={userCar?.id || (userCar as any)?._id}
               month={selectedDate.getMonth() + 1}
               year={selectedDate.getFullYear()}
+              monthlyBudget={userCar?.monthlyBudget}
             />
 
             {/* Mileage Tracker Section */}

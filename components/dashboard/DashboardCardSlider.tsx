@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, FlatList, Dimensions, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, Dimensions, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useAuthStore } from '@/store/useAuthStore';
 import { getCurrencySymbol } from '@/utils/currency';
-import { useActivitySpends } from '@/hooks/useActivity';
+import { useActivitySpends, useTrips } from '@/hooks/useActivity';
 import { Ionicons } from '@expo/vector-icons';
 import ExpenseDoughnutChart from './ExpenseDoughnutChart';
+import { calculateCPM, calculateMonthlyMileage, getWeeklySpendData } from '@/utils/activity-calculations';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -12,6 +13,7 @@ interface DashboardCardSliderProps {
   carId?: string;
   month?: number;
   year?: number;
+  monthlyBudget?: number;
 }
 
 const formatAmount = (amount: number, currencySymbol: string) => {
@@ -21,16 +23,47 @@ const formatAmount = (amount: number, currencySymbol: string) => {
   return currencySymbol + amount.toLocaleString();
 };
 
-export default function DashboardCardSlider({ carId, month, year }: DashboardCardSliderProps) {
+export default function DashboardCardSlider({ carId, month, year, monthlyBudget }: DashboardCardSliderProps) {
   const user = useAuthStore((state) => state.user);
   const currencySymbol = getCurrencySymbol(user?.preferredCurrency);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [selectedWeek, setSelectedWeek] = useState(1);
 
-  const { data: spendData, isLoading } = useActivitySpends(
+  const { data: spendData, isLoading: spendLoading } = useActivitySpends(
     carId || "",
     month?.toString(),
     year?.toString()
   );
+
+  const { data: tripsData, isLoading: tripsLoading } = useTrips(carId || "");
+
+  const isLoading = spendLoading || tripsLoading;
+
+  const currentMonthCPM = calculateCPM(
+    spendData?.expenses || [],
+    tripsData?.trips || [],
+    month || new Date().getMonth() + 1,
+    year || new Date().getFullYear()
+  );
+
+  const prevMonth = month === 1 ? 12 : (month || 1) - 1;
+  const prevYear = month === 1 ? (year || 2024) - 1 : (year || 2024);
+  const prevMonthCPM = calculateCPM(
+    spendData?.expenses || [],
+    tripsData?.trips || [],
+    prevMonth,
+    prevYear
+  );
+
+  const cpmDiff = prevMonthCPM === 0 ? 0 : ((currentMonthCPM - prevMonthCPM) / prevMonthCPM) * 100;
+
+  const currentMonth = month || new Date().getMonth() + 1;
+  const currentYear = year || new Date().getFullYear();
+
+  const weeklyData = getWeeklySpendData(spendData?.expenses || [], currentMonth, currentYear, selectedWeek);
+  const maxWeeklySpend = Math.max(...weeklyData.map(d => d.amount), 1);
+  const weeklyAverage = spendData?.totalSpend ? spendData.totalSpend / 4 : 0;
+  const weeklyBudget = monthlyBudget ? monthlyBudget / 4 : 30000;
 
   const cards = [
     { type: 'analysis', title: 'Expense Analysis' },
@@ -88,13 +121,13 @@ export default function DashboardCardSlider({ carId, month, year }: DashboardCar
           <View className="bg-[#E0FBFC] rounded-[8px] p-8 h-[284px] w-[315px] items-center justify-center shadow-sm">
             <Text className="text-[#1A3B41] font-lexendBold text-[18px] mb-10">{item.title}</Text>
 
-            <View className="bg-[#FFFD54] px-4 py-2 rounded-full flex-row items-center gap-1.5 mb-2">
-              <Ionicons name="arrow-up" size={12} color="#1A3B41" />
-              <Text className="text-[#1A3B41] font-lexendBold text-[13px]">14%</Text>
+            <View className={`px-4 py-2 rounded-full flex-row items-center gap-1.5 mb-2 ${cpmDiff >= 0 ? 'bg-[#FFFD54]' : 'bg-[#7AE6EB]'}`}>
+              <Ionicons name={cpmDiff >= 0 ? "arrow-up" : "arrow-down"} size={12} color="#1A3B41" />
+              <Text className="text-[#1A3B41] font-lexendBold text-[13px]">{Math.abs(cpmDiff).toFixed(0)}%</Text>
             </View>
 
             <Text className="text-[#1A3B41] font-lexendBold text-[44px] tracking-tighter">
-              {currencySymbol}317
+              {currencySymbol}{currentMonthCPM.toFixed(2)}
             </Text>
             <Text className="text-[#9BBABB] font-lexendRegular text-[14px] mt-1">than last month</Text>
           </View>
@@ -104,12 +137,14 @@ export default function DashboardCardSlider({ carId, month, year }: DashboardCar
           <View className="bg-[#E0FBFC] rounded-[8px] p-6 h-[284px] w-[315px] items-center justify-center shadow-sm">
             <Text className="text-[#1A3B41] font-lexendBold text-[18px] mb-8">{item.title}</Text>
 
-            <View className="bg-[#FFFD54] px-4 py-2 rounded-full flex-row items-center gap-1.5 mb-4">
-              <Ionicons name="arrow-up" size={12} color="#1A3B41" />
-              <Text className="text-[#1A3B41] font-lexendBold text-[13px]">14%</Text>
+            <View className={`px-4 py-2 rounded-full flex-row items-center gap-1.5 mb-4 ${spendData?.comparison?.trend === 'up' ? 'bg-[#FFFD54]' : 'bg-[#7AE6EB]'}`}>
+              <Ionicons name={spendData?.comparison?.trend === 'up' ? "arrow-up" : "arrow-down"} size={12} color="#1A3B41" />
+              <Text className="text-[#1A3B41] font-lexendBold text-[13px]">{Math.abs(spendData?.comparison?.percentage || 0).toFixed(0)}%</Text>
             </View>
 
-            <Text className="text-[#1A3B41] font-lexendBold text-[38px] mt-1">+ {currencySymbol} 2,000</Text>
+            <Text className="text-[#1A3B41] font-lexendBold text-[38px] mt-1">
+              {spendData?.comparison?.trend === 'up' ? '+' : '-'} {currencySymbol}{Math.abs(spendData?.comparison?.difference || 0).toLocaleString()}
+            </Text>
             <Text className="text-[#9BBABB] font-lexendRegular text-[14px] mt-1">than last month</Text>
 
             <View className="bg-[#B8F2F4]/60 p-5 rounded-[24px] mt-8 w-full">
@@ -118,12 +153,18 @@ export default function DashboardCardSlider({ carId, month, year }: DashboardCar
                   <Text className="text-[#1A3B41] font-lexendBold text-[11px] uppercase tracking-wider opacity-60">
                     Weekly Average
                   </Text>
-                  <Text className="text-[#1A3B41] font-lexendBold text-[20px] mt-1">{currencySymbol} 62,000</Text>
+                  <Text className="text-[#1A3B41] font-lexendBold text-[20px] mt-1">{currencySymbol}{weeklyAverage.toLocaleString(undefined, { maximumFractionDigits: 0 })}</Text>
                 </View>
-                <Ionicons name="thumbs-up" size={20} color="#00AEB5" />
+                <Ionicons 
+                  name={weeklyAverage <= weeklyBudget ? "thumbs-up" : "warning"} 
+                  size={20} 
+                  color={weeklyAverage <= weeklyBudget ? "#00AEB5" : "#FF6B6B"} 
+                />
               </View>
               <Text className="text-[#1A3B41] font-lexendRegular text-[10px] mt-2 opacity-70">
-                Great! You didn't exceed your weekly average threshold.
+                {weeklyAverage <= weeklyBudget 
+                  ? "Great! You didn't exceed your weekly average threshold."
+                  : "Caution: You are exceeding your set weekly budget threshold."}
               </Text>
             </View>
           </View>
@@ -134,38 +175,39 @@ export default function DashboardCardSlider({ carId, month, year }: DashboardCar
             <Text className="text-[#1A3B41] font-lexendBold text-[18px] mb-8">{item.title}</Text>
 
             <View className="flex-row gap-2 mb-2">
-              {['Week 1', 'Week 2', 'Week 3', 'Week 4'].map((w) => (
-                <View
+              {[1, 2, 3, 4].map((w) => (
+                <TouchableOpacity
                   key={w}
-                  className={`px-2.5 py-1 rounded-full border ${
-                    w === 'Week 3' ? 'bg-[#7AE6EB] border-[#7AE6EB]' : 'border-[#E0E0E0]'
+                  onPress={() => setSelectedWeek(w)}
+                  className={`px-3 py-1.5 rounded-full border ${
+                    selectedWeek === w ? 'bg-[#7AE6EB] border-[#7AE6EB]' : 'border-[#E0E0E0]'
                   }`}
                 >
                   <Text
                     className={`text-[10px] font-lexendMedium ${
-                      w === 'Week 3' ? 'text-[#00343F]' : 'text-[#9BBABB]'
+                      selectedWeek === w ? 'text-[#00343F]' : 'text-[#9BBABB]'
                     }`}
                   >
-                    {w}
+                    Week {w}
                   </Text>
-                </View>
+                </TouchableOpacity>
               ))}
             </View>
 
             <View className="flex-row items-end justify-between w-full h-32 px-4 mb-8">
               <View className="absolute left-0 top-0 h-full justify-between py-2">
                 <Text className="text-[10px] text-[#9BBABB] font-lexendRegular rotate-[-90deg] translate-x-[-15px]">
-                  {currencySymbol} 47,000
+                  {currencySymbol}{Math.round(maxWeeklySpend).toLocaleString()}
                 </Text>
               </View>
-              {[45, 75, 100, 85, 90, 70, 75].map((h, i) => (
+              {weeklyData.map((d, i) => (
                 <View key={i} className="items-center">
                   <View
-                    style={{ height: h }}
+                    style={{ height: Math.max((d.amount / maxWeeklySpend) * 100, 4) }}
                     className={`w-3.5 ${i % 2 === 0 ? 'bg-[#00AEB5]/20' : 'bg-[#00AEB5]'} rounded-sm`}
                   />
                   <Text className="text-[10px] text-[#1A3B41] font-lexendBold mt-1.5">
-                    {['M', 'T', 'W', 'T', 'F', 'S', 'S'][i]}
+                    {d.label}
                   </Text>
                 </View>
               ))}
@@ -173,7 +215,7 @@ export default function DashboardCardSlider({ carId, month, year }: DashboardCar
 
             <View className="w-full flex-row justify-between items-center pt-4 border-t border-[#F0F0F0]">
               <Text className="text-[#9BBABB] font-lexendRegular text-[12px]">Your Set Budget</Text>
-              <Text className="text-[#1A3B41] font-lexendBold text-[18px]">{currencySymbol}30,000</Text>
+              <Text className="text-[#1A3B41] font-lexendBold text-[18px]">{currencySymbol}{weeklyBudget.toLocaleString(undefined, { maximumFractionDigits: 0 })}</Text>
             </View>
           </View>
         )}

@@ -1,7 +1,8 @@
 import { SpendCategory } from "@/types/activity";
-import React from "react";
-import { Text, View } from "react-native";
-import Svg, { Circle, Path } from "react-native-svg";
+import React, { useState } from "react";
+import { Text, View, Pressable } from "react-native";
+import Svg, { Circle, Path, Defs, Filter, FeGaussianBlur, G } from "react-native-svg";
+import { CategoryIcon } from "../sheets/ExpenseCategorySheet";
 
 interface ExpenseDoughnutChartProps {
   data: SpendCategory[];
@@ -27,6 +28,8 @@ export default function ExpenseDoughnutChart({
   currencySymbol,
   size = 260,
 }: ExpenseDoughnutChartProps) {
+  const [showIcons, setShowIcons] = useState(false);
+
   const radius = size * 0.28;
   const strokeWidth = size * 0.13;
   const center = size / 2;
@@ -80,7 +83,8 @@ export default function ExpenseDoughnutChart({
   const offset = (canvasSize - size) / 2;
 
   return (
-    <View
+    <Pressable
+      onPress={() => setShowIcons(!showIcons)}
       style={{
         width: canvasSize,
         height: canvasSize,
@@ -90,34 +94,53 @@ export default function ExpenseDoughnutChart({
     >
       {/* SVG Ring */}
       <Svg
-        width={size}
-        height={size}
-        style={{ position: "absolute", left: offset, top: offset }}
+        width={canvasSize}
+        height={canvasSize}
+        style={{ position: "absolute", left: 0, top: 0 }}
       >
-        {/* Background ring */}
-        <Circle
-          cx={center}
-          cy={center}
-          r={radius}
-          stroke="#F0FAFA"
-          strokeWidth={strokeWidth}
-          fill="none"
-        />
-        {/* Segments */}
-        {segments.map((seg, i) => (
-          <Path
-            key={i}
-            d={seg.pathData}
-            fill="none"
-            stroke={seg.color}
+        <Defs>
+          <Filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+            <FeGaussianBlur stdDeviation="4" result="blur" />
+          </Filter>
+        </Defs>
+
+        <G x={offset} y={offset}>
+          {/* Background ring with glow */}
+          <Circle
+            cx={center}
+            cy={center}
+            r={radius}
+            stroke="#B8F2F4"
             strokeWidth={strokeWidth}
-            strokeLinecap="butt"
+            fill="none"
+            filter="url(#glow)"
+            strokeOpacity={0.5}
           />
-        ))}
+          <Circle
+            cx={center}
+            cy={center}
+            r={radius}
+            stroke="#B8F2F4"
+            strokeWidth={strokeWidth}
+            fill="none"
+          />
+
+          {/* Segments */}
+          {segments.map((seg, i) => (
+            <Path
+              key={i}
+              d={seg.pathData}
+              fill="none"
+              stroke={seg.color}
+              strokeWidth={strokeWidth}
+              strokeLinecap="butt"
+            />
+          ))}
+        </G>
       </Svg>
 
       {/* Floating icon bubbles */}
-      {/* {segments.map((seg, i) => {
+      {showIcons && segments.map((seg, i) => {
         const absX = offset + seg.iconPos.x;
         const absY = offset + seg.iconPos.y;
         return (
@@ -138,6 +161,12 @@ export default function ExpenseDoughnutChart({
                 backgroundColor: seg.color,
                 alignItems: "center",
                 justifyContent: "center",
+                // Native shadow for the bubble
+                shadowColor: seg.color,
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.3,
+                shadowRadius: 8,
+                elevation: 5,
               }}
             >
               <CategoryIcon name={seg.item.category} size={18} />
@@ -147,7 +176,7 @@ export default function ExpenseDoughnutChart({
             </Text>
           </View>
         );
-      })} */}
+      })}
 
       {/* Center content */}
       <View
@@ -173,6 +202,6 @@ export default function ExpenseDoughnutChart({
           {currencySymbol} {formatValue(totalSpend)}
         </Text>
       </View>
-    </View>
+    </Pressable>
   );
 }

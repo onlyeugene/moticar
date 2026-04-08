@@ -9,24 +9,31 @@ interface MotiBuddieStatusProps {
 }
 
 export function MotiBuddieStatus({ plate, carId }: MotiBuddieStatusProps) {
-  const obdData = useAppStore((state) => carId ? state.obdData[carId] : undefined);
+  const obdData = useAppStore((state) =>
+    carId ? state.obdData[carId] : undefined,
+  );
 
-  const statusColor = obdData?.status === 'moving'
-    ? '#4ADE80'
-    : obdData?.status === 'online'
-    ? '#29D7DE'
-    : '#9BBABB';
+  const statusColor =
+    obdData?.status === "moving"
+      ? "#4ADE80"
+      : obdData?.status === "online"
+        ? "#29D7DE"
+        : "#9BBABB";
 
-  const statusLabel = obdData?.status === 'moving'
-    ? 'Moving'
-    : obdData?.status === 'online'
-    ? 'Online'
-    : obdData?.status === 'offline'
-    ? 'Offline'
-    : 'Connected';
+  const statusLabel =
+    obdData?.status === "moving"
+      ? "Moving"
+      : obdData?.status === "online"
+        ? "Online"
+        : obdData?.status === "offline"
+          ? "Offline"
+          : "Connected";
 
   const lastSeen = obdData?.lastSeen
-    ? new Date(obdData.lastSeen).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    ? new Date(obdData.lastSeen).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      })
     : null;
 
   return (
@@ -49,17 +56,28 @@ export function MotiBuddieStatus({ plate, carId }: MotiBuddieStatusProps) {
             motibuddie
           </Text>
           <View className="flex-row items-center gap-1">
-            <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: statusColor }} />
-            <Text style={{ color: statusColor }} className="text-[10px] font-lexendMedium">
+            <View
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: 3,
+                backgroundColor: statusColor,
+              }}
+            />
+            <Text
+              style={{ color: statusColor }}
+              className="text-[10px] font-lexendMedium"
+            >
               {statusLabel}
             </Text>
           </View>
         </View>
         <Text className="text-[#29D7DE] text-[10px] font-lexendBold mb-2">
-          ID: {plate || '—'}
+          ID: {plate || "—"}
         </Text>
         <Text className="text-[#BCBCBC] text-[10px] font-lexendRegular leading-[17px] mb-3">
-          Your device is actively reading vehicle data in real-time.
+          Nothing to be alarmed about. Your device can now read {"\n"}about your
+          car. You have a buddie to count on.
         </Text>
         <View className="flex-row items-center gap-2">
           <View className="flex-row items-center gap-2">
@@ -67,7 +85,7 @@ export function MotiBuddieStatus({ plate, carId }: MotiBuddieStatusProps) {
               <Ionicons name="time-outline" size={13} color="#013037" />
             </View>
             <Text className="text-[#FBE74C] text-[10px] font-lexendRegular">
-              {lastSeen ? `Last seen at ${lastSeen}` : 'Awaiting data...'}
+              {lastSeen ? `Last seen at ${lastSeen}` : "Awaiting data..."}
             </Text>
           </View>
         </View>
