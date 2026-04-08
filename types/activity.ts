@@ -40,34 +40,80 @@ export interface CreateTripInput {
   category?: string;
 }
 
+export type ReminderCategory = 
+  | 'Toll Fee' 
+  | 'Servicing' 
+  | 'Dues & Levies' 
+  | 'Penalties' 
+  | 'Planned Trips' 
+  | 'Others';
+
+export interface ReminderDetails {
+  // Time (applies to the primary date field — date, startDate, or dueDate)
+  time?: string; // "HH:MM" e.g. "14:30". Defaults to "00:00" (midnight) if not set.
+
+  // Shared optional fields
+  amount?: number;
+  date?: string;
+  endDate?: string;
+  severity?: 'Urgent' | 'Mid' | 'Low';
+  frequency?: string;
+
+  // Planned Trips
+  startDate?: string;
+  destination?: string;
+  tripCategory?: 'Business' | 'Personal' | 'Vacation' | 'Misc';
+  budget?: number;
+
+  // Servicing
+  serviceCategory?: 'General' | 'Oil Change' | 'Major';
+  dueTrigger?: 'Date' | 'Mileage';
+  currentMileage?: number;
+  estimatedCost?: number;
+  technicianId?: string;
+  paymentMethod?: 'Cash' | 'Tag' | 'Auto-billing';
+  lastServiceDate?: string;
+  dueDate?: string;
+
+  // Dues & Levies
+  duesCategory?: string;
+  issuingAuthority?: string;
+
+  // Penalties
+  penaltyCategory?: string;
+  imageProof?: string;
+  location?: string;
+  referenceNumber?: string;
+
+  // Toll Fee
+  frequencyType?: 'One-Time' | 'Repeat';
+  repeatInterval?: 'Daily' | 'Weekly' | 'Every 2 weeks' | 'Monthly' | 'Yearly';
+
+  // Others
+  othersCategory?: 'Expense' | 'Maintenance' | 'Admin' | 'Personal';
+}
+
 export interface Reminder {
   id: string;
   _id?: string;
   carId: string;
-  category: 'Toll Fee' | 'Servicing' | 'Dues & Levies' | 'Penalties' | 'Planned Trips' | 'Others';
+  category: ReminderCategory;
   name: string;
-  amount?: number;
-  date: string;
-  frequency: 'One-Time' | 'Repeat';
-  severity: 'Urgent' | 'Mid' | 'Low';
   emailNotify: boolean;
-  time?: string;
   notes?: string;
+  details: ReminderDetails;
+  isProcessed: boolean;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface CreateReminderInput {
   carId: string;
-  category: string;
+  category: ReminderCategory;
   name: string;
-  amount?: number;
-  date: string;
-  frequency: string;
-  severity: string;
   emailNotify?: boolean;
-  time?: string;
   notes?: string;
+  details: ReminderDetails;
 }
 
 export interface SpendCategory {

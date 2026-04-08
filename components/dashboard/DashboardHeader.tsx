@@ -13,12 +13,16 @@ import Animated, {
   FadeOut,
   LinearTransition,
 } from "react-native-reanimated";
+import { useNotifications } from "@/hooks/useNotifications";
 
 export default function DashboardHeader() {
   const [isExpanded, setIsExpanded] = useState(false);
   const { data: carsData, isLoading } = useUserCars();
+  const { data: notificationsData } = useNotifications();
   const { selectedCarId, setSelectedCarId, setDiagnosticActive } =
     useAppStore();
+
+  const hasUnread = notificationsData?.notifications.some(n => !n.isRead);
 
   const cars = carsData?.cars || [];
 
@@ -217,7 +221,14 @@ export default function DashboardHeader() {
           {/* Right: divider + icons — fixed width so they never shift */}
           <View className="flex-row items-center gap-4 shrink-0">
             <View className="w-[1px] h-10 bg-[#0F6778]" />
-            <Ionicons name="notifications-outline" size={24} color="#FFFFFF" />
+            <TouchableOpacity onPress={() => router.push("/screens/notifications")}>
+              <View className="relative">
+                <Ionicons name="notifications-outline" size={24} color="#FFFFFF" />
+                {hasUnread && (
+                  <View className="absolute top-0 right-0 w-[10px] h-[10px] bg-[#FF4B4B] rounded-full border-2 border-[#002E35]" />
+                )}
+              </View>
+            </TouchableOpacity>
             <Ionicons name="menu" size={24} color="#FFFFFF" />
           </View>
         </Animated.View>

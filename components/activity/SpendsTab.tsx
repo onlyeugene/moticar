@@ -1,19 +1,123 @@
 import React, { useState, useMemo } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+  Modal,
+  Pressable,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SpendBreakdown } from "@/types/activity";
 import SpendStatsCard from "./SpendStatsCard";
 import ActivityEmptyState from "./ActivityEmptyState";
 import { Expense } from "@/types/expense";
-import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear } from "date-fns";
+import {
+  format,
+  startOfWeek,
+  startOfMonth,
+  subDays,
+  startOfDay,
+  endOfDay,
+  isWithinInterval,
+  addMonths,
+  subMonths,
+  isSameMonth,
+  isSameYear,
+} from "date-fns";
 import Calendar from "@/assets/icons/calendar.svg";
+import EmptyIcon from "@/assets/icons/empty.svg";
 import ExpenseBreakdownSheet from "../sheets/ExpenseBreakdownSheet";
+import Filter from "@/assets/icons/filter.svg";
+import Share from "@/assets/icons/share.svg";
 
 interface SpendsTabProps {
   spendData?: SpendBreakdown;
   currencySymbol: string;
   onShareExpense?: () => void;
 }
+
+const DateTimelineHeader = ({
+  selectedDate,
+  onSelectDate,
+  onOpenFilter,
+}: {
+  selectedDate: Date;
+  onSelectDate: (date: Date) => void;
+  onOpenFilter: () => void;
+}) => {
+  // Generate a rolling window of months (prev year, current year, next year)
+  const months = useMemo(() => {
+    const currentYear = selectedDate.getFullYear();
+    const result: Date[] = [];
+    for (let y = currentYear - 1; y <= currentYear + 1; y++) {
+      for (let m = 0; m < 12; m++) {
+        result.push(new Date(y, m, 1));
+      }
+    }
+    return result;
+  }, [selectedDate.getFullYear()]);
+
+  return (
+    <View className="flex-row items-center gap-2 mb-4">
+      <TouchableOpacity
+        onPress={() => onSelectDate(subMonths(selectedDate, 1))}
+      >
+        <Ionicons name="chevron-back" size={20} color="#7BA0A3" />
+      </TouchableOpacity>
+
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        className="flex-1"
+        contentContainerStyle={{
+          alignItems: "center",
+          paddingRight: 20,
+          paddingVertical: 10,
+        }}
+      >
+        <View className="flex-row items-center gap-8">
+          {months.map((m) => {
+            const isActive =
+              isSameMonth(m, selectedDate) && isSameYear(m, selectedDate);
+            const isCurrentYear = isSameYear(m, new Date());
+            return (
+              <TouchableOpacity
+                key={m.toISOString()}
+                onPress={() => onSelectDate(m)}
+                className="items-center"
+                style={{ overflow: "visible" }}
+              >
+                {isActive && (
+                  <View className="w-1 h-1 rounded-full absolute -top-1 -right-2 bg-[#293536]" />
+                )}
+                <Text
+                  className={`text-[14px] font-lexendSemiBold ${
+                    isActive ? "text-[#00AEB5]" : "text-[#B0B0B0]"
+                  }`}
+                >
+                  {format(m, isCurrentYear ? "MMMM" : "MMM yy")}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </ScrollView>
+
+      <TouchableOpacity
+        onPress={() => onSelectDate(addMonths(selectedDate, 1))}
+      >
+        <Ionicons name="chevron-forward" size={20} color="#7BA0A3" />
+      </TouchableOpacity>
+
+      <View className="w-[1px] h-6 bg-[#E2E2E2] mx-1" />
+
+      <TouchableOpacity onPress={onOpenFilter} className="p-2">
+        <Filter />
+      </TouchableOpacity>
+    </View>
+  );
+};
 
 const ExpenseGroupItem = ({
   date,
@@ -35,55 +139,47 @@ const ExpenseGroupItem = ({
   onPress?: () => void;
 }) => {
   const formattedDate = new Date(date);
-  
-  // Custom label formatting based on whether it's a specific date or a period
-  const isSpecificTime = date.includes('T') || date.includes(':');
-  const day = isSpecificTime ? format(formattedDate, "dd/MM") : format(formattedDate, "dd/MM");
-  const time = isSpecificTime ? format(formattedDate, "HH:mm") : "";
+  const day = format(formattedDate, "do");
+  const time = format(formattedDate, "HH:mm");
 
   return (
-    <TouchableOpacity 
-      onPress={onPress}
-      className="bg-white border border-[#F0F0F0] rounded-[12px] p-4 flex-row items-center mb-4"
-    >
-      <View className="items-center justify-center mr-4 w-[50px]">
+    <View className="flex-row mb-6 bg-white p-4 rounded-[10px]">
+      <View className="items-center mr-4">
         {!isFirst && (
-          <View 
-            className="absolute w-[1px] bg-[#D1D5D4]" 
-            style={{ top: -20, bottom: '50%' }} 
+          <View
+            className="absolute w-[1px] bg-[#E2E2E2]"
+            style={{ top: -24, bottom: "50%" }}
           />
         )}
         {!isLast && (
-          <View 
-            className="absolute w-[1px] bg-[#D1D5D4]" 
-            style={{ top: '50%', bottom: -20 }} 
+          <View
+            className="absolute w-[1px] bg-[#E2E2E2]"
+            style={{ top: "50%", bottom: -24 }}
           />
         )}
-        <View className="w-[50px] h-[50px] rounded-full border border-[#D1D5D4] bg-white items-center justify-center z-10">
-          <View className="items-center">
-            <Calendar width={20} height={20} />
-            <Text className="text-[#006C70] text-[8px] font-lexendRegular mt-0.5">
-              {day}
-            </Text>
-            {time !== "" && (
-              <Text className="text-[#006C70] text-[8px] font-lexendRegular">
-                {time}
-              </Text>
-            )}
-          </View>
+        <View className="w-[60px] h-[60px] rounded-[10px] border border-[#E2E2E2] bg-white items-center justify-center">
+          <Calendar width={20} height={20} />
+          <Text className="text-[#006C70] text-[10px] font-lexendBold mt-1">
+            {day}
+          </Text>
+          <Text className="text-[#006C70] text-[10px] font-lexendRegular">
+            {time}
+          </Text>
         </View>
       </View>
 
-
-      <View className="flex-1">
-        <View className="flex-row items-center justify-between mb-2">
-          <View className="flex-row items-center gap-2">
-            <Text className="text-[#000000] text-[16px] font-lexendMedium">
+      <TouchableOpacity
+        onPress={onPress}
+        className="flex-1 bg-white rounded-[16px] "
+      >
+        <View className="flex-row items-center justify-between mb-3">
+          <View className="flex-row items-center gap-3">
+            <Text className="text-[#001A1F] text-[20px] font-lexendBold">
               {currencySymbol}
               {totalAmount.toLocaleString()}
             </Text>
-            <View className="bg-[#7AE6EB] px-2 py-0.5 rounded-full">
-              <Text className="text-[#006C70] text-[10px] font-lexendMedium">
+            <View className="bg-[#7AE6EB] px-2.5 py-1 rounded-[6px]">
+              <Text className="text-[#006C70] text-[10px] font-lexendBold">
                 {entriesCount} entries
               </Text>
             </View>
@@ -91,24 +187,17 @@ const ExpenseGroupItem = ({
           <Ionicons name="chevron-forward" size={24} color="#7BA0A3" />
         </View>
 
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          className="flex-row mt-1"
-        >
+        <View className="flex-row flex-wrap gap-2">
           {categories.map((cat, idx) => (
-            <View
-              key={idx}
-              className="bg-[#DEDEDE] px-3 py-1 rounded-[3px] items-center justify-center mr-2"
-            >
+            <View key={idx} className="bg-[#F6F6F6] px-3 py-1.5 rounded-[4px]">
               <Text className="text-[#A1A1A1] text-[10px] font-lexendRegular">
                 {cat}
               </Text>
             </View>
           ))}
-        </ScrollView>
-      </View>
-    </TouchableOpacity>
+        </View>
+      </TouchableOpacity>
+    </View>
   );
 };
 
@@ -130,45 +219,62 @@ const TechnicianGroupItem = ({
   onPress?: () => void;
 }) => {
   return (
-    <TouchableOpacity 
-      onPress={onPress}
-      className="bg-white border border-[#F0F0F0] rounded-[16px] p-4 flex-row gap-3 items-start mb-4"
-    >
-      <View
-        style={{ backgroundColor: color }}
-        className="w-2.5 h-2.5 rounded-full "
-      />
+    <View className="flex-row mb-6 bg-white p-4 rounded-[10px]">
+      <View className="items-center mr-4 w-[60px]">
+        <View
+          className="absolute w-[1px] bg-[#E2E2E2]"
+          style={{ top: -24, bottom: "100%" }}
+        />
+        <View className="w-[60px] h-[60px] rounded-[10px] border border-[#E2E2E2] bg-white items-center justify-center">
+          <Calendar width={20} height={20} />
+          <Text className="text-[#001A1F] text-[10px] font-lexendBold mt-1">
+            21st
+          </Text>
+          <Text className="text-[#00AEB5] text-[10px] font-lexendRegular">
+            20:30
+          </Text>
+        </View>
+      </View>
 
-      <View className="flex-1">
-        <View className="flex-row items-center justify-between mb-2">
-          <View className="flex-row items-center gap-2">
-            <View>
-              <Text className="text-[#000000] text-[12px] font-lexendRegular">
+      <TouchableOpacity onPress={onPress} className="flex-1 flex-row gap-4">
+        <View
+          style={{ backgroundColor: color }}
+          className="w-[6px] h-full rounded-full"
+        />
+
+        <View className="flex-1 flex-row items-start justify-between">
+          <View>
+            <View className="flex-row items-center gap-2 mb-1">
+              <Text className="text-[#00AEB5] text-[14px] font-lexendRegular">
                 {name}
               </Text>
-              <Text className="text-[#000000] text-[16px] font-lexendMedium">
-                {currencySymbol}
-                {totalAmount.toLocaleString()}
-              </Text>
+              <View className="bg-[#7AE6EB] px-2.5 py-1 rounded-[6px]">
+                <Text className="text-[#006C70] text-[10px] font-lexendMedium">
+                  {entriesCount} entries
+                </Text>
+              </View>
             </View>
-            <View className="bg-[#7AE6EB] px-2 py-0.5 rounded-full">
-              <Text className="text-[#006C70] text-[10px] font-lexendMedium">
-                {entriesCount} entries
-              </Text>
+
+            <View className="flex-row items-center justify-between">
+              <View>
+                <Text className="text-[#001A1F] text-[20px] font-lexendBold mb-2">
+                  {currencySymbol}
+                  {totalAmount.toLocaleString()}
+                </Text>
+                {specialty && (
+                  <View className="bg-[#F6F6F6] px-3 py-1.5 rounded-[3px] self-start">
+                    <Text className="text-[#A1A1A1] text-[10px] font-lexendRegular">
+                      {specialty}
+                    </Text>
+                  </View>
+                )}
+              </View>
             </View>
           </View>
           <Ionicons name="chevron-forward" size={24} color="#7BA0A3" />
         </View>
-
-        {specialty && (
-          <View className="bg-[#DEDEDE] px-3 py-1 rounded-[3px] self-start">
-            <Text className="text-[#A1A1A1] text-[10px] font-lexendRegular">
-              {specialty}
-            </Text>
-          </View>
-        )}
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </View>
   );
 };
 
@@ -177,30 +283,59 @@ const SpendsTab: React.FC<SpendsTabProps> = ({
   currencySymbol,
   onShareExpense,
 }) => {
-  const [filterType, setFilterType] = useState("Show All");
-  const [timeFilter, setTimeFilter] = useState<'Weekly' | 'Monthly' | 'Yearly'>('Monthly');
-  
+  const [filterType, setFilterType] = useState("Overview");
+  const [timeFilter, setTimeFilter] = useState<"Weekly" | "Monthly" | "Yearly">(
+    "Monthly",
+  );
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [isScaleMenuOpen, setIsScaleMenuOpen] = useState(false);
+
   const [isBreakdownVisible, setIsBreakdownVisible] = useState(false);
   const [selectedExpenses, setSelectedExpenses] = useState<Expense[]>([]);
 
   const isByTechnician = filterType === "By Car Technicians";
-  const hasExpenses =
-    spendData && spendData.expenses && spendData.expenses.length > 0;
 
-  // Colors for technicians
-  const TECH_COLORS = ["#00AEB5", "#FBE74C", "#FF7A00", "#A15BFF", "#29D7DE"];
+  const TECH_COLORS = ["#FBE74C", "#00AEB5", "#7BA0A3", "#00343F", "#ADADAD"];
 
-  // Grouping logic
-  const groupedData = useMemo(() => {
+  const filteredData = useMemo(() => {
     if (!spendData?.expenses) return [];
 
+    return spendData.expenses.filter((exp) => {
+      const expDate = new Date(exp.date);
+      if (timeFilter === "Monthly") {
+        return (
+          isSameMonth(expDate, selectedDate) &&
+          isSameYear(expDate, selectedDate)
+        );
+      } else if (timeFilter === "Weekly") {
+        // If in weekly scale, only show the month's data in the list for now
+        return (
+          isSameMonth(expDate, selectedDate) &&
+          isSameYear(expDate, selectedDate)
+        );
+      } else if (timeFilter === "Yearly") {
+        return isSameYear(expDate, selectedDate);
+      }
+      return true;
+    });
+  }, [spendData?.expenses, selectedDate, timeFilter]);
+
+  const hasExpenses = filteredData.length > 0;
+
+  const groupedData = useMemo(() => {
     if (isByTechnician) {
       const groups: Record<
         string,
-        { name: string; specialty?: string; total: number; entries: number; expenses: any[] }
+        {
+          name: string;
+          specialty?: string;
+          total: number;
+          entries: number;
+          expenses: any[];
+        }
       > = {};
 
-      spendData.expenses.forEach((exp: any) => {
+      filteredData.forEach((exp: any) => {
         const techName =
           typeof exp.technicianId === "object"
             ? exp.technicianId?.name
@@ -219,7 +354,7 @@ const SpendsTab: React.FC<SpendsTabProps> = ({
             expenses: [],
           };
         }
-        groups[techName].total += exp.amount;
+        groups[techName].total += Number(exp.amount || 0);
         groups[techName].entries += 1;
         groups[techName].expenses.push(exp);
       });
@@ -237,19 +372,19 @@ const SpendsTab: React.FC<SpendsTabProps> = ({
         }
       > = {};
 
-      spendData.expenses.forEach((exp: any) => {
+      filteredData.forEach((exp: any) => {
         let dateKey: string;
         let displayDate: string;
 
-        if (timeFilter === 'Monthly') {
-          dateKey = format(new Date(exp.date), "yyyy-MM");
-          displayDate = format(startOfMonth(new Date(exp.date)), "yyyy-MM-dd");
-        } else if (timeFilter === 'Weekly') {
+        if (timeFilter === "Monthly") {
+          dateKey = format(new Date(exp.date), "yyyy-MM-dd");
+          displayDate = exp.date;
+        } else if (timeFilter === "Weekly") {
           dateKey = format(startOfWeek(new Date(exp.date)), "'Week' w, yyyy");
           displayDate = format(startOfWeek(new Date(exp.date)), "yyyy-MM-dd");
-        } else if (timeFilter === 'Yearly') {
-          dateKey = format(new Date(exp.date), "yyyy");
-          displayDate = format(startOfYear(new Date(exp.date)), "yyyy-MM-dd");
+        } else if (timeFilter === "Yearly") {
+          dateKey = format(new Date(exp.date), "yyyy-MM");
+          displayDate = format(startOfMonth(new Date(exp.date)), "yyyy-MM-dd");
         } else {
           dateKey = format(new Date(exp.date), "yyyy-MM-dd HH:mm");
           displayDate = exp.date;
@@ -264,7 +399,7 @@ const SpendsTab: React.FC<SpendsTabProps> = ({
             expenses: [],
           };
         }
-        groups[dateKey].total += exp.amount;
+        groups[dateKey].total += Number(exp.amount || 0);
         groups[dateKey].entries += 1;
         groups[dateKey].categories.add(exp.category);
         groups[dateKey].expenses.push(exp);
@@ -274,24 +409,29 @@ const SpendsTab: React.FC<SpendsTabProps> = ({
         (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
       );
     }
-  }, [spendData?.expenses, isByTechnician, timeFilter]);
+  }, [filteredData, isByTechnician, timeFilter]);
 
   return (
     <View className="pb-20">
-      {/* Spend toggle */}
-      <View className="bg-[#DCE7E6] rounded-full p-1.5 flex-row mb-6">
+      <DateTimelineHeader
+        selectedDate={selectedDate}
+        onSelectDate={setSelectedDate}
+        onOpenFilter={() => setIsScaleMenuOpen(true)}
+      />
+
+      <View className="bg-[#DCE7E6] rounded-full p-1.5 flex-row mb-8">
         <TouchableOpacity
-          onPress={() => setFilterType("Show All")}
+          onPress={() => setFilterType("Overview")}
           className={`flex-1 py-3 rounded-full items-center justify-center ${
-            filterType === "Show All" ? "bg-white shadow-sm" : ""
+            filterType === "Overview" ? "bg-white shadow-sm" : ""
           }`}
         >
           <Text
-            className={`text-[12px] font-lexendMedium ${
-              filterType === "Show All" ? "text-[#00AEB5]" : "text-[#667085]"
+            className={`text-[14px] font-lexendMedium ${
+              filterType === "Overview" ? "text-[#00AEB5]" : "text-[#7BA0A3]"
             }`}
           >
-            Show All
+            Overview
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -301,10 +441,10 @@ const SpendsTab: React.FC<SpendsTabProps> = ({
           }`}
         >
           <Text
-            className={`text-[12px]  ${
+            className={`text-[14px] font-lexendMedium ${
               filterType === "By Car Technicians"
-                ? "text-[#00AEB5] font-lexendMedium"
-                : "text-[#96A1A1] font-lexendRegular"
+                ? "text-[#00AEB5]"
+                : "text-[#7BA0A3]"
             }`}
           >
             By Car Technicians
@@ -312,26 +452,19 @@ const SpendsTab: React.FC<SpendsTabProps> = ({
         </TouchableOpacity>
       </View>
 
-      {/* Stats Card */}
-      <SpendStatsCard
-        spendData={spendData}
-        currencySymbol={currencySymbol}
-        filterType={filterType}
-        timeFilter={timeFilter}
-        setTimeFilter={setTimeFilter}
-      />
-
-      <TouchableOpacity
-        onPress={onShareExpense}
-        className=" border border-[#29D7DE] rounded-full h-[40px] items-center justify-center mb-8"
-      >
-        <Text className="text-[#00AEB5] text-[14px] font-lexendSemiBold">
-          Share this expense
-        </Text>
-      </TouchableOpacity>
+      {hasExpenses && (
+        <SpendStatsCard
+          spendData={spendData}
+          currencySymbol={currencySymbol}
+          filterType={filterType}
+          timeFilter={timeFilter}
+          setTimeFilter={setTimeFilter}
+          selectedDate={selectedDate}
+        />
+      )}
 
       {hasExpenses ? (
-        <View className="space-y-4">
+        <View className="mt-4">
           {groupedData.map((group: any, idx) =>
             isByTechnician ? (
               <TechnicianGroupItem
@@ -358,25 +491,60 @@ const SpendsTab: React.FC<SpendsTabProps> = ({
                 isFirst={idx === 0}
                 isLast={idx === groupedData.length - 1}
                 onPress={() => {
-                    setSelectedExpenses(group.expenses);
-                    setIsBreakdownVisible(true);
+                  setSelectedExpenses(group.expenses);
+                  setIsBreakdownVisible(true);
                 }}
               />
             ),
           )}
         </View>
       ) : (
-        <View className="items-center justify-center py-10 opacity-40">
-          <View className="w-20 h-20 bg-[#F0F0F0] rounded-full items-center justify-center mb-4">
-            <Ionicons name="pie-chart-outline" size={32} color="#ADADAD" />
-          </View>
-          <Text className="text-[#ADADAD] text-[14px] font-lexendRegular">
+        <View className="items-center justify-center py-32">
+          <EmptyIcon width={54} height={38} />
+          <Text className="text-[#ADADAD] text-[14px] font-lexendRegular mt-5">
             No spends recorded
           </Text>
         </View>
       )}
 
-      <ExpenseBreakdownSheet 
+      <Modal
+        visible={isScaleMenuOpen}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setIsScaleMenuOpen(false)}
+      >
+        <Pressable
+          className="flex-1 bg-black/40 justify-end"
+          onPress={() => setIsScaleMenuOpen(false)}
+        >
+          <View className="bg-white rounded-t-[24px] p-6 pb-12 shadow-lg">
+            <Text className="text-[#001A1F] text-[18px] font-lexendBold mb-4">
+              View Scale
+            </Text>
+            {(["Weekly", "Monthly", "Yearly"] as const).map((opt) => (
+              <TouchableOpacity
+                key={opt}
+                className="py-4 border-b border-[#F0F0F0] flex-row items-center justify-between"
+                onPress={() => {
+                  setTimeFilter(opt);
+                  setIsScaleMenuOpen(false);
+                }}
+              >
+                <Text
+                  className={`text-[16px] ${timeFilter === opt ? "text-[#00AEB5] font-lexendBold" : "text-[#879090] font-lexendRegular"}`}
+                >
+                  {opt}
+                </Text>
+                {timeFilter === opt && (
+                  <Ionicons name="checkmark-circle" size={24} color="#00AEB5" />
+                )}
+              </TouchableOpacity>
+            ))}
+          </View>
+        </Pressable>
+      </Modal>
+
+      <ExpenseBreakdownSheet
         visible={isBreakdownVisible}
         onClose={() => setIsBreakdownVisible(false)}
         expenses={selectedExpenses}

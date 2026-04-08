@@ -93,12 +93,11 @@ export const carService = {
     return response.data;
   },
 
-  /** Upload and OCR a car document */
+  /** Upload and OCR a car document (Saves immediately) */
   uploadDocument: async (carId: string, type: string, file: any): Promise<any> => {
     const formData = new FormData();
     formData.append("type", type);
     
-    // Check if file is an object with uri (standard React Native file upload)
     if (file.uri) {
       const uriParts = file.uri.split('.');
       const fileType = uriParts[uriParts.length - 1];
@@ -117,4 +116,53 @@ export const carService = {
     });
     return response.data;
   },
+
+  /** Stateless scan for pre-filling forms */
+  scanDocument: async (file: any, type?: string): Promise<any> => {
+    const formData = new FormData();
+    if (type) formData.append("type", type);
+
+    if (file.uri) {
+      const uriParts = file.uri.split('.');
+      const fileType = uriParts[uriParts.length - 1];
+
+      formData.append("file", {
+        uri: file.uri,
+        name: `scan.${fileType}`,
+        type: `image/${fileType}`,
+      } as any);
+    }
+
+    const response = await apiClient.post(API_ROUTES.CARS.SCAN_DOCUMENT, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  },
+
+  /** Save document manually (JSON) */
+  saveDocumentManual: async (carId: string, data: any): Promise<any> => {
+    const response = await apiClient.post(API_ROUTES.CARS.DOCUMENTS_MANUAL(carId), data);
+    return response.data;
+  },
+
+  /** Get detailed document list */
+  getDocuments: async (carId: string): Promise<any> => {
+    const response = await apiClient.get(API_ROUTES.CARS.DOCUMENTS_LIST(carId));
+    return response.data;
+  },
+
+  /** Update detailed document */
+  updateDocument: async (carId: string, docId: string, data: any): Promise<any> => {
+    const response = await apiClient.patch(API_ROUTES.CARS.DOCUMENTS_DETAIL(carId, docId), data);
+    return response.data;
+  },
+
+  /** Delete document */
+  deleteDocument: async (carId: string, docId: string): Promise<any> => {
+    const response = await apiClient.delete(API_ROUTES.CARS.DOCUMENTS_DETAIL(carId, docId));
+    return response.data;
+  },
 };
+

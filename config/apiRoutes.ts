@@ -36,7 +36,12 @@ export const API_ROUTES = {
     GET_BY_ID: (id: string) => `/cars/${id}`,
     UPDATE: (id: string) => `/cars/${id}`,
     DOCUMENTS: (carId: string) => `/cars/${carId}/documents`,
+    DOCUMENTS_LIST: (carId: string) => `/cars/${carId}/documents/list`,
+    DOCUMENTS_MANUAL: (carId: string) => `/cars/${carId}/documents/manual`,
+    DOCUMENTS_DETAIL: (carId: string, docId: string) => `/cars/${carId}/documents/${docId}`,
+    SCAN_DOCUMENT: "/cars/scan-document",
   },
+
   ACTIVITY: {
     TRIPS: "/activity/trips",
     REMINDERS: "/activity/reminders",
@@ -56,11 +61,18 @@ export const API_ROUTES = {
   TECHNICIANS: {
     BASE: "/technicians",
     DETAIL: (id: string) => `/technicians/${id}`,
+    UPDATE: (id: string) => `/technicians/${id}`,
   },
   OBD: {
     PAIR: "/obd/pair",
     STATUS: (deviceId: string) => `/obd/device/${deviceId}/status`,
     DIAGNOSTIC: (carId: string) => `/obd/car/${carId}/diagnostic`,
+  },
+  NOTIFICATIONS: {
+    BASE: "/notifications",
+    REGISTER_TOKEN: "/notifications/register-token",
+    MARK_AS_READ: (notificationId: string) => `/notifications/${notificationId}/read`,
+    MARK_ALL_AS_READ: "/notifications/mark-all-read",
   },
 };
 

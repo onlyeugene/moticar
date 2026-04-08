@@ -1,18 +1,10 @@
+import Pen from "@/assets/icons/pen.svg";
+import Trash from "@/assets/icons/trash.svg";
 import BottomSheet from "@/components/shared/BottomSheet";
 import { Ionicons } from "@expo/vector-icons";
-import { format } from "date-fns";
+import { format, isToday, isYesterday } from "date-fns";
 import { Text, TouchableOpacity, View } from "react-native";
-
-interface Technician {
-  _id: string;
-  name: string;
-  specialty: string;
-  phone?: string;
-  location?: string;
-  createdAt?: string;
-  notes?: string;
-  isVerified?: boolean;
-}
+import { Technician } from "@/types/technician";
 
 interface TechnicianDetailSheetProps {
   visible: boolean;
@@ -26,21 +18,59 @@ function DetailRow({
   icon,
   label,
   value,
+  subValue,
+  isNote = false,
+  isPhone = false,
+  isName = false
 }: {
   icon: string;
-  label: string;
+  label?: string;
   value?: string;
+  subValue?: string;
+  isNote?: boolean;
+  isPhone?: boolean;
+  isName?: boolean;
 }) {
   return (
-    <View className="flex-row items-start py-4 border-b border-[#F5F5F5] gap-3">
-      <Ionicons name={icon as any} size={18} color="#ADADAD" />
+    <View
+      className={`flex-row items-start py-4 border-b border-[#F5F5F5] gap-3 ${isNote ? "flex-row" : ""}`}
+    >
+      <View className="mt-0.5">
+        <Ionicons name={icon as any} size={20} color="#ADADAD" />
+      </View>
       <View className="flex-1">
-        <Text className="text-[#ADADAD] text-[10px] font-lexendRegular mb-0.5">
-          {label}
-        </Text>
-        <Text className="text-[#00343F] text-[14px] font-lexendMedium">
-          {value || "—"}
-        </Text>
+        {isNote ? (
+          <>
+            <Text className="text-[#ADADAD] text-[12px] font-lexendRegular mb-2">
+              {label}
+            </Text>
+            <View className=" p-3 rounded-lg border-b border-[#F0F0F0]">
+              <Text className="text-[#00343F] text-[14px] font-lexendMedium leading-5">
+                {value || "No notes added"}
+              </Text>
+            </View>
+          </>
+        ) : (
+          <View className="flex-row justify-between items-center">
+            {label && (
+              <Text className="text-[#ADADAD] text-[12px] font-lexendRegular">
+                {label}
+              </Text>
+            )}
+            <View className="items-end flex-1">
+              <Text
+                className={`text-[#001A1F] font-lexendRegular text-[14px] ${isPhone && "text-[24px]"} ${isName && "text-[16px]"} `}
+              >
+                {value || "—"}
+              </Text>
+              {subValue && (
+                <Text className="text-[#34A853] text-[10px] font-lexendMedium mt-0.5">
+                  {subValue}
+                </Text>
+              )}
+            </View>
+          </View>
+        )}
       </View>
     </View>
   );
@@ -53,81 +83,92 @@ export default function TechnicianDetailSheet({
   onEdit,
   onDelete,
 }: TechnicianDetailSheetProps) {
+  const dateValue = technician?.createdAt
+    ? new Date(technician.createdAt)
+    : null;
+  const relativeDate = dateValue
+    ? isToday(dateValue)
+      ? "Today"
+      : isYesterday(dateValue)
+        ? "Yesterday"
+        : ""
+    : "";
+
   return (
     <BottomSheet
       visible={visible}
       onClose={onClose}
       title="Your Auto-Technician"
       scrollable={true}
-      height="70%"
+      height="75%"
       backgroundColor="#F0F0F0"
       headerRight={
         <View className="flex-row gap-3">
-          <TouchableOpacity onPress={onEdit}>
-            <Ionicons name="pencil-outline" size={20} color="#888" />
+          <TouchableOpacity
+            onPress={onEdit}
+            className="bg-white w-12 h-12 rounded-full items-center justify-center border border-[#F0F0F0]"
+          >
+            <Pen width={20} height={20} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={onDelete}>
-            <Ionicons name="trash-outline" size={20} color="#E53935" />
+          <TouchableOpacity
+            onPress={onDelete}
+            className="bg-white w-12 h-12 rounded-full items-center justify-center border border-[#F0F0F0]"
+          >
+            <Trash width={20} height={20} />
           </TouchableOpacity>
         </View>
       }
     >
-      <View className="px-4 pb-10">
+      <View className="pb-10">
         {/* Avatar */}
         <View className="items-center my-6">
-          <View className="w-20 h-20 rounded-full bg-[#E5F9F9] items-center justify-center mb-1">
-            <Text className="text-[#00AEB5] text-[28px] font-lexendBold">
-              {technician?.name?.charAt(0)?.toUpperCase() || "?"}
-            </Text>
-          </View>
-          {technician?.isVerified && (
-            <View className="flex-row items-center gap-1 mt-1">
-              <View className="w-2 h-2 rounded-full bg-[#29D7DE]" />
-              <Text className="text-[#29D7DE] text-[10px] font-lexendMedium">
-                Verified
+          <View className="relative">
+            <View className="w-[130px] h-[130px] rounded-full bg-[#F9F5FF] items-center justify-center">
+              <Text className="text-[#7F56D9] text-[32px] font-lexendMedium">
+                {technician?.name
+                  ?.split(" ")
+                  .map((n) => n[0])
+                  .join("")
+                  .toUpperCase()
+                  .slice(0, 2) || "?"}
               </Text>
             </View>
-          )}
+            <View className="absolute bottom-2 right-2 w-6 h-6 rounded-full bg-[#29D7DE] border-[3px] border-white" />
+          </View>
         </View>
 
         {/* Detail rows */}
-        <DetailRow
-          icon="person-outline"
-          label="Full Name"
-          value={technician?.name}
-        />
-        <DetailRow
-          icon="call-outline"
-          label="Phone"
-          value={technician?.phone}
-        />
-        <DetailRow
-          icon="calendar-outline"
-          label="Date Added"
-          value={
-            technician?.createdAt
-              ? format(new Date(technician.createdAt), "d MMMM, yyyy")
-              : undefined
-          }
-        />
-        <DetailRow
-          icon="construct-outline"
-          label="SkillSet"
-          value={technician?.specialty}
-        />
-        <DetailRow
-          icon="location-outline"
-          label="Location"
-          value={technician?.location || "Not provided"}
-        />
-        <DetailRow
-          icon="document-text-outline"
-          label="Notes / Description"
-          value={technician?.notes || "No notes added"}
-        />
+        <View className="bg-white rounded-[12px] p-5 ">
+          <DetailRow icon="person-outline" value={technician?.name} isName={true}/>
+          <DetailRow
+            icon="call-outline"
+            value={technician?.phone}
+            isPhone={true}
+          />
+          <DetailRow
+            icon="calendar-outline"
+            label="Date"
+            value={dateValue ? format(dateValue, "d MMMM, yyyy") : undefined}
+            subValue={relativeDate}
+          />
+          <DetailRow
+            icon="construct-outline"
+            label="SkillSet"
+            value={technician?.specialty}
+          />
+          <DetailRow
+            icon="location-outline"
+            label="Location"
+            value={technician?.location || "Not provided"}
+          />
+          <DetailRow
+            icon="document-text-outline"
+            label="Notes / Description"
+            value={technician?.notes}
+            isNote={true}
+          />
+        </View>
       </View>
     </BottomSheet>
   );
 }
-
-export type { Technician };

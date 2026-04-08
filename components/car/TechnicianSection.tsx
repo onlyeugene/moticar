@@ -1,18 +1,7 @@
 import EmptyIcon from "@/assets/icons/empty.svg";
-import { TECHNICIAN_CATEGORIES } from "@/types/technician";
+import { TECHNICIAN_CATEGORIES, Technician } from "@/types/technician";
 import { Ionicons } from "@expo/vector-icons";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-
-interface Technician {
-  _id: string;
-  name: string;
-  specialty: string;
-  phone?: string;
-  location?: string;
-  createdAt?: string;
-  notes?: string;
-  isVerified?: boolean;
-}
 
 interface TechnicianSectionProps {
   filteredTechnicians: Technician[];

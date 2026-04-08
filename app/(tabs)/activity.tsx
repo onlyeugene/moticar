@@ -4,6 +4,7 @@ import TripsTab from "@/components/activity/TripsTab";
 import RemindersTab from "@/components/activity/RemindersTab";
 import AddTripSheet from "@/components/sheets/AddTripSheet";
 import AddReminderSheet from "@/components/sheets/AddReminderSheet";
+import ReminderCategorySheet from "@/components/sheets/ReminderCategorySheet";
 import { ScreenBackground } from "@/components/ui/ScreenBackground";
 import { useReminders, useTrips, useActivitySpends } from "@/hooks/useActivity";
 import { useAppStore } from "@/store/useAppStore";
@@ -17,12 +18,13 @@ import {
   View,
 } from "react-native";
 
-const TABS = ["Trips", "Mileage Milestones", "Spends", "Reminder"];
+const TABS = ["Trips", "Mileage Milestones", "Spends", "Reminders"];
 
 export default function ActivityScreen() {
   const { selectedCarId, activeActivityTab, setActiveActivityTab } = useAppStore();
   const [isAddTripVisible, setIsAddTripVisible] = useState(false);
   const [isAddReminderVisible, setIsAddReminderVisible] = useState(false);
+  const [isCategoryListVisible, setIsCategoryListVisible] = useState(false);
   const [selectedReminderCategory, setSelectedReminderCategory] = useState("Toll Fee");
   const user = useAuthStore((state) => state.user);
   const currencySymbol = getCurrencySymbol(user?.preferredCurrency);
@@ -32,10 +34,15 @@ export default function ActivityScreen() {
   const { data: spendData } = useActivitySpends(selectedCarId || "");
   const { data: remindersData } = useReminders(selectedCarId || "");
 
+  // Get reminders for the currently selected category
+  const categoryReminders = (remindersData?.reminders || []).filter(
+    (r) => r.category === selectedReminderCategory
+  );
+
   return (
-    <View className="flex-1 bg-[#F0F0F0]">
+    <View className="flex-1 bg-[#F5F7F7]">
       <View className="flex-1 pt-20 px-4">
-        <Text className="text-[26px] font-lexendMedium mb-6 text-[#001A1F]">
+        <Text className="text-[28px] font-lexendBold mb-6 text-[#001A1F]">
           Activity
         </Text>
 
@@ -46,30 +53,24 @@ export default function ActivityScreen() {
             showsHorizontalScrollIndicator={false}
             className="pt-2"
           >
-            <View className="flex-row gap-6">
+            <View className="flex-row gap-3">
               {TABS.map((tab) => {
                 const isActive = activeActivityTab === tab;
                 return (
                   <TouchableOpacity
                     key={tab}
                     onPress={() => setActiveActivityTab(tab)}
-                    className="items-center pb-2 relative mb-3"
+                    className={`px-4 py-2.5 rounded-[8px] items-center justify-center ${
+                      isActive ? "bg-[#00AEB5]" : "bg-[#DEDEDE]"
+                    }`}
                   >
-                    {isActive && (
-                      <View className="w-1 h-1 rounded-full bg-[#293536] absolute -right-2 -top-1" />
-                    )}
                     <Text
-                      className={`text-[14px] font-lexendSemiBold ${
-                        isActive ? "text-[#00AEB5]" : "text-[#C1C3C3]"
+                      className={`text-[12px] font-lexendSemiBold ${
+                        isActive ? "text-white" : "text-[#A1A1A1]"
                       }`}
                     >
                       {tab}
                     </Text>
-                    {isActive ? (
-                      <View className="absolute bottom-[-4px] left-0 right-0 h-[1px] bg-[#00AEB5] rounded-full" />
-                    ) : (
-                      <View className="absolute bottom-[-4px] left-0 right-0 h-[1px] bg-[#FFFFFF] rounded-full" />
-                    )}
                   </TouchableOpacity>
                 );
               })}
@@ -101,14 +102,17 @@ export default function ActivityScreen() {
             <ActivityEmptyState tabName={activeActivityTab} />
           )}
 
-          {activeActivityTab === "Reminder" && (
+          {activeActivityTab === "Reminders" && (
             <RemindersTab 
               summary={remindersData?.summary} 
-              reminders={remindersData?.reminders}
               onAdd={(cat) => {
                 setSelectedReminderCategory(cat);
                 setIsAddReminderVisible(true);
               }} 
+              onSelectCategory={(cat) => {
+                setSelectedReminderCategory(cat);
+                setIsCategoryListVisible(true);
+              }}
             />
           )}
         </ScrollView>
@@ -125,6 +129,17 @@ export default function ActivityScreen() {
         onClose={() => setIsAddReminderVisible(false)}
         category={selectedReminderCategory}
         carId={selectedCarId || ""}
+      />
+
+      <ReminderCategorySheet
+        visible={isCategoryListVisible}
+        onClose={() => setIsCategoryListVisible(false)}
+        category={selectedReminderCategory}
+        reminders={categoryReminders}
+        onAdd={() => {
+          setIsCategoryListVisible(false);
+          setIsAddReminderVisible(true);
+        }}
       />
     </View>
   );

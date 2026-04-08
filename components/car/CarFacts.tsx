@@ -9,17 +9,22 @@ import { BrandTags } from "@/lib";
 
 
 
+import { useAppStore } from "@/store/useAppStore";
+
 interface CarFactsProps {
+  activeCarId: string;
   activeCar: any;
   onOpenDiagnostics?: () => void;
   onSelectDiagnostic?: (key: string) => void;
 }
 
 export function CarFacts({
+  activeCarId,
   activeCar,
   onOpenDiagnostics,
   onSelectDiagnostic,
 }: CarFactsProps) {
+  const obdData = useAppStore((state) => state.obdData[activeCarId]);
   // Fuel Estimation Logic: Check if avgPriceRange is the total estimated cost or price per liter
   const getFuelEst = () => {
     if (!activeCar?.fuelSpec) return "Est. ₦N/A";
@@ -80,15 +85,17 @@ export function CarFacts({
           <View className="flex-row justify-between items-start mb-2">
             <FuelIcon width={30} height={30} />
             <Text className="text-[#006C70] text-[24px] font-lexendRegular">
-              {activeCar?.fuelSpec?.capacityLiters
-                ? `${activeCar.fuelSpec.capacityLiters}L`
-                : "N/A"}
+              {obdData?.fuelLevel !== undefined 
+                ? `${obdData.fuelLevel}%` 
+                : activeCar?.fuelSpec?.capacityLiters
+                  ? `${activeCar.fuelSpec.capacityLiters}L`
+                  : "N/A"
+              }
             </Text>
           </View>
           <Text className="text-[#006C70] text-[14px] font-lexendRegular mb-2">
-            Fuel
+            Fuel {obdData?.fuelLevel !== undefined && "(Live)"}
           </Text>
-          {/* <BrandTags brands={activeCar?.fuelSpec?.reputableStations} /> */}
           <View className="justify-between flex-row items-center mt-3">
             <Text className="text-[#879090] text-[10px] font-lexendRegular ">
               Full Tank
@@ -182,11 +189,13 @@ export function CarFacts({
           <View className="flex-row justify-between items-start mb-2">
             <BatteryIcon width={30} height={30} />
             <Text className="text-[#006C70] text-[24px] font-lexendRegular">
-              {activeCar?.batterySpec?.voltage ? '12V': "N/A"}
+              {obdData?.voltage 
+                ? `${obdData.voltage}V` 
+                : (activeCar?.batterySpec?.voltage ? '12V': "N/A")}
             </Text>
           </View>
           <Text className="text-[#006C70] text-[14px] font-lexendRegular mb-1">
-            Battery
+            Battery {obdData?.voltage && "(Live)"}
           </Text>
           <View className="mt-4 flex-row justify-between items-center">
           <BrandTags brands={activeCar?.batterySpec?.providers} />

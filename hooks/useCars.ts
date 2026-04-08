@@ -115,8 +115,9 @@ export const useUploadDocument = () => {
     mutationFn: ({ carId, type, file }: { carId: string; type: string; file: any }) =>
       carService.uploadDocument(carId, type, file),
     onSuccess: () => {
-      // Invalidate both the car list and potentially specific detail views
+      // Invalidate both the car list and the specific details query
       queryClient.invalidateQueries({ queryKey: ["cars", "user"] });
+      queryClient.invalidateQueries({ queryKey: ["cars", "details"] });
     },
   });
 };

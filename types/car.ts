@@ -48,11 +48,40 @@ export interface Car {
 }
 
 export interface CarDocument {
-  type: "MOT" | "Vehicle License" | "Tax" | "Insurance Status";
-  status: "active" | "expired" | "pending";
+  _id?: string;
+  id?: string;
+  type: string;
+  status?: "active" | "expired" | "pending";
   expiryDate: string;
-  fileUrl: string;
+  fileUrl?: string;
+  // Manual input fields
+  issueDate?: string;
+  testDate?: string;
+  startDate?: string;
+  serviceDate?: string;
+  amount?: number;
+  mileage?: number;
+  result?: "Pass" | "Fail";
+  testCentreName?: string;
+  certificateNumber?: string;
+  issuingAuthority?: string;
+  vin?: string;
+  frequency?: string;
+  paymentStatus?: string;
+  paymentMethod?: string;
+  serviceType?: string;
+  garageName?: string;
+  partsReplaced?: Array<{ id: string; item: string }>;
+  licenseNumber?: string;
+  provider?: string;
+  policyNumber?: string;
+  coverageType?: string;
+  paymentPlan?: string;
+  notes?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
+
 
 export interface CarCreateInput {
   make: string;

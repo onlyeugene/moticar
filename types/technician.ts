@@ -3,11 +3,13 @@ export interface Technician {
   id?: string;
   name: string;
   specialty: string;
-  phone: string;
+  phone?: string;
   location?: string;
   notes?: string;
   businessName?: string;
   avatarUrl?: string;
+  createdAt?: string;
+  isVerified?: boolean;
 }
 
 export interface CreateTechnicianInput {

@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View, Pressable, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
+import { Text, View, Pressable, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator } from "react-native";
 import { ScreenBackground } from "@/components/ui/ScreenBackground";
 import Container from "@/components/shared/container";
 import { Ionicons } from "@expo/vector-icons";
@@ -30,18 +30,20 @@ export default function ImeiEntry() {
   });
 
   const [showScanner, setShowScanner] = React.useState(false);
+  const [isPairing, setIsPairing] = React.useState(false);
 
   const selectedCarId = useAppStore((state) => state.selectedCarId);
   const { showSnackbar } = useSnackbar();
 
-  const onSubmit = async (data: ImeiFormData) => {
+  const handlePairing = async (imei: string) => {
+    setIsPairing(true);
     try {
-      console.log("📡 Initiating Pairing for IMEI:", data.imei, "Linked Car:", selectedCarId || "None (Discovery)");
-      await obdService.pairDevice(selectedCarId || "", data.imei);
+      console.log("📡 Initiating Pairing for IMEI:", imei, "Linked Car:", selectedCarId || "None (Discovery)");
+      await obdService.pairDevice(selectedCarId || "", imei);
       
       router.push({
         pathname: "/screens/motibuddie/connecting",
-        params: { imei: data.imei }
+        params: { imei }
       });
     } catch (error: any) {
       console.error("Pairing Error:", error);
@@ -60,7 +62,13 @@ export default function ImeiEntry() {
           type: "error" 
         });
       }
+    } finally {
+      setIsPairing(false);
     }
+  };
+
+  const onSubmit = async (data: ImeiFormData) => {
+    await handlePairing(data.imei);
   };
 
   return (
@@ -123,6 +131,10 @@ export default function ImeiEntry() {
                 // Remove any non-alphanumeric characters if necessary
                 const cleanData = data.replace(/[^\d]/g, "");
                 setValue("imei", cleanData, { shouldValidate: true });
+                // Auto-pair when scanned
+                if (cleanData.length >= 10) {
+                  handlePairing(cleanData);
+                }
               }}
             />
 
@@ -130,11 +142,11 @@ export default function ImeiEntry() {
             <View className="mb-10 w-full">
               <Pressable
                 onPress={handleSubmit(onSubmit)}
-                disabled={!isValid}
+                disabled={!isValid || isPairing}
                 className={`w-full h-[56px] rounded-full items-center justify-center ${
-                  isValid ? "bg-[#29D7DE]" : "bg-[#09515D] opacity-50"
+                  isValid && !isPairing ? "bg-[#29D7DE]" : "bg-[#09515D] opacity-50"
                 }`}
-                style={isValid ? {
+                style={isValid && !isPairing ? {
                   shadowColor: "#29D7DE",
                   shadowOffset: { width: 0, height: 4 },
                   shadowOpacity: 0.3,
@@ -142,9 +154,13 @@ export default function ImeiEntry() {
                   elevation: 5,
                 } : {}}
               >
-                <Text className={`font-lexendBold text-[16px] ${isValid ? "text-[#00343F]" : "text-white/50"}`}>
-                  Connect Device
-                </Text>
+                {isPairing ? (
+                  <ActivityIndicator color="#00343F" />
+                ) : (
+                  <Text className={`font-lexendBold text-[16px] ${isValid ? "text-[#00343F]" : "text-white/50"}`}>
+                    Connect Device
+                  </Text>
+                )}
               </Pressable>
             </View>
           </ScrollView>

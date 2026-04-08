@@ -74,7 +74,7 @@ export default function TechnicianSheet({
     return technicians.filter((tech) => {
       const matchesSearch =
         tech.name.toLowerCase().includes(search.toLowerCase()) ||
-        tech.phone.includes(search);
+        (tech.phone || "").includes(search);
       const matchesCategory =
         selectedCategory === "All" || tech.specialty === selectedCategory;
       return matchesSearch && matchesCategory;
@@ -167,10 +167,10 @@ export default function TechnicianSheet({
                       <Text className="text-[14px] font-lexendRegular text-[#101828]">
                         {item.name}
                       </Text>
-                      <Text className="text-[12px] font-lexendRegular text-[#9A9A9A]">
-                        {item.phone}
-                      </Text>
                     </View>
+                    <Text className="text-[14px] font-lexendRegular text-[#00AEB5]">
+                      {item.phone}
+                    </Text>
                   </TouchableOpacity>
                   {index < filteredTechnicians.length - 1 && (
                     <View className="h-[1px] bg-[#F0F0F0]" />
