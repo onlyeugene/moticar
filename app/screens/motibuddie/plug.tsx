@@ -47,7 +47,7 @@ export default function Plug() {
         {/* Action Button */}
         <View className="mb-10 w-full gap-6">
           <Pressable
-            onPress={() => router.push("/screens/motibuddie/connecting")}
+            onPress={() => router.push("/screens/motibuddie/imei")}
             className="w-full h-[56px] rounded-full bg-[#29D7DE] items-center justify-center active:opacity-90 shadow-lg"
             style={{
               shadowColor: "#29D7DE",
@@ -59,15 +59,6 @@ export default function Plug() {
           >
             <Text className="font-lexendBold text-[16px] text-[#00343F]">
               Start Pairing
-            </Text>
-          </Pressable>
-
-          <Pressable 
-            onPress={() => router.push("/screens/motibuddie/imei")}
-            className="items-center py-2"
-          >
-            <Text className="text-[#9BBABB] font-lexendRegular text-[14px]">
-              Or <Text className="text-[#29D7DE] font-lexendMedium">Enter IMEI manually</Text>
             </Text>
           </Pressable>
         </View>

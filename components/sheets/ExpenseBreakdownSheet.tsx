@@ -13,6 +13,7 @@ interface ExpenseBreakdownSheetProps {
   spendData?: SpendBreakdown;
   expenses?: Expense[];
   currencySymbol: string;
+  monthlyBudget?: number;
 }
 
 export default function ExpenseBreakdownSheet({
@@ -21,19 +22,72 @@ export default function ExpenseBreakdownSheet({
   spendData,
   expenses,
   currencySymbol,
+  monthlyBudget,
 }: ExpenseBreakdownSheetProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [expandedId, setExpandedId] = useState<string | null>(null);
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const [isDetailVisible, setIsDetailVisible] = useState(false);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const handlePressDetails = (expense: Expense) => {
     setSelectedExpense(expense);
     setIsDetailVisible(true);
   };
 
-  // Group expenses by date
   const expensesList = expenses || spendData?.expenses || [];
+
+  // Cumulative sum logic to find which expense exceeded the budget
+  const exceedingExpenseId = React.useMemo(() => {
+    if (!monthlyBudget) return null;
+
+    // We only care about the current month's expenses for the monthly budget exceedance.
+    // If spendData is provided, we use its month/year. Otherwise, we assume the latest expense's month.
+    const referenceMonth = spendData?.period?.month;
+    const referenceYear = spendData?.period?.year;
+
+    // Filter and Sort all expenses for THAT specific month by date ascending (oldest first)
+    const currentMonthExpenses = expensesList.filter((exp) => {
+      const d = new Date(exp.date);
+      return (
+        (!referenceMonth || d.getMonth() + 1 === referenceMonth) &&
+        (!referenceYear || d.getFullYear() === referenceYear)
+      );
+    });
+
+    const sortedAll = [...currentMonthExpenses].sort((a, b) => {
+      const dateA = new Date(a.date).getTime();
+      const dateB = new Date(b.date).getTime();
+      if (dateA !== dateB) return dateA - dateB;
+      // Stable sort tie-breaker
+      return (a.id || (a as any)._id).localeCompare(b.id || (b as any)._id);
+    });
+
+    let runningTotal = 0;
+    for (const exp of sortedAll) {
+      runningTotal += exp.amount;
+      if (runningTotal > monthlyBudget) {
+        return exp.id || (exp as any)._id;
+      }
+    }
+    return null;
+  }, [expensesList, monthlyBudget, spendData?.period]);
+
+  const BudgetExceededIndicator = ({ budget }: { budget: number }) => (
+    <View className="flex-row items-center my-4 ">
+      <View className="flex-1 h-[1px] bg-[#F8953A]" />
+      <View className="bg-[#FFF2C5] border border-[#F8953A] rounded-[4px] px-3 py-1.5 flex-row items-center gap-2 ">
+        <Ionicons name="warning-outline" size={14} color="#F8953A" />
+        <Text className="text-[#425658] text-[10px] font-lexendRegular">
+          You exceeded your set monthly budget on{" "}
+          <Text className="font-lexendBold">
+            {currencySymbol}
+            {budget.toLocaleString()}
+          </Text>
+        </Text>
+      </View>
+      <View className="flex-1 h-[1px] bg-[#F8953A]" />
+    </View>
+  );
   const groupedExpenses = expensesList.reduce((acc: any, expense) => {
     const date = new Date(expense.date);
     const dateKey = date
@@ -62,6 +116,10 @@ export default function ExpenseBreakdownSheet({
     </View>
   );
 
+  const totalAmount = React.useMemo(() => {
+    return expensesList.reduce((sum, exp) => sum + exp.amount, 0);
+  }, [expensesList]);
+
   const title = (
     <View className="flex-col items-start gap-2">
       <Text className="text-[#00343F] text-[16px] font-lexendBold">
@@ -71,7 +129,7 @@ export default function ExpenseBreakdownSheet({
         Total{" "}
         <Text className="text-[#00AEB5] text-[13px] font-lexendSemiBold">
           {currencySymbol}
-          {spendData?.totalSpend.toLocaleString()}
+          {totalAmount.toLocaleString()}
         </Text>
       </Text>
     </View>
@@ -113,22 +171,28 @@ export default function ExpenseBreakdownSheet({
                     .includes(searchQuery.toLowerCase()),
                 )
                 .map((expense: any, idx: number) => (
-                  <ExpenseListItem
-                    key={expense.id || expense._id || idx}
-                    expense={expense}
-                    currencySymbol={currencySymbol}
-                    isExpanded={
-                      expandedId === (expense.id || (expense as any)._id)
-                    }
-                    onToggle={() =>
-                      setExpandedId(
+                  <React.Fragment key={expense.id || expense._id || idx}>
+                    {exceedingExpenseId ===
+                      (expense.id || (expense as any)._id) &&
+                      monthlyBudget && (
+                        <BudgetExceededIndicator budget={monthlyBudget} />
+                      )}
+                    <ExpenseListItem
+                      expense={expense}
+                      currencySymbol={currencySymbol}
+                      onPressDetails={handlePressDetails}
+                      isExpanded={
                         expandedId === (expense.id || (expense as any)._id)
-                          ? null
-                          : expense.id || (expense as any)._id,
-                      )
-                    }
-                    onPressDetails={handlePressDetails}
-                  />
+                      }
+                      onToggle={() =>
+                        setExpandedId(
+                          expandedId === (expense.id || (expense as any)._id)
+                            ? null
+                            : expense.id || (expense as any)._id,
+                        )
+                      }
+                    />
+                  </React.Fragment>
                 ))}
             </View>
           ))}

@@ -13,17 +13,20 @@ interface ExpenseBreakdownCardProps {
   spendData?: SpendBreakdown;
   expenses?: Expense[];
   currencySymbol: string;
+  monthlyBudget?: number;
 }
 
 const ExpenseBreakdownCard: React.FC<ExpenseBreakdownCardProps> = ({
   spendData,
   expenses,
   currencySymbol,
+  monthlyBudget,
 }) => {
   const [containerWidth, setContainerWidth] = useState(240);
   const [isSheetVisible, setIsSheetVisible] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const [isDetailVisible, setIsDetailVisible] = useState(false);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const handlePressDetails = (expense: Expense) => {
     setSelectedExpense(expense);
@@ -56,6 +59,58 @@ const ExpenseBreakdownCard: React.FC<ExpenseBreakdownCardProps> = ({
 
     return days.map((d) => dailyTotals[d]);
   }, [expenses, spendData?.expenses]);
+
+  const expensesList = expenses || spendData?.expenses || [];
+
+  // Cumulative sum logic to find which expense exceeded the budget
+  const exceedingExpenseId = React.useMemo(() => {
+    if (!monthlyBudget) return null;
+
+    // Filter current month
+    const referenceMonth = spendData?.period?.month;
+    const referenceYear = spendData?.period?.year;
+
+    const currentMonthExpenses = expensesList.filter((exp) => {
+      const d = new Date(exp.date);
+      return (
+        (!referenceMonth || d.getMonth() + 1 === referenceMonth) &&
+        (!referenceYear || d.getFullYear() === referenceYear)
+      );
+    });
+
+    const sortedAll = [...currentMonthExpenses].sort((a, b) => {
+      const dateA = new Date(a.date).getTime();
+      const dateB = new Date(b.date).getTime();
+      if (dateA !== dateB) return dateA - dateB;
+      return (a.id || (a as any)._id).localeCompare(b.id || (b as any)._id);
+    });
+
+    let runningTotal = 0;
+    for (const exp of sortedAll) {
+      runningTotal += exp.amount;
+      if (runningTotal > monthlyBudget) {
+        return exp.id || (exp as any)._id;
+      }
+    }
+    return null;
+  }, [expensesList, monthlyBudget, spendData?.period]);
+
+  const BudgetExceededIndicator = ({ budget }: { budget: number }) => (
+    <View className="flex-row items-center my-4 px-1">
+      <View className="flex-1 h-[1px] bg-[#FFAB2D] opacity-40" />
+      <View className="bg-[#FFF8ED] border border-[#FFAB2D] rounded-[8px] px-3 py-1.5 flex-row items-center gap-2 mx-1.5">
+        <Ionicons name="warning-outline" size={14} color="#FF7A00" />
+        <Text className="text-[#1A3B41] text-[11px] font-lexendRegular">
+          You exceeded your set monthly budget on{" "}
+          <Text className="font-lexendBold">
+            {currencySymbol}
+            {budget.toLocaleString()}
+          </Text>
+        </Text>
+      </View>
+      <View className="flex-1 h-[1px] bg-[#FFAB2D] opacity-40" />
+    </View>
+  );
 
   return (
     <View className="mt-4">
@@ -110,13 +165,29 @@ const ExpenseBreakdownCard: React.FC<ExpenseBreakdownCardProps> = ({
             </View>
 
             <View className="mt-4">
-              {(expenses || spendData?.expenses || []).slice(0, 4).map((expense, idx) => (
-                <ExpenseListItem
-                  key={expense.id || expense._id || idx}
-                  expense={expense}
-                  currencySymbol={currencySymbol}
-                  onPressDetails={handlePressDetails}
-                />
+              {expensesList.slice(0, 4).map((expense, idx) => (
+                <React.Fragment key={expense.id || expense._id || idx}>
+                  {exceedingExpenseId ===
+                    (expense.id || (expense as any)._id) &&
+                    monthlyBudget && (
+                      <BudgetExceededIndicator budget={monthlyBudget} />
+                    )}
+                  <ExpenseListItem
+                    expense={expense}
+                    currencySymbol={currencySymbol}
+                    onPressDetails={handlePressDetails}
+                    isExpanded={
+                      expandedId === (expense.id || (expense as any)._id)
+                    }
+                    onToggle={() =>
+                      setExpandedId(
+                        expandedId === (expense.id || (expense as any)._id)
+                          ? null
+                          : expense.id || (expense as any)._id,
+                      )
+                    }
+                  />
+                </React.Fragment>
               ))}
             </View>
           </>
@@ -136,6 +207,7 @@ const ExpenseBreakdownCard: React.FC<ExpenseBreakdownCardProps> = ({
         spendData={spendData}
         expenses={expenses}
         currencySymbol={currencySymbol}
+        monthlyBudget={monthlyBudget}
       />
 
       <ExpenseDetailSheet

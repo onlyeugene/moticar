@@ -1,6 +1,6 @@
 import CameraPlusIcon from "@/assets/icons/cameraplus.svg";
 import { ExpenseCategory, ExpenseItem } from "@/types/expense";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -15,13 +15,38 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { format } from "date-fns";
 import BottomSheet from "../shared/BottomSheet";
-import ScanIcon from '@/assets/icons/scan.svg'
+import ScanIcon from "@/assets/icons/scan.svg";
+
+import BearingsIcon from "@/assets/parts/bearings.svg";
+import BeltsIcon from "@/assets/parts/belts.svg";
+import BodyIcon from "@/assets/parts/body.svg";
+import CarPartsIcon from "@/assets/parts/carParts-5.svg";
+import DampingIcon from "@/assets/parts/damping.svg";
+import CoolingIcon from "@/assets/parts/engineCoolingSystem.svg";
+import FilterIcon from "@/assets/parts/filter.svg";
+import FuelIcon from "@/assets/parts/fuel.svg";
+import GasketIcon from "@/assets/parts/gasket.svg";
+import OilIcon from "@/assets/parts/oil.svg";
+import SensorsIcon from "@/assets/parts/sensors.svg";
+import SteeringIcon from "@/assets/parts/steering.svg";
+import SuspensionIcon from "@/assets/parts/suspension.svg";
+import TowbarParts1Icon from "@/assets/parts/towbarParts-1.svg";
+import TowbarPartsIcon from "@/assets/parts/towbarParts.svg";
+import TransmissionIcon from "@/assets/parts/transmission.svg";
+import TyresIcon from "@/assets/parts/tyres.svg";
+import WiperIcon from "@/assets/parts/wiper.svg";
+
+import { CategoryIcon } from "./ExpenseCategorySheet";
 
 // Icons
 
 // Dynamic Icons (Fallback mapping)
 
-import { useLogExpense, useScanReceipt, useUploadReceipts } from "@/hooks/useExpenses";
+import {
+  useLogExpense,
+  useScanReceipt,
+  useUploadReceipts,
+} from "@/hooks/useExpenses";
 import { useAppStore } from "@/store/useAppStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useUserCars } from "@/hooks/useCars";
@@ -32,8 +57,7 @@ import DatePickerSheet from "./DatePickerSheet";
 import TechnicianSheet from "./TechnicianSheet";
 import AddTechnicianSheet from "./AddTechnicianSheet";
 import PriceRuler from "./PriceRuler";
-
-import { CategoryIcon } from "./ExpenseCategorySheet";
+import ItemSelectionSheet from "./ItemSelectionSheet";
 
 // Icons
 import TagIcon from "@/assets/new/tag.svg";
@@ -105,11 +129,14 @@ export default function LogExpenseSheet({
   const currencySymbol = getCurrencySymbol(user?.preferredCurrency);
 
   const { data: carsData } = useUserCars();
-  const selectedCar = carsData?.cars?.find((c: any) => (c.id || c._id) === selectedCarId);
+  const selectedCar = carsData?.cars?.find(
+    (c: any) => (c.id || c._id) === selectedCarId,
+  );
 
   const { mutate: logExpense, isPending } = useLogExpense();
   const { mutate: scanReceipt, isPending: isScanning } = useScanReceipt();
-  const { mutate: uploadReceipts, isPending: isUploading } = useUploadReceipts();
+  const { mutate: uploadReceipts, isPending: isUploading } =
+    useUploadReceipts();
 
   // Form State
   const [name, setName] = useState("");
@@ -124,13 +151,17 @@ export default function LogExpenseSheet({
     {},
   );
 
-  const currentMonth = date ? (date.getMonth() + 1).toString() : (new Date().getMonth() + 1).toString();
-  const currentYear = date ? date.getFullYear().toString() : new Date().getFullYear().toString();
+  const currentMonth = date
+    ? (date.getMonth() + 1).toString()
+    : (new Date().getMonth() + 1).toString();
+  const currentYear = date
+    ? date.getFullYear().toString()
+    : new Date().getFullYear().toString();
 
   const { data: spendData } = useActivitySpends(
     selectedCarId || "",
     currentMonth,
-    currentYear
+    currentYear,
   );
   const [selectedTechnician, setSelectedTechnician] =
     useState<Technician | null>(null);
@@ -141,6 +172,8 @@ export default function LogExpenseSheet({
     useState(false);
   const [isAddTechnicianSheetVisible, setIsAddTechnicianSheetVisible] =
     useState(false);
+  const [isItemSheetVisible, setIsItemSheetVisible] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     if (visible && category) {
@@ -215,8 +248,11 @@ export default function LogExpenseSheet({
   const budgetLeft = totalBudget - (spentSoFar + currentAmount);
   const isOverBudget = budgetLeft < 0;
 
+  const isAccessories = category.name === "Accessories & Parts";
+
   const handleAddExtraCost = () => {
-    setExtraCosts([...extraCosts, { name: "", price: 0, qty: 1 }]);
+    setActiveIndex(extraCosts.length);
+    setExtraCosts([...extraCosts, { name: "", price: 0, qty: 0 }]);
   };
 
   const updateExtraCost = (
@@ -238,7 +274,9 @@ export default function LogExpenseSheet({
     0,
   );
 
-  const showImageSourceOptions = (onSelect: (source: "camera" | "library") => void) => {
+  const showImageSourceOptions = (
+    onSelect: (source: "camera" | "library") => void,
+  ) => {
     Alert.alert(
       "Select Receipt Source",
       "Would you like to take a photo or choose from your gallery?",
@@ -264,7 +302,10 @@ export default function LogExpenseSheet({
     if (source === "camera") {
       const permission = await ImagePicker.requestCameraPermissionsAsync();
       if (!permission.granted) {
-        Alert.alert("Permission Required", "Please allow camera access to take a photo.");
+        Alert.alert(
+          "Permission Required",
+          "Please allow camera access to take a photo.",
+        );
         return null;
       }
       result = await ImagePicker.launchCameraAsync({
@@ -301,7 +342,10 @@ export default function LogExpenseSheet({
           },
           onError: (err: any) => {
             console.error("Failed to scan receipt:", err);
-            const errorMessage = err.response?.data?.message || err.message || "Failed to process the receipt.";
+            const errorMessage =
+              err.response?.data?.message ||
+              err.message ||
+              "Failed to process the receipt.";
             Alert.alert("Error", errorMessage);
           },
         });
@@ -321,7 +365,10 @@ export default function LogExpenseSheet({
           },
           onError: (err: any) => {
             console.error("Failed to upload receipt:", err);
-            const errorMessage = err.response?.data?.message || err.message || "Failed to upload the receipt.";
+            const errorMessage =
+              err.response?.data?.message ||
+              err.message ||
+              "Failed to upload the receipt.";
             Alert.alert("Error", errorMessage);
           },
         });
@@ -378,9 +425,10 @@ export default function LogExpenseSheet({
           {category.name}
         </Text>
         <Text className="text-[#8B8B8B] text-[12px] font-lexendRegular">
-         Recommeded  <Text className="font-lexendBold text-[#29D7DE] text-[13px]">
-          {currencySymbol} {budgetRecommended.toLocaleString()}
-         </Text>
+          Recommeded{" "}
+          <Text className="font-lexendBold text-[#29D7DE] text-[13px]">
+            {currencySymbol} {budgetRecommended.toLocaleString()}
+          </Text>
         </Text>
       </View>
     </View>
@@ -396,15 +444,15 @@ export default function LogExpenseSheet({
 
   const headerRight = (
     <View className="flex-row items-center gap-2">
-      <TouchableOpacity 
+      <TouchableOpacity
         onPress={triggerScan}
         disabled={isScanning}
         className="w-12 h-12 rounded-full bg-white border border-[#E0E0E0] items-center justify-center"
       >
         {isScanning ? (
-           <ActivityIndicator size="small" color="#29D7DE" />
+          <ActivityIndicator size="small" color="#29D7DE" />
         ) : (
-          <ScanIcon width={24}/>
+          <ScanIcon width={24} />
         )}
       </TouchableOpacity>
       <TouchableOpacity
@@ -430,6 +478,7 @@ export default function LogExpenseSheet({
       title={title as any}
       headerRight={headerRight}
       backgroundColor="#F0F0F0"
+      height='90%'
     >
       <View className="flex-1 pb-10">
         {/* Budget Left Banner */}
@@ -529,7 +578,7 @@ export default function LogExpenseSheet({
 
           {/* Date Field */}
           <FieldRow
-          noBorder
+            noBorder
             label="Date"
             icon={CalendarIcon}
             onPress={() => setIsDatePickerVisible(true)}
@@ -552,7 +601,6 @@ export default function LogExpenseSheet({
           />
         </View>
 
-  
         {/* Card 2: Receipt Upload */}
         <View className="bg-white px-4 mb-1 rounded-none py-2">
           <FieldRow
@@ -562,28 +610,32 @@ export default function LogExpenseSheet({
             onPress={triggerUpload}
             rightElement={
               <View className="flex-row items-center gap-2">
-                <View >
+                <View>
                   <View className="flex-row gap-2">
                     {receipts.map((uri, index) => (
                       <View key={`${uri}-${index}`} className="relative">
                         <View className="w-12 h-12 bg-gray-50 rounded-lg border border-gray-100 overflow-hidden">
                           <Image source={{ uri }} className="w-full h-full" />
                         </View>
-                        <TouchableOpacity 
+                        <TouchableOpacity
                           onPress={() => removeReceipt(index)}
                           className="absolute -top-1 -right-1 bg-white rounded-full shadow-sm z-10"
                         >
-                          <Ionicons name="close-circle" size={18} color="#EE6969" />
+                          <Ionicons
+                            name="close-circle"
+                            size={18}
+                            color="#EE6969"
+                          />
                         </TouchableOpacity>
                       </View>
                     ))}
-                    
+
                     {isUploading ? (
-                       <View className="w-12 h-12 bg-[#F5F5F5] rounded-lg items-center justify-center">
-                          <ActivityIndicator size="small" color="#29D7DE" />
-                       </View>
+                      <View className="w-12 h-12 bg-[#F5F5F5] rounded-lg items-center justify-center">
+                        <ActivityIndicator size="small" color="#29D7DE" />
+                      </View>
                     ) : receipts.length < 5 ? (
-                      <TouchableOpacity 
+                      <TouchableOpacity
                         onPress={triggerUpload}
                         className="w-12 h-12 bg-[#F5F5F5] rounded-lg items-center justify-center border border-dashed border-[#D0D0D0]"
                       >
@@ -592,7 +644,12 @@ export default function LogExpenseSheet({
                     ) : null}
                   </View>
                 </View>
-                <Ionicons name="chevron-forward" size={18} color="#C1C3C3" className="ml-2" />
+                <Ionicons
+                  name="chevron-forward"
+                  size={18}
+                  color="#C1C3C3"
+                  className="ml-2"
+                />
               </View>
             }
           />
@@ -603,11 +660,18 @@ export default function LogExpenseSheet({
           if (field.name === "technicianId") return null;
 
           return (
-            <View key={field._id || field.name} className="bg-white px-4 mb-1 rounded-none py-2">
+            <View
+              key={field._id || field.name}
+              className="bg-white px-4 mb-1 rounded-none py-2"
+            >
               <FieldRow
                 noBorder
                 label={field.label}
-                icon={field.name.toLowerCase().includes("station") ? TagIcon : TagIcon} // Simple logic for icons, can be improved
+                icon={
+                  field.name.toLowerCase().includes("station")
+                    ? TagIcon
+                    : TagIcon
+                } // Simple logic for icons, can be improved
               >
                 <TextInput
                   className="text-[#00343F] font-lexendRegular text-[14px] pb-2 border-b border-[#F0F0F0]"
@@ -660,15 +724,13 @@ export default function LogExpenseSheet({
                 key={method}
                 onPress={() => setPaymentMethod(method as any)}
                 className={`flex-1 h-[45px] items-center justify-center rounded-xl transition-all ${
-                  paymentMethod === method
-                    ? "bg-[#E6F7F7] border border-[#00AEB5]"
-                    : "bg-[#F5F5F5]"
+                  paymentMethod === method ? "bg-[#00AEB5] " : "bg-[#F5F5F5]"
                 }`}
               >
                 <Text
                   className={`text-[12px] font-lexendMedium ${
                     paymentMethod === method
-                      ? "text-[#00AEB5]"
+                      ? "text-[#FFFFFF]"
                       : "text-[#A0A0A0]"
                   }`}
                 >
@@ -679,10 +741,12 @@ export default function LogExpenseSheet({
           </View>
         </View>
 
-        {/* Card 5: Extra Costs */}
+        {/* Card 5: Extra Costs / Cost of Item */}
         <View className="bg-white px-4 mb-1 rounded-none py-4">
           <FieldRow
-            label="Did you incur any extra cost?"
+            label={
+              isAccessories ? "Cost of Item" : "Did you incur any extra cost?"
+            }
             icon={CostIcon}
             noBorder
             rightElement={
@@ -692,63 +756,182 @@ export default function LogExpenseSheet({
             }
           />
 
-          {extraCosts.length > 0 && (
-            <View className="flex-row gap-2 mb-2 px-1 ml-8">
-              <Text className="flex-[2] text-[#B4B1B1] text-[10px] font-lexendRegular">
-                Item
-              </Text>
-              <Text className="flex-1 text-[#B4B1B1] text-[10px] font-lexendRegular">
-                Price
-              </Text>
-              <View className="w-14 items-center">
-                <Text className="text-[#B4B1B1] text-[10px] font-lexendRegular">
-                  Qty
+          <View className="ml-8 ">
+            {isAccessories ? (
+              /* Accessories Mode: Chips + Price/Qty inputs for selected item */
+              <View>
+                <View className="flex-row items-center mb-4 ">
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    className="flex-grow-0 "
+                  >
+                    <View
+                      className={`flex-row gap-2 pr-2 ${extraCosts.length > 0 ? "border p-1 rounded-full border-[#E6E6E6]" : ""}`}
+                    >
+                      {extraCosts.map((item, index) => {
+                        const PART_ICONS: Record<string, any> = {
+                          Towbar: TowbarPartsIcon,
+                          Bearings: BearingsIcon,
+                          "Car Accessories": CarPartsIcon,
+                          Suspension: SuspensionIcon,
+                          "Oils & Fluids": OilIcon,
+                          "Gasket & Sealing Rings": GasketIcon,
+                          "Tow Parts": TowbarParts1Icon,
+                          Wiper: WiperIcon,
+                          Body: BodyIcon,
+                          Tyres: TyresIcon,
+                          Steering: SteeringIcon,
+                          Filters: FilterIcon,
+                          Gasket: GasketIcon,
+                          "Fuel Supply": FuelIcon,
+                          Damping: DampingIcon,
+                          Sensors: SensorsIcon,
+                          "Belts/Chains/Rollers": BeltsIcon,
+                          Transmission: TransmissionIcon,
+                          "Cooling System": CoolingIcon,
+                        };
+                        const PartIcon = PART_ICONS[item.name] || TagIcon;
+                        const isSelected = activeIndex === index;
+
+                        return (
+                          <TouchableOpacity
+                            key={index}
+                            onPress={() => setActiveIndex(index)}
+                            className={`flex-row items-center gap-2 px-3 py-2 rounded-full ${
+                              isSelected ? "bg-[#ECECEC]" : "bg-white border border-[#EFEFEF]"
+                            }`}
+                          >
+                            <PartIcon width={16} height={16} color="#00343F" />
+                            <Text className="text-[#4B4B4B] text-[12px] font-lexendRegular">
+                              {item.name || "Item"}
+                            </Text>
+                          </TouchableOpacity>
+                        );
+                      })}
+                    </View>
+                  </ScrollView>
+
+                  <TouchableOpacity
+                    onPress={() => setIsItemSheetVisible(true)}
+                    className="w-10 h-10 rounded-full bg-[#F0F0F0] items-center justify-center border border-[#E0E0E0] ml-2"
+                  >
+                    <Ionicons name="grid-outline" size={18} color="#00343F" />
+                  </TouchableOpacity>
+                </View>
+
+                {extraCosts.length > 0 && activeIndex < extraCosts.length && (
+                  <View className="flex-row gap-3 items-center mb-3">
+                    <View className="flex-1 border-b border-[#F0F0F0]  px-3 py-3">
+                      <TextInput
+                        className="text-[#00343F] font-lexendRegular text-[14px]"
+                        placeholder="Price"
+                        placeholderTextColor="#B4B1B1"
+                        keyboardType="numeric"
+                        value={
+                          extraCosts[activeIndex].price > 0
+                            ? extraCosts[activeIndex].price.toString()
+                            : ""
+                        }
+                        onChangeText={(val) =>
+                          updateExtraCost(
+                            activeIndex,
+                            "price",
+                            parseFloat(val) || 0,
+                          )
+                        }
+                      />
+                    </View>
+                    <View className="w-24 border-b border-[#F0F0F0]  px-3 py-3">
+                      <TextInput
+                        className="text-[#00343F] font-lexendRegular text-[14px] text-center"
+                        placeholder="Qty"
+                        placeholderTextColor="#B4B1B1"
+                        keyboardType="numeric"
+                        value={
+                          extraCosts[activeIndex].qty > 0
+                            ? extraCosts[activeIndex].qty.toString()
+                            : ""
+                        }
+                        onChangeText={(val) =>
+                          updateExtraCost(
+                            activeIndex,
+                            "qty",
+                            parseInt(val) || 0,
+                          )
+                        }
+                      />
+                    </View>
+                    <TouchableOpacity
+                      onPress={() => removeExtraCost(activeIndex)}
+                    >
+                      <Ionicons
+                        name="close"
+                        size={24}
+                        color="#EE6969"
+                        opacity={0.6}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
+            ) : (
+              /* Generic Mode: 3-column rows */
+              extraCosts.map((item, index) => (
+                <View key={index} className="flex-row gap-2 mb-3 items-center">
+                  <View className="flex-[2] bg-white border-b border-[#F0F0F0] px-3 py-3">
+                    <TextInput
+                      className="text-[#00343F] font-lexendRegular text-[12px]"
+                      placeholder="Item"
+                      placeholderTextColor="#B4B1B1"
+                      value={item.name}
+                      onChangeText={(val) =>
+                        updateExtraCost(index, "name", val)
+                      }
+                    />
+                  </View>
+                  <View className="flex-1 bg-white border-b border-[#F0F0F0] px-3 py-3">
+                    <TextInput
+                      className="text-[#00343F] font-lexendRegular text-[12px]"
+                      placeholder="Price"
+                      placeholderTextColor="#B4B1B1"
+                      keyboardType="numeric"
+                      value={item.price > 0 ? item.price.toString() : ""}
+                      onChangeText={(val) =>
+                        updateExtraCost(index, "price", parseFloat(val) || 0)
+                      }
+                    />
+                  </View>
+                  <View className="w-16  border-b border-[#F0F0F0] px-2 py-3">
+                    <TextInput
+                      className="text-[#00343F] font-lexendRegular text-[12px] text-center"
+                      placeholder="Qty"
+                      placeholderTextColor="#B4B1B1"
+                      keyboardType="numeric"
+                      value={item.qty > 0 ? item.qty.toString() : ""}
+                      onChangeText={(val) =>
+                        updateExtraCost(index, "qty", parseInt(val) || 0)
+                      }
+                    />
+                  </View>
+                  <TouchableOpacity onPress={() => removeExtraCost(index)}>
+                    <Ionicons
+                      name="close"
+                      size={24}
+                      color="#EE6969"
+                      opacity={0.6}
+                    />
+                  </TouchableOpacity>
+                </View>
+              ))
+            )}
+
+            {extraCosts.length > 0 && (
+              <View className="flex-row justify-end mx-5 mt-2">
+                <Text className="text-[#00AEB5] font-lexendRegular text-[12px]">
+                  Total sum : {currencySymbol} {totalExtraSum.toLocaleString()}
                 </Text>
               </View>
-              <View className="w-6" />
-            </View>
-          )}
-
-          <View className="ml-8">
-            {extraCosts.map((item, index) => (
-              <View key={index} className="flex-row gap-2 mb-3 items-center">
-                <TextInput
-                  className="flex-[2] bg-[#F9F9F9] border border-[#F0F0F0] rounded-lg p-3 text-[12px] font-lexendRegular"
-                  placeholder="Item"
-                  value={item.name}
-                  onChangeText={(val) => updateExtraCost(index, "name", val)}
-                />
-                <TextInput
-                  className="flex-1 bg-[#F9F9F9] border border-[#F0F0F0] rounded-lg p-3 text-[12px] font-lexendRegular"
-                  placeholder="Price"
-                  keyboardType="numeric"
-                  value={item.price.toString()}
-                  onChangeText={(val) =>
-                    updateExtraCost(index, "price", parseFloat(val) || 0)
-                  }
-                />
-                <TextInput
-                  className="w-14 bg-[#F9F9F9] border border-[#F0F0F0] rounded-lg p-3 text-[12px] font-lexendRegular text-center"
-                  placeholder="Qty"
-                  keyboardType="numeric"
-                  value={item.qty?.toString() || ""}
-                  onChangeText={(val) =>
-                    updateExtraCost(index, "qty", parseInt(val) || 0)
-                  }
-                />
-                <TouchableOpacity onPress={() => removeExtraCost(index)}>
-                  <Ionicons
-                    name="close-circle-outline"
-                    size={24}
-                    color="#EE6969"
-                  />
-                </TouchableOpacity>
-              </View>
-            ))}
-            {extraCosts.length > 0 && (
-              <Text className="text-right text-[#00AEB5] text-[12px] font-lexendMedium mt-1">
-                Total: {currencySymbol} {totalExtraSum.toLocaleString()}
-              </Text>
             )}
           </View>
         </View>
@@ -794,6 +977,16 @@ export default function LogExpenseSheet({
         onClose={() => setIsAddTechnicianSheetVisible(false)}
         onSuccess={() => {
           // Success logic if needed, e.g. toast or refetch
+        }}
+      />
+
+      <ItemSelectionSheet
+        visible={isItemSheetVisible}
+        onClose={() => setIsItemSheetVisible(false)}
+        onSelect={(itemLabel) => {
+          const newItem = { name: itemLabel, price: 0, qty: 0 };
+          setExtraCosts([...extraCosts, newItem]);
+          setActiveIndex(extraCosts.length);
         }}
       />
     </BottomSheet>

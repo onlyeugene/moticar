@@ -26,6 +26,20 @@ export const useAddTechnician = () => {
 };
 
 /**
+ * Hook for updating an existing technician.
+ */
+export const useUpdateTechnician = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<CreateTechnicianInput> }) => 
+      technicianService.updateTechnician(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["technicians"] });
+    },
+  });
+};
+
+/**
  * Hook for deleting a technician.
  */
 export const useDeleteTechnician = () => {

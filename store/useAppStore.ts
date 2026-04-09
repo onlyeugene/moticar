@@ -20,6 +20,8 @@ export const useAppStore = create<AppState>()(
       scannedCarData: null,
       scannedLicenseData: null,
       activeActivityTab: "Trips",
+      isDiagnosticActive: false,
+      obdData: {},
       setAppReady: (ready) => set({ isAppReady: ready }),
       setTheme: (theme) => set({ theme }),
       setSelectedCarId: (id) => set({ selectedCarId: id }),
@@ -31,6 +33,14 @@ export const useAppStore = create<AppState>()(
       setScannedCarData: (data) => set({ scannedCarData: data }),
       setScannedLicenseData: (data) => set({ scannedLicenseData: data }),
       setActiveActivityTab: (tab) => set({ activeActivityTab: tab }),
+      setDiagnosticActive: (active) => set({ isDiagnosticActive: active }),
+      setObdData: (carId, data) =>
+        set((state) => ({
+          obdData: {
+            ...state.obdData,
+            [carId]: { ...(state.obdData[carId] || {}), ...data },
+          },
+        })),
       resetScanningState: () =>
         set({
           scanningProgress: {
@@ -52,6 +62,7 @@ export const useAppStore = create<AppState>()(
         scannedCarData: state.scannedCarData,
         scannedLicenseData: state.scannedLicenseData,
         activeActivityTab: state.activeActivityTab,
+        obdData: state.obdData,
       }),
     }
   )

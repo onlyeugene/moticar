@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 40,
+    padding: 15,
   },
   footer: {
     paddingBottom: 40,

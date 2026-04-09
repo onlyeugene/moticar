@@ -20,6 +20,12 @@ export const technicianService = {
     return response.data;
   },
 
+  /** Update an existing auto-technician */
+  updateTechnician: async (id: string, data: Partial<CreateTechnicianInput>): Promise<Technician> => {
+    const response = await apiClient.patch(API_ROUTES.TECHNICIANS.DETAIL(id), data);
+    return response.data;
+  },
+
   /** Remove a saved technician */
   deleteTechnician: async (id: string): Promise<{ message: string }> => {
     const response = await apiClient.delete(API_ROUTES.TECHNICIANS.DETAIL(id));

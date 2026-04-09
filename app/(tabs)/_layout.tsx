@@ -3,8 +3,10 @@ import { useUserCars } from "@/hooks/useCars"; // Added
 import { useExpenseCategories } from "@/hooks/useExpenses";
 import { useAppStore } from "@/store/useAppStore";
 import { Tabs } from "expo-router";
+import { useObdLiveListener } from "@/hooks/useObdLiveListener";
 
 export default function TabLayout() {
+  useObdLiveListener(); // Initialize global OBD listener
   const { selectedCarId } = useAppStore();
   const { data: carsData } = useUserCars(); // Added
 

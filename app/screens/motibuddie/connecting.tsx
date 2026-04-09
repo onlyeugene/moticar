@@ -1,7 +1,7 @@
 import MotiBuddieIcon from "@/assets/icons/motibuddie.svg";
 import Container from "@/components/shared/container";
 import { ScreenBackground } from "@/components/ui/ScreenBackground";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Animated, {
@@ -12,11 +12,20 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
+import { useSocket } from "@/providers/SocketProvider";
+import { useAppStore } from "@/store/useAppStore";
+import { useSnackbar } from "@/providers/SnackbarProvider";
+
 export default function Connecting() {
+  const params = useLocalSearchParams<{ imei: string }>();
   const scale = useSharedValue(1);
   const opacity = useSharedValue(0.3);
+  const { socket, isConnected } = useSocket();
+  const selectedCarId = useAppStore((state) => state.selectedCarId);
+  const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
+    // ... animation logic ...
     scale.value = withRepeat(
       withSequence(
         withTiming(1.5, { duration: 2000 }),
@@ -34,13 +43,52 @@ export default function Connecting() {
       true,
     );
 
-    // Simulate successful connection after 3 seconds
-    const timer = setTimeout(() => {
-      router.replace("/screens/motibuddie/details");
-    }, 3000);
+    let discoveryTimeout: any;
 
-    return () => clearTimeout(timer);
-  }, []);
+    if (isConnected && socket && params.imei) {
+      console.log("📡 Subscribing to Device (Discovery):", params.imei);
+      socket.emit("subscribe_device", { imei: params.imei });
+
+      // Start 60s timeout for device detection
+      discoveryTimeout = setTimeout(() => {
+        showSnackbar({
+          message: "Connection Timed Out",
+          description:
+            "We couldn't detect your MotiBuddie. Please ensure it's plugged in and the engine is running.",
+          type: "error",
+        });
+        router.back();
+      }, 60000);
+
+      socket.on("obd:device_online", (data: { imei: string; car_id: string }) => {
+        if (discoveryTimeout) clearTimeout(discoveryTimeout);
+        console.log("✅ MotiBuddie is Online!", data);
+        showSnackbar({ message: "MotiBuddie Connected!", type: "success" });
+        
+        // If the device discovery reveals a car ID, update the store
+        if (data.car_id) {
+          useAppStore.getState().setSelectedCarId(data.car_id);
+        }
+
+        router.replace("/screens/motibuddie/details");
+      });
+
+      socket.on("error", (err: { message: string }) => {
+        if (discoveryTimeout) clearTimeout(discoveryTimeout);
+        console.error("Socket Error:", err.message);
+        showSnackbar({ message: err.message, type: "error" });
+        router.back();
+      });
+    }
+
+    return () => {
+      if (discoveryTimeout) clearTimeout(discoveryTimeout);
+      if (socket) {
+        socket.off("obd:device_online");
+        socket.off("error");
+      }
+    };
+  }, [isConnected, socket, params.imei]);
 
   const glowStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],

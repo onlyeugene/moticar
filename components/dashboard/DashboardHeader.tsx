@@ -8,12 +8,21 @@ import { CarIcon } from "@/utils/carIconHelper";
 import { Car } from "@/types/car";
 import Circle from "@/assets/icons/circle.svg";
 import Crown from "@/assets/icons/crown.svg";
-import Animated, { FadeIn, FadeOut, LinearTransition } from "react-native-reanimated";
+import Animated, {
+  FadeIn,
+  FadeOut,
+  LinearTransition,
+} from "react-native-reanimated";
+import { useNotifications } from "@/hooks/useNotifications";
 
 export default function DashboardHeader() {
   const [isExpanded, setIsExpanded] = useState(false);
   const { data: carsData, isLoading } = useUserCars();
-  const { selectedCarId, setSelectedCarId } = useAppStore();
+  const { data: notificationsData } = useNotifications();
+  const { selectedCarId, setSelectedCarId, setDiagnosticActive } =
+    useAppStore();
+
+  const hasUnread = notificationsData?.notifications.some(n => !n.isRead);
 
   const cars = carsData?.cars || [];
 
@@ -101,12 +110,12 @@ export default function DashboardHeader() {
   };
 
   return (
-    <Animated.View 
+    <Animated.View
       layout={LinearTransition}
       className="z-[1000] overflow-hidden"
     >
       {isExpanded ? (
-        <Animated.View 
+        <Animated.View
           key="expanded"
           entering={FadeIn.duration(300)}
           exiting={FadeOut.duration(300)}
@@ -145,7 +154,7 @@ export default function DashboardHeader() {
           </ScrollView>
         </Animated.View>
       ) : (
-        <Animated.View 
+        <Animated.View
           key="collapsed"
           entering={FadeIn.duration(300)}
           exiting={FadeOut.duration(300)}
@@ -178,7 +187,9 @@ export default function DashboardHeader() {
                 <View className="mt-2 flex-row gap-1 px-2">
                   <View
                     className={`w-[6px] h-[6px] rounded-full shrink-0 ${
-                      selectedCar?.entryMethod === "obd" ? "bg-[#78FF25]" : "bg-[#3F8E8E]"
+                      selectedCar?.entryMethod === "obd"
+                        ? "bg-[#78FF25]"
+                        : "bg-[#3F8E8E]"
                     }`}
                   />
                   <Ionicons
@@ -210,11 +221,41 @@ export default function DashboardHeader() {
           {/* Right: divider + icons — fixed width so they never shift */}
           <View className="flex-row items-center gap-4 shrink-0">
             <View className="w-[1px] h-10 bg-[#0F6778]" />
-            <Ionicons name="notifications-outline" size={24} color="#FFFFFF" />
+            <TouchableOpacity onPress={() => router.push("/screens/notifications")}>
+              <View className="relative">
+                <Ionicons name="notifications-outline" size={24} color="#FFFFFF" />
+                {hasUnread && (
+                  <View className="absolute top-0 right-0 w-[10px] h-[10px] bg-[#FF4B4B] rounded-full border-2 border-[#002E35]" />
+                )}
+              </View>
+            </TouchableOpacity>
             <Ionicons name="menu" size={24} color="#FFFFFF" />
           </View>
         </Animated.View>
       )}
+
+      <View>
+        {selectedCar?.entryMethod === "obd" ? (
+          <TouchableOpacity
+            onPress={() => setDiagnosticActive(true)}
+            className="border-[#29D7DE] border w-11/12 my-5 mx-auto items-center justify-center h-[40px] rounded-[32px]"
+          >
+            <Text className="text-[#00AEB5] font-lexendSemiBold text-[14px]">
+              Diagnostic Check
+            </Text>
+          </TouchableOpacity>
+        ) : (
+          // <TouchableOpacity
+          //   onPress={() => router.push("/screens/motibuddie/imei")}
+          //   className="border-[#C1C3C3] border w-11/12 my-5 mx-auto items-center justify-center h-[40px] rounded-[32px]"
+          // >
+          //   <Text className="text-[#C1C3C3] font-lexendSemiBold text-[14px]">
+          //     Connect MotiBuddie
+          //   </Text>
+          // </TouchableOpacity>
+          ''
+        )}
+      </View>
     </Animated.View>
   );
 }

@@ -9,7 +9,7 @@ export interface Car {
   plate: string;
   vin: string;
   mileage: number;
-  entryMethod: "manual" | "scan" | "obd";
+  entryMethod: "manual" | "scan" | "ai_scan" | "obd" | "obd_pull";
   monthlyBudget?: number;
   documents?: CarDocument[];
   createdAt?: string;
@@ -19,6 +19,12 @@ export interface Car {
   status?: string;
   purchaseDate?: string;
   currency?: string;
+  transmission?: string;
+  engine?: string;
+  driveType?: string;
+  segment?: string;
+  imei?: string;
+  deviceId?: string;
   engineOil?: {
     capacityLiters: number;
     recommendedGrade: string;
@@ -48,11 +54,40 @@ export interface Car {
 }
 
 export interface CarDocument {
-  type: "MOT" | "Vehicle License" | "Tax" | "Insurance Status";
-  status: "active" | "expired" | "pending";
+  _id?: string;
+  id?: string;
+  type: string;
+  status?: "active" | "expired" | "pending";
   expiryDate: string;
-  fileUrl: string;
+  fileUrl?: string;
+  // Manual input fields
+  issueDate?: string;
+  testDate?: string;
+  startDate?: string;
+  serviceDate?: string;
+  amount?: number;
+  mileage?: number;
+  result?: "Pass" | "Fail";
+  testCentreName?: string;
+  certificateNumber?: string;
+  issuingAuthority?: string;
+  vin?: string;
+  frequency?: string;
+  paymentStatus?: string;
+  paymentMethod?: string;
+  serviceType?: string;
+  garageName?: string;
+  partsReplaced?: Array<{ id: string; item: string }>;
+  licenseNumber?: string;
+  provider?: string;
+  policyNumber?: string;
+  coverageType?: string;
+  paymentPlan?: string;
+  notes?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
+
 
 export interface CarCreateInput {
   make: string;

@@ -15,13 +15,15 @@ import { Ionicons } from "@expo/vector-icons";
 
 interface BottomSheetProps {
   visible: boolean;
-  onClose: () => void;
+  onClose?: () => void;
   title: string | React.ReactNode;
   children: React.ReactNode;
   headerRight?: React.ReactNode;
   height?: DimensionValue;
   backgroundColor?: string;
   scrollable?: boolean;
+  showCloseButton?: boolean;
+  footer?: React.ReactNode;
 }
 
 export default function BottomSheet({
@@ -33,6 +35,8 @@ export default function BottomSheet({
   backgroundColor = "#F0F0F0",
   height,
   scrollable = true,
+  showCloseButton = true,
+  footer,
 }: BottomSheetProps) {
   const [keyboardHeight, setKeyboardHeight] = useState(0);
 
@@ -64,10 +68,12 @@ export default function BottomSheet({
         <View style={[styles.container, { backgroundColor, height }]}>
           {/* Header */}
           <View className="flex-row justify-between items-center mb-6 px-4 pt-6">
-            <View className="flex-row items-center gap-4">
-              <TouchableOpacity onPress={onClose}>
-                <Ionicons name="close" size={24} color="#101828" />
-              </TouchableOpacity>
+            <View className="flex-row items-center gap-4 flex-1">
+              {showCloseButton && (
+                <TouchableOpacity onPress={onClose}>
+                  <Ionicons name="close" size={24} color="#101828" />
+                </TouchableOpacity>
+              )}
               {typeof title === "string" ? (
                 <Text className="text-[#00343F] text-[16px] font-lexendBold">
                   {title}
@@ -80,19 +86,28 @@ export default function BottomSheet({
           </View>
 
           {/* Content */}
-          {scrollable ? (
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              keyboardShouldPersistTaps="handled"
-              contentContainerStyle={{
-                paddingHorizontal: 10,
-                paddingBottom: keyboardHeight > 0 ? keyboardHeight + 40 : 40,
-              }}
-            >
-              {children}
-            </ScrollView>
-          ) : (
-            <View style={{ flex: 1, paddingHorizontal: 10 }}>{children}</View>
+          <View className="flex-1">
+            {scrollable ? (
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps="handled"
+                contentContainerStyle={{
+                  paddingHorizontal: 10,
+                  paddingBottom: keyboardHeight > 0 ? keyboardHeight + 40 : 40,
+                }}
+              >
+                {children}
+              </ScrollView>
+            ) : (
+              <View style={{ flex: 1, paddingHorizontal: 10 }}>{children}</View>
+            )}
+          </View>
+
+          {/* Footer */}
+          {footer && (
+            <View className="px-4 pb-6 pt-2">
+              {footer}
+            </View>
           )}
         </View>
       </View>

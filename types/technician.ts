@@ -3,11 +3,14 @@ export interface Technician {
   id?: string;
   name: string;
   specialty: string;
-  phone: string;
+  phone?: string;
   location?: string;
   notes?: string;
   businessName?: string;
   avatarUrl?: string;
+  email?: string;
+  createdAt?: string;
+  isVerified?: boolean;
 }
 
 export interface CreateTechnicianInput {
@@ -18,21 +21,42 @@ export interface CreateTechnicianInput {
   notes?: string;
   businessName?: string;
   avatarUrl?: string;
+  email?: string;
 }
 
 export type TechnicianCategory = 
-  | "Mechanic" 
   | "Panel Beater" 
-  | "Car Washer" 
+  | "Painter" 
   | "Rewire" 
-  | "Upholstery" 
+  | "Diagnostic Technician" 
+  | "Auto Upholsterer" 
+  | "Vinyl Wrapper"
+  | "Diesel Mechanic"
+  | "Key"
+  | "Auto Glass"
+  | "Auto Electronics"
+  | "HVAC"
+  | "Lubrication"
+  | "MOT Tester"
+  | "Tire/Exhaust"
+  | "Heating & Air Conditioning"
   | "Others";
 
 export const TECHNICIAN_CATEGORIES: TechnicianCategory[] = [
-  "Mechanic",
   "Panel Beater",
-  "Car Washer",
+  "Painter",
   "Rewire",
-  "Upholstery",
+  "Diagnostic Technician",
+  "Auto Upholsterer",
+  "Vinyl Wrapper",
+  "Diesel Mechanic",
+  "Key",
+  "Auto Glass",
+  "Auto Electronics",
+  "HVAC",
+  "Lubrication",
+  "MOT Tester",
+  "Tire/Exhaust",
+  "Heating & Air Conditioning",
   "Others"
 ];

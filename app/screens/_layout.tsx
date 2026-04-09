@@ -58,6 +58,13 @@ export default function ScreensLayout() {
           presentation: "transparentModal",
         }} 
       />
+      <Stack.Screen 
+        name="notifications" 
+        options={{ 
+          animation: "slide_from_bottom",
+          presentation: "transparentModal",
+        }} 
+      />
     </Stack>
   );
 }

@@ -17,6 +17,7 @@ import {
   Alert,
 } from "react-native";
 import BottomSheet from "../shared/BottomSheet";
+import Empty from "@/assets/icons/empty.svg";
 
 interface TechnicianSheetProps {
   visible: boolean;
@@ -24,6 +25,20 @@ interface TechnicianSheetProps {
   onSelect: (technician: Technician) => void;
   onAdd: () => void;
 }
+
+export const Header = ({ onClose }: { onClose: () => void }) => (
+  <View className="flex-row items-center justify-between flex-1">
+    <TouchableOpacity onPress={onClose}>
+      <Ionicons name="chevron-back" size={24} color="#1A3B41" />
+    </TouchableOpacity>
+    <Text className="text-[#00343F] font-lexendMedium text-[14px]">
+      Add Technician
+    </Text>
+    <TouchableOpacity onPress={onClose}>
+      <Ionicons name="close" size={24} color="#1A3B41" />
+    </TouchableOpacity>
+  </View>
+);
 
 export default function TechnicianSheet({
   visible,
@@ -46,12 +61,12 @@ export default function TechnicianSheet({
       `Are you sure you want to delete ${tech.name}?`,
       [
         { text: "Cancel", style: "cancel" },
-        { 
-          text: "Delete", 
+        {
+          text: "Delete",
           style: "destructive",
-          onPress: () => deleteTechnician(tech.id || (tech as any)._id)
+          onPress: () => deleteTechnician(tech.id || (tech as any)._id),
         },
-      ]
+      ],
     );
   };
 
@@ -59,7 +74,7 @@ export default function TechnicianSheet({
     return technicians.filter((tech) => {
       const matchesSearch =
         tech.name.toLowerCase().includes(search.toLowerCase()) ||
-        tech.phone.includes(search);
+        (tech.phone || "").includes(search);
       const matchesCategory =
         selectedCategory === "All" || tech.specialty === selectedCategory;
       return matchesSearch && matchesCategory;
@@ -70,7 +85,8 @@ export default function TechnicianSheet({
     <BottomSheet
       visible={visible}
       onClose={onClose}
-      title="Select Technician"
+      showCloseButton={false}
+      title={<Header onClose={onClose} />}
       scrollable={true}
       height="60%"
       backgroundColor="#FFFFFF"
@@ -117,11 +133,11 @@ export default function TechnicianSheet({
             <ActivityIndicator size="large" color="#29D7DE" className="mt-12" />
           ) : filteredTechnicians.length === 0 ? (
             <View className="flex-1 items-center justify-center mt-10 px-10">
-              <Ionicons name="people-outline" size={60} color="#E0E0E0" />
-              <Text className="text-[18px] font-lexend-bold text-[#00343F] mt-4">
+              <Empty />
+              <Text className="text-[18px] font-lexendRegular text-[#00343F] mt-4">
                 No technicians found
               </Text>
-              <Text className="text-[14px] font-lexend-regular text-[#9BBABB] text-center mt-2">
+              <Text className="text-[14px] font-lexendRegular text-[#9BBABB] text-center mt-2">
                 {search
                   ? "Try adjusting your search"
                   : "Start by adding your favorite technicians"}
@@ -151,10 +167,10 @@ export default function TechnicianSheet({
                       <Text className="text-[14px] font-lexendRegular text-[#101828]">
                         {item.name}
                       </Text>
-                      <Text className="text-[12px] font-lexendRegular text-[#9A9A9A]">
-                        {item.phone}
-                      </Text>
                     </View>
+                    <Text className="text-[14px] font-lexendRegular text-[#00AEB5]">
+                      {item.phone}
+                    </Text>
                   </TouchableOpacity>
                   {index < filteredTechnicians.length - 1 && (
                     <View className="h-[1px] bg-[#F0F0F0]" />

@@ -11,6 +11,10 @@ import { CarLogo } from "@/components/shared/CarLogo";
 import SpecItem from "@/components/car/SpecItem";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
+import { useQuery } from "@tanstack/react-query";
+import { carService } from "@/services/api/carService";
+import { useAppStore } from "@/store/useAppStore";
+import { LoadingModal } from "@/components/ui/LoadingModal";
 
 // Icons
 import CalendarIcon from "@/assets/icons/car/calendar.svg";
@@ -23,31 +27,34 @@ import SegmentIcon from "@/assets/icons/car/segment.svg";
 import SpeedometerIcon from "@/assets/icons/car/speedometer.svg";
 
 export default function MotiBuddieDetails() {
-  const params = useLocalSearchParams<{
-    make?: string;
-    model?: string;
-    year?: string;
-    mileage?: string;
-    vin?: string;
-    transmission?: string;
-    engine?: string;
-    driveType?: string;
-    bodyStyle?: string;
-    segment?: string;
-  }>();
+  const selectedCarId = useAppStore((state) => state.selectedCarId);
+  const params = useLocalSearchParams();
+
+  // Fetch the actual car details using the ID from the store
+  const { data: carResponse, isLoading } = useQuery({
+    queryKey: ["carDetails", selectedCarId],
+    queryFn: () => (selectedCarId ? carService.getCarById(selectedCarId) : null),
+    enabled: !!selectedCarId,
+  });
+
+  const car = carResponse?.car as any;
 
   const carData = {
-    make: params.make || "Unknown",
-    model: params.model || "Model",
-    year: params.year || "---",
-    mileage: params.mileage || "0",
-    vin: params.vin || "---",
-    transmission: params.transmission || "---",
-    engine: params.engine || "---",
-    driveType: params.driveType || "---",
-    bodyStyle: params.bodyStyle || "---",
-    segment: params.segment || "---",
+    make: car?.make || (params.make as string) || "Unknown",
+    model: car?.model || car?.carModel || (params.model as string) || "Model",
+    year: car?.year?.toString() || (params.year as string) || "---",
+    mileage: car?.mileage?.toLocaleString() || (params.mileage as string) || "0",
+    vin: car?.vin || (params.vin as string) || "---",
+    transmission: car?.transmission || (params.transmission as string) || "---",
+    engine: car?.engine || (params.engine as string) || "---",
+    driveType: car?.driveType || (params.driveType as string) || "---",
+    bodyStyle: car?.bodyStyle || (params.bodyStyle as string) || "---",
+    segment: car?.segment || (params.segment as string) || "---",
   };
+
+  if (isLoading) {
+    return <LoadingModal visible={true} />;
+  }
 
   const handleConfirm = () => {
     // In a real app, this would save the car and navigate to the dashboard
@@ -141,11 +148,7 @@ export default function MotiBuddieDetails() {
                   value={carData.engine}
                   hasDropdown
                 />
-                <SpecItem
-                  icon={DriveIcon}
-                  label="Drive Type"
-                  value={carData.driveType}
-                />
+                <SpecItem icon={DriveIcon} label="Drive Type" value={carData.driveType} />
                 <SpecItem
                   icon={BodyIcon}
                   label="Body Style"

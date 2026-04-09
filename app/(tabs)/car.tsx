@@ -12,9 +12,8 @@ import DiagnosticListSheet, {
   type DiagnosticItem,
 } from "@/components/sheets/DiagnosticListSheet";
 import DiagnosticDetailSheet from "@/components/sheets/DiagnosticDetailSheet";
-import TechnicianDetailSheet, {
-  type Technician,
-} from "@/components/sheets/TechnicianDetailSheet";
+import TechnicianDetailSheet from "@/components/sheets/TechnicianDetailSheet";
+import { type Technician } from "@/types/technician";
 import { useCarById, useUserCars } from "@/hooks/useCars";
 import { useTechnicians, useDeleteTechnician } from "@/hooks/useTechnicians";
 import { TECHNICIAN_CATEGORIES } from "@/types/technician";
@@ -145,6 +144,7 @@ export default function CarScreen() {
         {/* ── Car Facts ── */}
         {hasCars && (
           <CarFacts
+            activeCarId={activeCar?._id || activeCar?.id || ''}
             activeCar={activeCar}
             onOpenDiagnostics={() => setIsDiagnosticListVisible(true)}
             onSelectDiagnostic={handleSelectDiagnosticByKey}
@@ -153,7 +153,10 @@ export default function CarScreen() {
 
         {/* ── motiBuddie Status ── */}
         {hasCars && activeCar?.entryMethod === "obd" && (
-          <MotiBuddieStatus plate={activeCar?.plate} />
+          <MotiBuddieStatus
+            plate={activeCar?.plate}
+            carId={activeCar?._id || activeCar?.id}
+          />
         )}
 
         {/* ── Technicians ── */}
@@ -169,7 +172,11 @@ export default function CarScreen() {
       {/* ── Sheets ── */}
       <AddTechnicianSheet
         visible={isAddTechnicianSheetVisible}
-        onClose={() => setIsAddTechnicianSheetVisible(false)}
+        onClose={() => {
+            setIsAddTechnicianSheetVisible(false);
+            setSelectedTechnician(null);
+        }}
+        technician={selectedTechnician}
       />
 
       <ValuationSheet
@@ -197,9 +204,12 @@ export default function CarScreen() {
       />
 
       <TechnicianDetailSheet
-        visible={!!selectedTechnician}
+        visible={!!selectedTechnician && !isAddTechnicianSheetVisible}
         onClose={() => setSelectedTechnician(null)}
         technician={selectedTechnician}
+        onEdit={() => {
+            setIsAddTechnicianSheetVisible(true);
+        }}
         onDelete={() => {
           if (!selectedTechnician) return;
           Alert.alert(

@@ -1,18 +1,7 @@
-import EmptyIcon from "@/assets/icons/empty.svg";
-import { TECHNICIAN_CATEGORIES } from "@/types/technician";
+import EmptyIcon from "@/assets/icons/technician_empty.svg";
+import { TECHNICIAN_CATEGORIES, Technician } from "@/types/technician";
 import { Ionicons } from "@expo/vector-icons";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-
-interface Technician {
-  _id: string;
-  name: string;
-  specialty: string;
-  phone?: string;
-  location?: string;
-  createdAt?: string;
-  notes?: string;
-  isVerified?: boolean;
-}
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 interface TechnicianSectionProps {
   filteredTechnicians: Technician[];
@@ -80,37 +69,36 @@ export function TechnicianSection({
             <TouchableOpacity
               key={tech._id}
               onPress={() => onSelectTechnician?.(tech)}
-              className="w-[22%] items-center gap-1.5"
+              className="w-[22%] items-center gap-1.5 "
             >
-              <View className="w-14 h-14 rounded-full bg-[#E5F9F9] items-center justify-center overflow-hidden">
-                <Ionicons name="person" size={24} color="#00AEB5" />
+              <View className="w-[75px] h-[105px] relative rounded-[8px] items-center justify-center overflow-hidden">
+                {tech.avatarUrl ? (
+                  <Image
+                    source={{ uri: tech.avatarUrl }}
+                    className="w-full h-full rounded-[8px]"
+                  />
+                ) : (
+                  <View className="bg-[#E5F9F9] w-full h-full rounded-[8px] items-center justify-center">
+                    <Ionicons name="person" size={24} color="#00AEB5" />
+                  </View>
+                )}
+                <View className="absolute bg-white/60 w-[75px] h-[105px] top-0 left-0 right-0 bottom-0" />
+                  <Text
+                  className="text-[#293536] text-[11px] font-lexendRegular text-center absolute bottom-2 left-2"
+                    numberOfLines={2}
+                  >
+                    {tech.name}
+                  </Text>
               </View>
-              <Text
-                className="text-[#00343F] text-[11px] font-lexendBold text-center"
-                numberOfLines={2}
-              >
-                {tech.name}
-              </Text>
-              <Text className="text-[#888282] text-[9px] font-lexendRegular text-center">
-                {tech.specialty}
-              </Text>
             </TouchableOpacity>
           ))}
         </View>
       ) : (
         <View className="bg-white p-10 rounded-[24px] items-center">
-          <EmptyIcon width={80} height={60} />
+          <EmptyIcon width={95} height={88} />
           <Text className="text-[#888282] text-[14px] font-lexendMedium mt-4">
             No details recorded
           </Text>
-          <TouchableOpacity
-            onPress={onAddTechnician}
-            className="mt-4 bg-[#C6F1F1] px-6 py-2.5 rounded-full"
-          >
-            <Text className="text-[#00343F] font-lexendBold text-[13px]">
-              Add Technician
-            </Text>
-          </TouchableOpacity>
         </View>
       )}
     </View>

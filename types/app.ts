@@ -12,10 +12,19 @@ export interface ScannedLicenseData {
   photoUrl?: string;
 }
 
+export interface ObdTelemetry {
+  fuelLevel?: number;
+  voltage?: string;
+  mileage?: number;
+  lastSeen?: string;
+  status?: "online" | "offline" | "moving" | "pairing";
+}
+
 export interface AppState {
   isAppReady: boolean;
   theme: "light" | "dark" | "system";
   selectedCarId?: string;
+  obdData: Record<string, ObdTelemetry>; // Map of carId -> telemetry
   scanningProgress: {
     picturesCompleted: boolean;
     licenseCompleted: boolean;
@@ -24,6 +33,7 @@ export interface AppState {
   scannedCarData: any | null;
   scannedLicenseData: ScannedLicenseData | null;
   activeActivityTab: string;
+  isDiagnosticActive: boolean;
   setAppReady: (ready: boolean) => void;
   setTheme: (theme: "light" | "dark" | "system") => void;
   setSelectedCarId: (id: string) => void;
@@ -32,5 +42,7 @@ export interface AppState {
   setScannedCarData: (data: any | null) => void;
   setScannedLicenseData: (data: ScannedLicenseData | null) => void;
   setActiveActivityTab: (tab: string) => void;
+  setDiagnosticActive: (active: boolean) => void;
+  setObdData: (carId: string, data: Partial<ObdTelemetry>) => void;
   resetScanningState: () => void;
 }

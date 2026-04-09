@@ -20,6 +20,7 @@ import OutlineLocation from "@/assets/icons/outlinelocation.svg";
 import Route from "@/assets/icons/route.svg";
 import Calendar from "@/assets/icons/calendar.svg";
 import Tciket from "@/assets/icons/ticket.svg";
+import * as ExpoLocation from "expo-location";
 
 // 🔑 No API key needed for Photon!
 
@@ -51,6 +52,7 @@ export default function AddTripSheet({
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [isFetchingLocation, setIsFetchingLocation] = useState(false);
   const [activeSearchField, setActiveSearchField] = useState<
     "origin" | "destination" | null
   >(null);
@@ -111,6 +113,54 @@ export default function AddTripSheet({
       console.error("Location Search Error:", error);
     } finally {
       setIsSearching(false);
+    }
+  };
+
+  const handleGetCurrentLocation = async () => {
+    setIsFetchingLocation(true);
+    try {
+      const { status } = await ExpoLocation.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.error("Permission to access location was denied");
+        return;
+      }
+
+      const location = await ExpoLocation.getCurrentPositionAsync({
+        accuracy: ExpoLocation.Accuracy.Balanced,
+      });
+
+      const { latitude, longitude } = location.coords;
+
+      // Photon reverse geocode: https://photon.komoot.io/reverse?lon={lon}&lat={lat}
+      const response = await fetch(
+        `https://photon.komoot.io/reverse?lon=${longitude}&lat=${latitude}`,
+      );
+      const data = await response.json();
+
+      if (data.features && data.features.length > 0) {
+        const feature = data.features[0];
+        const address = [
+          feature.properties.name,
+          feature.properties.city,
+          feature.properties.country,
+        ]
+          .filter(Boolean)
+          .join(", ");
+
+        setOrigin({
+          address,
+          lat: latitude,
+          lng: longitude,
+        });
+
+        // If we were searching, clear it
+        setActiveSearchField(null);
+        setSearchQuery("");
+      }
+    } catch (error) {
+      console.error("Get Current Location Error:", error);
+    } finally {
+      setIsFetchingLocation(false);
     }
   };
 
@@ -273,11 +323,16 @@ export default function AddTripSheet({
                       setSearchResults([]);
                       setActiveSearchField(null);
                       setDistanceKm("0");
+                    } else if (!isFetchingLocation) {
+                      handleGetCurrentLocation();
                     }
                   }}
                   className={`w-[36px] h-[24px] rounded-full items-center justify-center ${origin || (activeSearchField === "origin" && searchQuery) ? "bg-[#F0F0F0]" : "bg-[#81B4B4]"}`}
                 >
-                  {origin || (activeSearchField === "origin" && searchQuery) ? (
+                  {isFetchingLocation ? (
+                    <ActivityIndicator size="small" color="#FFFFFF" />
+                  ) : origin ||
+                    (activeSearchField === "origin" && searchQuery) ? (
                     <Ionicons name="close" size={16} color="#8B8B8B" />
                   ) : (
                     <OutlineLocation className="w-4 h-4" />

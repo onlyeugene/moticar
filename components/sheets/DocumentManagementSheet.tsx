@@ -1,17 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
-  ScrollView,
-  Modal,
-  Pressable,
-  Image,
+  Alert,
   ActivityIndicator,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { CarDocument } from "@/types/car";
-import Calendar from "@/assets/icons/calendar.svg";
+import { Ionicons } from "@expo/vector-icons";
+import BottomSheet from "../shared/BottomSheet";
+import { DocumentCategory } from "../document-forms/types";
+import Body from "@/assets/icons/body.svg";
+import { useDeleteDocument } from "@/hooks/useDocuments";
 
 interface DocumentManagementSheetProps {
   visible: boolean;
@@ -19,6 +19,9 @@ interface DocumentManagementSheetProps {
   documents: CarDocument[];
   onUpload: (type: string) => void;
   uploadingType: string | null;
+  carId: string;
+  onAddRequest: (category: DocumentCategory) => void;
+  onPreviewRequest: (url: string) => void;
 }
 
 export default function DocumentManagementSheet({
@@ -27,27 +30,30 @@ export default function DocumentManagementSheet({
   documents,
   onUpload,
   uploadingType,
+  carId,
+  onAddRequest,
+  onPreviewRequest,
 }: DocumentManagementSheetProps) {
-  const [hasChanges, setHasChanges] = React.useState(false);
-  const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
+  const { mutate: deleteDoc } = useDeleteDocument();
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const documentTypes = [
-    { name: "Vehicle Licence", type: "Vehicle Licence" },
-    { name: "Tax", type: "Tax" },
-    { name: "Insurance Status", type: "Insurance Status" },
     { name: "MOT", type: "MOT" },
+    { name: "Vehicle Licence", type: "Vehicle License" },
+    { name: "Road Tax", type: "Road Tax" },
+    { name: "Insurance", type: "Insurance" },
+    { name: "Service History", type: "Service History" },
+    { name: "Driver’s License", type: "Driver’s License" },
+    { name: "Emissions / Inspection", type: "Emissions / Inspection" },
   ];
 
   const getDocInfo = (type: string) => {
     const doc = documents?.find((d) => d.type === type);
     if (!doc)
       return {
-        date: "Select date of event",
-        color: "text-[#B4B1B1]",
-        sub: "Date of expiry",
-        status: "",
-        statusColor: "text-[#B4B1B1]",
-        icon: null,
+        id: null,
+        date: null,
+        status: 'No data recorded',
         fileUrl: null,
       };
 
@@ -60,199 +66,185 @@ export default function DocumentManagementSheet({
     const diffTime = expire.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    const formattedDate = expiryDate.toLocaleDateString("en-GB", {
+    const inputDate = doc.createdAt ? new Date(doc.createdAt) : expiryDate;
+    const formattedDate = inputDate.toLocaleDateString("en-GB", {
       day: "numeric",
       month: "long",
       year: "numeric",
     });
 
-    if (diffDays < 0) {
-      return {
-        date: formattedDate,
-        color: "text-[#050505]",
-        sub: "Date of expiry",
-        status: "Inactive",
-        statusColor: "text-[#FF4D4D]",
-        icon: <Ionicons name="close-circle" size={12} color="#FF4D4D" />,
-        fileUrl: doc.fileUrl,
-      };
-    } else if (diffDays <= 30) {
-      return {
-        date: formattedDate,
-        color: "text-[#050505]",
-        sub: "Date of expiry",
-        status: `Expires in ${diffDays} days`,
-        statusColor: "text-[#F2994A]",
-        icon: <Ionicons name="alert-circle" size={12} color="#F2994A" />,
-        fileUrl: doc.fileUrl,
-      };
-    } else {
-      return {
-        date: formattedDate,
-        color: "text-[#050505]",
-        sub: "Date of expiry",
-        status: "Active",
-        statusColor: "text-[#27AE60]",
-        icon: <Ionicons name="checkmark-circle" size={12} color="#27AE60" />,
-        fileUrl: doc.fileUrl,
-      };
-    }
+    const fileUrl =
+      doc.fileUrl ||
+      (doc as any).documentUrl ||
+      (doc as any).url ||
+      (doc as any).photoUrl ||
+      (doc as any).scannedPhotoUrl;
+
+    const status =
+      diffDays < 0 ? "Expired" : diffDays <= 30 ? "Pending" : "Active";
+
+    // Extra meta info to show in the list
+    const meta =
+      doc.vin ||
+      doc.licenseNumber ||
+      doc.certificateNumber ||
+      doc.policyNumber ||
+      "";
+
+    return {
+      id: doc._id || (doc as any).id,
+      date: `Added ${formattedDate}`,
+      status,
+      fileUrl,
+      meta: meta.length > 20 ? meta.substring(0, 17) + "..." : meta,
+    };
+  };
+
+  const handleDelete = (docId: string, typeName: string) => {
+    Alert.alert(
+      "Delete Document",
+      `Are you sure you want to delete your ${typeName} document?`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => {
+            setDeletingId(docId);
+            deleteDoc(
+              { carId, docId },
+              {
+                onSuccess: () => {
+                  Alert.alert("Success", "Document deleted successfully");
+                },
+                onSettled: () => {
+                  setDeletingId(null);
+                }
+              },
+            );
+          },
+        },
+      ],
+    );
   };
 
   return (
-    <Modal
+    <BottomSheet
       visible={visible}
-      transparent
-      animationType="slide"
-      onRequestClose={onClose}
+      onClose={onClose}
+      title="Car Documents"
+      height="90%"
+      backgroundColor="#F5F5F5"
+      headerRight={
+        <TouchableOpacity
+          onPress={() => onAddRequest("MOT")}
+          className="w-10 h-10 items-center justify-center bg-white rounded-full shadow-sm"
+        >
+          <Ionicons name="add" size={24} color="#00AEB5" />
+        </TouchableOpacity>
+      }
     >
-      <Pressable
-        style={{
-          flex: 1,
-          backgroundColor: "rgba(0,0,0,0.5)",
-          justifyContent: "flex-end",
-        }}
-        onPress={onClose}
-      >
-        <View className="bg-[#F0F0F0] rounded-t-[20px] p-6 pb-12">
-          <View className="flex-row justify-between items-center mb-6">
-            <View className="flex-row items-center gap-4">
-              <TouchableOpacity onPress={onClose}>
-                <Ionicons name="close" size={24} color="#7A7A7C" />
-              </TouchableOpacity>
-              <Text className="text-[#00343F] text-[16px] font-lexendBold">
-                Vehicle License
-              </Text>
-            </View>
+      <View className="flex-1 px-2 pt-2 pb-10">
+        {documentTypes.map((doc, index) => {
+          const info = getDocInfo(doc.type);
+
+          return (
             <TouchableOpacity
-              disabled={!hasChanges}
-              className={`${hasChanges ? "bg-[#29D7DE]" : "bg-[#29D7DE]/60"} px-6 py-3 rounded-full`}
+              key={index}
+              activeOpacity={0.7}
+              onPress={() => {
+                if (info.fileUrl) {
+                  onPreviewRequest(info.fileUrl);
+                } else {
+                  onAddRequest(doc.type as DocumentCategory);
+                }
+              }}
+              onLongPress={() => {
+                if (info.id) handleDelete(info.id, doc.name);
+              }}
+              className="flex-row items-start justify-between p-4 bg-white rounded-[16px] mb-3"
             >
-              <Text
-                className={`${hasChanges ? "text-[#00343F]" : "text-[#00343F]/60"} font-lexendBold text-[14px]`}
-              >
-                Save
-              </Text>
-            </TouchableOpacity>
-          </View>
+              <View className="flex-row items-center gap-4 flex-1">
+                <View className="flex-1 gap-2">
+                  <Text className="text-[#050505] text-[16px] font-lexendSemiBold">
+                    {doc.name}
+                  </Text>
 
-          <ScrollView showsVerticalScrollIndicator={false}>
-            {documentTypes.map((doc, index) => {
-              const info = getDocInfo(doc.type);
-              const isFirst = index === 0;
-              const isLast = index === documentTypes.length - 1;
-              const isUploading = uploadingType === doc.type;
-
-              return (
-                <View
-                  key={index}
-                  className={`flex-row items-center justify-between p-5 bg-white ${isFirst ? "rounded-t-[12px]" : ""} ${isLast ? "rounded-b-[12px]" : ""} mb-[2px]`}
-                >
-                  <TouchableOpacity
-                    className="flex-row items-center gap-4 flex-1"
-                    onPress={() => {
-                      if (info.fileUrl) {
-                        setPreviewUrl(info.fileUrl);
-                      }
-                    }}
-                  >
-                    <View className="">
-                      <Calendar />
-                    </View>
-                    <View>
-                      <Text className="text-[#050505] text-[16px] font-lexendRegular">
-                        {doc.name}
-                      </Text>
-                      <Text className="text-[#8B8B8B] text-[12px] font-lexendRegular">
-                        {info.sub}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-
-                  <View className="flex-row items-center gap-2">
-                    <TouchableOpacity
-                      className="items-end"
-                      onPress={() => {
-                        if (info.fileUrl) {
-                          setPreviewUrl(info.fileUrl);
-                        }
-                      }}
-                    >
-                      <Text
-                        className={`${info.color} text-[14px] font-lexendRegular`}
+                  <View>
+                    {info.status ? (
+                      <View
+                        className={`flex-row items-center gap-2 ${
+                          info.status === "Active"
+                            ? ""
+                            : info.status === "Pending"
+                              ? ""
+                              : ""
+                        }`}
                       >
-                        {info.date}
-                      </Text>
-                      {info.status ? (
-                        <View className="flex-row items-center gap-1">
-                          {info.icon}
-                          <Text
-                            className={`${info.statusColor} text-[10px] font-lexendRegular`}
-                          >
-                            {info.status}
-                          </Text>
-                        </View>
-                      ) : null}
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                      onPress={() => onUpload(doc.type)}
-                      disabled={!!uploadingType}
-                    >
-                      {isUploading ? (
-                        <ActivityIndicator size="small" color="#00AEB5" />
-                      ) : (
-                        <Ionicons
-                      name="chevron-forward"
-                          size={20}
-                      color="#B4B1B1"
-                        />
-                      )}
-                    </TouchableOpacity>
+                        {info.status === "Active" ? (
+                          <Ionicons name="checkmark" color={'#1ED760'} />
+                        ) : info.status === "Expired" ? (
+                          <Ionicons name="close" color='#B30303' />
+                        ) : (
+                          ''
+                        )}
+                        <Text
+                          className={`text-[12px] font-lexendMedium ${
+                            info.status === "Active"
+                              ? "text-[#1ED760]"
+                              : info.status === "Expired"
+                                ? "text-[#B30303]"
+                                : "text-[#B4B1B1]"
+                          }`}
+                        >
+                          {info.status}
+                        </Text>
+                      </View>
+                    ) : null}
+                  </View>
+                  <View className="">
+                    <Text className="text-[#00AEB5] text-[12px] font-lexendRegular">
+                      {info.date}
+                    </Text>
+                    {/* {info.meta ? (
+                      <>
+                        <View className="w-1 h-1 rounded-full bg-[#D9D9D9]" />
+                        <Text className="text-[#00AEB5] text-[12px] font-lexendMedium">
+                          {info.meta}
+                        </Text>
+                      </>
+                    ) : null} */}
                   </View>
                 </View>
-              );
-            })}
+              </View>
 
-            <TouchableOpacity className="mt-8 border border-[#013037] py-4 rounded-full items-center w-[60%] mx-auto">
-              <Text className="text-[#013037] font-lexendSemiBold text-[14px]">
-                Enter another car document
-              </Text>
+              <View className="flex-row items-center gap-3">
+                <TouchableOpacity
+                  onPress={() => {
+                    if (info.id) {
+                      handleDelete(info.id, doc.name);
+                    } else {
+                      onAddRequest(doc.type as DocumentCategory);
+                    }
+                  }}
+                  disabled={!!deletingId}
+                  className="p-1"
+                >
+                  {deletingId && deletingId === info.id ? (
+                    <ActivityIndicator size="small" color="#B4B1B1" />
+                  ) : (
+                    <Ionicons
+                      name={info.id ? "trash-outline" : "chevron-forward"}
+                      size={20}
+                      color="#B4B1B1"
+                    />
+                  )}
+                </TouchableOpacity>
+              </View>
             </TouchableOpacity>
-          </ScrollView>
-        </View>
-      </Pressable>
-
-      <Modal
-        visible={!!previewUrl}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setPreviewUrl(null)}
-      >
-        <Pressable
-          className="flex-1 bg-black/90 justify-center items-center"
-          onPress={() => setPreviewUrl(null)}
-        >
-          <TouchableOpacity
-            activeOpacity={1}
-            className="w-[90%] h-[70%] bg-white rounded-2xl overflow-hidden"
-          >
-            {previewUrl && (
-              <Image
-                source={{ uri: previewUrl }}
-                className="w-full h-full"
-                resizeMode="contain"
-              />
-            )}
-            <TouchableOpacity
-              className="absolute top-4 right-4 bg-black/50 rounded-full p-2"
-              onPress={() => setPreviewUrl(null)}
-            >
-              <Ionicons name="close" size={24} color="white" />
-            </TouchableOpacity>
-          </TouchableOpacity>
-        </Pressable>
-      </Modal>
-    </Modal>
+          );
+        })}
+      </View>
+    </BottomSheet>
   );
 }
