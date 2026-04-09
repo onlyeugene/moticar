@@ -22,6 +22,9 @@ import {
   isWithinInterval,
   isSameMonth,
   isSameYear,
+  eachWeekOfInterval,
+  eachDayOfInterval,
+  eachMonthOfInterval,
 } from "date-fns";
 
 interface SpendStatsCardProps {
@@ -49,53 +52,41 @@ const SpendStatsCard: React.FC<SpendStatsCardProps> = ({
     const data: { current: number; prev: number }[] = [];
     const anchorDate = selectedDate;
 
-    if (timeFilter === "Monthly") {
-      const displayMonths = [
-        subMonths(anchorDate, 5),
-        subMonths(anchorDate, 4),
-        subMonths(anchorDate, 3),
-        subMonths(anchorDate, 2),
-        subMonths(anchorDate, 1),
-        anchorDate,
-      ];
+    if (timeFilter === "Yearly") {
+      const yearStart = startOfYear(anchorDate);
+      const yearEnd = endOfYear(anchorDate);
+      const monthsInYear = eachMonthOfInterval({ start: yearStart, end: yearEnd });
 
-      displayMonths.forEach((d) => {
+      monthsInYear.forEach((m) => {
         const currentTotal = expenses
           .filter((e) => {
             const expDate = new Date(e.date);
-            return isSameMonth(expDate, d) && isSameYear(expDate, d);
+            return isSameMonth(expDate, m) && isSameYear(expDate, m);
           })
           .reduce((sum, e) => sum + Number(e.amount || 0), 0);
 
+        const prevYearMonth = subYears(m, 1);
         const prevTotal = expenses
           .filter((e) => {
             const expDate = new Date(e.date);
-            const prevMonth = subMonths(d, 1);
-            return (
-              isSameMonth(expDate, prevMonth) && isSameYear(expDate, prevMonth)
-            );
+            return isSameMonth(expDate, prevYearMonth) && isSameYear(expDate, prevYearMonth);
           })
           .reduce((sum, e) => sum + Number(e.amount || 0), 0);
 
-        labels.push(format(d, "MMM"));
+        labels.push(format(m, "MMM"));
         data.push({ current: currentTotal, prev: prevTotal });
       });
-    } else if (timeFilter === "Weekly") {
-      // Current week and 5 previous weeks
-      const displayWeeks = [
-        subWeeks(anchorDate, 5),
-        subWeeks(anchorDate, 4),
-        subWeeks(anchorDate, 3),
-        subWeeks(anchorDate, 2),
-        subWeeks(anchorDate, 1),
-        anchorDate,
-      ];
+    } else if (timeFilter === "Monthly") {
+      const monthStart = startOfMonth(anchorDate);
+      const monthEnd = endOfMonth(anchorDate);
+      const weeksInMonth = eachWeekOfInterval({ start: monthStart, end: monthEnd }, { weekStartsOn: 0 });
 
-      displayWeeks.forEach((d, i) => {
-        const start = startOfWeek(d);
-        const end = endOfWeek(d);
-        const prevStart = startOfWeek(subWeeks(d, 1));
-        const prevEnd = endOfWeek(subWeeks(d, 1));
+      weeksInMonth.forEach((w, i) => {
+        const start = startOfWeek(w);
+        const end = endOfWeek(w);
+        const prevYearDate = subYears(w, 1);
+        const prevStart = startOfWeek(prevYearDate);
+        const prevEnd = endOfWeek(prevYearDate);
 
         const currentTotal = expenses
           .filter((e) => {
@@ -107,36 +98,37 @@ const SpendStatsCard: React.FC<SpendStatsCardProps> = ({
         const prevTotal = expenses
           .filter((e) => {
             const expDate = new Date(e.date);
-            return isWithinInterval(expDate, {
-              start: prevStart,
-              end: prevEnd,
-            });
+            return isWithinInterval(expDate, { start: prevStart, end: prevEnd });
           })
           .reduce((sum, e) => sum + Number(e.amount || 0), 0);
 
-        labels.push(format(start, "d MMM"));
+        labels.push(`Week ${i + 1}`);
         data.push({ current: currentTotal, prev: prevTotal });
       });
-    } else if (timeFilter === "Yearly") {
-      for (let i = 4; i >= 0; i--) {
-        const d = subYears(anchorDate, i);
+    } else if (timeFilter === "Weekly") {
+      const weekStart = startOfWeek(anchorDate);
+      const weekEnd = endOfWeek(anchorDate);
+      const daysInWeek = eachDayOfInterval({ start: weekStart, end: weekEnd });
+
+      daysInWeek.forEach((d) => {
+        const prevDay = subWeeks(d, 1);
         const currentTotal = expenses
           .filter((e) => {
             const expDate = new Date(e.date);
-            return isSameYear(expDate, d);
+            return format(expDate, 'yyyy-MM-dd') === format(d, 'yyyy-MM-dd');
           })
           .reduce((sum, e) => sum + Number(e.amount || 0), 0);
 
         const prevTotal = expenses
           .filter((e) => {
             const expDate = new Date(e.date);
-            return isSameYear(expDate, subYears(d, 1));
+            return format(expDate, 'yyyy-MM-dd') === format(prevDay, 'yyyy-MM-dd');
           })
           .reduce((sum, e) => sum + Number(e.amount || 0), 0);
 
-        labels.push(format(d, "yyyy"));
+        labels.push(format(d, "EEE"));
         data.push({ current: currentTotal, prev: prevTotal });
-      }
+      });
     }
 
     const allValues = data.flatMap((d) => [d.current, d.prev]);

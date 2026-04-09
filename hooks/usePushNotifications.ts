@@ -20,11 +20,11 @@ Notifications.setNotificationHandler({
 export const usePushNotifications = () => {
   const [expoPushToken, setExpoPushToken] = useState<string | undefined>(undefined);
   const [notification, setNotification] = useState<Notifications.Notification | undefined>(undefined);
-  const notificationListener = useRef<Notifications.Subscription>();
-  const responseListener = useRef<Notifications.Subscription>();
+  const notificationListener = useRef<Notifications.Subscription | null>(null);
+  const responseListener = useRef<Notifications.Subscription | null>(null);
   
   const { user } = useAuthStore();
-  const userId = user?.id;
+  const userId = user?.id || user?._id;
 
   useEffect(() => {
     if (!userId) return;
@@ -45,7 +45,7 @@ export const usePushNotifications = () => {
       // Handle badge count if provided in data
       const badgeCount = notification.request.content.badge;
       if (typeof badgeCount === 'number') {
-        Notifications.setBadgeCountAsync(badgeCount);
+        Notifications.setBadgeCountAsync(badgeCount).catch(() => {});
       }
     });
 
@@ -74,15 +74,6 @@ export const usePushNotifications = () => {
 async function registerForPushNotificationsAsync() {
   let token;
 
-  if (Platform.OS === "android") {
-    await Notifications.setNotificationChannelAsync("default", {
-      name: "default",
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: "#FF231F7C",
-    });
-  }
-
   if (Device.isDevice) {
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
@@ -97,12 +88,10 @@ async function registerForPushNotificationsAsync() {
       return;
     }
 
-    // Replace with your actual project ID from app.json / EAS
-    // We try multiple ways to get the projectId as it varies between development and production
     const projectId = 
       Constants?.expoConfig?.extra?.eas?.projectId ?? 
       Constants?.easConfig?.projectId ?? 
-      ''; // Should be defined in production
+      '';
 
     try {
       token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;

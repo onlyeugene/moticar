@@ -15,11 +15,13 @@ import { DriversLicenseForm } from "../document-forms/DriversLicenseForm";
 import { InsuranceForm } from "../document-forms/InsuranceForm";
 import { EmissionsInspectionForm } from "../document-forms/EmissionsInspectionForm";
 import { useCarById } from "@/hooks/useCars";
-import { useCreateDocument, useScanDocument, useUpdateDocument } from "@/hooks/useDocuments";
+import { useCreateDocument, useScanDocument, useUpdateDocument, useDeleteDocument } from "@/hooks/useDocuments";
 import BottomSheet from "../shared/BottomSheet";
 import ImageCropper from "../shared/ImageCropper";
 import * as ImagePicker from "expo-image-picker";
 import ScanIcon from "@/assets/icons/scan.svg";
+import Pen from "@/assets/icons/pen.svg";
+import Trash from "@/assets/icons/trash.svg";
 import { ActivityIndicator } from "react-native";
 
 interface AddDocumentSheetProps {
@@ -81,6 +83,7 @@ export default function AddDocumentSheet({
   const { mutate: scanDoc, isPending: isScanning } = useScanDocument();
   const { mutate: createDoc, isPending: isSaving } = useCreateDocument();
   const { mutate: updateDoc, isPending: isUpdating } = useUpdateDocument();
+  const { mutate: deleteDoc, isPending: isDeleting } = useDeleteDocument();
 
   const sheetHeight = SHEET_HEIGHTS[category] || "94%";
 
@@ -317,6 +320,33 @@ export default function AddDocumentSheet({
     }
   }, [category, formState, carId, createDoc, updateDoc, scanDoc, onClose, initialData, isProcessing]);
 
+  const handleDelete = useCallback(() => {
+    if (!initialData?._id) return;
+
+    Alert.alert(
+      "Delete Document",
+      `Are you sure you want to delete this ${category} document?`,
+      [
+        { text: "Cancel", style: "cancel" },
+        { 
+          text: "Delete", 
+          style: "destructive",
+          onPress: () => {
+            deleteDoc({ carId, docId: initialData._id! }, {
+              onSuccess: () => {
+                Alert.alert("Success", "Document deleted successfully");
+                onClose();
+              },
+              onError: (err: any) => {
+                Alert.alert("Error", err.response?.data?.message || err.message || "Failed to delete document");
+              }
+            });
+          }
+        }
+      ]
+    );
+  }, [initialData?._id, category, carId, deleteDoc, onClose]);
+
 
   const ActiveForm = FORM_MAP[category];
 
@@ -338,23 +368,56 @@ export default function AddDocumentSheet({
       }
       headerRight={
         <View className="flex-row items-center gap-3">
-          <TouchableOpacity 
-            onPress={handleScan}
-            disabled={isScanning || isProcessing}
-            className="w-10 h-10 items-center justify-center bg-white rounded-full shadow-sm"
-          >
-            {isScanning && !isProcessing ? <ActivityIndicator size="small" color="#00AEB5" /> : <ScanIcon width={20} height={20} />}
-          </TouchableOpacity>
-          
-          <TouchableOpacity
-            onPress={handleSave}
-            disabled={isProcessing}
-            className={`px-6 py-2.5 rounded-full ${isProcessing ? "bg-[#29D7DE]" : "bg-[#29D7DE]/50"}`}
-          >
-            <Text className="text-[#00343F] font-lexendBold text-[14px]">
-              {isProcessing ? "Saving..." : "Save"}
-            </Text>
-          </TouchableOpacity>
+          {initialData?._id ? (
+            <>
+              <TouchableOpacity
+                onPress={handleDelete}
+                disabled={isDeleting || isProcessing}
+                className="w-10 h-10 items-center justify-center bg-white rounded-full shadow-sm"
+              >
+                {isDeleting ? (
+                  <ActivityIndicator size="small" color="#FF3B30" />
+                ) : (
+                  <Trash width={18} height={18} />
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleSave}
+                disabled={isProcessing || isUpdating}
+                className="w-10 h-10 items-center justify-center bg-white rounded-full shadow-sm"
+              >
+                {isUpdating || (isProcessing && !isDeleting) ? (
+                  <ActivityIndicator size="small" color="#00AEB5" />
+                ) : (
+                  <Pen width={18} height={18} />
+                )}
+              </TouchableOpacity>
+            </>
+          ) : (
+            <>
+              <TouchableOpacity
+                onPress={handleScan}
+                disabled={isScanning || isProcessing}
+                className="w-10 h-10 items-center justify-center bg-white rounded-full shadow-sm"
+              >
+                {isScanning && !isProcessing ? (
+                  <ActivityIndicator size="small" color="#00AEB5" />
+                ) : (
+                  <ScanIcon width={20} height={20} />
+                )}
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={handleSave}
+                disabled={isProcessing}
+                className={`px-6 py-2.5 rounded-full ${isProcessing ? "bg-[#29D7DE]" : "bg-[#29D7DE]/50"}`}
+              >
+                <Text className="text-[#00343F] font-lexendBold text-[14px]">
+                  {isProcessing ? "Saving..." : "Save"}
+                </Text>
+              </TouchableOpacity>
+            </>
+          )}
         </View>
       }
     >

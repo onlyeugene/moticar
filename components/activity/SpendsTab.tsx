@@ -22,8 +22,14 @@ import {
   isWithinInterval,
   addMonths,
   subMonths,
+  addYears,
+  subYears,
+  addWeeks,
+  subWeeks,
   isSameMonth,
   isSameYear,
+  eachWeekOfInterval,
+  endOfMonth,
 } from "date-fns";
 import Calendar from "@/assets/icons/calendar.svg";
 import EmptyIcon from "@/assets/icons/empty.svg";
@@ -41,27 +47,59 @@ const DateTimelineHeader = ({
   selectedDate,
   onSelectDate,
   onOpenFilter,
+  timeFilter,
 }: {
   selectedDate: Date;
   onSelectDate: (date: Date) => void;
   onOpenFilter: () => void;
+  timeFilter: "Weekly" | "Monthly" | "Yearly";
 }) => {
-  // Generate a rolling window of months (prev year, current year, next year)
-  const months = useMemo(() => {
-    const currentYear = selectedDate.getFullYear();
+  // Generate items based on scale
+  const timelineItems = useMemo(() => {
     const result: Date[] = [];
-    for (let y = currentYear - 1; y <= currentYear + 1; y++) {
-      for (let m = 0; m < 12; m++) {
-        result.push(new Date(y, m, 1));
+    if (timeFilter === "Yearly") {
+      const currentYear = new Date().getFullYear();
+      for (let y = currentYear - 10; y <= currentYear + 2; y++) {
+        result.push(new Date(y, 0, 1));
       }
+    } else if (timeFilter === "Monthly") {
+      const currentYear = selectedDate.getFullYear();
+      for (let m = 0; m < 12; m++) {
+        result.push(new Date(currentYear, m, 1));
+      }
+    } else if (timeFilter === "Weekly") {
+      // Show weeks of the current or selected month
+      const start = startOfMonth(selectedDate);
+      const end = endOfMonth(selectedDate);
+      return eachWeekOfInterval({ start, end }, { weekStartsOn: 0 });
     }
     return result;
-  }, [selectedDate.getFullYear()]);
+  }, [selectedDate.getFullYear(), selectedDate.getMonth(), timeFilter]);
+
+  const handlePrev = () => {
+    if (timeFilter === "Yearly") {
+      onSelectDate(subYears(selectedDate, 1));
+    } else if (timeFilter === "Monthly") {
+      onSelectDate(subMonths(selectedDate, 1));
+    } else {
+      onSelectDate(subWeeks(selectedDate, 1));
+    }
+  };
+
+  const handleNext = () => {
+    if (timeFilter === "Yearly") {
+      onSelectDate(addYears(selectedDate, 1));
+    } else if (timeFilter === "Monthly") {
+      onSelectDate(addMonths(selectedDate, 1));
+    } else {
+      onSelectDate(addWeeks(selectedDate, 1));
+    }
+  };
 
   return (
     <View className="flex-row items-center gap-2 mb-4">
       <TouchableOpacity
-        onPress={() => onSelectDate(subMonths(selectedDate, 1))}
+        onPress={handlePrev}
       >
         <Ionicons name="chevron-back" size={20} color="#7BA0A3" />
       </TouchableOpacity>
@@ -77,14 +115,25 @@ const DateTimelineHeader = ({
         }}
       >
         <View className="flex-row items-center gap-8">
-          {months.map((m) => {
-            const isActive =
-              isSameMonth(m, selectedDate) && isSameYear(m, selectedDate);
-            const isCurrentYear = isSameYear(m, new Date());
+          {timelineItems.map((item, idx) => {
+            const isActive = timeFilter === "Yearly" 
+              ? isSameYear(item, selectedDate)
+              : timeFilter === "Monthly"
+                ? isSameMonth(item, selectedDate) && isSameYear(item, selectedDate)
+                : format(item, 'w-yyyy') === format(selectedDate, 'w-yyyy');
+              
+            const isCurrentYear = isSameYear(item, new Date());
+            
+            const label = timeFilter === "Yearly" 
+              ? format(item, "yyyy")
+              : timeFilter === "Monthly"
+                ? format(item, isCurrentYear ? "MMMM" : "MMM yy")
+                : `Week ${idx + 1}`;
+
             return (
               <TouchableOpacity
-                key={m.toISOString()}
-                onPress={() => onSelectDate(m)}
+                key={item.toISOString()}
+                onPress={() => onSelectDate(item)}
                 className="items-center"
                 style={{ overflow: "visible" }}
               >
@@ -96,7 +145,7 @@ const DateTimelineHeader = ({
                     isActive ? "text-[#00AEB5]" : "text-[#B0B0B0]"
                   }`}
                 >
-                  {format(m, isCurrentYear ? "MMMM" : "MMM yy")}
+                  {label}
                 </Text>
               </TouchableOpacity>
             );
@@ -105,7 +154,7 @@ const DateTimelineHeader = ({
       </ScrollView>
 
       <TouchableOpacity
-        onPress={() => onSelectDate(addMonths(selectedDate, 1))}
+        onPress={handleNext}
       >
         <Ionicons name="chevron-forward" size={20} color="#7BA0A3" />
       </TouchableOpacity>
@@ -417,6 +466,7 @@ const SpendsTab: React.FC<SpendsTabProps> = ({
         selectedDate={selectedDate}
         onSelectDate={setSelectedDate}
         onOpenFilter={() => setIsScaleMenuOpen(true)}
+        timeFilter={timeFilter}
       />
 
       <View className="bg-[#DCE7E6] rounded-full p-1.5 flex-row mb-8">
