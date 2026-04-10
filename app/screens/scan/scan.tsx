@@ -41,6 +41,10 @@ export default function Scan() {
     }
   };
 
+  const handleBack = () => {
+    router.replace("/(onboarding)");
+  };
+
   const isFlowComplete = picturesCompleted && licenseCompleted;
 
   return (
@@ -48,7 +52,7 @@ export default function Scan() {
       <Container>
         {/* Header with Progress Bar */}
         <View className="flex-row w-full items-center">
-          <Pressable onPress={() => router.back()}>
+          <Pressable onPress={handleBack}>
             <Ionicons name="arrow-back" size={24} color="white" />
           </Pressable>
 
@@ -92,7 +96,17 @@ export default function Scan() {
               <TouchableOpacity
                 key={scan.id}
                 activeOpacity={0.7}
-                onPress={() => router.push(scan.route as any)}
+                onPress={() => {
+                  if (scan.completed) {
+                    const dest =
+                      scan.id === 1
+                        ? "/screens/scan/details"
+                        : "/screens/scan/license-details";
+                    router.push(dest as any);
+                  } else {
+                    router.push(scan.route as any);
+                  }
+                }}
                 className={`border rounded-[10px] px-[10px] py-[20px] flex-row justify-between items-center ${
                   scan.completed
                     ? "border-[#29D7DE]/30 bg-[#29D7DE]/5"
@@ -149,7 +163,11 @@ export default function Scan() {
 
           {/* Car Summary Result Card (Appears after Step 1) */}
           {picturesCompleted && scannedCarData && (
-            <View className="mt-8 bg-[#002126]  rounded-[10px] p-4 flex-row items-center gap-4">
+            <TouchableOpacity
+              onPress={() => router.push("/screens/scan/details")}
+              activeOpacity={0.8}
+              className="mt-8 bg-[#002126]  rounded-[10px] p-4 flex-row items-center gap-4"
+            >
               <View className="items-center justify-center">
                 <CarLogo make={scannedCarData.make || ""} size={48} />
               </View>
@@ -159,11 +177,14 @@ export default function Scan() {
                   {scannedCarData.year}
                 </Text>
                 <Text className="text-[#29D7DE] font-ukNumberPlate text-[12px] mt-0.5 uppercase tracking-wider">
-                  {(scannedCarData.plate || "No Plate Detected").replace(/-/g, " ")}
+                  {(scannedCarData.plate || "No Plate Detected").replace(
+                    /-/g,
+                    " ",
+                  )}
                 </Text>
               </View>
               <Ionicons name="checkmark-circle" size={24} color="#29D7DE" />
-            </View>
+            </TouchableOpacity>
           )}
         </View>
 

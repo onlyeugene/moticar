@@ -6,6 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import React, { useState } from "react";
+import ImageCropper from "@/components/shared/ImageCropper";
 import {
   Alert,
   Image,
@@ -24,6 +25,10 @@ export default function LicenseScan() {
     (state) => state.setScannedLicenseData,
   );
   const setScanningProgress = useAppStore((state) => state.setScanningProgress);
+  
+  // Cropping State
+  const [croppingVisible, setCroppingVisible] = useState(false);
+  const [imageToCrop, setImageToCrop] = useState<string | null>(null);
 
   const handleImageSourceSelection = () => {
     Alert.alert(
@@ -64,8 +69,7 @@ export default function LicenseScan() {
 
     const options: ImagePicker.ImagePickerOptions = {
       mediaTypes: ["images"],
-      allowsEditing: true,
-      aspect: [4, 3],
+      allowsEditing: false, // Use our custom cropper
       quality: 0.8,
     };
 
@@ -75,8 +79,15 @@ export default function LicenseScan() {
         : await ImagePicker.launchImageLibraryAsync(options);
 
     if (!result.canceled && result.assets && result.assets.length > 0) {
-      setImage(result.assets[0].uri);
+      setImageToCrop(result.assets[0].uri);
+      setCroppingVisible(true);
     }
+  };
+
+  const handleCropComplete = (croppedUri: string) => {
+    setImage(croppedUri);
+    setCroppingVisible(false);
+    setImageToCrop(null);
   };
 
   const handleNext = async () => {
@@ -218,6 +229,17 @@ export default function LicenseScan() {
           </View>
         </View>
       )}
+
+      {/* Image Cropper */}
+      <ImageCropper
+        visible={croppingVisible}
+        imageUri={imageToCrop}
+        onClose={() => {
+          setCroppingVisible(false);
+          setImageToCrop(null);
+        }}
+        onCrop={handleCropComplete}
+      />
     </ScreenBackground>
   );
 }

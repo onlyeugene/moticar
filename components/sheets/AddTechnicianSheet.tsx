@@ -125,7 +125,7 @@ export default function AddTechnicianSheet({
     if (technician && visible) {
       setForm({
         name: technician.name || "",
-        specialty: (technician.specialty as TechnicianCategory) || "",
+        specialty: (technician.specialty as TechnicianCategory) || ("" as TechnicianCategory),
         phone: technician.phone || "",
         email: technician.email || "",
         location: technician.location || "",

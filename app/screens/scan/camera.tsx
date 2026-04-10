@@ -14,6 +14,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import CarWireframe from "@/components/scan/CarWireframe";
 import { useAppStore } from "@/store/useAppStore";
 import { AppState } from "@/types/app";
+import TagIcon from "@/assets/icons/takepic.svg";
 
 const { width } = Dimensions.get("window");
 
@@ -86,42 +87,39 @@ export default function CameraScreen() {
       <SafeAreaView style={styles.overlay} pointerEvents="box-none">
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.closeButton}>
-            <Text style={styles.closeText}>Exit</Text>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <Ionicons name="arrow-back" size={24} color="#FFF" />
           </TouchableOpacity>
-          <Text style={styles.stepIndicator}>
-            {params.step || "1"} of {params.totalSteps || "4"}
-          </Text>
+          <View style={styles.headerTitleContainer}>
+            <Text style={styles.headerTitle}>Take pictures</Text>
+            <Text style={styles.headerSubtitle}>
+              Ensure you are in a well lit area so that data gathered can be readable.
+            </Text>
+          </View>
+          <TouchableOpacity onPress={() => router.back()} style={styles.skipButton}>
+            <Text style={styles.skipText}>Skip</Text>
+            <Ionicons name="chevron-forward" size={16} color="#FFF" />
+          </TouchableOpacity>
         </View>
 
         {/* Center Wireframe */}
         <View style={styles.wireframeContainer} pointerEvents="none">
-          <CarWireframe 
-            type={params.type || 'perspective'} 
-            color="#FFFFFF" 
-            opacity={0.6} 
-          />
+          <CarWireframe opacity={0.8} />
         </View>
 
         {/* Footer */}
         <View style={styles.footer}>
-          <View style={styles.labelContainer}>
-            <Text style={styles.labelText}>{params.label || "Front driver side"}</Text>
-          </View>
-          
-          <View style={styles.controls}>
-            <TouchableOpacity 
-              style={styles.captureButton} 
-              onPress={takePicture}
-              disabled={isCapturing}
-            >
-              {isCapturing ? (
-                <ActivityIndicator color="#00232A" />
-              ) : (
-                <View style={styles.captureButtonInner} />
-              )}
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity 
+            style={styles.captureButton} 
+            onPress={takePicture}
+            disabled={isCapturing}
+          >
+            {isCapturing ? (
+              <ActivityIndicator color="#000" />
+            ) : (
+              <TagIcon width={32} height={32} />
+            )}
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     </View>
@@ -141,65 +139,64 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
     paddingHorizontal: 20,
     paddingTop: 20,
+    flexDirection: "row",
+    alignItems: "flex-start",
   },
-  closeButton: {
+  backButton: {
     padding: 10,
+    marginLeft: -10,
   },
-  closeText: {
+  headerTitleContainer: {
+    flex: 1,
+    paddingTop: 8,
+  },
+  headerTitle: {
+    color: "#FFF",
+    fontSize: 24,
+    fontFamily: "Lexend-Bold",
+    marginBottom: 4,
+  },
+  headerSubtitle: {
+    color: "rgba(255,255,255,0.7)",
+    fontSize: 12,
+    lineHeight: 18,
+    fontFamily: "Lexend-Regular",
+  },
+  skipButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 10,
+  },
+  skipText: {
     color: "#FFF",
     fontSize: 16,
     fontFamily: "Lexend-Medium",
-  },
-  stepIndicator: {
-    color: "#FFF",
-    fontSize: 16,
-    fontFamily: "Lexend-Regular",
-    opacity: 0.8,
+    marginRight: 2,
   },
   wireframeContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 15,
+    padding: 20,
   },
   footer: {
-    paddingBottom: 40,
-    alignItems: "center",
-  },
-  labelContainer: {
-    backgroundColor: "rgba(0,0,0,0.6)",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 4,
-    marginBottom: 30,
-  },
-  labelText: {
-    color: "#FFF",
-    fontSize: 14,
-    fontFamily: "Lexend-Medium",
-  },
-  controls: {
-    width: "100%",
+    paddingBottom: 60,
     alignItems: "center",
   },
   captureButton: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: "rgba(255,255,255,0.3)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  captureButtonInner: {
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: "#29D7DE",
+    backgroundColor: "#FBE74C",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 8,
   },
   message: {
     textAlign: "center",

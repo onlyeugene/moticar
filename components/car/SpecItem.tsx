@@ -21,25 +21,29 @@ const SpecItem = ({
     <TouchableOpacity
       onPress={onPress}
       disabled={!onPress}
-      className="flex-row items-center w-1/2 mb-6 px-1"
+      className="px-0"
     >
-      <View className=" ">
-        <View className="items-center gap-2 flex-row">
-          {Icon && <Icon width={20} height={20} />}
-          <Text className="text-[#C1C3C3] font-lexendRegular text-[12px]">
-            {label}
+      <View className="flex-col">
+        <View className="flex-row items-center gap-3 mb-1.5">
+          {Icon && (
+            <View className="w-4 h-4 items-center justify-center">
+              <Icon width={20} height={20} fill="#29D7DE" />
+            </View>
+          )}
+          <Text className="text-[#707676] font-lexendRegular text-[12px]">
+            {label}:
           </Text>
         </View>
 
-        <View className="flex-row items-center ml-8">
+        <View className="flex-row items-center ml-7">
           <Text
-            className={`font-lexendMedium text-[14px] mr-1 ${hasDropdown ? "text-[#202A2A]" : "text-[#616161]"}`}
+            className={`font-lexendMedium text-[14px] mr-1 ${hasDropdown ? "text-[#202A2A]" : "text-[#202A2A]"}`}
             numberOfLines={1}
           >
-            {value || "---"}
+            {value || "N/A"}
           </Text>
           {hasDropdown && (
-            <Ionicons name="chevron-down" size={14} color="#7BA0A3" />
+            <Ionicons name="chevron-down" size={14} color="#C1C3C3" />
           )}
         </View>
       </View>

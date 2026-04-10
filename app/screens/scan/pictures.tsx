@@ -5,7 +5,8 @@ import { useCarScanning } from "@/hooks/useCarScanning";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import ImageCropper from "@/components/shared/ImageCropper";
 import {
   Image,
   Pressable,
@@ -27,6 +28,10 @@ export default function Pictures() {
   const [images, setImages] = useState<Record<string, string>>({});
   const [additionalImages, setAdditionalImages] = useState<string[]>([]);
   const [activeSlot, setActiveSlot] = useState<string | null>(null);
+  
+  // Cropping State
+  const [croppingVisible, setCroppingVisible] = useState(false);
+  const [imageToCrop, setImageToCrop] = useState<string | null>(null);
 
   const setScanningProgress = useAppStore((state) => state.setScanningProgress);
   const tempCapturedImage = useAppStore((state) => state.tempCapturedImage);
@@ -39,16 +44,13 @@ export default function Pictures() {
   const { isLoading, scanCarPhotos } = useCarScanning();
 
   // Handle image handoff from Custom Camera
-  React.useEffect(() => {
+  useEffect(() => {
     if (tempCapturedImage && activeSlot) {
-      if (activeSlot === "more") {
-        setAdditionalImages((prev) => [...prev, tempCapturedImage]);
-      } else {
-        setImages((prev) => ({ ...prev, [activeSlot]: tempCapturedImage }));
-      }
-      // Reset handoff state
+      // Trigger cropper instead of saving directly
+      setImageToCrop(tempCapturedImage);
+      setCroppingVisible(true);
+      // We keep activeSlot so we know where to save after cropping
       setTempCapturedImage(null);
-      setActiveSlot(null);
     }
   }, [tempCapturedImage, activeSlot]);
 
@@ -64,18 +66,25 @@ export default function Pictures() {
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
-      allowsEditing: true,
+      allowsEditing: false, // Use our custom cropper
       quality: 0.8,
     });
 
     if (!result.canceled && result.assets && result.assets.length > 0) {
-      const uri = result.assets[0].uri;
-      if (id === "more") {
-        setAdditionalImages((prev) => [...prev, uri]);
-      } else {
-        setImages((prev) => ({ ...prev, [id]: uri }));
-      }
+      setActiveSlot(id);
+      setImageToCrop(result.assets[0].uri);
+      setCroppingVisible(true);
     }
+  };
+
+  const handleCropComplete = (croppedUri: string) => {
+    if (activeSlot === "more") {
+      setAdditionalImages((prev) => [...prev, croppedUri]);
+    } else if (activeSlot) {
+      setImages((prev) => ({ ...prev, [activeSlot]: croppedUri }));
+    }
+    setCroppingVisible(false);
+    setImageToCrop(null);
     setActiveSlot(null);
   };
 
@@ -290,6 +299,18 @@ export default function Pictures() {
           </View>
         </View>
       )}
+
+      {/* Image Cropper */}
+      <ImageCropper
+        visible={croppingVisible}
+        imageUri={imageToCrop}
+        onClose={() => {
+          setCroppingVisible(false);
+          setImageToCrop(null);
+          setActiveSlot(null);
+        }}
+        onCrop={handleCropComplete}
+      />
     </ScreenBackground>
   );
 }

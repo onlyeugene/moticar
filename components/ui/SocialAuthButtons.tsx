@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, Pressable } from "react-native";
 import GoogleIcon from "@/assets/icons/google.svg";
+import MailIcon from "@/assets/icons/mail.svg";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { SocialAuthProps } from "@/types/ui";
@@ -17,12 +18,12 @@ export const SocialAuthButtons = ({
   disabled = false,
 }: SocialAuthProps) => {
   return (
-    <View className={`w-full px-5 ${disabled ? "opacity-50" : ""}`}>
+    <View className={`w-full ${disabled ? "opacity-50" : ""}`}>
       {/* SSO Buttons Row */}
       <View className="flex-row items-center justify-center w-full gap-4 mb-4">
         <Pressable
           style={{ borderColor: appleBorder, backgroundColor: appleBg }}
-          className="flex-1 items-center justify-center border border-[#143E44] h-12 rounded-full active:opacity-80 shadow-sm"
+          className="flex-1 items-center justify-center border border-[#143E44] h-[52px] rounded-full active:opacity-80 shadow-sm"
           onPress={() => onAuth("apple")}
           disabled={disabled}
         >
@@ -31,7 +32,7 @@ export const SocialAuthButtons = ({
 
         <Pressable
           style={{ borderColor: googleBorder, backgroundColor: googleBg }}
-          className="flex-1 items-center justify-center border border-[#143E44] h-12 rounded-full active:opacity-80 shadow-sm"
+          className="flex-1 items-center justify-center border border-[#143E44] h-[52px] rounded-full active:opacity-80 shadow-sm"
           onPress={() => onAuth("google")}
           disabled={disabled}
         >
@@ -42,11 +43,12 @@ export const SocialAuthButtons = ({
       {/* Email Button */}
       {showEmail && (
         <Pressable
-          className="w-full bg-white h-12 rounded-full items-center justify-center active:opacity-90 shadow-md"
+          className="w-full bg-white h-[52px] rounded-full flex-row items-center justify-center active:opacity-90 shadow-md gap-3"
           onPress={() => router.push("/(auth)/create")}
           disabled={disabled}
         >
-          <Text className="text-[#1E293B] font-lexendMedium text-base">
+          <MailIcon width={20} height={20} fill="#1E293B" />
+          <Text className="text-[#1E293B] font-lexendSemiBold text-base">
             Sign up with Email
           </Text>
         </Pressable>

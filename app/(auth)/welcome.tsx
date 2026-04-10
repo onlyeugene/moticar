@@ -1,4 +1,4 @@
-import LogoIcon from "@/assets/icons/logo.svg";
+import LogoIcon from "@/assets/images/logowhite.svg";
 import { useSocialLogin } from "@/hooks/useAuth";
 import { useSnackbar } from "@/providers/SnackbarProvider";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -15,45 +15,64 @@ import {
 } from "react-native";
 import { SocialAuthButtons } from "../../components/ui/SocialAuthButtons";
 
+// Character SVGs
+import Img1 from "@/assets/images/image.svg";
+import Img2 from "@/assets/images/image1.svg";
+import Img3 from "@/assets/images/image2.svg";
+import Img4 from "@/assets/images/image3.svg";
+import Img5 from "@/assets/images/image4.svg";
+
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const SLIDES = [
   {
     id: "1",
-    image: require("@/assets/images/onboarding_1.png"),
+    Image: Img1,
+    bgImage: require("@/assets/images/onboarding_1.png"),
     title: "Do you know what your car really costs you?",
     description:
       "Track fuel, servicing, insurance, and more, all in one place and see the real cost of owning your vehicle.",
   },
   {
     id: "2",
-    image: require("@/assets/images/onboarding_2.png"),
+    Image: Img2,
+    bgImage: require("@/assets/images/onboarding_2.png"),
     title: "Never miss important car maintenance",
     description:
       "Stay ahead of servicing, inspections, and repairs with reminders that keep your car running smoothly.",
   },
   {
     id: "3",
-    image: require("@/assets/images/onboarding_3.png"),
+    Image: Img3,
+    bgImage: require("@/assets/images/onboarding_3.png"),
     title: "Tired of losing receipts and service records?",
     description:
       "Store every receipt, expense, and document in one organized digital folder for your vehicle.",
   },
   {
     id: "4",
-    image: require("@/assets/images/onboarding_4.png"),
+    Image: Img4,
+    bgImage: require("@/assets/images/onboarding_4.png"),
     title: "Make smarter decisions about your car",
     description:
       "View spending trends, driving costs and maintenance insights that help you stay ahead of problems.",
   },
   {
     id: "5",
-    image: require("@/assets/images/onboarding_5.png"),
+    Image: Img5,
+    bgImage: require("@/assets/images/onboarding_5.png"),
     title: "Getting overcharged by mechanics?",
     description:
       "Access a full service history and expense report so you avoid paying more than you should.",
   },
 ];
+
+const BlobBackground = () => (
+  <View
+    className="absolute w-[180px] h-[350px] bg-[#9BBABB]/25 rounded-full"
+    style={{ transform: [{ rotate: "0deg" }] }}
+  />
+);
 
 export default function WelcomeScreen() {
   const { mutate: socialLogin, isPending } = useSocialLogin();
@@ -73,13 +92,12 @@ export default function WelcomeScreen() {
         index: nextIndex,
         animated: true,
       });
-    }, 4000); // Scroll every 4 seconds
+    }, 4500);
 
     return () => clearInterval(timer);
   }, [activeIndex]);
 
   const handleSocialAuth = (provider: string) => {
-    // Mock social media data for demo
     const mockData = {
       email: "social_user@test.com",
       provider,
@@ -119,106 +137,84 @@ export default function WelcomeScreen() {
 
   return (
     <View className="flex-1 bg-[#013037]">
-      {/* Background Image Slider */}
-      <View className="absolute top-0 w-full h-[65%]">
-        <FlatList
-          ref={flatListRef}
-          data={SLIDES}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          onViewableItemsChanged={onViewableItemsChanged}
-          viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
-          onScrollToIndexFailed={(info) => {
-            flatListRef.current?.scrollToOffset({
-              offset: info.averageItemLength * info.index,
-              animated: true,
-            });
-          }}
-          renderItem={({ item }) => (
-            <View style={{ width: SCREEN_WIDTH }} className="h-full">
-              <Image
-                source={item.image}
-                className="w-full h-full"
-                resizeMode="cover"
-              />
-              {/* Overlay Gradient for Text Readability - "Eating into the image" */}
-              <LinearGradient
-                colors={["#004E5A00", "#013037"]}
-                locations={[0.2, 0.9]}
-                className="absolute inset-0"
-              />
+
+      {/* 1. Static Overlay: Fixed Header Logo */}
+      <View className="absolute top-0 w-full items-center pt-20" style={{ zIndex: 40 }}>
+        <LogoIcon width={130} height={34} fill="#00AEB5" />
+      </View>
+
+      {/* 2. Main Sliding Content */}
+      <FlatList
+        ref={flatListRef}
+        data={SLIDES}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onViewableItemsChanged={onViewableItemsChanged}
+        viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={{ width: SCREEN_WIDTH }} className="flex-1">
+            {/* Sliding Environmental Background */}
+            <Image 
+              source={item.bgImage} 
+              className="absolute inset-0 w-full h-[65%]"
+              resizeMode="cover"
+            />
+            
+            {/* Blending Gradient: PNG -> Solid Teal */}
+            <LinearGradient
+              colors={["transparent", "rgba(1, 48, 55, 0.4)", "#013037", "#013037"]}
+              stops={[0, 0.4, 0.85, 1]}
+              className="absolute top-[25%] left-0 right-0 h-[75%]"
+            />
+
+            {/* Dark Overlay for Background Contrast */}
+            <View className="absolute inset-0 bg-[#002D32]/80 h-full" />
+
+            <View className="flex-1 items-center px-8 pt-44">
+              {/* Artwork Area */}
+              <View className="items-center justify-center w-full h-[35%] mb-4">
+                <BlobBackground />
+                <View className="z-10">
+                  <item.Image width={350} height={350} />
+                </View>
+              </View>
+
+              {/* Text Content */}
+              <View className="mt-4 items-center w-full px-2">
+                <Text className="text-[#FFFFFF] text-center text-[28px] font-lexendBold leading-[34px] mb-3">
+                  {item.title}
+                </Text>
+                <Text className="text-[#9BBABB] text-center font-lexendRegular text-[14px] leading-[22px] px-2">
+                  {item.description}
+                </Text>
+              </View>
             </View>
-          )}
-          keyExtractor={(item) => item.id}
-        />
-      </View>
+          </View>
+        )}
+      />
 
-      {/* Static Logo at Top */}
-      <View className="absolute top-0 w-full items-center pt-20">
-        <LogoIcon width={120} height={30} fill="#00AEB5" />
-      </View>
-
-      {/* Moving Text Content */}
-      <View
-        className="absolute top-[52%] w-full h-[15%]"
-        style={{ zIndex: 10 }}
-        pointerEvents="none"
+      {/* 3. Static Overlay: Fixed Bottom Auth Section */}
+      <View 
+        className="absolute bottom-0 w-full pb-10 pt-6 px-10" 
+        style={{ zIndex: 50 }}
       >
-        <FlatList
-          data={SLIDES}
-          horizontal
-          pagingEnabled
-          scrollEnabled={false}
-          showsHorizontalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <View
-              style={{ width: SCREEN_WIDTH }}
-              className="px-10 justify-center"
-            >
-              <Text className="text-[#FFFFFF] text-center text-[30px] font-lexendBold leading-[32px] mb-2">
-                {item.title}
-              </Text>
-              <Text className="text-[#76D7E6] text-center font-lexendRegular text-[13px] leading-[20px]">
-                {item.description}
-              </Text>
-            </View>
-          )}
-          // Set manual offset based on activeIndex to sync
-          contentOffset={{ x: activeIndex * SCREEN_WIDTH, y: 0 }}
-          keyExtractor={(item) => item.id}
-        />
-      </View>
-
-      {/* Static Bottom Auth Section */}
-      <View className="absolute bottom-0 w-full pb-10">
-        <LinearGradient
-          colors={["#004E5A00", "#013037"]}
-          locations={[0, 0.5]}
-          style={{
-            position: "absolute",
-            top: -200,
-            left: 0,
-            right: 0,
-            height: 200,
-          }}
-        />
-
         <View className="items-center">
-          {/* Pagination Dots */}
-          <View className="flex-row justify-center mb-8">
-            {SLIDES.map((_, index) => (
+          {/* Static Pagination Dots */}
+          <View className="flex-row justify-center mb-10">
+            {SLIDES.map((_, dotIdx) => (
               <View
-                key={index}
-                className={`h-1.5 rounded-full mx-[2px] ${activeIndex === index ? "w-6 bg-[#FFFFFF]" : "w-6 bg-[#09515D]"}`}
+                key={dotIdx}
+                className={`h-1.5 rounded-full mx-1 ${activeIndex === dotIdx ? "w-6 bg-[#FFFFFF]" : "w-6 bg-[#09515D]"}`}
               />
             ))}
           </View>
 
           <SocialAuthButtons onAuth={handleSocialAuth} />
 
-          <View className="mt-6 px-10">
-            <Text className="text-[#31828E] text-center font-lexendMedium text-[14px] ">
+          <View className="mt-6 items-center">
+            <Text className="text-[#31828E] text-center font-lexendMedium text-[10px] leading-4 mb-4">
               By signing up, you accept moticar’s{" "}
               <Text className="text-[#FDEF56]">Terms of Service</Text> and{" "}
               <Text className="text-[#FDEF56]">Membership Terms</Text>, and
@@ -226,12 +222,12 @@ export default function WelcomeScreen() {
               <Text className="text-[#FDEF56]">Privacy Policy</Text>
             </Text>
 
-            <View className="flex-row gap-2 items-center justify-center mt-6">
-              <Text className="text-[#FFFFFF] text-[16px] font-lexendMedium">
+            <View className="flex-row gap-2 items-center justify-center">
+              <Text className="text-[#FFFFFF] text-[15px] font-lexendMedium">
                 Already have an account?
               </Text>
               <TouchableOpacity onPress={() => router.push("/(auth)/login")}>
-                <Text className="text-[#00AEB5] font-lexendBold text-[16px]">
+                <Text className="text-[#00AEB5] font-lexendBold text-[15px]">
                   Sign in
                 </Text>
               </TouchableOpacity>

@@ -4,6 +4,7 @@ import { authService } from "@/services/api/authService";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useAppStore } from "@/store/useAppStore";
 import { AuthResponse, SignupResponse, User } from "@/types/auth";
+import { router } from "expo-router";
 
 /**
  * Authentication Hooks
@@ -81,6 +82,7 @@ export const useLogout = () => {
       clearAuth();
       resetScanningState();
       queryClient.clear();
+      router.replace("/(auth)/welcome");
     },
   });
 };

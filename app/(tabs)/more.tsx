@@ -13,6 +13,7 @@ import KeyIcon from "@/assets/more/key.svg";
 import Logout from "@/assets/more/logout.svg";
 import Translate from "@/assets/more/translate.svg";
 import Inbox from "@/assets/more/inbox.svg";
+import { LoadingModal } from "@/components/ui/LoadingModal";
 
 
 
@@ -185,6 +186,11 @@ export default function MoreScreen() {
           updateProfile.mutate({ preferredCurrency: code });
           setShowCurrencySheet(false);
         }}
+      />
+
+      <LoadingModal
+        visible={logout.isPending || deleteAccount.isPending}
+        message={logout.isPending ? "Logging out..." : "Deleting account..."}
       />
     </View>
   );
