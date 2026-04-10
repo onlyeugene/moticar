@@ -1,8 +1,17 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Alert, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useLogout, useDeleteAccount, useUpdateProfile } from "@/hooks/useAuth";
-import CurrencySelectionSheet, { CURRENCIES } from "@/components/sheets/CurrencySelectionSheet";
+import CurrencySelectionSheet, {
+  CURRENCIES,
+} from "@/components/sheets/CurrencySelectionSheet";
 import React, { useState } from "react";
 import BookIcon from "@/assets/more/book.svg";
 import CoinStack from "@/assets/more/coinstack.svg";
@@ -15,9 +24,6 @@ import Translate from "@/assets/more/translate.svg";
 import Inbox from "@/assets/more/inbox.svg";
 import { LoadingModal } from "@/components/ui/LoadingModal";
 
-
-
-
 interface SettingItemProps {
   icon: React.FC<any>;
   label: string;
@@ -26,7 +32,13 @@ interface SettingItemProps {
   isLast?: boolean;
 }
 
-function SettingItem({ icon: Icon, label, value, onPress, isLast }: SettingItemProps) {
+function SettingItem({
+  icon: Icon,
+  label,
+  value,
+  onPress,
+  isLast,
+}: SettingItemProps) {
   return (
     <TouchableOpacity
       className={`flex-row items-center justify-between py-4 ${
@@ -59,9 +71,8 @@ export default function MoreScreen() {
   const updateProfile = useUpdateProfile();
   const [showCurrencySheet, setShowCurrencySheet] = useState(false);
 
-  const currentCurrency = CURRENCIES.find(
-    (c) => c.code === user?.preferredCurrency
-  ) || CURRENCIES[0];
+  const currentCurrency =
+    CURRENCIES.find((c) => c.code === user?.preferredCurrency) || CURRENCIES[0];
 
   const handleLogout = () => {
     Alert.alert("Logout", "Are you sure you want to log out?", [
@@ -81,7 +92,7 @@ export default function MoreScreen() {
           style: "destructive",
           onPress: () => deleteAccount.mutate(),
         },
-      ]
+      ],
     );
   };
 
@@ -98,7 +109,7 @@ export default function MoreScreen() {
 
         {/* Profile Card */}
         <TouchableOpacity className="bg-[#ECE6B7] rounded-[8px] p-4 flex-row items-center justify-between mb-8 border border-[#F8E761]">
-          <View className="flex-row items-center gap-4">
+          <View className="flex-row items-center gap-4 flex-1 mr-2">
             <View>
               <View className="w-[64px] h-[64px] rounded-full bg-[#F4EBFF] items-center justify-center border-2 border-[#F4EBFF] overflow-hidden">
                 <View className="bg-white w-full h-full items-center justify-center">
@@ -109,21 +120,30 @@ export default function MoreScreen() {
               </View>
               <View className="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-[#22C55E] border-2 border-[#FEF9C3]" />
             </View>
-            <View>
+            <View className="flex-1">
               <Text className="text-[#00343F] text-[14px] font-lexendMedium">
-                {user?.preferredName || user?.name || ""}
+                {user?.name || ""}
               </Text>
-              <Text className="text-[#00343F] text-[20px] font-lexendBold">
-                {user?.email || ""}
+              <Text
+                className="text-[#00343F] text-[16px] font-lexendBold"
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {user?.preferredName || ""}
               </Text>
-              <View className="bg-[#29D7DE] px-2 py-2 rounded-md mt-1 self-start">
+              <View className="bg-[#29D7DE] px-2 py-2 rounded-[8px] mt-1 self-start">
                 <Text className="text-[#00343F] text-[12px] font-lexendRegular">
                   userID: {user?.id?.slice(-8) || ""}
                 </Text>
               </View>
             </View>
           </View>
-          <Ionicons name="chevron-forward" size={24} color="#7BA0A3" opacity={0.5} />
+          <Ionicons
+            name="chevron-forward"
+            size={24}
+            color="#7BA0A3"
+            opacity={0.5}
+          />
         </TouchableOpacity>
 
         {/* SETTINGS */}
@@ -163,11 +183,7 @@ export default function MoreScreen() {
           YOUR ACCOUNT
         </Text>
         <View className="bg-white rounded-[16px] px-4 mb-8">
-          <SettingItem
-            icon={Logout}
-            label="Logout"
-            onPress={handleLogout}
-          />
+          <SettingItem icon={Logout} label="Logout" onPress={handleLogout} />
           <SettingItem
             icon={HelpIcon}
             label="Delete Account"

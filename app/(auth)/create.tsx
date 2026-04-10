@@ -19,6 +19,8 @@ import {
   View,
 } from "react-native";
 import * as z from "zod";
+import { LoadingModal } from "@/components/ui/LoadingModal";
+import { useSocialAuth } from "@/hooks/useSocialAuth";
 
 const schema = z.object({
   email: emailSchema,
@@ -31,6 +33,29 @@ interface CreateAccountFormData {
 export default function Login() {
   const { showSnackbar } = useSnackbar();
   const signup = useSignup();
+
+  const { loginWithApple, loginWithGoogle, isPending: socialPending } = useSocialAuth({
+    onSuccess: (data) => {
+      showSnackbar({
+        type: "success",
+        message: "Account Created!",
+        description: "You've successfully signed up with your social account.",
+      });
+
+      if (data.user?.onboardingCompleted) {
+        router.replace("/(tabs)");
+      } else {
+        router.replace("/(onboarding)");
+      }
+    },
+    onError: (error: any) => {
+      showSnackbar({
+        type: "error",
+        message: "Social Signup Failed",
+        description: error.response?.data?.message || "Something went wrong. Please try again.",
+      });
+    },
+  });
 
   const {
     control,
@@ -156,9 +181,15 @@ export default function Login() {
             googleBg="transparent"
             googleBorder="#09515D"
             appleIconColor="white"
-            disabled={signup.isPending}
+            disabled={signup.isPending || socialPending}
+            onAuth={(type) => {
+              if (type === "apple") loginWithApple();
+              else if (type === "google") loginWithGoogle();
+            }}
           />
         </View>
+
+        <LoadingModal visible={socialPending} message="Signing you up..." />
 
         <View className="flex-1" />
 

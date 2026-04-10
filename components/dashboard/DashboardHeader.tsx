@@ -171,7 +171,9 @@ export default function DashboardHeader() {
             }}
             className="flex-row items-center gap-1 flex-1 mr-4"
           >
-            <CarIcon make={selectedCar?.make || ""} size={48} />
+           <View className="bg-white rounded-[8px] mr-1">
+             <CarIcon make={selectedCar?.make || ""} size={48} />
+           </View>
 
             <View className="flex-1">
               {/* Car name + status dot */}

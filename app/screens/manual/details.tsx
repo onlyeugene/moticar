@@ -1,29 +1,29 @@
-import BodyIcon from "@/assets/icons/car/body.svg";
-import CalendarIcon from "@/assets/icons/car/calendar.svg";
-import CylinderIcon from "@/assets/icons/car/cylinder.svg";
-import DriveIcon from "@/assets/icons/car/drive.svg";
-import FuelIcon from "@/assets/icons/car/fuel.svg";
-import HorseIcon from "@/assets/icons/car/horse.svg";
-import SegmentIcon from "@/assets/icons/car/segment.svg";
-import TransmissionIcon from "@/assets/icons/car/transmission.svg";
+import BodyIcon from "@/assets/details/body.svg";
+import CylinderIcon from "@/assets/details/cylinder.svg";
+import DriveIcon from "@/assets/details/drivetype.svg";
+import EngineIcon from "@/assets/details/engine.svg";
+import FuelIcon from "@/assets/details/fuel.svg";
+import TransmissionIcon from "@/assets/details/gear.svg";
+import HorseIcon from "@/assets/details/horse.svg";
+import SegmentIcon from "@/assets/details/segment.svg";
+import CalendarIcon from "@/assets/details/year.svg";
 import SpecItem from "@/components/car/SpecItem";
+import AttributeEditSheet, {
+  EditMode,
+} from "@/components/scan/AttributeEditSheet";
 import { CarLogo } from "@/components/shared/CarLogo";
 import { ScreenBackground } from "@/components/ui/ScreenBackground";
-import { useCarDetails, useCreateCar } from "@/hooks/useCars";
+import { useCarDetails } from "@/hooks/useCars";
 import { useSnackbar } from "@/providers/SnackbarProvider";
-import { Ionicons } from "@expo/vector-icons";
-import SpeedometerIcon from "@/assets/icons/car/speedometer.svg";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
-  ActivityIndicator,
   Pressable,
   ScrollView,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
-  Modal,
 } from "react-native";
 
 export default function CarDetailsScreen() {
@@ -52,18 +52,18 @@ export default function CarDetailsScreen() {
     driveType: "N/A",
     bodyStyle: params.class || "",
     segment: "N/A",
-    bodyColor: "---",
+    bodyColor: "White",
+    doors: "4",
   });
 
   // Modal states
-  const [modalVisible, setModalVisible] = useState(false);
+  const [editSheetVisible, setEditSheetVisible] = useState(false);
   const [editingField, setEditingField] = useState<{
     key: string;
     label: string;
-    type: "text" | "picker" | "numeric";
+    mode: EditMode;
     options?: string[];
   } | null>(null);
-  const [tempValue, setTempValue] = useState("");
 
   useEffect(() => {
     isMounted.current = true;
@@ -91,7 +91,8 @@ export default function CarDetailsScreen() {
         driveType: f.driveType || prev.driveType || "N/A",
         bodyStyle: f.bodyStyle || prev.bodyStyle || "N/A",
         segment: f.segment || prev.segment || "N/A",
-        bodyColor: f.bodyColor || prev.bodyColor || "---",
+        bodyColor: f.bodyColor || prev.bodyColor || "White",
+        doors: f.doors || "5",
       }));
     }
   }, [detailsData]);
@@ -131,20 +132,18 @@ export default function CarDetailsScreen() {
   const openEditor = (
     key: string,
     label: string,
-    type: "text" | "picker" | "numeric",
+    mode: EditMode,
     options?: string[],
   ) => {
-    setEditingField({ key, label, type, options });
-    const val = carData[key as keyof typeof carData] || "";
-    setTempValue(String(val).replace(/,/g, ""));
-    setModalVisible(true);
+    setEditingField({ key, label, mode, options });
+    setEditSheetVisible(true);
   };
 
-  const saveEdit = () => {
+  const saveEdit = (newValue: any) => {
     if (editingField) {
-      setCarData((prev) => ({ ...prev, [editingField.key]: tempValue }));
+      setCarData((prev) => ({ ...prev, [editingField.key]: newValue }));
     }
-    setModalVisible(false);
+    setEditSheetVisible(false);
   };
 
   const getYearOptions = () => {
@@ -160,141 +159,200 @@ export default function CarDetailsScreen() {
     return [params.year || new Date().getFullYear().toString()];
   };
 
+  const detailItems = [
+    {
+      label: "Year of Production",
+      key: "year",
+      value: carData.year,
+      icon: CalendarIcon,
+      mode: "chips" as const,
+      options: getYearOptions(),
+      isEditable: true,
+    },
+    {
+      label: "Fuel Type",
+      key: "fuelType",
+      value: carData.fuelType,
+      icon: FuelIcon,
+      mode: "chips" as const,
+      options: ["Petrol", "Diesel", "Electric", "Hybrid"],
+      isEditable: true,
+    },
+    {
+      label: "Gearbox",
+      key: "transmission",
+      value: carData.transmission,
+      icon: TransmissionIcon,
+      mode: "toggle" as const,
+      options: ["Automatic", "Manual"],
+      isEditable: true,
+    },
+    {
+      label: "Engine",
+      key: "engine",
+      value: carData.engine,
+      icon: EngineIcon,
+      mode: "input" as const,
+      isEditable: true,
+    },
+    {
+      label: "Cylinder",
+      key: "cylinder",
+      value: carData.cylinder,
+      icon: CylinderIcon,
+      mode: "input" as const,
+      isEditable: false,
+    },
+    {
+      label: "Horse Power",
+      key: "horsepower",
+      value: carData.horsepower,
+      icon: HorseIcon,
+      mode: "input" as const,
+      isEditable: false,
+    },
+    {
+      label: "Drive Type",
+      key: "driveType",
+      value: carData.driveType,
+      icon: DriveIcon,
+      mode: "chips" as const,
+      options: [
+        "All-Wheel Drive (AWD)",
+        "Four-Wheel Drive (4WD)",
+        "Rear-Wheel Drive (RWD)",
+        "Front-Wheel Drive (FWD)",
+      ],
+      isEditable: true,
+    },
+    {
+      label: "Body Style",
+      key: "bodyStyle",
+      value: carData.bodyStyle,
+      icon: BodyIcon,
+      mode: "input" as const,
+      isEditable: false,
+    },
+    {
+      label: "Segment",
+      key: "segment",
+      value: carData.segment,
+      icon: SegmentIcon,
+      mode: "input" as const,
+      isEditable: false,
+    },
+    {
+      label: "Body Color",
+      key: "bodyColor",
+      value: carData.bodyColor,
+      icon: BodyIcon,
+      mode: "color" as const,
+      isEditable: true,
+    },
+    {
+      label: "Doors",
+      key: "doors",
+      value: carData.doors,
+      icon: () => (
+        <MaterialCommunityIcons name="car-door" size={18} color="#29D7DE" />
+      ),
+      mode: "input" as const,
+      isEditable: true,
+    },
+  ];
+
+  // Helper to chunk items into rows of 2
+  const chunkedItems = [];
+  for (let i = 0; i < detailItems.length; i += 2) {
+    chunkedItems.push(detailItems.slice(i, i + 2));
+  }
+
   return (
     <View className="flex-1 bg-black/60">
       <ScreenBackground>
-        <Pressable className="h-[20%]" onPress={() => router.back()} />
+        <Pressable
+          className="h-[15%]"
+          onPress={() => router.replace("/(onboarding)")}
+        />
 
-        <View className="flex-1 bg-white rounded-t-[20px]">
-          <View className="bg-[#E8E7DC] px-6 pt-6 rounded-t-[20px]">
-            <View className="flex-row justify-between items-center">
+        <View className="flex-1 bg-white rounded-t-[20px] overflow-hidden">
+          {/* Header Section */}
+          <View className="bg-[#E8E7DC] px-6 pt-6 pb-4">
+            <View className="flex-row justify-between items-center mb-4">
               <View className="flex-1" />
-              <Text className="text-[#9BBABB] font-lexendMedium text-[12px]">
+              <Text className="text-[#767674] font-lexendRegular text-[14px]">
                 This is what we got
               </Text>
               <TouchableOpacity
-                onPress={() => router.back()}
+                onPress={() => router.replace("/(onboarding)")}
                 className="flex-1 items-end"
               >
                 <Ionicons name="close" size={24} color="#101828" />
               </TouchableOpacity>
             </View>
 
-            <View className="items-center mb-6 ">
-              <View className="">
-                <CarLogo make={params.make || ""} size={48} />
+            <View className="items-center mb-4">
+              <View className="w-[48px] h-[48px] bg-white rounded-[10px] items-center justify-center border border-gray-50 mb-3 shadow-sm">
+                <CarLogo make={params.make || ""} size={40} />
               </View>
-              <Text className="text-[#00343F] font-lexendSemiBold text-[20px] text-center uppercase">
-                {params.make} {params.model} {carData.engine !== "N/A" ? carData.engine : ""}
+              <Text className="text-[#00343F] font-lexendBold text-[20px] text-center uppercase">
+                {params.make} {params.model}
               </Text>
             </View>
           </View>
 
-          <View className="flex-row items-center justify-center gap-2 mb-8 px-6 pt-6">
-            <View className="h-[1px] flex-1 bg-[#D0CCA6]" />
-            <Text className="text-[#D0CCA6] font-lexendMedium text-[10px] uppercase tracking-widest">
+          <View className="items-center mt-6">
+            <Text className="text-[#A8A477] font-lexendMedium text-[12px] uppercase tracking-widest">
               Expected Features
             </Text>
-            <View className="h-[1px] flex-1 bg-[#D0CCA6]" />
           </View>
 
           <ScrollView
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: 120 }}
+            className="mt-4"
           >
-            <View className="flex-row flex-wrap px-6">
-              <SpecItem
-                icon={CalendarIcon}
-                label="Year of Production:"
-                value={carData.year}
-                hasDropdown={true}
-                onPress={() => openEditor("year", "Year of Production", "picker", getYearOptions())}
-              />
-              <SpecItem
-                icon={FuelIcon}
-                label="Fuel Type"
-                value={carData.fuelType}
-                hasDropdown={true}
-                onPress={() => openEditor("fuelType", "Fuel Type", "picker", ["Petrol", "Diesel", "Electric", "Hybrid"])}
-              />
-              <SpecItem
-                icon={TransmissionIcon}
-                label="Transmission"
-                value={carData.transmission}
-                hasDropdown={true}
-                onPress={() => openEditor("transmission", "Transmission", "picker", ["Automatic", "Manual"])}
-              />
-              <SpecItem
-                icon={CylinderIcon}
-                label="Engine"
-                value={carData.engine}
-                hasDropdown={true}
-                onPress={() => openEditor("engine", "Engine Size", "text")}
-              />
-              <SpecItem
-                icon={CylinderIcon}
-                label="Cylinder"
-                value={carData.cylinder}
-                hasDropdown={true}
-                onPress={() => openEditor("cylinder", "Cylinder", "text")}
-              />
-              <SpecItem
-                icon={HorseIcon}
-                label="Horse Power"
-                value={carData.horsepower}
-                hasDropdown={true}
-                onPress={() => openEditor("horsepower", "Horse Power", "text")}
-              />
-              <SpecItem
-                icon={DriveIcon}
-                label="Drive Type"
-                value={carData.driveType}
-                hasDropdown={true}
-                onPress={() => openEditor("driveType", "Drive Type", "picker", ["FWD", "RWD", "AWD", "4WD"])}
-              />
-              <SpecItem
-                icon={BodyIcon}
-                label="Body Style"
-                value={carData.bodyStyle}
-                hasDropdown={true}
-                onPress={() => openEditor("bodyStyle", "Body Style", "text")}
-              />
-              <SpecItem
-                icon={SegmentIcon}
-                label="Segment"
-                value={carData.segment}
-                hasDropdown={true}
-                onPress={() => openEditor("segment", "Segment", "text")}
-              />
-              <SpecItem
-                icon={BodyIcon}
-                label="Body Color"
-                value={carData.bodyColor}
-                hasDropdown={true}
-                onPress={() =>
-                  openEditor("bodyColor", "Body Color", "picker", [
-                    "White",
-                    "Black",
-                    "Grey",
-                    "Silver",
-                    "Blue",
-                    "Red",
-                    "Green",
-                    "Brown/Beige",
-                    "Yellow",
-                    "Orange",
-                    "Gold",
-                    "Bronze",
-                    "Purple",
-                    "Turquoise/Teal",
-                    "Maroon",
-                    "Pink",
-                  ])
-                }
-              />
+            <View className="px-5">
+              <View className="bg-white rounded-[20px] border border-[#D6D5CA] overflow-hidden">
+                {chunkedItems.map((row, rowIndex) => (
+                  <View key={rowIndex}>
+                    <View className="flex-row">
+                      {row.map((item, itemIndex) => (
+                        <View key={item.key} className="flex-1 py-4 px-7">
+                          <SpecItem
+                            icon={item.icon}
+                            label={item.label}
+                            value={item.value?.toString()}
+                            hasDropdown={item.isEditable}
+                            onPress={
+                              item.isEditable
+                                ? () =>
+                                    openEditor(
+                                      item.key,
+                                      item.label,
+                                      item.mode,
+                                      item.options,
+                                    )
+                                : undefined
+                            }
+                          />
+                          {/* {itemIndex === 0 && row.length === 2 && (
+                            <View className="absolute right-0 top-4 bottom-4 w-[1px] bg-[#D6D5CA]" />
+                          )} */}
+                        </View>
+                      ))}
+                      {row.length === 1 && <View className="flex-1" />}
+                    </View>
+                    {rowIndex < chunkedItems.length - 1 && (
+                      <View className="h-[1px] bg-[#D6D5CA]" />
+                    )}
+                  </View>
+                ))}
+              </View>
             </View>
           </ScrollView>
 
+          {/* Action Button */}
           <View className="absolute bottom-10 left-6 right-6">
             <TouchableOpacity
               onPress={handleConfirm}
@@ -308,66 +366,19 @@ export default function CarDetailsScreen() {
           </View>
         </View>
 
-        {/* Universal Edit Modal */}
-        <Modal
-          visible={modalVisible}
-          transparent={true}
-          animationType="fade"
-          onRequestClose={() => setModalVisible(false)}
-        >
-          <Pressable 
-            className="flex-1 bg-black/40 justify-center items-center px-10"
-            onPress={() => setModalVisible(false)}
-          >
-            <View className="bg-white rounded-3xl w-full p-6 shadow-xl" onStartShouldSetResponder={() => true}>
-              <Text className="text-[#00343F] font-lexendBold text-lg mb-4">
-                Edit {editingField?.label}
-              </Text>
-
-              {editingField?.type === "text" || editingField?.type === "numeric" ? (
-                <View className="border border-[#D0CCA6] rounded-xl px-4 py-2 mb-6">
-                  <TextInput
-                    value={tempValue}
-                    onChangeText={setTempValue}
-                    autoFocus={true}
-                    keyboardType={editingField?.type === "numeric" ? "numeric" : "default"}
-                    className="text-[#00343F] font-lexendMedium py-2 text-[16px]"
-                    placeholderTextColor="#9BBABB"
-                  />
-                </View>
-              ) : (
-                <ScrollView className="max-h-60 mb-6">
-                  {editingField?.options?.map((opt, idx) => (
-                    <TouchableOpacity
-                      key={idx}
-                      className={`py-4 border-b border-[#9BBABB]/10 ${tempValue === opt ? "bg-[#29D7DE]/10 rounded-[4px]" : ""}`}
-                      onPress={() => setTempValue(opt)}
-                    >
-                      <Text className={`font-lexendMedium px-2 ${tempValue === opt ? "text-[#29D7DE]" : "text-[#00343F]"}`}>
-                        {opt}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </ScrollView>
-              )}
-
-              <View className="flex-row gap-4">
-                <TouchableOpacity 
-                  onPress={() => setModalVisible(false)}
-                  className="flex-1 h-12 rounded-xl items-center justify-center border border-[#9BBABB]"
-                >
-                  <Text className="font-lexendMedium text-[#9BBABB]">Cancel</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  onPress={saveEdit}
-                  className="flex-1 h-12 rounded-xl items-center justify-center bg-[#FBE74C]"
-                >
-                  <Text className="font-lexendMedium text-[#00343F]">Save</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Pressable>
-        </Modal>
+        <AttributeEditSheet
+          visible={editSheetVisible}
+          onClose={() => setEditSheetVisible(false)}
+          onSave={saveEdit}
+          title={editingField?.label || ""}
+          mode={editingField?.mode || "chips"}
+          options={editingField?.options}
+          initialValue={
+            editingField
+              ? carData[editingField.key as keyof typeof carData]
+              : ""
+          }
+        />
       </ScreenBackground>
     </View>
   );

@@ -55,7 +55,7 @@ const WheelPicker = ({ data, initialValue, onValueChange, width = 80 }: WheelPic
           height: ITEM_HEIGHT,
           borderTopWidth: 1,
           borderBottomWidth: 1,
-          borderColor: "#00AEB5",
+          borderColor: "#0000001A",
         }}
       />
       <ScrollView
@@ -73,25 +73,24 @@ const WheelPicker = ({ data, initialValue, onValueChange, width = 80 }: WheelPic
         {data.map((item, index) => {
           const isSelected = item === selectedValue;
           return (
-            <View
-              key={index}
+          <View
+            key={index}
+            style={{
+              height: ITEM_HEIGHT,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text
+              className={`${isSelected ? "font-lexendMedium" : "font-lexendRegular"}`}
               style={{
-                height: ITEM_HEIGHT,
-                alignItems: "center",
-                justifyContent: "center",
+                color: isSelected ? "#00343F" : "#9BA5A5",
+                fontSize: isSelected ? 16 : 14,
               }}
             >
-              <Text
-              className={` ${isSelected ? "font-lexendMedium" : "font-lexendRegular"} `}
-                style={{
-                  color: isSelected ? "#FFFFFF" : "#899B9B",
-                  fontSize: isSelected ? 16 : 14,
-
-                }}
-              >
-                {item}
-              </Text>
-            </View>
+              {item}
+            </Text>
+          </View>
           );
         })}
       </ScrollView>

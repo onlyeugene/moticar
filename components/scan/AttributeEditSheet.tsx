@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView, TextInput } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { View, Text, TouchableOpacity, TextInput } from "react-native";
+import { WheelDatePicker } from "../shared/WheelDatePicker";
 import BottomSheet from "../shared/BottomSheet";
 
-export type EditMode = "color" | "chips" | "toggle" | "input";
+export type EditMode = "color" | "chips" | "toggle" | "input" | "date" | "plate";
 
 interface AttributeEditSheetProps {
   visible: boolean;
@@ -13,6 +13,8 @@ interface AttributeEditSheetProps {
   mode: EditMode;
   options?: string[];
   initialValue: any;
+  keyboardType?: "default" | "numeric" | "email-address" | "phone-pad";
+  multiline?: boolean;
 }
 
 const COLORS = [
@@ -41,6 +43,8 @@ export default function AttributeEditSheet({
   mode,
   options = [],
   initialValue,
+  keyboardType = "default",
+  multiline = false,
 }: AttributeEditSheetProps) {
   const [value, setValue] = useState(initialValue);
 
@@ -133,16 +137,44 @@ export default function AttributeEditSheet({
 
       case "input":
         return (
+          <View className="pt-2 px-6">
+            <View className="border-b border-[#0000001A] pb-2">
+              <TextInput
+                value={value?.toString()}
+                onChangeText={setValue}
+                autoFocus
+                multiline={multiline}
+                keyboardType={keyboardType}
+                placeholder="Enter value"
+                className={`text-[#00343F] font-lexendMedium ${multiline ? "text-[16px]" : "text-[24px] text-center"}`}
+              />
+            </View>
+          </View>
+        );
+
+      case "plate":
+        return (
+          <View className="pt-2 px-6 items-center">
+            <View className="w-full bg-white  rounded-[12px] py-10 px-4">
+              <TextInput
+                value={value?.toString()}
+                onChangeText={setValue}
+                autoFocus
+                autoCapitalize="characters"
+                placeholder="Enter Plate"
+                className="text-[#00343F] font-ukNumberPlate text-[32px] text-center uppercase"
+              />
+            </View>
+          </View>
+        );
+
+      case "date":
+        return (
           <View className="pt-2">
-             <View className="bg-white rounded-xl px-6 py-6 border border-gray-100 shadow-sm">
-                <TextInput
-                  value={value}
-                  onChangeText={setValue}
-                  autoFocus
-                  placeholder="Enter value"
-                  className="text-[#006C70] font-ukNumberPlate text-[28px] uppercase text-center tracking-widest"
-                />
-             </View>
+            <WheelDatePicker
+              initialDate={value || "12.02.2025"}
+              onDateChange={setValue}
+            />
           </View>
         );
 

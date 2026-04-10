@@ -210,7 +210,7 @@ export default function ScanDetailsScreen() {
               </Text>
 
               <TouchableOpacity
-                onPress={() => openEditor("plate", "Plate Number", "input")}
+                onPress={() => openEditor("plate", "Plate Number", "plate")}
                 activeOpacity={0.7}
                 className="bg-white h-[44px] px-8 rounded-lg border border-[#00000033] items-center justify-center"
               >

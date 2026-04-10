@@ -24,7 +24,7 @@ export const notificationService = {
   },
 
   markAllAsRead: async (type?: string): Promise<void> => {
-    await apiClient.patch(`${API_ROUTES.NOTIFICATIONS.BASE}/mark-all-read`, null, {
+    await apiClient.patch(`${API_ROUTES.NOTIFICATIONS.BASE}/mark-all-read`, {}, {
       params: { type }
     });
   },

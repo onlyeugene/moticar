@@ -157,7 +157,10 @@ export default function Pictures() {
       router.push("/screens/scan/details");
     } catch (error: any) {
       console.error("Scanning Error:", error);
-      Alert.alert("Scanning Failed", error.message);
+      Alert.alert(
+        "Scanning Failed",
+        "Something went wrong. Please check your internet connection and try again."
+      );
     }
   };
 

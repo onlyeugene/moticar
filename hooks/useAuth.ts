@@ -38,12 +38,12 @@ export const useSetPassword = () => {
 
 export const useLogin = () => {
   const setAuth = useAuthStore((state) => state.setAuth);
-  const resetScanningState = useAppStore((state) => state.resetScanningState);
+  const clearAppState = useAppStore((state) => state.clearAppState);
   return useMutation({
     mutationFn: authService.login,
     onSuccess: (data) => {
       if (data.token && data.refreshToken && data.user) {
-        resetScanningState();
+        clearAppState();
         setAuth(data.token, data.refreshToken, data.user);
       }
     },
@@ -52,7 +52,7 @@ export const useLogin = () => {
 
 export const useSocialLogin = () => {
   const setAuth = useAuthStore((state) => state.setAuth);
-  const resetScanningState = useAppStore((state) => state.resetScanningState);
+  const clearAppState = useAppStore((state) => state.clearAppState);
   return useMutation({
     mutationFn: (data: { 
       email: string; 
@@ -64,7 +64,7 @@ export const useSocialLogin = () => {
     }) => authService.socialLogin(data),
     onSuccess: (data) => {
       if (data.token && data.refreshToken && data.user) {
-        resetScanningState();
+        clearAppState();
         setAuth(data.token, data.refreshToken, data.user);
       }
     },
@@ -74,13 +74,13 @@ export const useSocialLogin = () => {
 export const useLogout = () => {
   const queryClient = useQueryClient();
   const clearAuth = useAuthStore((state) => state.clearAuth);
-  const resetScanningState = useAppStore((state) => state.resetScanningState);
+  const clearAppState = useAppStore((state) => state.clearAppState);
   return useMutation({
     mutationFn: authService.logout,
     onSuccess: () => {
       // Clear store and cache on logout
       clearAuth();
-      resetScanningState();
+      clearAppState();
       queryClient.clear();
       router.replace("/(auth)/welcome");
     },
@@ -90,13 +90,13 @@ export const useLogout = () => {
 export const useDeleteAccount = () => {
   const queryClient = useQueryClient();
   const clearAuth = useAuthStore((state) => state.clearAuth);
-  const resetScanningState = useAppStore((state) => state.resetScanningState);
+  const clearAppState = useAppStore((state) => state.clearAppState);
   return useMutation({
     mutationFn: authService.deleteAccount,
     onSuccess: () => {
       // Clear store and cache on deletion
       clearAuth();
-      resetScanningState();
+      clearAppState();
       queryClient.clear();
     },
   });

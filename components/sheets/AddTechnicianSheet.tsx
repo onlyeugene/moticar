@@ -17,6 +17,7 @@ import {
   Technician,
 } from "@/types/technician";
 import { useAddTechnician, useUpdateTechnician } from "@/hooks/useTechnicians";
+import { useUploadImage } from "@/hooks/useUpload";
 import TechnicianSpecialtySheet from "./TechnicianSpecialtySheet";
 import Spanner from "@/assets/icons/spanner.svg";
 
@@ -104,8 +105,10 @@ export default function AddTechnicianSheet({
 }: AddTechnicianSheetProps) {
   const addMutation = useAddTechnician();
   const updateMutation = useUpdateTechnician();
+  const { mutateAsync: uploadImage } = useUploadImage();
 
   const isEditing = !!technician;
+  const [isUploading, setIsUploading] = useState(false);
 
   // Form state
   const [form, setForm] = useState({
@@ -150,13 +153,32 @@ export default function AddTechnicianSheet({
     if (!form.name || !form.phone) return;
 
     try {
+      setIsUploading(true);
+      let avatarUrl = form.avatarUrl;
+
+      // Handle image upload if it's a local URI
+      if (avatarUrl && (avatarUrl.startsWith("file://") || avatarUrl.startsWith("content://") || !avatarUrl.startsWith("http"))) {
+        try {
+          const uploadResult = await uploadImage({
+            uri: avatarUrl,
+            folder: "avatars",
+          });
+          avatarUrl = uploadResult.url;
+        } catch (uploadError) {
+          console.error("Image upload failed, proceeding with original URL:", uploadError);
+          // Optional: You could stop here if you want to force successful uploads
+        }
+      }
+
+      const finalData = { ...form, avatarUrl };
+
       if (isEditing && technician) {
         await updateMutation.mutateAsync({
           id: technician._id || technician.id || "",
-          data: form,
+          data: finalData,
         });
       } else {
-        await addMutation.mutateAsync(form);
+        await addMutation.mutateAsync(finalData);
       }
       onSuccess?.();
       onClose();
@@ -167,6 +189,9 @@ export default function AddTechnicianSheet({
           : "Failed to add technician:",
         error,
       );
+      Alert.alert("Error", "Failed to save technician details. Please try again.");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -203,12 +228,12 @@ export default function AddTechnicianSheet({
       >
         <Ionicons name="camera-outline" size={22} color="#00343F" />
       </TouchableOpacity>
-      <TouchableOpacity
+    <TouchableOpacity
         onPress={handleSaveTechnician}
-        disabled={isPending || !isFormValid}
-        className={`bg-[#9DE8EB] px-6 py-3 rounded-full items-center justify-center ${isPending || !isFormValid ? "opacity-30" : ""}`}
+        disabled={isPending || isUploading || !isFormValid}
+        className={`bg-[#9DE8EB] px-6 py-3 rounded-full items-center justify-center ${isPending || isUploading || !isFormValid ? "opacity-30" : ""}`}
       >
-        {isPending ? (
+        {isPending || isUploading ? (
           <ActivityIndicator size="small" color="#00343F" />
         ) : (
           <Text className="text-[#00343F] font-lexendBold text-[15px]">

@@ -51,16 +51,26 @@ export const useAppStore = create<AppState>()(
           scannedCarData: null,
           scannedLicenseData: null,
         }),
+      clearAppState: () =>
+        set({
+          selectedCarId: undefined,
+          isDiagnosticActive: false,
+          obdData: {},
+          scanningProgress: {
+            picturesCompleted: false,
+            licenseCompleted: false,
+          },
+          tempCapturedImage: null,
+          scannedCarData: null,
+          scannedLicenseData: null,
+        }),
     }),
     {
       name: "moticar-app-storage",
       storage: createJSONStorage(() => AsyncStorage),
       partialize: (state) => ({
-        scanningProgress: state.scanningProgress,
         theme: state.theme,
         selectedCarId: state.selectedCarId,
-        scannedCarData: state.scannedCarData,
-        scannedLicenseData: state.scannedLicenseData,
         activeActivityTab: state.activeActivityTab,
         obdData: state.obdData,
       }),

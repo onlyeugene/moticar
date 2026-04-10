@@ -3,7 +3,9 @@ import { ControlledInput } from "@/components/shared/controlledInput";
 import CurrencySelector from "@/components/shared/CurrencySelector";
 import { ScreenBackground } from "@/components/ui/ScreenBackground";
 import { SocialAuthButtons } from "@/components/ui/SocialAuthButtons";
-import { useLogin } from "@/hooks/useAuth";
+import { LoadingModal } from "@/components/ui/LoadingModal";
+import { useLogin, useSocialLogin } from "@/hooks/useAuth";
+import { useSocialAuth } from "@/hooks/useSocialAuth";
 import { useSnackbar } from "@/providers/SnackbarProvider";
 import { emailSchema, passwordSchema } from "@/utils/validation";
 import { Ionicons } from "@expo/vector-icons";
@@ -79,6 +81,37 @@ export default function Login() {
         },
       },
     );
+  };
+
+  const { loginWithApple, loginWithGoogle, isPending: socialPending } = useSocialAuth({
+    onSuccess: (data) => {
+      showSnackbar({
+        type: "success",
+        message: "Welcome back!",
+        description: "You've successfully signed in with your social account.",
+      });
+
+      if (data.user?.onboardingCompleted) {
+        router.replace("/(tabs)");
+      } else {
+        router.replace("/(onboarding)");
+      }
+    },
+    onError: (error: any) => {
+      showSnackbar({
+        type: "error",
+        message: "Social Login Failed",
+        description: error.response?.data?.message || "Something went wrong",
+      });
+    },
+  });
+
+  const handleSocialAuth = (provider: string) => {
+    if (provider === "apple") {
+      loginWithApple();
+    } else if (provider === "google") {
+      loginWithGoogle();
+    }
   };
 
   return (
@@ -171,7 +204,8 @@ export default function Login() {
             googleBg="transparent"
             googleBorder="#09515D"
             appleIconColor="white"
-            disabled={login.isPending}
+            onAuth={handleSocialAuth}
+            disabled={login.isPending || socialPending}
           />
         </View>
 
@@ -195,6 +229,7 @@ export default function Login() {
           </View>
         </View>
       </Container>
+      <LoadingModal visible={socialPending} message="Signing you in..." />
     </ScreenBackground>
   );
 }

@@ -47,7 +47,7 @@ export const SocialAuthButtons = ({
           onPress={() => router.push("/(auth)/create")}
           disabled={disabled}
         >
-          <MailIcon width={20} height={20} fill="#1E293B" />
+          <Ionicons name="mail-outline" size={24} color="black" />
           <Text className="text-[#1E293B] font-lexendSemiBold text-base">
             Sign up with Email
           </Text>

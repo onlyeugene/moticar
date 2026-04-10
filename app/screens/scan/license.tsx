@@ -125,7 +125,10 @@ export default function LicenseScan() {
       }
     } catch (error: any) {
       console.error("License Scanning Error:", error);
-      Alert.alert("Scanning Failed", error.message);
+      Alert.alert(
+        "Scanning Failed",
+        "Something went wrong. Please check your internet connection and try again."
+      );
     }
   };
 
