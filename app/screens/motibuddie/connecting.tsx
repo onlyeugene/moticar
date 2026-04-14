@@ -2,7 +2,7 @@ import MotiBuddieIcon from "@/assets/icons/motibuddie.svg";
 import Container from "@/components/shared/container";
 import { ScreenBackground } from "@/components/ui/ScreenBackground";
 import { router, useLocalSearchParams } from "expo-router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -23,6 +23,7 @@ export default function Connecting() {
   const { socket, isConnected } = useSocket();
   const selectedCarId = useAppStore((state) => state.selectedCarId);
   const { showSnackbar } = useSnackbar();
+  const [statusText, setStatusText] = useState("Please keep the vehicle in idle");
 
   useEffect(() => {
     // ... animation logic ...
@@ -49,7 +50,7 @@ export default function Connecting() {
       console.log("📡 Subscribing to Device (Discovery):", params.imei);
       socket.emit("subscribe_device", { imei: params.imei });
 
-      // Start 60s timeout for device detection
+      // 5 minute timeout to match the server-side watcher
       discoveryTimeout = setTimeout(() => {
         showSnackbar({
           message: "Connection Timed Out",
@@ -58,14 +59,25 @@ export default function Connecting() {
           type: "error",
         });
         router.back();
-      }, 60000);
+      }, 300000);
 
-      socket.on("obd:device_online", (data: { imei: string; car_id: string }) => {
+      // Device is registered on Hero but hasn't sent GPS data yet
+      socket.on("obd:device_silent", (data: { imei: string; message: string }) => {
+        console.log("⏳ Device silent:", data.message);
+        setStatusText("Device found! Waiting for first GPS signal...");
+        showSnackbar({
+          message: "Device Found!",
+          description: "Waiting for the first GPS signal. This may take a moment.",
+          type: "success",
+        });
+      });
+
+      socket.on("obd:device_online", (data: { imei: string; car_id: string; metadata?: any }) => {
         if (discoveryTimeout) clearTimeout(discoveryTimeout);
         console.log("✅ MotiBuddie is Online!", data);
         showSnackbar({ message: "MotiBuddie Connected!", type: "success" });
         
-        // If the device discovery reveals a car ID, update the store
+        // Store the new car_id so details.tsx can fetch by it
         if (data.car_id) {
           useAppStore.getState().setSelectedCarId(data.car_id);
         }
@@ -85,6 +97,7 @@ export default function Connecting() {
       if (discoveryTimeout) clearTimeout(discoveryTimeout);
       if (socket) {
         socket.off("obd:device_online");
+        socket.off("obd:device_silent");
         socket.off("error");
       }
     };
@@ -121,7 +134,7 @@ export default function Connecting() {
               Connecting to device
             </Text>
             <Text className="text-[#9BBABB] font-lexendRegular text-[14px] mt-2 text-center">
-              Please keep the vehicle in idle
+              {statusText}
             </Text>
           </View>
         </View>

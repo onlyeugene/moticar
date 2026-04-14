@@ -133,4 +133,11 @@ export const authService = {
     const response = await apiClient.post(API_ROUTES.AUTH.SET_NAME, data);
     return response.data;
   },
+
+  /** Toggle email notifications */
+  toggleEmailNotifications: async (): Promise<any> => {
+    const response = await apiClient.patch(API_ROUTES.USER.EMAIL_NOTIFICATIONS);
+    return response.data;
+  },
 };
+

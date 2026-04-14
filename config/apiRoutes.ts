@@ -23,6 +23,7 @@ export const API_ROUTES = {
     PROFILE: "/users/profile",
     CHECK_LOCATION: "/users/check-location",
     PUSH_TOKEN: "/users/push-token",
+    EMAIL_NOTIFICATIONS: "/users/email-notifications",
   },
   CARS: {
     CREATE: "/cars",
@@ -70,6 +71,7 @@ export const API_ROUTES = {
     PAIR: "/obd/pair",
     STATUS: (deviceId: string) => `/obd/device/${deviceId}/status`,
     DIAGNOSTIC: (carId: string) => `/obd/car/${carId}/diagnostic`,
+    ACTIVATE: (carId: string) => `/obd/car/${carId}/activate`,
   },
   NOTIFICATIONS: {
     BASE: "/notifications",
