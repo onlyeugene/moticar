@@ -57,6 +57,20 @@ export default function AuthLayout() {
           gestureDirection: 'horizontal',
         }}
       />
+      <Stack.Screen 
+        name="forgot-password"
+        options={{
+          gestureEnabled: true,
+          gestureDirection: 'horizontal',
+        }}
+      />
+      <Stack.Screen 
+        name="reset-password"
+        options={{
+          gestureEnabled: true,
+          gestureDirection: 'horizontal',
+        }}
+      />
     </Stack>
   );
 }
