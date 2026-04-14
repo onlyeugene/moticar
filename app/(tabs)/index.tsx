@@ -9,7 +9,9 @@ import DiagnosticView from "@/components/dashboard/diagnostic/DiagnosticView";
 import MileageTracker from "@/components/dashboard/MileageTracker";
 import LocationAlert from "@/components/shared/LocationAlert";
 import { RulerPicker } from "@/components/shared/RulerPicker";
+import AddMileageSheet from "@/components/sheets/AddMileageSheet";
 import { ScreenBackground } from "@/components/ui/ScreenBackground";
+
 import { useActivitySpends, useTrips } from "@/hooks/useActivity";
 import { useCheckLocation, useMe } from "@/hooks/useAuth";
 import { useUserCars } from "@/hooks/useCars";
@@ -39,7 +41,9 @@ export default function Dashboard() {
 
   const [showLocationAlert, setShowLocationAlert] = useState(false);
   const { selectedCarId, isDiagnosticActive } = useAppStore();
+  const [isAddMileageVisible, setIsAddMileageVisible] = useState(false);
   const { data: carsData, isLoading: carsLoading } = useUserCars();
+
   const userCar =
     carsData?.cars?.find((c) => (c.id || (c as any)._id) === selectedCarId) ||
     carsData?.cars?.[0];
@@ -275,8 +279,10 @@ export default function Dashboard() {
               updatedAt={userCar?.updatedAt}
               approxKm={tripsData?.trips?.[0]?.distanceKm || 0}
               entriesCount={tripsData?.count || 0}
+              onPress={() => setIsAddMileageVisible(true)}
             />
           </View>
+
 
           {/* <ActivityScreen /> */}
 
@@ -320,16 +326,14 @@ export default function Dashboard() {
           </TouchableOpacity>
         </View>
 
-        {/* Location Alert
-        {showLocationAlert && locationData && (
-          <LocationAlert
-            country={locationData.newCountry || "United States"}
-            suggestedCurrency={locationData.newCurrency || "USD"}
-            message={locationData.message}
-            onDismiss={() => setShowLocationAlert(false)}
-          />
-        )} */}
+        <AddMileageSheet
+          visible={isAddMileageVisible}
+          onClose={() => setIsAddMileageVisible(false)}
+          carId={userCar?.id || (userCar as any)?._id || ""}
+          initialMileage={userCar?.mileage}
+        />
       </ScrollView>
+
     </ScreenBackground>
   );
 }

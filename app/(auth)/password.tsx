@@ -10,7 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Platform, Pressable, Text, View } from "react-native";
 import * as z from "zod";
 
 const schema = z.object({
@@ -74,6 +74,7 @@ export default function Password() {
         password: data.password,
         preferredCurrency: user?.preferredCurrency,
         country: user?.country,
+        deviceType: Platform.OS.toLowerCase(),
       },
       {
         onSuccess: () => {

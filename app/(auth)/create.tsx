@@ -153,7 +153,7 @@ export default function Login() {
           <Pressable
             disabled={isButtonDisabled}
             onPress={handleSubmit(onSubmit)}
-            className={`w-[366px] h-[50px] rounded-full items-center justify-center active:opacity-90 ${isButtonDisabled ? "bg-[#09515D]" : "bg-[#43E4E9]"}`}
+            className={`w-full h-[50px] rounded-full items-center justify-center active:opacity-90 ${isButtonDisabled ? "bg-[#09515D]" : "bg-[#43E4E9]"}`}
           >
             {signup.isPending ? (
               <ActivityIndicator color="#00343F" />

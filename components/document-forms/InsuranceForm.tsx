@@ -15,6 +15,7 @@ export function InsuranceForm({
   state,
   setState,
   onPickImage,
+  isEditing,
 }: DocumentFormProps) {
   const [showStartDate, setShowStartDate] = useState(false);
   const [showExpiryDate, setShowExpiryDate] = useState(false);
@@ -33,6 +34,7 @@ export function InsuranceForm({
           icon="business-outline"
           placeholder="Select"
           align="end"
+          disabled={!isEditing}
         />
       </SectionCard>
       <SectionCard>
@@ -43,6 +45,7 @@ export function InsuranceForm({
           placeholder="Enter Policy Number"
           underline={true}
           multiline={true}
+          disabled={!isEditing}
         />
       </SectionCard>
 
@@ -53,6 +56,7 @@ export function InsuranceForm({
           options={["Third-party", "Comprehensive", "Fire & Theft"]}
           selected={state.coverageType}
           onSelect={(v) => updateState({ coverageType: v as any })}
+          disabled={!isEditing}
         />
       </SectionCard>
 
@@ -63,6 +67,7 @@ export function InsuranceForm({
           date={state.startDate}
           onPress={() => setShowStartDate(true)}
           icon="calendar-outline"
+          disabled={!isEditing}
         />
       </SectionCard>
       <SectionCard>
@@ -72,6 +77,7 @@ export function InsuranceForm({
           date={state.expiryDate}
           onPress={() => setShowExpiryDate(true)}
           icon="calendar-outline"
+          disabled={!isEditing}
         />
       </SectionCard>
 
@@ -80,6 +86,7 @@ export function InsuranceForm({
           label="Premium Amount"
           value={state.amount}
           onChange={(v) => updateState({ amount: v })}
+          disabled={!isEditing}
         />
       </SectionCard>
 
@@ -89,6 +96,7 @@ export function InsuranceForm({
           options={["Monthly", "Annual"]}
           selected={state.paymentPlan}
           onSelect={(v) => updateState({ paymentPlan: v as any })}
+          disabled={!isEditing}
         />
       </SectionCard>
 
@@ -98,6 +106,7 @@ export function InsuranceForm({
           url={state.receiptUrl}
           onPress={() => onPickImage("receiptUrl")}
           icon="receipt-outline"
+          disabled={!isEditing}
         />
       </SectionCard>
 

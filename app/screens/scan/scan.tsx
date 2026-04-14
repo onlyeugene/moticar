@@ -206,7 +206,7 @@ export default function Scan() {
               )}
             </View>
             <Text className="text-[#FFFFFF] text-[14px] font-lexendRegular flex-1">
-              I can confirm that the pictures of the car {"\n"}taken is mine
+              I can confirm that the picture of the car {"\n"}taken is mine
             </Text>
           </Pressable>
 

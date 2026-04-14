@@ -12,7 +12,7 @@ import {
 } from "./DocumentFormComponents";
 import DatePickerSheet from "../sheets/DatePickerSheet";
 
-export function DriversLicenseForm({ state, setState, onPickImage }: DocumentFormProps) {
+export function DriversLicenseForm({ state, setState, onPickImage, isEditing }: DocumentFormProps) {
   const [showExpiryDate, setShowExpiryDate] = useState(false);
 
   const updateState = (updates: Partial<DocumentFormState>) => {
@@ -29,6 +29,7 @@ export function DriversLicenseForm({ state, setState, onPickImage }: DocumentFor
           placeholder="Enter License Number"
           underline={true}
           multiline={true}
+          disabled={!isEditing}
         />
       </SectionCard>
 
@@ -39,6 +40,7 @@ export function DriversLicenseForm({ state, setState, onPickImage }: DocumentFor
           date={state.expiryDate}
           onPress={() => setShowExpiryDate(true)}
           icon="calendar-outline"
+          disabled={!isEditing}
         />
       </SectionCard>
 
@@ -48,6 +50,7 @@ export function DriversLicenseForm({ state, setState, onPickImage }: DocumentFor
           url={state.documentUrl}
           onPress={() => onPickImage("documentUrl")}
           icon="document-text-outline"
+          disabled={!isEditing}
         />
       </SectionCard>
 
@@ -60,6 +63,7 @@ export function DriversLicenseForm({ state, setState, onPickImage }: DocumentFor
           placeholder="Write a brief note for your preference"
           multiline={true}
           underline={true}
+          disabled={!isEditing}
         />
       </SectionCard>
 

@@ -15,6 +15,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import {
   ActivityIndicator,
+  Platform,
   Pressable,
   Text,
   TouchableOpacity,
@@ -55,7 +56,11 @@ export default function Login() {
 
   const onSubmit = (data: LoginAccountFormData) => {
     login.mutate(
-      { emailOrUsername: data.email, password: data.password },
+      { 
+        emailOrUsername: data.email, 
+        password: data.password, 
+        deviceType: Platform.OS.toLowerCase() 
+      },
       {
         onSuccess: (data) => {
           showSnackbar({
@@ -166,7 +171,7 @@ export default function Login() {
           <Pressable
             disabled={isButtonDisabled}
             onPress={handleSubmit(onSubmit)}
-            className={`w-[366px] h-[50px] rounded-full items-center justify-center active:opacity-90 ${isButtonDisabled ? "bg-[#09515D]/60" : "bg-[#29D7DE]"}`}
+            className={`w-full h-[50px] rounded-full items-center justify-center active:opacity-90 ${isButtonDisabled ? "bg-[#09515D]/60" : "bg-[#29D7DE]"}`}
           >
             {login.isPending ? (
               <ActivityIndicator color="#00343F" />

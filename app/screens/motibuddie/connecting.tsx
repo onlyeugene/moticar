@@ -120,7 +120,7 @@ export default function Connecting() {
             <Text className="text-white text-[26px] font-lexendMedium text-center">
               Connecting to device
             </Text>
-            <Text className="text-[#9BBABB] font-lexendRegular text-[16px] mt-4 text-center leading-7">
+            <Text className="text-[#9BBABB] font-lexendRegular text-[14px] mt-2 text-center">
               Please keep the vehicle in idle
             </Text>
           </View>

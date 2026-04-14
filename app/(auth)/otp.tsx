@@ -135,7 +135,7 @@ export default function Otp() {
             <Pressable
               disabled={isButtonDisabled}
               onPress={handleSubmit(onSubmit)}
-              className={`w-[366px] h-[50px] rounded-full items-center justify-center active:opacity-90 ${isButtonDisabled ? "bg-[#09515D]" : "bg-[#29D7DE]"}`}
+              className={`w-full h-[50px] rounded-full items-center justify-center active:opacity-90 ${isButtonDisabled ? "bg-[#09515D]" : "bg-[#29D7DE]"}`}
             >
               {verifyEmail.isPending ? (
                 <ActivityIndicator color="#00343F" />

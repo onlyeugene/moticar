@@ -32,6 +32,7 @@ export const useSetPassword = () => {
       otp: string;
       preferredCurrency?: string;
       country?: string;
+      deviceType?: string;
     }) => authService.setPassword(data),
   });
 };
@@ -40,7 +41,7 @@ export const useLogin = () => {
   const setAuth = useAuthStore((state) => state.setAuth);
   const clearAppState = useAppStore((state) => state.clearAppState);
   return useMutation({
-    mutationFn: authService.login,
+    mutationFn: (data: { emailOrUsername: string; password: string; deviceType?: string }) => authService.login(data),
     onSuccess: (data) => {
       if (data.token && data.refreshToken && data.user) {
         clearAppState();
@@ -61,6 +62,8 @@ export const useSocialLogin = () => {
       name: string;
       preferredCurrency?: string;
       country?: string;
+      deviceType?: string;
+      idToken?: string;
     }) => authService.socialLogin(data),
     onSuccess: (data) => {
       if (data.token && data.refreshToken && data.user) {

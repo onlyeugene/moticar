@@ -10,6 +10,7 @@ export interface User {
   country?: string;
   preferredLanguage?: string;
   preferredName?: string;
+  deviceType?: 'ios' | 'android';
 }
 
 export interface AuthState {

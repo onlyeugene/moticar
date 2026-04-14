@@ -3,19 +3,31 @@ import LocationRound from "@/assets/icons/locationRound.svg";
 import { Trip } from "@/types/activity";
 import { formatDuration, formatTime } from "@/utils/date";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import Svg, { Line } from "react-native-svg";
 import Route from "@/assets/icons/route.svg";
 import Info from "@/assets/icons/info.svg";
+import { Alert } from "react-native";
+import TripActionMenu from "./TripActionMenu";
+
+
 
 interface TripCardProps {
   trip: Trip;
   onPressDetails?: (trip: Trip) => void;
+  onEdit?: (trip: Trip) => void;
+  onDelete?: (trip: Trip) => void;
 }
 
-const TripCard: React.FC<TripCardProps> = ({ trip, onPressDetails }) => {
+const TripCard: React.FC<TripCardProps> = ({ trip, onPressDetails, onEdit, onDelete }) => {
+
   const [showInsights, setShowInsights] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0, width: 0, height: 0 });
+  const anchorRef = useRef<View>(null);
+
+
   const startTimeStr = formatTime(trip.startTime);
   const endTimeStr = trip.endTime ? formatTime(trip.endTime) : "In Progress";
   const durationStr = formatDuration(trip.durationMins);
@@ -112,10 +124,30 @@ const TripCard: React.FC<TripCardProps> = ({ trip, onPressDetails }) => {
           </View>
         </View>
 
-        <TouchableOpacity>
+        <TouchableOpacity 
+          ref={anchorRef}
+          onPress={() => {
+            anchorRef.current?.measure((x, y, width, height, pageX, pageY) => {
+              setMenuPosition({ x: pageX, y: pageY, width, height });
+              setShowMenu(true);
+            });
+
+          }}
+        >
           <Ionicons name="ellipsis-vertical" size={16} color="#ADADAD" />
         </TouchableOpacity>
+
       </View>
+
+      <TripActionMenu 
+        visible={showMenu}
+        anchorPosition={menuPosition}
+        onClose={() => setShowMenu(false)}
+        onEdit={() => onEdit?.(trip)}
+        onDelete={() => onDelete?.(trip)}
+      />
+
+
 
       <View className="h-[1px] bg-[#F0F0F0] my-2" />
 

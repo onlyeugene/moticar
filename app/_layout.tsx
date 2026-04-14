@@ -85,8 +85,9 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (Platform.OS === "android") {
-      NavigationBar.setBackgroundColorAsync("gray").catch(() => {});
-      NavigationBar.setButtonStyleAsync("dark").catch(() => {});
+      NavigationBar.setPositionAsync("relative").catch(() => {});
+      NavigationBar.setBackgroundColorAsync("#013037").catch(() => {});
+      NavigationBar.setButtonStyleAsync("light").catch(() => {});
     }
   }, []);
 

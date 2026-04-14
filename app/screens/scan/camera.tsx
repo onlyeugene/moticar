@@ -43,7 +43,7 @@ export default function CameraScreen() {
   if (!permission.granted) {
     // Camera permissions are not granted yet.
     return (
-      <View style={styles.container}>
+      <View className="items-center justify-center bg-[#000000] flex-1">
         <Text style={styles.message}>We need your permission to show the camera</Text>
         <TouchableOpacity 
           style={styles.permissionButton} 
@@ -80,18 +80,20 @@ export default function CameraScreen() {
   return (
     <View style={styles.container}>
       <CameraView 
-        style={styles.camera} 
+        style={StyleSheet.absoluteFill} 
         facing="back"
         ref={cameraRef}
       />
-      <SafeAreaView style={styles.overlay} pointerEvents="box-none">
+      <View style={styles.overlay} pointerEvents="box-none" className="pt-10">
         {/* Header */}
-        <View style={styles.header}>
+        {/* <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
             <Ionicons name="arrow-back" size={24} color="#FFF" />
           </TouchableOpacity>
           <View style={styles.headerTitleContainer}>
-            <Text style={styles.headerTitle}>Take pictures</Text>
+            <Text style={styles.headerTitle}>
+              {params.totalSteps === "1" ? "Take picture" : "Take pictures"}
+            </Text>
             <Text style={styles.headerSubtitle}>
               Ensure you are in a well lit area so that data gathered can be readable.
             </Text>
@@ -100,7 +102,7 @@ export default function CameraScreen() {
             <Text style={styles.skipText}>Skip</Text>
             <Ionicons name="chevron-forward" size={16} color="#FFF" />
           </TouchableOpacity>
-        </View>
+        </View> */}
 
         {/* Center Wireframe */}
         <View style={styles.wireframeContainer} pointerEvents="none">
@@ -117,11 +119,11 @@ export default function CameraScreen() {
             {isCapturing ? (
               <ActivityIndicator color="#000" />
             ) : (
-              <TagIcon width={32} height={32} />
+              <Ionicons name="camera-outline" size={32} color="#000" />
             )}
           </TouchableOpacity>
         </View>
-      </SafeAreaView>
+      </View>
     </View>
   );
 }

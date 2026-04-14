@@ -90,6 +90,7 @@ export const useSocialAuth = (callbacks?: {
         providerId, 
         name,
         idToken,
+        deviceType: Platform.OS.toLowerCase(),
       } as any, {
         onSuccess: (data) => {
           if (callbacks?.onSuccess) callbacks.onSuccess(data);

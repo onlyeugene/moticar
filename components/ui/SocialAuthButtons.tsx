@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, Platform } from "react-native";
 import GoogleIcon from "@/assets/icons/google.svg";
 import MailIcon from "@/assets/icons/mail.svg";
 import { Ionicons } from "@expo/vector-icons";
@@ -17,18 +17,22 @@ export const SocialAuthButtons = ({
   googleIconColor = "black",
   disabled = false,
 }: SocialAuthProps) => {
+  const isAndroid = Platform.OS === "android";
+
   return (
     <View className={`w-full ${disabled ? "opacity-50" : ""}`}>
       {/* SSO Buttons Row */}
       <View className="flex-row items-center justify-center w-full gap-4 mb-4">
-        <Pressable
-          style={{ borderColor: appleBorder, backgroundColor: appleBg }}
-          className="flex-1 items-center justify-center border border-[#143E44] h-[52px] rounded-full active:opacity-80 shadow-sm"
-          onPress={() => onAuth("apple")}
-          disabled={disabled}
-        >
-          <Ionicons name="logo-apple" size={24} color={appleIconColor} />
-        </Pressable>
+        {!isAndroid && (
+          <Pressable
+            style={{ borderColor: appleBorder, backgroundColor: appleBg }}
+            className="flex-1 items-center justify-center border border-[#143E44] h-[52px] rounded-full active:opacity-80 shadow-sm"
+            onPress={() => onAuth("apple")}
+            disabled={disabled}
+          >
+            <Ionicons name="logo-apple" size={24} color={appleIconColor} />
+          </Pressable>
+        )}
 
         <Pressable
           style={{ borderColor: googleBorder, backgroundColor: googleBg }}

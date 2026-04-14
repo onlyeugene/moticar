@@ -9,9 +9,17 @@ interface TripsTabProps {
   trips?: Trip[];
   onAddTrip?: () => void;
   onTripPress?: (trip: Trip) => void;
+  onEditTrip?: (trip: Trip) => void;
+  onDeleteTrip?: (trip: Trip) => void;
 }
 
-const TripsTab: React.FC<TripsTabProps> = ({ trips = [], onAddTrip, onTripPress }) => {
+const TripsTab: React.FC<TripsTabProps> = ({ 
+  trips = [], 
+  onAddTrip, 
+  onTripPress,
+  onEditTrip,
+  onDeleteTrip
+}) => {
   if (trips.length === 0) {
     return (
       <View className="flex-1 px-4">
@@ -66,6 +74,8 @@ const TripsTab: React.FC<TripsTabProps> = ({ trips = [], onAddTrip, onTripPress 
               key={trip.id || idx} 
               trip={trip} 
               onPressDetails={onTripPress}
+              onEdit={onEditTrip}
+              onDelete={onDeleteTrip}
             />
           ))}
         </View>

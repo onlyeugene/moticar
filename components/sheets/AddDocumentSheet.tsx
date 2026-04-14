@@ -79,6 +79,7 @@ export default function AddDocumentSheet({
   const [cropperVisible, setCropperVisible] = useState(false);
   const [pendingImageUri, setPendingImageUri] = useState<string | null>(null);
   const [activeField, setActiveField] = useState<keyof DocumentFormState | 'scan' | null>(null);
+  const [isEditing, setIsEditing] = useState(!initialData?._id);
 
   const { mutate: scanDoc, isPending: isScanning } = useScanDocument();
   const { mutate: createDoc, isPending: isSaving } = useCreateDocument();
@@ -125,8 +126,10 @@ export default function AddDocumentSheet({
         newState.invoiceUrl = (initialData as any).invoiceUrl || null;
 
         setFormState(newState);
+        setIsEditing(false);
       } else {
         setFormState({ ...CATEGORY_DEFAULTS });
+        setIsEditing(true);
       }
     }
   }, [visible, category, initialData]);
@@ -370,28 +373,49 @@ export default function AddDocumentSheet({
         <View className="flex-row items-center gap-3">
           {initialData?._id ? (
             <>
-              <TouchableOpacity
-                onPress={handleDelete}
-                disabled={isDeleting || isProcessing}
-                className="w-10 h-10 items-center justify-center bg-white rounded-full shadow-sm"
-              >
-                {isDeleting ? (
-                  <ActivityIndicator size="small" color="#FF3B30" />
-                ) : (
-                  <Trash width={18} height={18} />
-                )}
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={handleSave}
-                disabled={isProcessing || isUpdating}
-                className="w-10 h-10 items-center justify-center bg-white rounded-full shadow-sm"
-              >
-                {isUpdating || (isProcessing && !isDeleting) ? (
-                  <ActivityIndicator size="small" color="#00AEB5" />
-                ) : (
-                  <Pen width={18} height={18} />
-                )}
-              </TouchableOpacity>
+              {isEditing ? (
+                <>
+                  <TouchableOpacity
+                    onPress={() => setIsEditing(false)}
+                    disabled={isProcessing}
+                    className="px-4 py-2 bg-white rounded-full shadow-sm"
+                  >
+                    <Text className="text-[#8B8B8B] font-lexendMedium text-[14px]">Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={handleSave}
+                    disabled={isProcessing || isUpdating}
+                    className="px-6 py-2.5 bg-[#29D7DE] rounded-full shadow-sm"
+                  >
+                    {isUpdating || isProcessing ? (
+                      <ActivityIndicator size="small" color="#00343F" />
+                    ) : (
+                      <Text className="text-[#00343F] font-lexendBold text-[14px]">Save</Text>
+                    )}
+                  </TouchableOpacity>
+                </>
+              ) : (
+                <>
+                  <TouchableOpacity
+                    onPress={handleDelete}
+                    disabled={isDeleting || isProcessing}
+                    className="w-10 h-10 items-center justify-center bg-white rounded-full shadow-sm"
+                  >
+                    {isDeleting ? (
+                      <ActivityIndicator size="small" color="#FF3B30" />
+                    ) : (
+                      <Trash width={18} height={18} />
+                    )}
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => setIsEditing(true)}
+                    disabled={isProcessing}
+                    className="w-10 h-10 items-center justify-center bg-white rounded-full shadow-sm"
+                  >
+                    <Pen width={18} height={18} />
+                  </TouchableOpacity>
+                </>
+              )}
             </>
           ) : (
             <>
@@ -430,6 +454,7 @@ export default function AddDocumentSheet({
             vin={car?.vin}
             plate={car?.plate}
             onPickImage={handlePickImage}
+            isEditing={isEditing}
           />
         )}
       </View>

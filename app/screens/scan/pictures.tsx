@@ -19,9 +19,7 @@ import {
 } from "react-native";
 
 const uploadOptions = [
-  { id: "front", label: "Front" },
-  { id: "back", label: "Back" },
-  { id: "side", label: "Side" },
+  { id: "perspective", label: "Vehicle photo" },
 ];
 
 export default function Pictures() {
@@ -91,24 +89,11 @@ export default function Pictures() {
   const openCustomCamera = (id: string | "more") => {
     setActiveSlot(id);
 
-    // Map slot ID to guide type and label
     let type = "perspective";
-    let label = "Front driver side";
+    let label = "Vehicle photo";
     let step = "1";
 
-    if (id === "front") {
-      type = "front";
-      label = "Front view";
-      step = "1";
-    } else if (id === "back") {
-      type = "back";
-      label = "Back view";
-      step = "2";
-    } else if (id === "side") {
-      type = "side";
-      label = "Side view";
-      step = "3";
-    } else if (id === "more") {
+    if (id === "more") {
       type = "perspective";
       label = "Additional view";
       step = (
@@ -124,7 +109,7 @@ export default function Pictures() {
         type,
         label,
         step,
-        totalSteps: "4",
+        totalSteps: "1",
       },
     });
   };
@@ -194,14 +179,14 @@ export default function Pictures() {
             </Text>
           </View>
 
-          {/* Image Upload Slots */}
-          <View className="flex-row justify-between mt-12 px-2">
+          {/* Image Upload Slot */}
+          <View className="items-center mt-12 px-2">
             {uploadOptions.map((option) => (
-              <View key={option.id} className="items-center">
+              <View key={option.id} className="items-center w-full">
                 <TouchableOpacity
                   activeOpacity={0.7}
                   onPress={() => handleImageSourceSelection(option.id)}
-                  className="w-[105px] h-[160px] border-2 border-dashed border-[#506D72] rounded-[12px] items-center justify-center mb-3 bg-white/5"
+                  className="w-full h-[240px] border-2 border-dashed border-[#506D72] rounded-[12px] items-center justify-center mb-4 bg-white/5"
                 >
                   {images[option.id] ? (
                     <Image
@@ -210,15 +195,20 @@ export default function Pictures() {
                       resizeMode="cover"
                     />
                   ) : (
-                    <Ionicons name="image-outline" size={32} color="#506D72" />
+                    <View className="items-center">
+                      <Ionicons name="image-outline" size={48} color="#506D72" />
+                      <Text className="text-[#506D72] font-lexendMedium mt-2">
+                        Tap to capture or upload
+                      </Text>
+                    </View>
                   )}
 
                   {/* Camera Icon Overlay */}
-                  <View className="absolute bottom-[-8px] right-[-8px] w-8 h-8 rounded-full bg-[#FBE74C] items-center justify-center">
-                    <Ionicons name="camera" size={18} color="#00232A" />
+                  <View className="absolute bottom-[-12px] -right-2 w-12 h-12 rounded-full bg-[#FBE74C] items-center justify-center shadow-lg">
+                    <Ionicons name="camera" size={24} color="#00232A" />
                   </View>
                 </TouchableOpacity>
-                <Text className="text-[#C1C3C3] font-lexendMedium text-[12px]">
+                <Text className="text-[#C1C3C3] font-lexendMedium text-[16px]">
                   {option.label}
                 </Text>
               </View>

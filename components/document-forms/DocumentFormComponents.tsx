@@ -75,6 +75,7 @@ export function FormInput({
   multiline = false,
   align,
   underline = false,
+  disabled = false,
 }: {
   label?: string;
   icon?: string;
@@ -85,6 +86,7 @@ export function FormInput({
   multiline?: boolean;
   align?: "start" | "end" | "center";
   underline?: boolean;
+  disabled?: boolean;
 }) {
   return (
     <View className={`flex-row items-start py-4 border-[#F5F5F5]`}>
@@ -109,7 +111,8 @@ export function FormInput({
           value={value}
           onChangeText={onChange}
           multiline={multiline}
-          className={`text-[#202A2A] font-lexendMedium text-[14px] ${underline ? "border-b border-[#DEDEDE]" : ""} ${align === "end" ? "text-right" : ""} ${multiline ? "min-h-[40px] pt-1" : ""}`}
+          editable={!disabled}
+          className={`text-[#202A2A] font-lexendMedium text-[14px] ${underline ? "border-b border-[#DEDEDE]" : ""} ${align === "end" ? "text-right" : ""} ${multiline ? "min-h-[40px] pt-1" : ""} ${disabled ? "opacity-60" : ""}`}
         />
       </View>
     </View>
@@ -124,12 +127,14 @@ export function PillSelector({
   selected,
   onSelect,
   required = false,
+  disabled = false,
 }: {
   label: string;
   options: string[];
   selected: string;
   onSelect: (v: string) => void;
   required?: boolean;
+  disabled?: boolean;
 }) {
   return (
     <View className="py-4">
@@ -141,11 +146,12 @@ export function PillSelector({
           <TouchableOpacity
             key={opt}
             onPress={() => onSelect(opt)}
+            disabled={disabled}
             className={`px-6 py-2.5 rounded-[8px] border items-center justify-center flex-1 ${
               selected === opt
                 ? "bg-[#00AEB5] border-[#00AEB5]"
                 : "border-[#E2E2E2]"
-            }`}
+            } ${disabled ? "opacity-60" : ""}`}
           >
             <Text
               className={`font-lexendRegular text-[12px] ${
@@ -170,6 +176,7 @@ export function DateSelectRow({
   onPress,
   required = false,
   showExpiryShortcut = false,
+  disabled = false,
 }: {
   label: string;
   icon?: string;
@@ -177,6 +184,7 @@ export function DateSelectRow({
   onPress: () => void;
   required?: boolean;
   showExpiryShortcut?: boolean;
+  disabled?: boolean;
 }) {
   return (
     <View className="flex-row items-center py-2 border-[#F5F5F5]">
@@ -188,7 +196,11 @@ export function DateSelectRow({
           {label} {required && <Text className="text-[#00AEB5] text-[12px]">*</Text>}
         </Text>
       </View>
-      <TouchableOpacity onPress={onPress} className="flex-row items-center">
+      <TouchableOpacity 
+        onPress={onPress} 
+        disabled={disabled}
+        className={`flex-row items-center ${disabled ? "opacity-60" : ""}`}
+      >
         {showExpiryShortcut && !date && (
           <View className="bg-[#F5F5F5] px-2 py-1 rounded-md mr-2">
             <Text className="text-[#8B8B8B] text-[12px]">+ 12</Text>
@@ -199,12 +211,14 @@ export function DateSelectRow({
         >
           {date ? format(date, "d MMMM, yyyy") : "Select date"}
         </Text>
-        <Ionicons
-          name="chevron-forward"
-          size={24}
-          color="#ADADAD"
-          style={{ marginLeft: 6 }}
-        />
+        {!disabled && (
+          <Ionicons
+            name="chevron-forward"
+            size={24}
+            color="#ADADAD"
+            style={{ marginLeft: 6 }}
+          />
+        )}
       </TouchableOpacity>
     </View>
   );
@@ -217,11 +231,13 @@ export function AmountBlock({
   value,
   onChange,
   required = true,
+  disabled = false,
 }: {
   label?: string;
   value: number;
   onChange: (v: number) => void;
   required?: boolean;
+  disabled?: boolean;
 }) {
   return (
     <View className="py-6 items-center">
@@ -231,7 +247,7 @@ export function AmountBlock({
       <Text className="text-[#001A1F] font-lexendBold text-[34px] mb-4">
         ₦{value.toLocaleString()}
       </Text>
-      <PriceRuler value={value} onValueChange={onChange} />
+      {!disabled && <PriceRuler value={value} onValueChange={onChange} />}
     </View>
   );
 }
@@ -243,11 +259,13 @@ export function DocumentUpload({
   url,
   onPress,
   icon = "image-outline",
+  disabled = false,
 }: {
   label: string;
   url: string | null;
   onPress: () => void;
   icon?: string;
+  disabled?: boolean;
 }) {
   const [loading, setLoading] = React.useState(false);
   const [hasError, setHasError] = React.useState(false);
@@ -270,7 +288,8 @@ export function DocumentUpload({
       </Text>
       <TouchableOpacity
         onPress={onPress}
-        className="flex-row items-center gap-4"
+        disabled={disabled}
+        className={`flex-row items-center gap-4 ${disabled ? "opacity-60" : ""}`}
       >
         <View className=" bg-[#F0F0F0] p-1 rounded-[4px] overflow-hidden">
           <View className="w-[60px] h-[45px] bg-white p-1 border border-dashed border-[#C1C3C3] rounded-[4px] items-center justify-center">
@@ -301,7 +320,7 @@ export function DocumentUpload({
             </View>
           )}
         </View>
-        <Ionicons name="chevron-forward" size={24} color="#C1C3C3" />
+        {!disabled && <Ionicons name="chevron-forward" size={24} color="#C1C3C3" />}
       </TouchableOpacity>
     </View>
   );
@@ -314,11 +333,13 @@ export function PartsReplacedList({
   onAdd,
   onRemove,
   onChange,
+  disabled = false,
 }: {
   items: Array<{ id: string; item: string }>;
   onAdd: () => void;
   onRemove: (id: string) => void;
   onChange: (id: string, text: string) => void;
+  disabled?: boolean;
 }) {
   return (
     <View className="py-4">
@@ -334,8 +355,8 @@ export function PartsReplacedList({
             Parts replaced
           </Text>
         </View>
-        <TouchableOpacity onPress={onAdd}>
-          <Ionicons name="add" size={22} color="#8B8B8B" />
+        <TouchableOpacity onPress={onAdd} disabled={disabled}>
+          <Ionicons name="add" size={22} color={disabled ? "#DEDEDE" : "#8B8B8B"} />
         </TouchableOpacity>
       </View>
       {items.map((item) => (
@@ -345,11 +366,14 @@ export function PartsReplacedList({
             placeholderTextColor="#C1C3C3"
             value={item.item}
             onChangeText={(text) => onChange(item.id, text)}
-            className="flex-1 bg-[#F5F5F5] px-3 py-2 rounded-md text-[#001A1F] font-lexendRegular text-[14px]"
+            editable={!disabled}
+            className={`flex-1 bg-[#F5F5F5] px-3 py-2 rounded-md text-[#001A1F] font-lexendRegular text-[14px] ${disabled ? "opacity-60" : ""}`}
           />
-          <TouchableOpacity onPress={() => onRemove(item.id)} className="ml-3">
-            <Ionicons name="close" size={20} color="#FF4D4F" />
-          </TouchableOpacity>
+          {!disabled && (
+            <TouchableOpacity onPress={() => onRemove(item.id)} className="ml-3">
+              <Ionicons name="close" size={20} color="#FF4D4F" />
+            </TouchableOpacity>
+          )}
         </View>
       ))}
     </View>

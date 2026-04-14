@@ -17,9 +17,11 @@ import {
  * Handles trips, reminders, and spend aggregation API calls.
  */
 export const activityService = {
-  /** Get all recorded trips for a car */
-  getTrips: async (carId: string): Promise<TripsResponse> => {
-    const response = await apiClient.get(API_ROUTES.ACTIVITY.TRIPS, { params: { carId } });
+  /** Get all recorded trips for a car with optional filters */
+  getTrips: async (carId: string, month?: string, year?: string, week?: string): Promise<TripsResponse> => {
+    const response = await apiClient.get(API_ROUTES.ACTIVITY.TRIPS, { 
+      params: { carId, month, year, week } 
+    });
     return response.data;
   },
 
@@ -56,4 +58,35 @@ export const activityService = {
     });
     return response.data;
   },
+
+  /** Update a recorded trip */
+  updateTrip: async (id: string, data: Partial<CreateTripInput>): Promise<{ message: string; trip: Trip }> => {
+    const response = await apiClient.patch(`${API_ROUTES.ACTIVITY.TRIPS}/${id}`, data);
+    return response.data;
+  },
+
+  /** Delete a recorded trip */
+  deleteTrip: async (id: string): Promise<{ message: string }> => {
+    const response = await apiClient.delete(`${API_ROUTES.ACTIVITY.TRIPS}/${id}`);
+    return response.data;
+  },
+
+  /** Get mileage milestones history */
+  getMilestones: async (carId: string): Promise<{ count: number; milestones: any[] }> => {
+    const response = await apiClient.get(`${API_ROUTES.ACTIVITY.MILESTONES}`, { params: { carId } });
+    return response.data;
+  },
+
+  /** Log a manual mileage milestone */
+  createMilestone: async (data: { carId: string; mileage: number; description?: string; timestamp?: string }): Promise<{ message: string; milestone: any }> => {
+    const response = await apiClient.post(`${API_ROUTES.ACTIVITY.MILESTONES}`, data);
+    return response.data;
+  },
+
+  /** Resolve a pending milestone discrepancy */
+  resolveMilestone: async (id: string, data: { status: 'confirmed' | 'rejected', mileage?: number }): Promise<{ message: string; milestone: any }> => {
+    const response = await apiClient.patch(`${API_ROUTES.ACTIVITY.MILESTONES}/${id}`, data);
+    return response.data;
+  },
 };
+

@@ -15,6 +15,7 @@ export function EmissionsInspectionForm({
   state,
   setState,
   onPickImage,
+  isEditing,
 }: DocumentFormProps) {
   const [showTestDate, setShowTestDate] = useState(false);
   const [showExpiryDate, setShowExpiryDate] = useState(false);
@@ -32,6 +33,7 @@ export function EmissionsInspectionForm({
           date={state.testDate}
           onPress={() => setShowTestDate(true)}
           icon="calendar-outline"
+          disabled={!isEditing}
         />
       </SectionCard>
       <SectionCard>
@@ -41,6 +43,7 @@ export function EmissionsInspectionForm({
           date={state.expiryDate}
           onPress={() => setShowExpiryDate(true)}
           icon="calendar-outline"
+          disabled={!isEditing}
         />
         {/* <FormInput
           label="Mileage"
@@ -48,6 +51,7 @@ export function EmissionsInspectionForm({
           onChange={(v) => updateState({ mileage: v })}
           icon="speedometer-outline"
           placeholder="Enter Mileage"
+          disabled={!isEditing}
         /> */}
       </SectionCard>
 
@@ -58,6 +62,7 @@ export function EmissionsInspectionForm({
           options={["Pass", "Fail"]}
           selected={state.result as string}
           onSelect={(v) => updateState({ result: v as any })}
+          disabled={!isEditing}
         />
       </SectionCard>
 
@@ -67,6 +72,7 @@ export function EmissionsInspectionForm({
           url={state.documentUrl}
           onPress={() => onPickImage("documentUrl")}
           icon="document-text-outline"
+          disabled={!isEditing}
         />
       </SectionCard>
 
