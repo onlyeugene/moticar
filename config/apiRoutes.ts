@@ -48,7 +48,9 @@ export const API_ROUTES = {
     REMINDERS: "/activity/reminders",
     SPENDS: "/activity/spends",
     INSIGHTS: "/activity/insights",
+    MILESTONES: "/activity/milestones",
   },
+
   EXPENSES: {
     BASE: "/expenses",
     CATEGORIES: "/expenses/categories",

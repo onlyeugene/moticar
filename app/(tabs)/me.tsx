@@ -20,6 +20,8 @@ import { CarLogo } from "@/components/shared/CarLogo";
 import { useLogout, useDeleteAccount } from "@/hooks/useAuth";
 import { useSnackbar } from "@/providers/SnackbarProvider";
 
+import { LoadingModal } from "@/components/ui/LoadingModal";
+
 export default function MeScreen() {
   const user = useAuthStore((state) => state.user);
   const { selectedCarId, obdData } = useAppStore();
@@ -299,6 +301,11 @@ export default function MeScreen() {
           onPress={() => setMenuVisible(null)}
         />
       )}
+
+      <LoadingModal
+        visible={logout.isPending}
+        message="Logging out..."
+      />
     </View>
   );
 }

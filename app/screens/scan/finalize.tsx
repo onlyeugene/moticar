@@ -179,16 +179,78 @@ export default function FinalizeScan() {
 
           <TouchableOpacity
             onPress={() => {
-              // Same skip logic as manual
-              updateUser({ onboardingCompleted: true });
-              router.replace("/(tabs)");
+              if (!scannedCarData) {
+                updateUser({ onboardingCompleted: true });
+                router.replace("/(tabs)");
+                return;
+              }
+
+              // Silent save on skip
+              createCar(
+                {
+                  make: scannedCarData.make || "",
+                  carModel:
+                    scannedCarData.carModel || scannedCarData.model || "",
+                  year: parseInt(scannedCarData.year) || 0,
+                  yearRange: scannedCarData.yearRange,
+                  mileage: 0,
+                  plate: (
+                    scannedCarData.plate ||
+                    scannedCarData.plateNumber ||
+                    ""
+                  ).replace(/-/g, " "),
+                  vin: scannedCarData.vin || scannedLicenseData?.vin || "",
+                  fuelType: scannedCarData.fuelType,
+                  color: scannedCarData.color,
+                  transmission: scannedCarData.transmission,
+                  engineDesc:
+                    scannedCarData.engineDesc ||
+                    scannedCarData.engine ||
+                    scannedCarData.engineSize,
+                  cylinder: scannedCarData.cylinder || scannedCarData.cylinders,
+                  horsepower: scannedCarData.horsepower,
+                  driveType: scannedCarData.driveType,
+                  bodyStyle: scannedCarData.bodyStyle,
+                  segment: scannedCarData.segment,
+                  doors: scannedCarData.doors,
+                  condition: "Used",
+                  monthlyBudget: 0,
+                  entryMethod: "ai_scan",
+                },
+                {
+                  onSuccess: () => {
+                    showSnackbar({
+                      type: "success",
+                      message: "Car Added",
+                      description:
+                        "Your scanned vehicle has been successfully registered.",
+                    });
+                    // Reset progress and store
+                    setScanningProgress({
+                      picturesCompleted: false,
+                      licenseCompleted: false,
+                    });
+                    setScannedCarData(null);
+                    setScannedLicenseData(null);
+                    updateUser({ onboardingCompleted: true });
+                    router.replace("/(tabs)");
+                  },
+                },
+              );
             }}
+            disabled={isSubmitting}
           >
             <View className="flex-row items-center">
-              <Text className="text-[#29D7DE] font-lexendRegular mr-1">
-                Skip
-              </Text>
-              <Ionicons name="chevron-forward" size={16} color="#29D7DE" />
+              {isSubmitting ? (
+                <ActivityIndicator size="small" color="#29D7DE" />
+              ) : (
+                <>
+                  <Text className="text-[#29D7DE] font-lexendRegular mr-1">
+                    Skip
+                  </Text>
+                  <Ionicons name="chevron-forward" size={16} color="#29D7DE" />
+                </>
+              )}
             </View>
           </TouchableOpacity>
         </View>

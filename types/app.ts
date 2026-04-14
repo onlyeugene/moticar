@@ -24,7 +24,7 @@ export interface AppState {
   isAppReady: boolean;
   theme: "light" | "dark" | "system";
   selectedCarId?: string;
-  obdData: Record<string, ObdTelemetry>; // Map of carId -> telemetry
+  obdData: Record<string, ObdTelemetry>;
   scanningProgress: {
     picturesCompleted: boolean;
     licenseCompleted: boolean;
@@ -45,4 +45,5 @@ export interface AppState {
   setDiagnosticActive: (active: boolean) => void;
   setObdData: (carId: string, data: Partial<ObdTelemetry>) => void;
   resetScanningState: () => void;
+  clearAppState: () => void;
 }

@@ -1,6 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import Svg, { Defs, RadialGradient, Stop, Ellipse } from "react-native-svg";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ScreenBackgroundProps } from "@/types/ui";
 
 /**
@@ -14,6 +15,8 @@ export const ScreenBackground: React.FC<ScreenBackgroundProps> = ({
   style,
   ...props
 }) => {
+  const insets = useSafeAreaInsets();
+
   return (
     <View 
       className={`flex-1 ${className || ""}`}
@@ -41,7 +44,16 @@ export const ScreenBackground: React.FC<ScreenBackgroundProps> = ({
           <Ellipse cx="50%" cy="0%" rx="80%" ry="50%" fill="url(#topGlow)" />
         </Svg>
       </View>
-      {children}
+
+      {/* // this and leave the children */}
+      {/* <View 
+        style={{ 
+          flex: 1, 
+          paddingTop: withSafeArea ? insets.top : 0, 
+          paddingBottom: withSafeArea ? insets.bottom : 0 
+        }}
+      > */}
+        {children}
     </View>
   );
 };

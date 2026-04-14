@@ -147,20 +147,40 @@ export default function FinalDetailsScreen() {
 
           <TouchableOpacity
             onPress={() => {
-              updateProfile(
-                { onboardingCompleted: true },
+              if (!initialCarData) {
+                updateUser({ onboardingCompleted: true });
+                router.replace("/(tabs)");
+                return;
+              }
+
+              // Silent save on skip
+              createCar(
                 {
-                  onSettled: () => {
+                  ...initialCarData,
+                  mileage: initialCarData.mileage || 0,
+                  plate: initialCarData.plate || "",
+                  vin: initialCarData.vin || "",
+                  condition: "Newly Purchased",
+                  monthlyBudget: 0,
+                  entryMethod: "manual",
+                },
+                {
+                  onSuccess: () => {
                     updateUser({ onboardingCompleted: true });
+                    showSnackbar({
+                      type: "success",
+                      message: "Onboarding complete!",
+                      description: "Your car details have been saved.",
+                    });
                     router.replace("/(tabs)");
                   },
                 },
               );
             }}
-            disabled={isUpdatingProfile}
+            disabled={isSubmitting}
           >
             <View className="flex-row items-center">
-              {isUpdatingProfile ? (
+              {isSubmitting ? (
                 <ActivityIndicator size="small" color="#29D7DE" />
               ) : (
                 <>

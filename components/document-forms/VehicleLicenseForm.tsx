@@ -16,6 +16,7 @@ export function VehicleLicenseForm({
   vin,
   plate,
   onPickImage,
+  isEditing,
 }: DocumentFormProps) {
   const [showIssueDate, setShowIssueDate] = useState(false);
   const [showExpiryDate, setShowExpiryDate] = useState(false);
@@ -34,6 +35,7 @@ export function VehicleLicenseForm({
               value={state.vin || vin || ""}
               onChange={(v) => updateState({ vin: v })}
               placeholder="Enter VIN"
+              disabled={!isEditing}
             />
           </View>
           <View className="mb-4">
@@ -56,6 +58,7 @@ export function VehicleLicenseForm({
             date={state.issueDate}
             onPress={() => setShowIssueDate(true)}
             icon="calendar-outline"
+            disabled={!isEditing}
           />
       </SectionCard>
 
@@ -67,6 +70,7 @@ export function VehicleLicenseForm({
           onPress={() => setShowExpiryDate(true)}
           icon="calendar-outline"
           showExpiryShortcut
+          disabled={!isEditing}
         />
       </SectionCard>
 
@@ -76,6 +80,7 @@ export function VehicleLicenseForm({
           options={["DVLA", "State DMV", "Others"]}
           selected={state.issuingAuthority}
           onSelect={(v) => updateState({ issuingAuthority: v })}
+          disabled={!isEditing}
         />
       </SectionCard>
 
@@ -85,6 +90,7 @@ export function VehicleLicenseForm({
           url={state.documentUrl}
           onPress={() => onPickImage("documentUrl")}
           icon="document-text-outline"
+          disabled={!isEditing}
         />
       </SectionCard>
 

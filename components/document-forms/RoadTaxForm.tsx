@@ -14,6 +14,7 @@ export function RoadTaxForm({
   state,
   setState,
   onPickImage,
+  isEditing,
 }: DocumentFormProps) {
   const [showStartDate, setShowStartDate] = useState(false);
   const [showExpiryDate, setShowExpiryDate] = useState(false);
@@ -31,6 +32,7 @@ export function RoadTaxForm({
           options={["Monthly", "Bi-Annual", "Annual"]}
           selected={state.frequency}
           onSelect={(v) => updateState({ frequency: v as any })}
+          disabled={!isEditing}
         />
       </SectionCard>
 
@@ -41,6 +43,7 @@ export function RoadTaxForm({
           date={state.startDate}
           onPress={() => setShowStartDate(true)}
           icon="calendar-outline"
+          disabled={!isEditing}
         />
       </SectionCard>
 
@@ -52,6 +55,7 @@ export function RoadTaxForm({
           onPress={() => setShowExpiryDate(true)}
           icon="calendar-outline"
           showExpiryShortcut
+          disabled={!isEditing}
         />
       </SectionCard>
 
@@ -60,6 +64,7 @@ export function RoadTaxForm({
           label="Amount Paid"
           value={state.amount}
           onChange={(v) => updateState({ amount: v })}
+          disabled={!isEditing}
         />
       </SectionCard>
 
@@ -69,6 +74,7 @@ export function RoadTaxForm({
           options={["DVLA", "State DMV", "Others"]}
           selected={state.issuingAuthority}
           onSelect={(v) => updateState({ issuingAuthority: v })}
+          disabled={!isEditing}
         />
       </SectionCard>
 
@@ -78,6 +84,7 @@ export function RoadTaxForm({
           options={["Paid", "Pending"]}
           selected={state.paymentStatus}
           onSelect={(v) => updateState({ paymentStatus: v as any })}
+          disabled={!isEditing}
         />
       </SectionCard>
 
@@ -87,6 +94,7 @@ export function RoadTaxForm({
           options={["Cash", "Card", "Others"]}
           selected={state.paymentMethod}
           onSelect={(v) => updateState({ paymentMethod: v as any })}
+          disabled={!isEditing}
         />
       </SectionCard>
 
@@ -96,6 +104,7 @@ export function RoadTaxForm({
           url={state.receiptUrl}
           onPress={() => onPickImage("receiptUrl")}
           icon="receipt-outline"
+          disabled={!isEditing}
         />
       </SectionCard>
 

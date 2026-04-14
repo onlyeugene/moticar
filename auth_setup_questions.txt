@@ -1,0 +1,7 @@
+To set up social logins properly, I need to know a few things about your current configuration:
+
+1. **Credentials Status**: Do you already have the **Google Client IDs** (iOS, Android, Web) and **Apple Developer** setup (Service ID, Key ID, Team ID) ready to go? If so, I can add them to the `.env` files.
+2. **Testing Environment**: Are you testing on **Expo Go** or are you using a custom **Development Client** (EAS)? (This is important because Apple Authentication often requires a dev client/native build).
+3. **Primary Providers**: Should I focus exclusively on Google and Apple for now?
+
+Once I have this info, I can present a detailed implementation plan.

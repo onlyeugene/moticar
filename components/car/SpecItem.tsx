@@ -7,6 +7,8 @@ interface SpecItemProps {
   label: string;
   value: string;
   hasDropdown?: boolean;
+  showChevron?: boolean;
+  centered?: boolean;
   onPress?: () => void;
 }
 
@@ -15,35 +17,83 @@ const SpecItem = ({
   label,
   value,
   hasDropdown,
+  showChevron = false,
+  centered = false,
   onPress,
 }: SpecItemProps) => {
-  return (
-    <TouchableOpacity
-      onPress={onPress}
-      disabled={!onPress}
-      className="flex-row items-center w-1/2 mb-6 px-1"
-    >
-      <View className=" ">
-        <View className="items-center gap-2 flex-row">
-          {Icon && <Icon width={20} height={20} />}
-          <Text className="text-[#C1C3C3] font-lexendRegular text-[12px]">
+  const showIcon = !!Icon;
+
+  if (centered) {
+    return (
+      <TouchableOpacity
+        onPress={onPress}
+        disabled={!onPress}
+        activeOpacity={onPress ? 0.7 : 1}
+        className="items-center py-2"
+      >
+        <View className="flex-row items-center mb-1">
+          {showIcon && (
+            <View className="mr-2 items-center justify-center">
+              {typeof Icon === "function" ? (
+                <Icon width={16} height={16} fill="#29D7DE" />
+              ) : (
+                <Ionicons name={Icon} size={16} color="#29D7DE" />
+              )}
+            </View>
+          )}
+          <Text className="text-[#899B9B] font-lexendRegular text-[12px]" numberOfLines={1}>
             {label}
           </Text>
         </View>
 
-        <View className="flex-row items-center ml-8">
+        <View className="flex-row items-center">
           <Text
-            className={`font-lexendMedium text-[14px] mr-1 ${hasDropdown ? "text-[#202A2A]" : "text-[#616161]"}`}
+            className="text-[#202A2A] font-lexendSemiBold text-[16px] text-center"
             numberOfLines={1}
           >
             {value || "---"}
           </Text>
-          {hasDropdown && (
-            <Ionicons name="chevron-down" size={14} color="#7BA0A3" />
+          {(hasDropdown || showChevron) && (
+            <Ionicons name="chevron-down" size={14} color="#00AEB5" style={{ marginLeft: 6 }} />
+          )}
+        </View>
+      </TouchableOpacity>
+    );
+  }
+
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      disabled={!onPress}
+      activeOpacity={onPress ? 0.7 : 1}
+      className="flex-row items-center py-1"
+    >
+      {showIcon && (
+        <View className="mr-3 items-center justify-center">
+          {typeof Icon === "function" ? (
+            <Icon width={18} height={18} fill="#29D7DE" />
+          ) : (
+            <Ionicons name={Icon} size={18} color="#29D7DE" />
+          )}
+        </View>
+      )}
+
+      <View className="flex-1">
+        <Text className="text-[#899B9B] font-lexendRegular text-[12px] mb-0.5" numberOfLines={1}>
+          {label}
+        </Text>
+        <View className="flex-row items-center">
+          <Text
+            className="text-[#202A2A] font-lexendSemiBold text-[15px]"
+            numberOfLines={1}
+          >
+            {value || "---"}
+          </Text>
+          {(hasDropdown || showChevron) && (
+            <Ionicons name="chevron-down" size={14} color="#00AEB5" style={{ marginLeft: 4 }} />
           )}
         </View>
       </View>
-      <View className="flex-1" />
     </TouchableOpacity>
   );
 };

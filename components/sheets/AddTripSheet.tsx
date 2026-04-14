@@ -10,7 +10,9 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import BottomSheet from "../shared/BottomSheet";
-import { useCreateManualTrip } from "@/hooks/useActivity";
+import { useCreateManualTrip, useUpdateTrip } from "@/hooks/useActivity";
+import { Trip } from "@/types/activity";
+
 import DatePickerSheet from "./DatePickerSheet";
 import TimePickerSheet from "./TimePickerSheet";
 import { calculateHaversineDistance } from "@/utils/location";
@@ -28,7 +30,9 @@ interface AddTripSheetProps {
   visible: boolean;
   onClose: () => void;
   carId: string;
+  trip?: Trip | null;
 }
+
 
 const CATEGORIES = ["Work", "Leisure", "Family", "Misc"];
 
@@ -42,7 +46,10 @@ export default function AddTripSheet({
   visible,
   onClose,
   carId,
+  trip,
 }: AddTripSheetProps) {
+  const isEdit = !!trip;
+
   const [origin, setOrigin] = useState<LocationData | null>(null);
   const [destination, setDestination] = useState<LocationData | null>(null);
   const [distanceKm, setDistanceKm] = useState("0");
@@ -85,7 +92,50 @@ export default function AddTripSheet({
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [timePickerType, setTimePickerType] = useState<"start" | "end">("start");
 
-  const { mutate: createTrip, isPending } = useCreateManualTrip();
+  const { mutate: createTrip, isPending: isCreating } = useCreateManualTrip();
+  const { mutate: updateTrip, isPending: isUpdating } = useUpdateTrip();
+  const isPending = isCreating || isUpdating;
+
+  // 🔄 Populate fields if editing
+  React.useEffect(() => {
+    if (trip && visible) {
+      setOrigin(trip.origin);
+      setDestination(trip.destination);
+      setDistanceKm(trip.distanceKm.toString());
+      setSelectedCategory(trip.category || "Misc");
+      
+      const startDate = new Date(trip.startTime);
+      setRawDate(startDate);
+      setDateStr(formatDate(startDate));
+      setStartTime(formatTime(startDate));
+      
+      if (trip.endTime) {
+        setEndTime(formatTime(new Date(trip.endTime)));
+      }
+
+      // Set label
+      const today = new Date();
+      if (startDate.toDateString() === today.toDateString()) setDateLabel("Today");
+      else {
+        const yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+        if (startDate.toDateString() === yesterday.toDateString()) setDateLabel("Yesterday");
+        else setDateLabel("");
+      }
+    } else if (visible && !trip) {
+      // Reset if adding new
+      setOrigin(null);
+      setDestination(null);
+      setDistanceKm("0");
+      setSelectedCategory("Misc");
+      setRawDate(undefined);
+      setDateStr("");
+      setDateLabel("");
+      setStartTime(formatTime(new Date()));
+      setEndTime(formatTime(new Date(Date.now() + 60 * 60 * 1000)));
+    }
+  }, [trip, visible]);
+
 
   const searchLocations = async (query: string) => {
     if (query.length < 3) {
@@ -222,37 +272,51 @@ export default function AddTripSheet({
     const [endH, endM] = endTime.split(":").map(Number);
     finalEndDate.setHours(endH, endM);
 
-    createTrip(
-      {
-        carId,
-        origin: {
-          address: origin.address,
-          lat: origin.lat,
-          lng: origin.lng,
-        },
-        destination: {
-          address: destination.address,
-          lat: destination.lat,
-          lng: destination.lng,
-        },
-        distanceKm: parseFloat(distanceKm),
-        startTime: finalStartDate.toISOString(),
-        endTime: finalEndDate.toISOString(),
-        category: selectedCategory,
+    const tripData = {
+      carId,
+      origin: {
+        address: origin.address,
+        lat: origin.lat,
+        lng: origin.lng,
       },
-      {
-        onSuccess: () => {
-          onClose();
-          // Reset fields
-          setOrigin(null);
-          setDestination(null);
-          setRawDate(undefined);
-          setDateStr("");
-          setDateLabel("");
-        },
+      destination: {
+        address: destination.address,
+        lat: destination.lat,
+        lng: destination.lng,
       },
-    );
+      distanceKm: parseFloat(distanceKm),
+      startTime: finalStartDate.toISOString(),
+      endTime: finalEndDate.toISOString(),
+      category: selectedCategory,
+    };
+
+    if (isEdit && trip) {
+      updateTrip(
+        { id: trip.id, data: tripData },
+        {
+          onSuccess: () => {
+            onClose();
+          },
+        }
+      );
+    } else {
+      createTrip(
+        tripData,
+        {
+          onSuccess: () => {
+            onClose();
+            // Reset fields
+            setOrigin(null);
+            setDestination(null);
+            setRawDate(undefined);
+            setDateStr("");
+            setDateLabel("");
+          },
+        },
+      );
+    }
   };
+
 
   const canSave = !isPending && origin && destination && rawDate;
 
@@ -273,10 +337,11 @@ export default function AddTripSheet({
       <BottomSheet
         visible={visible}
         onClose={onClose}
-        title="Add New Trip"
+        title={isEdit ? "Edit Trip" : "Add New Trip"}
         headerRight={headerRight}
         height="65%"
       >
+
         <View className="flex-1  px-2">
           {/* Journey Section */}
           <View

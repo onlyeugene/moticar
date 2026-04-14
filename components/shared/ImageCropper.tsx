@@ -161,6 +161,34 @@ export default function ImageCropper({
     height: boxHeight.value,
   }));
 
+  const topOverlayStyle = useAnimatedStyle(() => ({
+    left: 0,
+    top: 0,
+    width: SCREEN_WIDTH,
+    height: boxY.value,
+  }));
+
+  const leftOverlayStyle = useAnimatedStyle(() => ({
+    left: 0,
+    top: boxY.value,
+    width: boxX.value,
+    height: boxHeight.value,
+  }));
+
+  const rightOverlayStyle = useAnimatedStyle(() => ({
+    left: boxX.value + boxWidth.value,
+    top: boxY.value,
+    width: SCREEN_WIDTH - (boxX.value + boxWidth.value),
+    height: boxHeight.value,
+  }));
+
+  const bottomOverlayStyle = useAnimatedStyle(() => ({
+    left: 0,
+    top: boxY.value + boxHeight.value,
+    width: SCREEN_WIDTH,
+    height: SCREEN_HEIGHT - (boxY.value + boxHeight.value),
+  }));
+
   const handleCrop = async () => {
     if (!imageUri || !imgLayout.width || !originalSize.width) return;
 
@@ -195,113 +223,71 @@ export default function ImageCropper({
 
   return (
     <Modal visible={visible} animationType="slide">
-      <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#000' }}>
-        <SafeAreaView style={styles.container}>
-          <View style={styles.header}>
-            <TouchableOpacity onPress={onClose}>
-              <Text style={styles.cancelText}>Cancel</Text>
-            </TouchableOpacity>
-            <Text style={styles.title}>Crop Image</Text>
-            <TouchableOpacity onPress={handleCrop}>
-              <Text style={styles.cropText}>Done</Text>
-            </TouchableOpacity>
-          </View>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={onClose}>
+            <Text style={styles.cancelText}>Cancel</Text>
+          </TouchableOpacity>
+          <Text style={styles.title}>Crop Image</Text>
+          <TouchableOpacity onPress={handleCrop}>
+            <Text style={styles.cropText}>Done</Text>
+          </TouchableOpacity>
+        </View>
 
-          <View style={styles.previewContainer}>
-            {imageUri && (
-              <Image
-                source={{ uri: imageUri }}
-                style={[
-                  styles.image,
-                  {
-                    width: imgLayout.width,
-                    height: imgLayout.height,
-                    left: imgLayout.x,
-                    top: imgLayout.y,
-                  },
-                ]}
-                resizeMode="contain"
-              />
-            )}
+        <View style={styles.previewContainer}>
+          {imageUri && (
+            <Image
+              source={{ uri: imageUri }}
+              style={[
+                styles.image,
+                {
+                  width: imgLayout.width,
+                  height: imgLayout.height,
+                  left: imgLayout.x,
+                  top: imgLayout.y,
+                },
+              ]}
+              resizeMode="contain"
+            />
+          )}
 
-            {/* Dark Overlays around the crop box - Simplified */}
-            <Animated.View 
-              style={[
-                styles.overlay, 
-                useAnimatedStyle(() => ({
-                  left: 0,
-                  top: 0,
-                  width: SCREEN_WIDTH,
-                  height: boxY.value,
-                }))
-              ]} 
-            />
-            <Animated.View 
-              style={[
-                styles.overlay, 
-                useAnimatedStyle(() => ({
-                  left: 0,
-                  top: boxY.value,
-                  width: boxX.value,
-                  height: boxHeight.value,
-                }))
-              ]} 
-            />
-             <Animated.View 
-              style={[
-                styles.overlay, 
-                useAnimatedStyle(() => ({
-                  left: boxX.value + boxWidth.value,
-                  top: boxY.value,
-                  width: SCREEN_WIDTH - (boxX.value + boxWidth.value),
-                  height: boxHeight.value,
-                }))
-              ]} 
-            />
-            <Animated.View 
-              style={[
-                styles.overlay, 
-                useAnimatedStyle(() => ({
-                  left: 0,
-                  top: boxY.value + boxHeight.value,
-                  width: SCREEN_WIDTH,
-                  height: SCREEN_HEIGHT - (boxY.value + boxHeight.value),
-                }))
-              ]} 
-            />
-            
-            <GestureDetector gesture={boxGesture}>
-              <Animated.View style={[styles.cropBox, animatedBoxStyle]}>
-                {/* Corner Handles */}
-                <GestureDetector gesture={createHandleGesture('tl')}>
-                  <View style={[styles.handle, styles.tl]} />
-                </GestureDetector>
-                <GestureDetector gesture={createHandleGesture('tr')}>
-                  <View style={[styles.handle, styles.tr]} />
-                </GestureDetector>
-                <GestureDetector gesture={createHandleGesture('bl')}>
-                  <View style={[styles.handle, styles.bl]} />
-                </GestureDetector>
-                <GestureDetector gesture={createHandleGesture('br')}>
-                  <View style={[styles.handle, styles.br]} />
-                </GestureDetector>
-                
-                {/* Visual Grid */}
-                <View style={styles.gridContainer}>
-                  <View style={styles.gridRow} />
-                  <View style={styles.gridRow} />
-                  <View style={styles.gridCol} />
-                  <View style={styles.gridCol} />
-                </View>
-              </Animated.View>
-            </GestureDetector>
-          </View>
+          {/* Dark Overlays around the crop box */}
+          <Animated.View style={[styles.overlay, topOverlayStyle]} />
+          <Animated.View style={[styles.overlay, leftOverlayStyle]} />
+          <Animated.View style={[styles.overlay, rightOverlayStyle]} />
+          <Animated.View style={[styles.overlay, bottomOverlayStyle]} />
+          
+          <GestureDetector gesture={boxGesture}>
+            <Animated.View style={[styles.cropBox, animatedBoxStyle]}>
+              {/* Corner Handles */}
+              <GestureDetector gesture={createHandleGesture('tl')}>
+                <View style={[styles.handle, styles.tl]} />
+              </GestureDetector>
+              <GestureDetector gesture={createHandleGesture('tr')}>
+                <View style={[styles.handle, styles.tr]} />
+              </GestureDetector>
+              <GestureDetector gesture={createHandleGesture('bl')}>
+                <View style={[styles.handle, styles.bl]} />
+              </GestureDetector>
+              <GestureDetector gesture={createHandleGesture('br')}>
+                <View style={[styles.handle, styles.br]} />
+              </GestureDetector>
+              
+              {/* Visual Grid */}
+              <View style={styles.gridContainer}>
+                <View style={styles.gridRow} />
+                <View style={styles.gridRow} />
+                <View style={styles.gridCol} />
+                <View style={styles.gridCol} />
+              </View>
+            </Animated.View>
+          </GestureDetector>
+        </View>
 
-          <View style={styles.footer}>
-            <Text style={styles.hint}>Drag corners to resize. Drag box to move.</Text>
-          </View>
-        </SafeAreaView>
-      </GestureHandlerRootView>
+        <View style={styles.footer}>
+          <Text style={styles.hint}>Drag corners to resize. Drag box to move.</Text>
+        </View>
+      </SafeAreaView>
     </Modal>
   );
 }

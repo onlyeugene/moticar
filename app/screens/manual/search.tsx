@@ -14,6 +14,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import CarTypeIcon from "@/components/shared/CarTypeIcon";
 
 interface CarResult {
   make: string;
@@ -86,11 +87,11 @@ export default function Search() {
             active ? "border-2 border-[#1A8798]" : "border border-[#09515D]"
           }`}
         >
-          <View className="w-10 h-10 rounded-full bg-white items-center justify-center mr-4">
+          <View className={`w-[48px] h-[48px] rounded-[8px] items-center justify-center mr-4 ${active ? "bg-white" : "bg-white/30"}`}>
             <CarLogo
               make={car.make}
-              size={24}
-              color={active ? "#29D7DE" : "#9BBABB"}
+              size={32}
+              color={active ? "#29D7DE" : "#506D72"}
             />
           </View>
 
@@ -101,10 +102,18 @@ export default function Search() {
               >
                 {car.model}
               </Text>
-              <View className="bg-[#5E9597] px-2 py-0.5 rounded">
-                <Text className="text-[#002E35] font-lexendMedium text-[8px] uppercase">
-                  {car.class || "SUV"}
-                </Text>
+              
+              <View className="flex-row items-center gap-3">
+                <CarTypeIcon
+                  type={car.class || "SUV"} 
+                  size={50} 
+                  color={active ? "#29D7DE" : "#406065"} 
+                />
+                <View className="bg-[#5E9597] px-2 py-0.5 rounded">
+                  <Text className="text-[#002E35] font-lexendMedium text-[8px] uppercase">
+                    {car.class || "SUV"}
+                  </Text>
+                </View>
               </View>
             </View>
           </View>
@@ -114,7 +123,11 @@ export default function Search() {
               active ? "bg-[#00AEB5]" : "bg-[#012328]"
             }`}
           >
-            {active ? <Ionicons name="checkmark" size={16} color="#FFFFFF" /> : <Ionicons name="checkmark" size={16} color="#013037" />}
+            {active ? (
+              <Ionicons name="checkmark" size={16} color="#FFFFFF" />
+            ) : (
+              <Ionicons name="checkmark" size={16} color="#013037" />
+            )}
           </View>
         </TouchableOpacity>
       </View>

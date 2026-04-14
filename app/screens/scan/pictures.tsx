@@ -5,7 +5,8 @@ import { useCarScanning } from "@/hooks/useCarScanning";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import ImageCropper from "@/components/shared/ImageCropper";
 import {
   Image,
   Pressable,
@@ -18,15 +19,17 @@ import {
 } from "react-native";
 
 const uploadOptions = [
-  { id: "front", label: "Front" },
-  { id: "back", label: "Back" },
-  { id: "side", label: "Side" },
+  { id: "perspective", label: "Vehicle photo" },
 ];
 
 export default function Pictures() {
   const [images, setImages] = useState<Record<string, string>>({});
   const [additionalImages, setAdditionalImages] = useState<string[]>([]);
   const [activeSlot, setActiveSlot] = useState<string | null>(null);
+  
+  // Cropping State
+  const [croppingVisible, setCroppingVisible] = useState(false);
+  const [imageToCrop, setImageToCrop] = useState<string | null>(null);
 
   const setScanningProgress = useAppStore((state) => state.setScanningProgress);
   const tempCapturedImage = useAppStore((state) => state.tempCapturedImage);
@@ -39,16 +42,13 @@ export default function Pictures() {
   const { isLoading, scanCarPhotos } = useCarScanning();
 
   // Handle image handoff from Custom Camera
-  React.useEffect(() => {
+  useEffect(() => {
     if (tempCapturedImage && activeSlot) {
-      if (activeSlot === "more") {
-        setAdditionalImages((prev) => [...prev, tempCapturedImage]);
-      } else {
-        setImages((prev) => ({ ...prev, [activeSlot]: tempCapturedImage }));
-      }
-      // Reset handoff state
+      // Trigger cropper instead of saving directly
+      setImageToCrop(tempCapturedImage);
+      setCroppingVisible(true);
+      // We keep activeSlot so we know where to save after cropping
       setTempCapturedImage(null);
-      setActiveSlot(null);
     }
   }, [tempCapturedImage, activeSlot]);
 
@@ -64,42 +64,36 @@ export default function Pictures() {
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
-      allowsEditing: true,
+      allowsEditing: false, // Use our custom cropper
       quality: 0.8,
     });
 
     if (!result.canceled && result.assets && result.assets.length > 0) {
-      const uri = result.assets[0].uri;
-      if (id === "more") {
-        setAdditionalImages((prev) => [...prev, uri]);
-      } else {
-        setImages((prev) => ({ ...prev, [id]: uri }));
-      }
+      setActiveSlot(id);
+      setImageToCrop(result.assets[0].uri);
+      setCroppingVisible(true);
     }
+  };
+
+  const handleCropComplete = (croppedUri: string) => {
+    if (activeSlot === "more") {
+      setAdditionalImages((prev) => [...prev, croppedUri]);
+    } else if (activeSlot) {
+      setImages((prev) => ({ ...prev, [activeSlot]: croppedUri }));
+    }
+    setCroppingVisible(false);
+    setImageToCrop(null);
     setActiveSlot(null);
   };
 
   const openCustomCamera = (id: string | "more") => {
     setActiveSlot(id);
 
-    // Map slot ID to guide type and label
     let type = "perspective";
-    let label = "Front driver side";
+    let label = "Vehicle photo";
     let step = "1";
 
-    if (id === "front") {
-      type = "front";
-      label = "Front view";
-      step = "1";
-    } else if (id === "back") {
-      type = "back";
-      label = "Back view";
-      step = "2";
-    } else if (id === "side") {
-      type = "side";
-      label = "Side view";
-      step = "3";
-    } else if (id === "more") {
+    if (id === "more") {
       type = "perspective";
       label = "Additional view";
       step = (
@@ -115,7 +109,7 @@ export default function Pictures() {
         type,
         label,
         step,
-        totalSteps: "4",
+        totalSteps: "1",
       },
     });
   };
@@ -148,7 +142,10 @@ export default function Pictures() {
       router.push("/screens/scan/details");
     } catch (error: any) {
       console.error("Scanning Error:", error);
-      Alert.alert("Scanning Failed", error.message);
+      Alert.alert(
+        "Scanning Failed",
+        "Something went wrong. Please check your internet connection and try again."
+      );
     }
   };
 
@@ -182,14 +179,14 @@ export default function Pictures() {
             </Text>
           </View>
 
-          {/* Image Upload Slots */}
-          <View className="flex-row justify-between mt-12 px-2">
+          {/* Image Upload Slot */}
+          <View className="items-center mt-12 px-2">
             {uploadOptions.map((option) => (
-              <View key={option.id} className="items-center">
+              <View key={option.id} className="items-center w-full">
                 <TouchableOpacity
                   activeOpacity={0.7}
                   onPress={() => handleImageSourceSelection(option.id)}
-                  className="w-[105px] h-[160px] border-2 border-dashed border-[#506D72] rounded-[12px] items-center justify-center mb-3 bg-white/5"
+                  className="w-full h-[240px] border-2 border-dashed border-[#506D72] rounded-[12px] items-center justify-center mb-4 bg-white/5"
                 >
                   {images[option.id] ? (
                     <Image
@@ -198,15 +195,20 @@ export default function Pictures() {
                       resizeMode="cover"
                     />
                   ) : (
-                    <Ionicons name="image-outline" size={32} color="#506D72" />
+                    <View className="items-center">
+                      <Ionicons name="image-outline" size={48} color="#506D72" />
+                      <Text className="text-[#506D72] font-lexendMedium mt-2">
+                        Tap to capture or upload
+                      </Text>
+                    </View>
                   )}
 
                   {/* Camera Icon Overlay */}
-                  <View className="absolute bottom-[-8px] right-[-8px] w-8 h-8 rounded-full bg-[#FBE74C] items-center justify-center">
-                    <Ionicons name="camera" size={18} color="#00232A" />
+                  <View className="absolute bottom-[-12px] -right-2 w-12 h-12 rounded-full bg-[#FBE74C] items-center justify-center shadow-lg">
+                    <Ionicons name="camera" size={24} color="#00232A" />
                   </View>
                 </TouchableOpacity>
-                <Text className="text-[#C1C3C3] font-lexendMedium text-[12px]">
+                <Text className="text-[#C1C3C3] font-lexendMedium text-[16px]">
                   {option.label}
                 </Text>
               </View>
@@ -290,6 +292,18 @@ export default function Pictures() {
           </View>
         </View>
       )}
+
+      {/* Image Cropper */}
+      <ImageCropper
+        visible={croppingVisible}
+        imageUri={imageToCrop}
+        onClose={() => {
+          setCroppingVisible(false);
+          setImageToCrop(null);
+          setActiveSlot(null);
+        }}
+        onCrop={handleCropComplete}
+      />
     </ScreenBackground>
   );
 }

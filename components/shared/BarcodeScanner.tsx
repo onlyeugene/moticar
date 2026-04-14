@@ -67,7 +67,7 @@ export default function BarcodeScanner({
   if (!permission?.granted && isVisible) {
     return (
       <Modal visible={isVisible} animationType="slide">
-        <SafeAreaView className="flex-1 bg-[#00171B] items-center justify-center p-6">
+        <View className="flex-1 bg-[#00171B] items-center justify-center p-6">
           <Ionicons name="camera-outline" size={64} color="#29D7DE" />
           <Text className="text-white text-[20px] font-lexendMedium mt-6 text-center">
             Camera Permission Needed
@@ -84,7 +84,7 @@ export default function BarcodeScanner({
           <TouchableOpacity onPress={onClose} className="mt-6">
             <Text className="text-[#9BBABB] font-lexendRegular">Cancel</Text>
           </TouchableOpacity>
-        </SafeAreaView>
+        </View>
       </Modal>
     );
   }

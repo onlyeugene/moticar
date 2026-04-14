@@ -6,6 +6,7 @@ import CurrencySelector from "@/components/shared/CurrencySelector";
 import { ScreenBackground } from "@/components/ui/ScreenBackground";
 import { useUpdateProfile } from "@/hooks/useAuth";
 import { useSnackbar } from "@/providers/SnackbarProvider";
+import { useAppStore } from "@/store/useAppStore";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
@@ -35,6 +36,12 @@ export default function AddCar() {
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const updateProfile = useUpdateProfile();
   const { showSnackbar } = useSnackbar();
+  const resetScanningState = useAppStore((state) => state.resetScanningState);
+
+  // Clear scanning state on mount for a clean slate
+  React.useEffect(() => {
+    resetScanningState();
+  }, []);
 
   const handleSkip = () => {
     updateProfile.mutate(
@@ -63,7 +70,7 @@ export default function AddCar() {
               <Ionicons name="arrow-back" size={24} color="white" />
             </Pressable>
             <View className="flex-row items-center gap-4">
-              <CurrencySelector variant="auth" />
+              {/* <CurrencySelector variant="auth" /> */}
               <Pressable
                 onPress={handleSkip}
                 disabled={updateProfile.isPending}
@@ -184,11 +191,11 @@ export default function AddCar() {
             disabled={!selectedOption}
             onPress={() => {
               if (selectedOption === 1) {
-                router.push("/screens/motibuddie/plug");
+                router.replace("/screens/motibuddie/plug");
               } else if (selectedOption === 2) {
-                router.push("/screens/scan/scan");
+                router.replace("/screens/scan/scan");
               } else if (selectedOption === 3) {
-                router.push("/screens/manual/search");
+                router.replace("/screens/manual/search");
               } else {
                 
               }

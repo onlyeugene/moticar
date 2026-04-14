@@ -58,6 +58,7 @@ export interface DocumentFormProps {
   carId?: string;
   vin?: string;
   plate?: string;
+  isEditing?: boolean;
   onPickImage: (field: keyof Pick<DocumentFormState, 'documentUrl' | 'receiptUrl' | 'invoiceUrl'>) => void;
 }
 

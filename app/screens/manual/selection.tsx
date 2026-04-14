@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import CarTypeIcon from "@/components/shared/CarTypeIcon";
 
 export default function Selection() {
   const params = useLocalSearchParams<{
@@ -95,8 +96,8 @@ export default function Selection() {
             <View className="flex-1 h-[1px] bg-[#06454F]" />
           </View>
           <View className="flex-row items-center p-4 rounded-xl border border-[#1A8798] bg-[#002E35]">
-            <View className="w-10 h-10 rounded-full bg-white items-center justify-center mr-4">
-              <CarLogo make={params.make || ""} size={24} color="#29D7DE" />
+            <View className="w-[48px] h-[48px] rounded-[8px] bg-white items-center justify-center mr-4">
+              <CarLogo make={params.make || ""} size={32} color="#29D7DE" />
             </View>
 
             <View className="flex-1">
@@ -104,10 +105,17 @@ export default function Selection() {
                 <Text className="font-lexendRegular text-[14px] text-[#FFFFFF]">
                   {params.model}
                 </Text>
-                <View className="bg-[#5E9597] px-2 py-1 rounded">
-                  <Text className="text-[#002E35] font-lexendBold text-[8px] uppercase">
-                    {params.class || "SUV"}
-                  </Text>
+                <View className="flex-row items-center gap-3">
+                  <CarTypeIcon
+                    type={params.class || "SUV"} 
+                    size={50} 
+                    color="#29D7DE" 
+                  />
+                  <View className="bg-[#5E9597] px-2 py-1 rounded">
+                    <Text className="text-[#002E35] font-lexendBold text-[8px] uppercase">
+                      {params.class || "SUV"}
+                    </Text>
+                  </View>
                 </View>
               </View>
             </View>

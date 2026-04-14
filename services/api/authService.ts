@@ -28,13 +28,14 @@ export const authService = {
     otp: string;
     preferredCurrency?: string;
     country?: string;
+    deviceType?: string;
   }): Promise<AuthResponse> => {
     const response = await apiClient.post(API_ROUTES.AUTH.SET_PASSWORD, data);
     return response.data;
   },
 
   /** Email + password login, returns JWT */
-  login: async (data: { emailOrUsername: string; password: string }): Promise<AuthResponse> => {
+  login: async (data: { emailOrUsername: string; password: string; deviceType?: string }): Promise<AuthResponse> => {
     const response = await apiClient.post(API_ROUTES.AUTH.LOGIN, data);
     return response.data;
   },
@@ -47,6 +48,8 @@ export const authService = {
     name: string;
     preferredCurrency?: string;
     country?: string;
+    deviceType?: string;
+    idToken?: string;
   }): Promise<AuthResponse> => {
     const response = await apiClient.post(API_ROUTES.AUTH.SOCIAL_LOGIN, data);
     return response.data;

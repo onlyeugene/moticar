@@ -165,7 +165,19 @@ export default function ExpenseCategorySheet({
           <Ionicons name="search-outline" size={20} color="#D4D4D4" />
         </View>
 
-        {isLoading ? (
+        {(!selectedCarId || selectedCarId === "" || (!isLoading && categories.length === 0)) ? (
+          <View className="items-center justify-center py-20 px-10">
+            <View className="w-20 h-20 bg-[#F5F5F5] rounded-full items-center justify-center mb-6">
+              <Ionicons name="car-outline" size={40} color="#00AEB5" />
+            </View>
+            <Text className="text-[#00343F] text-[18px] font-lexendBold text-center mb-2">
+              No Vehicle Found
+            </Text>
+            <Text className="text-[#8B8B8B] text-[14px] font-lexendRegular text-center leading-5">
+              You need to have a registered car to view expense categories and track budgets.
+            </Text>
+          </View>
+        ) : isLoading ? (
           <ActivityIndicator size="large" color="#00343F" className="mt-10" />
         ) : (
           <View>
