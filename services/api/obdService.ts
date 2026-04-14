@@ -30,5 +30,13 @@ export const obdService = {
   getDiagnosticReport: async (carId: string): Promise<any> => {
     const response = await apiClient.get(API_ROUTES.OBD.DIAGNOSTIC(carId));
     return response.data;
+  },
+
+  /**
+   * Final confirmation to activate a car that was auto-discovered via OBD.
+   */
+  activateCar: async (carId: string): Promise<any> => {
+    const response = await apiClient.post(API_ROUTES.OBD.ACTIVATE(carId));
+    return response.data;
   }
 };

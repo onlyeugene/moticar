@@ -160,6 +160,7 @@ export default function Login() {
           <ControlledInput
             placeholder="Enter your password"
             secureTextEntry
+            showPasswordToggle
             name="password"
             control={control}
             placeholderClassName="text-[#7BA0A3]"
@@ -184,7 +185,10 @@ export default function Login() {
         </View>
 
         <View className="mt-5">
-          <Pressable disabled={login.isPending}>
+          <Pressable 
+            onPress={() => router.push("/(auth)/forgot-password")}
+            disabled={login.isPending}
+          >
             <Text
               className={`text-[#9BBABB] font-lexendMedium text-[14px] text-center ${login.isPending ? "opacity-50" : ""}`}
             >

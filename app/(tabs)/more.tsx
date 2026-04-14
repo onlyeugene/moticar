@@ -7,12 +7,14 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import * as WebBrowser from "expo-web-browser";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useLogout, useDeleteAccount, useUpdateProfile } from "@/hooks/useAuth";
 import CurrencySelectionSheet, {
   CURRENCIES,
 } from "@/components/sheets/CurrencySelectionSheet";
 import React, { useState } from "react";
+import { router } from "expo-router";
 import BookIcon from "@/assets/more/book.svg";
 import CoinStack from "@/assets/more/coinstack.svg";
 import Headset from "@/assets/more/headphones.svg";
@@ -151,8 +153,16 @@ export default function MoreScreen() {
           SETTINGS
         </Text>
         <View className="bg-white rounded-[16px] px-4 mb-8">
-          <SettingItem icon={KeyIcon} label="Change Password" />
-          <SettingItem icon={Inbox} label="Email Subscriptions" />
+          <SettingItem 
+            icon={KeyIcon} 
+            label="Change Password" 
+            onPress={() => router.push("/screens/settings/change-password")}
+          />
+          <SettingItem 
+            icon={Inbox} 
+            label="Email Subscriptions" 
+            onPress={() => router.push("/screens/settings/email-subscriptions")}
+          />
           <SettingItem
             icon={CoinStack}
             label="Currency"
@@ -174,7 +184,16 @@ export default function MoreScreen() {
         <View className="bg-white rounded-[16px] px-4 mb-8">
           <SettingItem icon={Headset} label="Contact Us" />
           <SettingItem icon={HelpIcon} label="FAQ" />
-          <SettingItem icon={BookIcon} label="Terms & Policy" />
+          <SettingItem 
+            icon={BookIcon} 
+            label="Terms of Service" 
+            onPress={() => WebBrowser.openBrowserAsync("https://usemoticar.com/terms-of-service/")}
+          />
+          <SettingItem 
+            icon={BookIcon} 
+            label="Privacy Policy" 
+            onPress={() => WebBrowser.openBrowserAsync("https://usemoticar.com/privacy-policy/")}
+          />
           <SettingItem icon={Command} label="Community" isLast={true} />
         </View>
 

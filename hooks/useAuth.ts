@@ -199,3 +199,17 @@ export const useSetName = () => {
     mutationFn: authService.setName,
   });
 };
+
+export const useToggleEmailNotifications = () => {
+  const queryClient = useQueryClient();
+  const updateUser = useAuthStore((state) => state.updateUser);
+  return useMutation({
+    mutationFn: authService.toggleEmailNotifications,
+    onSuccess: (data) => {
+      if (typeof data.emailNotificationsEnabled === "boolean") {
+        updateUser({ emailNotificationsEnabled: data.emailNotificationsEnabled });
+      }
+      queryClient.invalidateQueries({ queryKey: ["user", "me"]});
+    }
+  });
+};

@@ -11,6 +11,7 @@ export interface User {
   preferredLanguage?: string;
   preferredName?: string;
   deviceType?: 'ios' | 'android';
+  emailNotificationsEnabled?: boolean;
 }
 
 export interface AuthState {

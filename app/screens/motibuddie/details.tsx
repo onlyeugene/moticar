@@ -13,6 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { carService } from "@/services/api/carService";
+import { obdService } from "@/services/api/obdService";
 import { useAppStore } from "@/store/useAppStore";
 import { LoadingModal } from "@/components/ui/LoadingModal";
 
@@ -56,9 +57,17 @@ export default function MotiBuddieDetails() {
     return <LoadingModal visible={true} />;
   }
 
-  const handleConfirm = () => {
-    // In a real app, this would save the car and navigate to the dashboard
-    router.replace("/(tabs)/car");
+  const handleConfirm = async () => {
+    try {
+      if (selectedCarId) {
+        await obdService.activateCar(selectedCarId);
+      }
+      router.replace("/(tabs)/car");
+    } catch (error) {
+      console.error("Activation failed:", error);
+      // Fail gracefully and navigate to dashboard as fallback
+      router.replace("/(tabs)/car");
+    }
   };
 
   return (
