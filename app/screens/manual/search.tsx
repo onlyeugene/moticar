@@ -27,6 +27,7 @@ interface CarResult {
   brandKeys?: string;
   availableYears?: number[];
   availableFuelTypes?: string[];
+  gearbox?: string;
 }
 
 export default function Search() {
@@ -57,6 +58,7 @@ export default function Search() {
           brandKeys: selectedCar.brandKeys,
           availableYears: JSON.stringify(selectedCar.availableYears || []),
           availableFuelTypes: JSON.stringify(selectedCar.availableFuelTypes || []),
+          gearbox: selectedCar.gearbox || selectedCar.transmission || "",
         },
       });
     }

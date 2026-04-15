@@ -13,9 +13,12 @@ import { LinearGradient } from "expo-linear-gradient";
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 // Each item in FlatList = step units (passed via prop)
-const SUB_TICK_WIDTH = 8;
-const STEP_WIDTH = SUB_TICK_WIDTH; // Fixed width per step for smooth scrolling
+const SUB_TICK_WIDTH = 10; // Balanced breathable spacing
+const STEP_WIDTH = SUB_TICK_WIDTH;
 const CENTER_OFFSET = SCREEN_WIDTH / 2;
+const RULER_HEIGHT = 60; // Increased to float labels higher
+const MAJOR_TICK_HEIGHT = 40;
+const MINOR_TICK_HEIGHT = 20;
 
 interface RulerPickerProps {
   min?: number;
@@ -135,12 +138,10 @@ export const RulerPicker = ({
   const renderItem = ({ item }: { item: number }) => {
     // Major tick every unitStep units
     const isMajor = item % unitStep === 0;
-    // Mid tick every half of unitStep units
-    const isMid = item % (unitStep / 2) === 0 && !isMajor;
 
-    const tickHeight = isMajor ? 48 : isMid ? 28 : 18;
-    const tickWidth = isMajor ? 2 : 1;
-    const tickColor = isMajor ? "#7A9A9B" : "#4A6A6B";
+    const tickHeight = isMajor ? MAJOR_TICK_HEIGHT : MINOR_TICK_HEIGHT;
+    const tickWidth = 1;
+    const tickColor = isMajor ? "rgba(255,255,255,0.4)" : "rgba(255,255,255,0.15)";
 
     return (
       <View
@@ -149,7 +150,7 @@ export const RulerPicker = ({
           width: STEP_WIDTH,
           alignItems: "center",
           justifyContent: "flex-end",
-          height: 80,
+          height: RULER_HEIGHT,
         }}
       >
         {isMajor && (
@@ -158,10 +159,10 @@ export const RulerPicker = ({
               color: "#6A9A9B",
               fontSize: 10,
               position: "absolute",
-              top: 0,
-              width: 80,
+              top: 5,
+              width: 100,
               textAlign: "center",
-              fontFamily: "LexendDeca-Regular",
+              fontFamily: "Lexend-Regular",
               letterSpacing: -0.3,
             }}
           >
@@ -173,7 +174,7 @@ export const RulerPicker = ({
             width: tickWidth,
             height: tickHeight,
             backgroundColor: tickColor,
-            marginBottom: 8,
+            marginBottom: 4,
             borderRadius: 1,
           }}
         />
@@ -245,8 +246,38 @@ export const RulerPicker = ({
         />
       </View>
 
-      {/* Ruler */}
-      <View style={{ height: 80, width: SCREEN_WIDTH }}>
+      {/* Ruler container with faded edges */}
+      <View style={{ height: RULER_HEIGHT, width: SCREEN_WIDTH }}>
+        {/* Fading Gradients */}
+        <LinearGradient
+          colors={["#00242C", "transparent"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0.15, y: 0 }}
+          style={{
+            position: "absolute",
+            left: 0,
+            top: 0,
+            bottom: 0,
+            width: SCREEN_WIDTH * 0.2,
+            zIndex: 5,
+          }}
+          pointerEvents="none"
+        />
+        <LinearGradient
+          colors={["transparent", "#00242C"]}
+          start={{ x: 0.85, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={{
+            position: "absolute",
+            right: 0,
+            top: 0,
+            bottom: 0,
+            width: SCREEN_WIDTH * 0.2,
+            zIndex: 5,
+          }}
+          pointerEvents="none"
+        />
+
         <FlatList
           ref={flatListRef}
           data={ticks}
@@ -288,12 +319,13 @@ export const RulerPicker = ({
           pointerEvents="none"
           style={{
             position: "absolute",
-            left: CENTER_OFFSET - 2,
-            bottom: -4,
+            left: CENTER_OFFSET - 1.5,
+            bottom: 0,
             width: 3,
-            height: 88,
+            height: 75,
             backgroundColor: "#00AEB5",
-            borderRadius: 2,
+            borderRadius: 1.5,
+            zIndex: 10,
           }}
         />
       </View>

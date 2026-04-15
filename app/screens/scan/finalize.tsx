@@ -1,7 +1,7 @@
 import Container from "@/components/shared/container";
 import { ControlledInput } from "@/components/shared/controlledInput";
 import { RulerPicker } from "@/components/shared/RulerPicker";
-import { WheelDatePicker } from "@/components/shared/WheelDatePicker";
+import { FormWheelDatePicker } from "@/components/shared/FormWheelDatePicker";
 import { ScreenBackground } from "@/components/ui/ScreenBackground";
 import { useCreateCar } from "@/hooks/useCars";
 import { useSnackbar } from "@/providers/SnackbarProvider";
@@ -51,7 +51,9 @@ export default function FinalizeScan() {
   const user = useAuthStore((state: AuthState) => state.user);
   const currencySymbol = getCurrencySymbol(user?.preferredCurrency);
   const { showSnackbar } = useSnackbar();
-  const { mutate: createCar, isPending: isSubmitting } = useCreateCar();
+  const { mutate: saveMutation, isPending: isSaving } = useCreateCar();
+  const { mutate: skipMutation, isPending: isSkipping } = useCreateCar();
+  const isSubmitting = isSaving || isSkipping;
   const updateUser = useAuthStore((state: AuthState) => state.updateUser);
 
   const {
@@ -65,7 +67,7 @@ export default function FinalizeScan() {
     mode: "onChange",
     defaultValues: {
       condition: "Newly Purchased",
-      purchaseDate: "12.02.2025",
+      purchaseDate: "12-02-2025",
       dontRememberDate: false,
       monthlyBudget: 50000,
     },
@@ -97,12 +99,12 @@ export default function FinalizeScan() {
   const onSave = (data: FinalFormData) => {
     let purchaseDateStr: string | undefined = undefined;
     if (!data.dontRememberDate && data.purchaseDate) {
-      const [d, m, y] = data.purchaseDate.split(".");
+      const [d, m, y] = data.purchaseDate.split(/[-.]/);
       const date = new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
       purchaseDateStr = date.toISOString();
     }
 
-    createCar(
+    saveMutation(
       {
         make: scannedCarData.make || "",
         carModel: scannedCarData.carModel || scannedCarData.model || "",
@@ -186,7 +188,7 @@ export default function FinalizeScan() {
               }
 
               // Silent save on skip
-              createCar(
+              skipMutation(
                 {
                   make: scannedCarData.make || "",
                   carModel:
@@ -241,7 +243,7 @@ export default function FinalizeScan() {
             disabled={isSubmitting}
           >
             <View className="flex-row items-center">
-              {isSubmitting ? (
+              {isSkipping ? (
                 <ActivityIndicator size="small" color="#29D7DE" />
               ) : (
                 <>
@@ -276,7 +278,7 @@ export default function FinalizeScan() {
               unitPrefix={currencySymbol}
               min={1000}
               max={1000000}
-              step={500}
+              step={100}
               unitStep={500}
             />
           </View>
@@ -324,7 +326,7 @@ export default function FinalizeScan() {
                 entering={FadeInDown.duration(300)}
                 exiting={FadeOutUp.duration(300)}
               >
-                <WheelDatePicker
+                <FormWheelDatePicker
                   initialDate={watch("purchaseDate")}
                   onDateChange={(val) => setValue("purchaseDate", val)}
                 />
@@ -404,7 +406,7 @@ export default function FinalizeScan() {
               !isValid || isSubmitting ? "bg-[#29D7DE]/10" : "bg-[#29D7DE]"
             }`}
           >
-            {isSubmitting ? (
+            {isSaving ? (
               <ActivityIndicator color="#00343F" />
             ) : (
               <Text className="font-lexendBold text-[#00343F] text-lg">

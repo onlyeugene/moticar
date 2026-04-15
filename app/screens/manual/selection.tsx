@@ -21,6 +21,7 @@ export default function Selection() {
     brandKeys?: string;
     availableYears?: string; // JSON stringified
     availableFuelTypes?: string; // JSON stringified
+    gearbox?: string;
   }>();
 
   const availableYears = params.availableYears
@@ -48,6 +49,9 @@ export default function Selection() {
           fuelType: selectedFuelType,
           class: params.class,
           brandKeys: params.brandKeys,
+          availableYears: params.availableYears,
+          availableFuelTypes: params.availableFuelTypes,
+          availableGearboxes: params.gearbox,
         },
       });
     }

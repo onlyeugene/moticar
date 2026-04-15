@@ -61,7 +61,7 @@ const WheelPicker = ({ data, initialValue, onValueChange, width = 80 }: WheelPic
           height: ITEM_HEIGHT,
           borderTopWidth: 1,
           borderBottomWidth: 1,
-          borderColor: "#0000001A",
+          borderColor: "#1A8798",
         }}
       />
       <ScrollView
@@ -88,11 +88,7 @@ const WheelPicker = ({ data, initialValue, onValueChange, width = 80 }: WheelPic
             }}
           >
             <Text
-              className={`${isSelected ? "font-lexendMedium" : "font-lexendRegular"}`}
-              style={{
-                color: isSelected ? "#00343F" : "#9BA5A5",
-                fontSize: isSelected ? 16 : 14,
-              }}
+              className={`${isSelected ? "font-lexendRegular text-[#FFFFFF]" : "font-lexendRegular text-[#9BA5A5]"} text-[14px]`}
             >
               {item}
             </Text>
@@ -104,12 +100,12 @@ const WheelPicker = ({ data, initialValue, onValueChange, width = 80 }: WheelPic
   );
 };
 
-interface WheelDatePickerProps {
+interface FormWheelDatePickerProps {
   onDateChange: (date: string) => void;
   initialDate?: string; // Format: DD.MM.YYYY
 }
 
-export const WheelDatePicker = ({ onDateChange, initialDate = "12-02-2025" }: WheelDatePickerProps) => {
+export const FormWheelDatePicker = ({ onDateChange, initialDate = "12.02.2025" }: FormWheelDatePickerProps) => {
   const [day, month, year] = initialDate.split(/[-.]/).map((v, i) => parseInt(v));
   
   const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -119,10 +115,9 @@ export const WheelDatePicker = ({ onDateChange, initialDate = "12-02-2025" }: Wh
   const [selectedDay, setSelectedDay] = useState(day || 1);
   const [selectedMonth, setSelectedMonth] = useState(MONTHS[(month || 1) - 1] || MONTHS[0]);
   const [selectedYear, setSelectedYear] = useState(year || new Date().getFullYear());
-  const lastEmittedDate = useRef<string>("");
 
   useEffect(() => {
-    if (initialDate && initialDate !== lastEmittedDate.current) {
+    if (initialDate) {
       const [d, m, y] = initialDate.split(/[-.]/).map((v) => parseInt(v));
       if (d) setSelectedDay(d);
       if (m && MONTHS[m - 1]) setSelectedMonth(MONTHS[m - 1]);
@@ -134,12 +129,7 @@ export const WheelDatePicker = ({ onDateChange, initialDate = "12-02-2025" }: Wh
     const monthIndex = MONTHS.indexOf(selectedMonth) + 1;
     const formattedMonth = monthIndex.toString().padStart(2, "0");
     const formattedDay = selectedDay.toString().padStart(2, "0");
-    const newDate = `${formattedDay}-${formattedMonth}-${selectedYear}`;
-    
-    if (newDate !== lastEmittedDate.current) {
-      lastEmittedDate.current = newDate;
-      onDateChange(newDate);
-    }
+    onDateChange(`${formattedDay}-${formattedMonth}-${selectedYear}`);
   }, [selectedDay, selectedMonth, selectedYear]);
 
   return (
@@ -148,19 +138,19 @@ export const WheelDatePicker = ({ onDateChange, initialDate = "12-02-2025" }: Wh
         data={DAYS}
         initialValue={selectedDay}
         onValueChange={(val) => setSelectedDay(val as number)}
-        width={40}
+        width={50}
       />
       <WheelPicker
         data={MONTHS}
         initialValue={selectedMonth}
         onValueChange={(val) => setSelectedMonth(val as string)}
-        width={60}
+        width={70}
       />
       <WheelPicker
         data={YEARS}
         initialValue={selectedYear}
         onValueChange={(val) => setSelectedYear(val as number)}
-        width={80}
+        width={90}
       />
     </View>
   );

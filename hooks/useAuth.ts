@@ -182,9 +182,13 @@ export const useUpdateProfile = () => {
         updateUser(variables);
       }
       
-      queryClient.invalidateQueries({ queryKey: ["user", "me"] });
-      queryClient.invalidateQueries({ queryKey: ["user", "me", "profile"] });
-      queryClient.invalidateQueries({ queryKey: ["cars", "user"] });
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.invalidateQueries({ queryKey: ["cars"] });
+      queryClient.invalidateQueries({ queryKey: ["expenses"] });
+      queryClient.invalidateQueries({ queryKey: ["activities"] });
+      
+      // Specifically refetch the main profile query
+      queryClient.refetchQueries({ queryKey: ["user", "me"] });
     },
     onError: (error) => {
       console.error("❌ [useUpdateProfile] Error:", error);
