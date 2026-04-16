@@ -172,7 +172,7 @@ export default function AttributeEditSheet({
         return (
           <View className="pt-2">
             <WheelDatePicker
-              initialDate={value || "12.02.2025"}
+              initialDate={value || "12-02-2025"}
               onDateChange={setValue}
             />
           </View>

@@ -59,7 +59,9 @@ export default function DashboardHeader() {
       >
         <View className="flex-row items-start">
           <View className="flex-row items-start gap-3 flex-1 pr-8">
-            <CarIcon make={car.make} size={40} color="#FFFFFF" />
+           <View className="bg-white rounded-[8px]">
+             <CarIcon make={car.make} size={40} color="#FFFFFF" />
+           </View>
             <View className="flex-1 flex-col gap-1">
               <View className="flex-row items-center gap-2">
                 <Text

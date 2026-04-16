@@ -20,6 +20,7 @@ interface TimePickerSheetProps {
   onClose: () => void;
   onSelect: (time: string) => void;
   initialTime?: string; // "HH:mm"
+  minTime?: string; // "HH:mm"
   title?: string;
 }
 
@@ -34,6 +35,7 @@ export default function TimePickerSheet({
   onClose,
   onSelect,
   initialTime = "12:00",
+  minTime,
   title = "Select Time",
 }: TimePickerSheetProps) {
   const [selectedHour, setSelectedHour] = useState(initialTime.split(":")[0]);
@@ -76,9 +78,48 @@ export default function TimePickerSheet({
     const index = Math.round(offset / ITEM_HEIGHT);
     
     if (type === "hour") {
-      if (HOURS[index]) setSelectedHour(HOURS[index]);
+      const h = HOURS[index];
+      if (h) setSelectedHour(h);
     } else {
-      if (MINUTES[index]) setSelectedMinute(MINUTES[index]);
+      const m = MINUTES[index];
+      if (m) setSelectedMinute(m);
+    }
+  };
+
+  const handleMomentumScrollEnd = (type: "hour" | "minute") => (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    if (!minTime) return;
+    
+    const [minHour, minMinute] = minTime.split(":");
+    const offset = event.nativeEvent.contentOffset.y;
+    const index = Math.round(offset / ITEM_HEIGHT);
+    
+    if (type === "hour") {
+      if (HOURS[index] < minHour) {
+        hourListRef.current?.scrollToOffset({
+          offset: HOURS.indexOf(minHour) * ITEM_HEIGHT,
+          animated: true,
+        });
+        setSelectedHour(minHour);
+      }
+    } else {
+      if (selectedHour === minHour && MINUTES[index] < minMinute) {
+        minuteListRef.current?.scrollToOffset({
+          offset: MINUTES.indexOf(minMinute) * ITEM_HEIGHT,
+          animated: true,
+        });
+        setSelectedMinute(minMinute);
+      }
+    }
+  };
+
+  const isValueDisabled = (type: "hour" | "minute", value: string) => {
+    if (!minTime || value === "") return false;
+    const [minHour, minMinute] = minTime.split(":");
+    
+    if (type === "hour") {
+      return value < minHour;
+    } else {
+      return selectedHour === minHour && value < minMinute;
     }
   };
 
@@ -87,13 +128,20 @@ export default function TimePickerSheet({
     onClose();
   };
 
-  const renderItem = ({ item }: { item: string }) => (
-    <View style={styles.item}>
-      <Text style={[styles.itemText, item === "" && { opacity: 0 }]}>
-        {item}
-      </Text>
-    </View>
-  );
+  const renderItem = (type: "hour" | "minute") => ({ item }: { item: string }) => {
+    const isDisabled = isValueDisabled(type, item);
+    return (
+      <View style={styles.item}>
+        <Text style={[
+          styles.itemText, 
+          item === "" && { opacity: 0 },
+          isDisabled && { opacity: 0.2 }
+        ]}>
+          {item}
+        </Text>
+      </View>
+    );
+  };
 
   return (
     <BottomSheet
@@ -112,12 +160,13 @@ export default function TimePickerSheet({
             <FlatList
               ref={hourListRef}
               data={dataHours}
-              renderItem={renderItem}
+              renderItem={renderItem("hour")}
               keyExtractor={(item, index) => `hour-${index}`}
               showsVerticalScrollIndicator={false}
               snapToInterval={ITEM_HEIGHT}
               decelerationRate="fast"
               onScroll={handleScroll("hour")}
+              onMomentumScrollEnd={handleMomentumScrollEnd("hour")}
               scrollEventThrottle={16}
               getItemLayout={(_, index) => ({
                 length: ITEM_HEIGHT,
@@ -135,12 +184,13 @@ export default function TimePickerSheet({
             <FlatList
               ref={minuteListRef}
               data={dataMinutes}
-              renderItem={renderItem}
+              renderItem={renderItem("minute")}
               keyExtractor={(item, index) => `minute-${index}`}
               showsVerticalScrollIndicator={false}
               snapToInterval={ITEM_HEIGHT}
               decelerationRate="fast"
               onScroll={handleScroll("minute")}
+              onMomentumScrollEnd={handleMomentumScrollEnd("minute")}
               scrollEventThrottle={16}
               getItemLayout={(_, index) => ({
                 length: ITEM_HEIGHT,

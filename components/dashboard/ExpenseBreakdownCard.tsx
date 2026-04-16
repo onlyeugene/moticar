@@ -14,6 +14,7 @@ interface ExpenseBreakdownCardProps {
   expenses?: Expense[];
   currencySymbol: string;
   monthlyBudget?: number;
+  selectedDate?: Date;
 }
 
 const ExpenseBreakdownCard: React.FC<ExpenseBreakdownCardProps> = ({
@@ -21,6 +22,7 @@ const ExpenseBreakdownCard: React.FC<ExpenseBreakdownCardProps> = ({
   expenses,
   currencySymbol,
   monthlyBudget,
+  selectedDate,
 }) => {
   const [containerWidth, setContainerWidth] = useState(240);
   const [isSheetVisible, setIsSheetVisible] = useState(false);
@@ -208,6 +210,7 @@ const ExpenseBreakdownCard: React.FC<ExpenseBreakdownCardProps> = ({
         expenses={expenses}
         currencySymbol={currencySymbol}
         monthlyBudget={monthlyBudget}
+        selectedDate={selectedDate || new Date()}
       />
 
       <ExpenseDetailSheet

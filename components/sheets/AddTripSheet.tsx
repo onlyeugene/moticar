@@ -1,28 +1,28 @@
-import React, { useState } from "react";
-import {
-  Text,
-  TouchableOpacity,
-  View,
-  StyleSheet,
-  TextInput,
-  FlatList,
-  ActivityIndicator,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import BottomSheet from "../shared/BottomSheet";
 import { useCreateManualTrip, useUpdateTrip } from "@/hooks/useActivity";
 import { Trip } from "@/types/activity";
+import { Ionicons } from "@expo/vector-icons";
+import React, { useState } from "react";
+import { useSnackbar } from "@/providers/SnackbarProvider";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
+} from "react-native";
+import BottomSheet from "../shared/BottomSheet";
 
-import DatePickerSheet from "./DatePickerSheet";
-import TimePickerSheet from "./TimePickerSheet";
-import { calculateHaversineDistance } from "@/utils/location";
+import Calendar from "@/assets/icons/calendar.svg";
 import Location from "@/assets/icons/location.svg";
 import LocationRound from "@/assets/icons/locationRound.svg";
 import OutlineLocation from "@/assets/icons/outlinelocation.svg";
 import Route from "@/assets/icons/route.svg";
-import Calendar from "@/assets/icons/calendar.svg";
 import Tciket from "@/assets/icons/ticket.svg";
+import { calculateHaversineDistance } from "@/utils/location";
 import * as ExpoLocation from "expo-location";
+import DatePickerSheet from "./DatePickerSheet";
+import TimePickerSheet from "./TimePickerSheet";
 
 // 🔑 No API key needed for Photon!
 
@@ -33,7 +33,6 @@ interface AddTripSheetProps {
   trip?: Trip | null;
 }
 
-
 const CATEGORIES = ["Work", "Leisure", "Family", "Misc"];
 
 export interface LocationData {
@@ -42,6 +41,17 @@ export interface LocationData {
   lng?: number;
 }
 
+const timeToMinutes = (time: string) => {
+  const [h, m] = time.split(":").map(Number);
+  return h * 60 + m;
+};
+
+const minutesToTime = (totalMinutes: number) => {
+  const h = Math.floor(totalMinutes / 60) % 24;
+  const m = totalMinutes % 60;
+  return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`;
+};
+
 export default function AddTripSheet({
   visible,
   onClose,
@@ -49,6 +59,7 @@ export default function AddTripSheet({
   trip,
 }: AddTripSheetProps) {
   const isEdit = !!trip;
+  const { showSnackbar } = useSnackbar();
 
   const [origin, setOrigin] = useState<LocationData | null>(null);
   const [destination, setDestination] = useState<LocationData | null>(null);
@@ -90,7 +101,9 @@ export default function AddTripSheet({
   const [dateLabel, setDateLabel] = useState("");
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
-  const [timePickerType, setTimePickerType] = useState<"start" | "end">("start");
+  const [timePickerType, setTimePickerType] = useState<"start" | "end">(
+    "start",
+  );
 
   const { mutate: createTrip, isPending: isCreating } = useCreateManualTrip();
   const { mutate: updateTrip, isPending: isUpdating } = useUpdateTrip();
@@ -103,23 +116,25 @@ export default function AddTripSheet({
       setDestination(trip.destination);
       setDistanceKm(trip.distanceKm.toString());
       setSelectedCategory(trip.category || "Misc");
-      
+
       const startDate = new Date(trip.startTime);
       setRawDate(startDate);
       setDateStr(formatDate(startDate));
       setStartTime(formatTime(startDate));
-      
+
       if (trip.endTime) {
         setEndTime(formatTime(new Date(trip.endTime)));
       }
 
       // Set label
       const today = new Date();
-      if (startDate.toDateString() === today.toDateString()) setDateLabel("Today");
+      if (startDate.toDateString() === today.toDateString())
+        setDateLabel("Today");
       else {
         const yesterday = new Date();
         yesterday.setDate(today.getDate() - 1);
-        if (startDate.toDateString() === yesterday.toDateString()) setDateLabel("Yesterday");
+        if (startDate.toDateString() === yesterday.toDateString())
+          setDateLabel("Yesterday");
         else setDateLabel("");
       }
     } else if (visible && !trip) {
@@ -135,7 +150,6 @@ export default function AddTripSheet({
       setEndTime(formatTime(new Date(Date.now() + 60 * 60 * 1000)));
     }
   }, [trip, visible]);
-
 
   const searchLocations = async (query: string) => {
     if (query.length < 3) {
@@ -255,7 +269,31 @@ export default function AddTripSheet({
   const handleTimeSelect = (selectedTime: string) => {
     if (timePickerType === "start") {
       setStartTime(selectedTime);
+
+      // If start time is now after or equal to end time, move end time forward
+      const startMins = timeToMinutes(selectedTime);
+      const endMins = timeToMinutes(endTime);
+
+      if (startMins >= endMins) {
+        // Default to +1 hour, clamped to end of day
+        const newEndMins = Math.min(startMins + 60, 23 * 60 + 59);
+        setEndTime(minutesToTime(newEndMins));
+      }
     } else {
+      const startMins = timeToMinutes(startTime);
+      const endMins = timeToMinutes(selectedTime);
+
+      if (endMins <= startMins) {
+        showSnackbar({
+          type: "error",
+          message: "Invalid Time",
+          description: "End time must be after start time.",
+        });
+        // Snap end time to 1 hour after start if possible
+        const newEndMins = Math.min(startMins + 60, 23 * 60 + 59);
+        setEndTime(minutesToTime(newEndMins));
+        return;
+      }
       setEndTime(selectedTime);
     }
   };
@@ -297,26 +335,22 @@ export default function AddTripSheet({
           onSuccess: () => {
             onClose();
           },
-        }
-      );
-    } else {
-      createTrip(
-        tripData,
-        {
-          onSuccess: () => {
-            onClose();
-            // Reset fields
-            setOrigin(null);
-            setDestination(null);
-            setRawDate(undefined);
-            setDateStr("");
-            setDateLabel("");
-          },
         },
       );
+    } else {
+      createTrip(tripData, {
+        onSuccess: () => {
+          onClose();
+          // Reset fields
+          setOrigin(null);
+          setDestination(null);
+          setRawDate(undefined);
+          setDateStr("");
+          setDateLabel("");
+        },
+      });
     }
   };
-
 
   const canSave = !isPending && origin && destination && rawDate;
 
@@ -341,7 +375,6 @@ export default function AddTripSheet({
         headerRight={headerRight}
         height="65%"
       >
-
         <View className="flex-1  px-2">
           {/* Journey Section */}
           <View
@@ -628,8 +661,11 @@ export default function AddTripSheet({
           visible={showTimePicker}
           onClose={() => setShowTimePicker(false)}
           initialTime={timePickerType === "start" ? startTime : endTime}
+          minTime={timePickerType === "end" ? startTime : undefined}
           onSelect={handleTimeSelect}
-          title={timePickerType === "start" ? "Select Start Time" : "Select End Time"}
+          title={
+            timePickerType === "start" ? "Select Start Time" : "Select End Time"
+          }
         />
       </BottomSheet>
     </>

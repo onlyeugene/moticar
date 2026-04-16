@@ -168,7 +168,7 @@ export default function Scan() {
               activeOpacity={0.8}
               className="mt-8 bg-[#002126]  rounded-[10px] p-4 flex-row items-center gap-4"
             >
-              <View className="items-center justify-center">
+              <View className="items-center justify-center bg-white rounded-[8px]">
                 <CarLogo make={scannedCarData.make || ""} size={48} />
               </View>
               <View className="flex-1">

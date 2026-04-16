@@ -35,14 +35,6 @@ export default function MileageMilestonesTab({ carId }: MileageMilestonesTabProp
     }));
   };
 
-  if (isLoading) {
-    return (
-      <View className="flex-1 items-center justify-center pt-20">
-        <ActivityIndicator size="large" color="#00AEB5" />
-      </View>
-    );
-  }
-
   const milestonesWithDelta = React.useMemo(() => {
     const raw = data?.milestones || [];
     return raw.map((m, index) => {
@@ -54,6 +46,14 @@ export default function MileageMilestonesTab({ carId }: MileageMilestonesTabProp
   }, [data?.milestones]);
 
   const sections = groupMilestonesByDate(milestonesWithDelta);
+
+  if (isLoading) {
+    return (
+      <View className="flex-1 items-center justify-center pt-20">
+        <ActivityIndicator size="large" color="#00AEB5" />
+      </View>
+    );
+  }
 
 
   return (

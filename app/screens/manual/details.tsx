@@ -36,6 +36,9 @@ export default function CarDetailsScreen() {
     engine?: string;
     transmission?: string;
     brandKeys?: string;
+    availableYears?: string;
+    availableFuelTypes?: string;
+    availableGearboxes?: string;
   }>();
 
   const isMounted = useRef(false);
@@ -139,6 +142,28 @@ export default function CarDetailsScreen() {
     setEditSheetVisible(true);
   };
 
+  const availableYearsList = React.useMemo(() => {
+    try {
+      return params.availableYears ? JSON.parse(params.availableYears).map((y: any) => y.toString()) : [];
+    } catch {
+      return [];
+    }
+  }, [params.availableYears]);
+
+  const availableFuelTypesList = React.useMemo(() => {
+    try {
+      return params.availableFuelTypes ? JSON.parse(params.availableFuelTypes) : ["Petrol", "Diesel", "Electric", "Hybrid"];
+    } catch {
+      return ["Petrol", "Diesel", "Electric", "Hybrid"];
+    }
+  }, [params.availableFuelTypes]);
+
+  const availableGearboxList = React.useMemo(() => {
+    if (!params.availableGearboxes) return ["Automatic", "Manual"];
+    const split = params.availableGearboxes.split("/").map(s => s.trim());
+    return split.length > 0 ? split : ["Automatic", "Manual"];
+  }, [params.availableGearboxes]);
+
   const saveEdit = (newValue: any) => {
     if (editingField) {
       setCarData((prev) => ({ ...prev, [editingField.key]: newValue }));
@@ -147,6 +172,7 @@ export default function CarDetailsScreen() {
   };
 
   const getYearOptions = () => {
+    if (availableYearsList.length > 0) return availableYearsList;
     const range = detailsData?.details?.features?.yearRange;
     if (range && range.includes("-")) {
       const [start, end] = range.split("-").map((s) => parseInt(s.trim()));
@@ -175,7 +201,7 @@ export default function CarDetailsScreen() {
       value: carData.fuelType,
       icon: FuelIcon,
       mode: "chips" as const,
-      options: ["Petrol", "Diesel", "Electric", "Hybrid"],
+      options: availableFuelTypesList,
       isEditable: true,
     },
     {
@@ -184,7 +210,7 @@ export default function CarDetailsScreen() {
       value: carData.transmission,
       icon: TransmissionIcon,
       mode: "toggle" as const,
-      options: ["Automatic", "Manual"],
+      options: availableGearboxList,
       isEditable: true,
     },
     {

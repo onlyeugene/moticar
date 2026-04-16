@@ -47,9 +47,27 @@ export default function LicenseDetailsScreen() {
     setEditSheetVisible(true);
   };
 
+  const formatDate = (date: string | null | undefined) => {
+    if (!date) return "---";
+    // Split by common separators
+    const parts = date.split(/[-.]/);
+    if (parts.length !== 3) return date.replace(/\./g, "-");
+
+    // If first part is a 4-digit year, rearrange to DD-MM-YYYY
+    if (parts[0].length === 4) {
+      return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+    
+    // Otherwise just ensure it uses dashes
+    return parts.join("-");
+  };
+
   const saveEdit = (newValue: any) => {
     if (editingField) {
-      setScannedLicenseData({ ...scannedLicenseData, [editingField.key]: newValue });
+      const finalValue = (editingField.mode === "date" && typeof newValue === "string") 
+        ? newValue.replace(/\./g, "-") 
+        : newValue;
+      setScannedLicenseData({ ...scannedLicenseData, [editingField.key]: finalValue });
     }
     setEditSheetVisible(false);
   };
@@ -123,7 +141,7 @@ export default function LicenseDetailsScreen() {
                 {/* Chassis Number Row */}
                 <View className="py-2">
                   <SpecItem
-                    icon={CalendarIcon}
+                    icon={EngineIcon}
                     label="Chasis Number"
                     value={scannedLicenseData.vin || "---"}
                     centered
@@ -137,7 +155,7 @@ export default function LicenseDetailsScreen() {
                 {/* Engine Number Row */}
                 <View className="py-2">
                   <SpecItem
-                    icon={CalendarIcon}
+                    icon={EngineIcon}
                     label="Engine Number"
                     value={scannedLicenseData.engineNumber || "---"}
                     centered
@@ -151,7 +169,8 @@ export default function LicenseDetailsScreen() {
                 {/* Address Row */}
                 <View className="py-2 px-6">
                   <SpecItem
-                    icon={CalendarIcon}
+                    icon={Ionicons as any}
+                    // iconName="location"
                     label="Address"
                     value={scannedLicenseData.ownerAddress || "---"}
                     centered
@@ -168,7 +187,7 @@ export default function LicenseDetailsScreen() {
                     <SpecItem
                       icon={CalendarIcon}
                       label="Date Issued"
-                      value={scannedLicenseData.dateIssued || "---"}
+                      value={formatDate(scannedLicenseData.dateIssued)}
                       centered
                       hasDropdown
                       onPress={() => openEditor("dateIssued", "Date Issued", "date")}
@@ -181,7 +200,7 @@ export default function LicenseDetailsScreen() {
                     <SpecItem
                       icon={CalendarIcon}
                       label="Expiry Date"
-                      value={scannedLicenseData.expiryDate || "---"}
+                      value={formatDate(scannedLicenseData.expiryDate)}
                       centered
                       hasDropdown
                       onPress={() => openEditor("expiryDate", "Expiry Date", "date")}
@@ -212,7 +231,11 @@ export default function LicenseDetailsScreen() {
           onSave={saveEdit}
           title={editingField?.label || ""}
           mode={editingField?.mode || "input"}
-          initialValue={editingField ? scannedLicenseData[editingField.key] : ""}
+          initialValue={editingField ? (
+            editingField.mode === "date" 
+              ? (scannedLicenseData[editingField.key] ? formatDate(scannedLicenseData[editingField.key] as string) : "12-02-2025")
+              : scannedLicenseData[editingField.key]
+          ) : ""}
           multiline={editingField?.multiline}
           keyboardType={editingField?.keyboardType}
         />

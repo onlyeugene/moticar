@@ -140,6 +140,7 @@ export interface SpendBreakdown {
   };
   categoryBreakdown: SpendCategory[];
   expenses: any[];
+  allExpenses?: any[];
 }
 
 export interface TripsResponse {

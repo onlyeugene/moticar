@@ -292,6 +292,7 @@ export default function Dashboard() {
             // expenses={expensesData?.expenses}
             currencySymbol={currencySymbol}
             monthlyBudget={userCar?.monthlyBudget}
+            selectedDate={selectedDate}
           />
 
           {/* Insights Section */}

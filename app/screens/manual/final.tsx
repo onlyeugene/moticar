@@ -1,6 +1,6 @@
 import { ControlledInput } from "@/components/shared/controlledInput";
 import { RulerPicker } from "@/components/shared/RulerPicker";
-import { WheelDatePicker } from "@/components/shared/WheelDatePicker";
+import { FormWheelDatePicker } from "@/components/shared/FormWheelDatePicker";
 import { ScreenBackground } from "@/components/ui/ScreenBackground";
 import { useUpdateProfile } from "@/hooks/useAuth";
 import { useCreateCar } from "@/hooks/useCars";
@@ -32,7 +32,7 @@ const finalSchema = z.object({
   monthlyBudget: z.number().optional(),
   mileage: z.string().min(1, "Mileage is required"),
   plate: z.string().min(1, "Plate number is required"),
-  vin: z.string().min(1, "Chassis number is required"),
+  vin: z.string().optional(),
   purchaseDate: z.string().optional(),
   dontRememberDate: z.boolean(),
   condition: z.enum(["Newly Purchased", "Already had an existing user"]),
@@ -53,7 +53,10 @@ export default function FinalDetailsScreen() {
     : null;
 
   const { showSnackbar } = useSnackbar();
-  const { mutate: createCar, isPending: isSubmitting } = useCreateCar();
+  const { mutate: saveMutation, isPending: isSaving } = useCreateCar();
+  const { mutate: skipMutation, isPending: isSkipping } = useCreateCar();
+  const isSubmitting = isSaving || isSkipping;
+
   const { mutate: updateProfile, isPending: isUpdatingProfile } =
     useUpdateProfile();
   const updateUser = useAuthStore((state: AuthState) => state.updateUser);
@@ -69,7 +72,7 @@ export default function FinalDetailsScreen() {
     mode: "onChange",
     defaultValues: {
       condition: "Newly Purchased",
-      purchaseDate: "12.02.2025",
+      purchaseDate: "12-02-2025",
       dontRememberDate: false,
       monthlyBudget: params.recommendedBudget
         ? parseInt(params.recommendedBudget)
@@ -92,12 +95,12 @@ export default function FinalDetailsScreen() {
 
     let purchaseDateStr: string | undefined = undefined;
     if (!data.dontRememberDate && data.purchaseDate) {
-      const [d, m, y] = data.purchaseDate.split(".");
+      const [d, m, y] = data.purchaseDate.split(/[-.]/);
       const date = new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
       purchaseDateStr = date.toISOString();
     }
 
-    createCar(
+    saveMutation(
       {
         ...initialCarData,
         mileage: parseInt(data.mileage.replace(/,/g, "")) || 0,
@@ -136,7 +139,7 @@ export default function FinalDetailsScreen() {
       <View className="flex-1 mt-20 px-4">
         {/* Header */}
         <View className="flex-row items-center justify-between mb-8">
-          <TouchableOpacity onPress={() => router.back()}>
+          <TouchableOpacity onPress={() => router.replace('/(onboarding)')}>
             <Ionicons name="arrow-back" size={24} color="white" />
           </TouchableOpacity>
 
@@ -154,7 +157,7 @@ export default function FinalDetailsScreen() {
               }
 
               // Silent save on skip
-              createCar(
+              skipMutation(
                 {
                   ...initialCarData,
                   mileage: initialCarData.mileage || 0,
@@ -180,7 +183,7 @@ export default function FinalDetailsScreen() {
             disabled={isSubmitting}
           >
             <View className="flex-row items-center">
-              {isSubmitting ? (
+              {isSkipping ? (
                 <ActivityIndicator size="small" color="#29D7DE" />
               ) : (
                 <>
@@ -215,7 +218,7 @@ export default function FinalDetailsScreen() {
               unitPrefix={currencySymbol}
               min={1000}
               max={1000000}
-              step={500}
+              step={100}
               unitStep={500}
             />
           </View>
@@ -295,7 +298,7 @@ export default function FinalDetailsScreen() {
                 entering={FadeInDown.duration(300)}
                 exiting={FadeOutUp.duration(300)}
               >
-                <WheelDatePicker
+                <FormWheelDatePicker
                   initialDate={watch("purchaseDate")}
                   onDateChange={(val) => setValue("purchaseDate", val)}
                 />
@@ -375,7 +378,7 @@ export default function FinalDetailsScreen() {
               !isValid || isSubmitting ? "bg-[#29D7DE]/10" : "bg-[#29D7DE]"
             }`}
           >
-            {isSubmitting ? (
+            {isSaving ? (
               <ActivityIndicator color="#00343F" />
             ) : (
               <Text

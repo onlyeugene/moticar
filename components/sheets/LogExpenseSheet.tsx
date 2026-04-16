@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { format } from "date-fns";
+import { BlurView } from "expo-blur";
 import BottomSheet from "../shared/BottomSheet";
 import ScanIcon from "@/assets/icons/scan.svg";
 
@@ -165,6 +166,13 @@ export default function LogExpenseSheet({
   );
   const [selectedTechnician, setSelectedTechnician] =
     useState<Technician | null>(null);
+  const [extractedTechnicianName, setExtractedTechnicianName] = useState("");
+  const [extractedTechnicianSpecialty, setExtractedTechnicianSpecialty] =
+    useState("");
+  const [partsCost, setPartsCost] = useState<number | null>(null);
+  const [laborCost, setLaborCost] = useState<number | null>(null);
+  const [originalAmount, setOriginalAmount] = useState<number | null>(null);
+  const [originalCurrency, setOriginalCurrency] = useState<string | null>(null);
   const [receipts, setReceipts] = useState<string[]>([]);
 
   const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
@@ -189,6 +197,12 @@ export default function LogExpenseSheet({
       setNotes("");
       setExtraCosts([]);
       setDynamicFields({});
+      setExtractedTechnicianName("");
+      setExtractedTechnicianSpecialty("");
+      setPartsCost(null);
+      setLaborCost(null);
+      setOriginalAmount(null);
+      setOriginalCurrency(null);
 
       // Auto-populate technician
       const techField = category.fields?.find((f) => f.name === "technicianId");
@@ -336,6 +350,27 @@ export default function LogExpenseSheet({
             if (data.amount) setAmount(data.amount.toString());
             if (data.date) setDate(new Date(data.date));
             if (data.notes) setNotes(data.notes);
+            if (data.technicianName)
+              setExtractedTechnicianName(data.technicianName);
+            if (data.technicianSpecialty)
+              setExtractedTechnicianSpecialty(data.technicianSpecialty);
+            if (data.partsCost) {
+              setPartsCost(data.partsCost);
+              setExtraCosts((prev) => [
+                ...prev,
+                { name: "Parts", price: data.partsCost!, qty: 1 },
+              ]);
+            }
+            if (data.laborCost) {
+              setLaborCost(data.laborCost);
+              setExtraCosts((prev) => [
+                ...prev,
+                { name: "Labor", price: data.laborCost!, qty: 1 },
+              ]);
+            }
+            if (data.originalAmount) setOriginalAmount(data.originalAmount);
+            if (data.originalCurrency)
+              setOriginalCurrency(data.originalCurrency);
             if (data.receiptUrl) {
               setReceipts((prev) => [...prev, data.receiptUrl!]);
             }
@@ -396,8 +431,16 @@ export default function LogExpenseSheet({
       paymentMethod,
       notes,
       items: extraCosts.filter((item) => item.name && item.price),
-      metadata: { ...dynamicFields },
+      metadata: {
+        ...dynamicFields,
+        partsCost,
+        laborCost,
+      },
       receipts,
+      technicianName: selectedTechnician ? undefined : extractedTechnicianName,
+      technicianSpecialty: selectedTechnician
+        ? undefined
+        : extractedTechnicianSpecialty,
     };
 
     if (selectedTechnician) {
@@ -478,9 +521,23 @@ export default function LogExpenseSheet({
       title={title as any}
       headerRight={headerRight}
       backgroundColor="#F0F0F0"
-      height='90%'
+      height="90%"
     >
       <View className="flex-1 pb-10">
+        {isScanning && (
+          <BlurView
+            intensity={20}
+            tint="light"
+            className="absolute inset-0 z-50 items-center justify-center bg-white/30"
+          >
+            <View className="bg-white p-6 rounded-2xl shadow-xl items-center gap-4">
+              <ActivityIndicator size="large" color="#29D7DE" />
+              <Text className="text-[#00343F] font-lexendMedium text-[14px]">
+                Scanning receipt...
+              </Text>
+            </View>
+          </BlurView>
+        )}
         {/* Budget Left Banner */}
         <View
           className="px-4 py-2 flex-row justify-center items-center rounded-t-[8px]"
@@ -538,6 +595,13 @@ export default function LogExpenseSheet({
                 }}
               />
             </View>
+
+            {originalAmount && originalCurrency && (
+              <Text className="text-[#8B8B8B] text-[10px] font-lexendRegular text-center -mt-1 mb-2">
+                Converted from {originalCurrency}{" "}
+                {originalAmount.toLocaleString()}
+              </Text>
+            )}
 
             {/* Price Ruler Section */}
             <View className="h-24">
@@ -703,6 +767,15 @@ export default function LogExpenseSheet({
                         {selectedTechnician.name}
                       </Text>
                     </View>
+                  ) : extractedTechnicianName ? (
+                    <View className="items-end">
+                      <Text className="text-[#00AEB5] font-lexendBold text-[14px]">
+                        {extractedTechnicianName}
+                      </Text>
+                      <Text className="text-[#8B8B8B] text-[10px] font-lexendRegular">
+                        New entry from scan
+                      </Text>
+                    </View>
                   ) : (
                     <Text className="text-[#B4B1B1] font-lexendRegular text-[14px]">
                       Select
@@ -799,7 +872,9 @@ export default function LogExpenseSheet({
                             key={index}
                             onPress={() => setActiveIndex(index)}
                             className={`flex-row items-center gap-2 px-3 py-2 rounded-full ${
-                              isSelected ? "bg-[#ECECEC]" : "bg-white border border-[#EFEFEF]"
+                              isSelected
+                                ? "bg-[#ECECEC]"
+                                : "bg-white border border-[#EFEFEF]"
                             }`}
                           >
                             <PartIcon width={16} height={16} color="#00343F" />

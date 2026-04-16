@@ -1,8 +1,9 @@
 import { SpendBreakdown } from "@/types/activity";
 import { Expense } from "@/types/expense";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
-import { Text, TextInput, View } from "react-native";
+import { isSameMonth, isSameWeek, isSameYear } from "date-fns";
+import React, { useMemo, useState } from "react";
+import { Modal, Pressable, Text, TextInput, TouchableOpacity, View } from "react-native";
 import ExpenseListItem from "../dashboard/ExpenseListItem";
 import BottomSheet from "../shared/BottomSheet";
 import ExpenseDetailSheet from "./ExpenseDetailSheet";
@@ -14,6 +15,7 @@ interface ExpenseBreakdownSheetProps {
   expenses?: Expense[];
   currencySymbol: string;
   monthlyBudget?: number;
+  selectedDate: Date;
 }
 
 export default function ExpenseBreakdownSheet({
@@ -23,7 +25,10 @@ export default function ExpenseBreakdownSheet({
   expenses,
   currencySymbol,
   monthlyBudget,
+  selectedDate,
 }: ExpenseBreakdownSheetProps) {
+  const [filterScale, setFilterScale] = useState<"Weekly" | "Monthly" | "Yearly" | "All Time">("Monthly");
+  const [isScaleMenuOpen, setIsScaleMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const [isDetailVisible, setIsDetailVisible] = useState(false);
@@ -34,7 +39,22 @@ export default function ExpenseBreakdownSheet({
     setIsDetailVisible(true);
   };
 
-  const expensesList = expenses || spendData?.expenses || [];
+  const expensesList = useMemo(() => {
+    // If "All Time" is selected, we use the complete list from spendData.allExpenses
+    // If not "All Time", we still use allExpenses as our pool but filter it on the client
+    // using the Dashboard's selectedDate as the reference point.
+    const pool = (spendData as any)?.allExpenses || expenses || spendData?.expenses || [];
+    
+    if (filterScale === "All Time") return pool;
+
+    return pool.filter((exp: any) => {
+      const d = new Date(exp.date);
+      if (filterScale === "Weekly") return isSameWeek(d, selectedDate);
+      if (filterScale === "Monthly") return isSameMonth(d, selectedDate);
+      if (filterScale === "Yearly") return isSameYear(d, selectedDate);
+      return true;
+    });
+  }, [expenses, spendData?.expenses, (spendData as any)?.allExpenses, filterScale, selectedDate]);
 
   // Cumulative sum logic to find which expense exceeded the budget
   const exceedingExpenseId = React.useMemo(() => {
@@ -46,7 +66,7 @@ export default function ExpenseBreakdownSheet({
     const referenceYear = spendData?.period?.year;
 
     // Filter and Sort all expenses for THAT specific month by date ascending (oldest first)
-    const currentMonthExpenses = expensesList.filter((exp) => {
+    const currentMonthExpenses = expensesList.filter((exp: Expense) => {
       const d = new Date(exp.date);
       return (
         (!referenceMonth || d.getMonth() + 1 === referenceMonth) &&
@@ -88,12 +108,13 @@ export default function ExpenseBreakdownSheet({
       <View className="flex-1 h-[1px] bg-[#F8953A]" />
     </View>
   );
-  const groupedExpenses = expensesList.reduce((acc: any, expense) => {
+  const groupedExpenses = expensesList.reduce((acc: any, expense: Expense) => {
     const date = new Date(expense.date);
     const dateKey = date
       .toLocaleDateString("en-GB", {
         day: "2-digit",
-        month: "long",
+        month: "short",
+        year: "numeric",
       })
       .toUpperCase();
 
@@ -111,20 +132,40 @@ export default function ExpenseBreakdownSheet({
   });
 
   const headerRight = (
-    <View className="">
+    <TouchableOpacity onPress={() => setIsScaleMenuOpen(true)} className="p-2">
       <Ionicons name="filter" size={20} color="#00343F" />
-    </View>
+    </TouchableOpacity>
   );
 
-  const totalAmount = React.useMemo(() => {
-    return expensesList.reduce((sum, exp) => sum + exp.amount, 0);
+  const totalAmount = useMemo(() => {
+    return expensesList.reduce((sum: number, exp: Expense) => sum + exp.amount, 0);
   }, [expensesList]);
+
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
 
   const title = (
     <View className="flex-col items-start gap-2">
-      <Text className="text-[#00343F] text-[16px] font-lexendBold">
-        Expense Breakdown
-      </Text>
+      <View className="flex-row items-baseline gap-1">
+        <Text className="text-[#00343F] text-[16px] font-lexendBold">
+          Expense Breakdown
+        </Text>
+        <Text className="text-[#8B8B8B] text-[12px] font-lexendRegular">
+          • {filterScale}
+        </Text>
+      </View>
       <Text className="text-[#8B8B8B] text-[12px] font-lexendRegular">
         Total{" "}
         <Text className="text-[#00AEB5] text-[13px] font-lexendSemiBold">
@@ -205,6 +246,43 @@ export default function ExpenseBreakdownSheet({
         expense={selectedExpense}
         currencySymbol={currencySymbol}
       />
+
+      <Modal
+        visible={isScaleMenuOpen}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setIsScaleMenuOpen(false)}
+      >
+        <Pressable
+          className="flex-1 bg-black/40 justify-end"
+          onPress={() => setIsScaleMenuOpen(false)}
+        >
+          <View className="bg-white rounded-t-[24px] p-6 pb-12 shadow-lg">
+            <Text className="text-[#001A1F] text-[18px] font-lexendBold mb-4">
+              Filter By Period
+            </Text>
+            {(["Weekly", "Monthly", "Yearly", "All Time"] as const).map((opt) => (
+              <TouchableOpacity
+                key={opt}
+                className="py-4 border-b border-[#F0F0F0] flex-row items-center justify-between"
+                onPress={() => {
+                  setFilterScale(opt);
+                  setIsScaleMenuOpen(false);
+                }}
+              >
+                <Text
+                  className={`text-[16px] ${filterScale === opt ? "text-[#00AEB5] font-lexendBold" : "text-[#879090] font-lexendRegular"}`}
+                >
+                  {opt}
+                </Text>
+                {filterScale === opt && (
+                  <Ionicons name="checkmark-circle" size={24} color="#00AEB5" />
+                )}
+              </TouchableOpacity>
+            ))}
+          </View>
+        </Pressable>
+      </Modal>
     </BottomSheet>
   );
 }

@@ -72,11 +72,12 @@ export const useActivitySpends = (carId: string, month?: string, year?: string) 
     queryKey: ["activity", "spends", carId, month, year],
     queryFn: async () => {
       const breakdown = await activityService.getSpendsChart(carId, month, year);
-      // Fetch all expenses to ensure the trend chart has data for previous months
+      // We still fetch all expenses for historical charts (like CPM) 
+      // but we store them separately to avoid polluting the monthly breakdown.
       const allExpenses = await expenseService.getExpensesByCarId(carId);
       return {
         ...breakdown,
-        expenses: allExpenses.expenses
+        allExpenses: allExpenses.expenses
       };
     },
     enabled: !!carId,
