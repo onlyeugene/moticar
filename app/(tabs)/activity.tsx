@@ -169,7 +169,7 @@ export default function ActivityScreen() {
           </ScrollView>
         </View>
 
-        {(activeActivityTab === "Trips" || activeActivityTab === "Spends") && (
+        {activeActivityTab === "Trips" && (
           <DateNavigator
             selectedDate={selectedDate}
             onChange={setSelectedDate}

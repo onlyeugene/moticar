@@ -185,7 +185,7 @@ export const useUpdateProfile = () => {
       queryClient.invalidateQueries({ queryKey: ["user"] });
       queryClient.invalidateQueries({ queryKey: ["cars"] });
       queryClient.invalidateQueries({ queryKey: ["expenses"] });
-      queryClient.invalidateQueries({ queryKey: ["activities"] });
+      queryClient.invalidateQueries({ queryKey: ["activity"] });
       
       // Specifically refetch the main profile query
       queryClient.refetchQueries({ queryKey: ["user", "me"] });

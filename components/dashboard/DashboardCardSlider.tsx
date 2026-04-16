@@ -40,7 +40,7 @@ export default function DashboardCardSlider({ carId, month, year, monthlyBudget 
   const isLoading = spendLoading || tripsLoading;
 
   const currentMonthCPM = calculateCPM(
-    spendData?.expenses || [],
+    spendData?.allExpenses || [],
     tripsData?.trips || [],
     month || new Date().getMonth() + 1,
     year || new Date().getFullYear()
@@ -49,7 +49,7 @@ export default function DashboardCardSlider({ carId, month, year, monthlyBudget 
   const prevMonth = month === 1 ? 12 : (month || 1) - 1;
   const prevYear = month === 1 ? (year || 2024) - 1 : (year || 2024);
   const prevMonthCPM = calculateCPM(
-    spendData?.expenses || [],
+    spendData?.allExpenses || [],
     tripsData?.trips || [],
     prevMonth,
     prevYear
@@ -60,7 +60,7 @@ export default function DashboardCardSlider({ carId, month, year, monthlyBudget 
   const currentMonth = month || new Date().getMonth() + 1;
   const currentYear = year || new Date().getFullYear();
 
-  const weeklyData = getWeeklySpendData(spendData?.expenses || [], currentMonth, currentYear, selectedWeek);
+  const weeklyData = getWeeklySpendData(spendData?.allExpenses || [], currentMonth, currentYear, selectedWeek);
   const maxWeeklySpend = Math.max(...weeklyData.map(d => d.amount), 1);
   const weeklyAverage = spendData?.totalSpend ? spendData.totalSpend / 4 : 0;
   const weeklyBudget = monthlyBudget ? monthlyBudget / 4 : 30000;

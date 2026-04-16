@@ -10,6 +10,7 @@ import {
   Dimensions,
   FlatList,
   Image,
+  ScrollView,
   Text,
   TouchableOpacity,
   View,
@@ -124,17 +125,23 @@ export default function WelcomeScreen() {
   }).current;
 
   return (
-    <View className="flex-1 bg-[#013037]">
-      {/* ── Fixed Header: Logo ── */}
-      <View
-        className="absolute top-0 w-full items-center pt-16"
-        style={{ zIndex: 40 }}
-      >
-        <LogoIcon width={130} height={34} />
-      </View>
+    <ScrollView
+      contentContainerStyle={{ flexGrow: 1 }} 
+      bounces={false} 
+      showsVerticalScrollIndicator={false}
+      className="bg-[#013037]"
+    >
+      <View className="flex-1 bg-[#013037]" style={{ minHeight: 820 }}>
+        {/* ── Fixed Header: Logo ── */}
+        <View
+          className="absolute top-0 w-full items-center pt-16"
+          style={{ zIndex: 40 }}
+        >
+          <LogoIcon width={130} height={34} />
+        </View>
 
-      {/* ── Sliding Content ── */}
-      <FlatList
+        {/* ── Sliding Content ── */}
+        <FlatList
         ref={flatListRef}
         data={SLIDES}
         horizontal
@@ -267,5 +274,6 @@ export default function WelcomeScreen() {
         </View>
       </View>
     </View>
+    </ScrollView>
   );
 }

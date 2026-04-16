@@ -23,7 +23,6 @@ export const CURRENCIES = [
   { label: "Kenyan Shilling", value: "KES", symbol: "KSh", country: "Kenya" },
   { label: "Ghanaian Cedi", value: "GHS", symbol: "GH₵", country: "Ghana" },
   { label: "AED", value: "AED", symbol: "د.إ", country: "UAE" },
-  { label: "Australian Dollar", value: "AUD", symbol: "A$", country: "Australia" },
   { label: "BRL", value: "BRL", symbol: "R$", country: "Brazil" },
   { label: "CHF", value: "CHF", symbol: "Fr", country: "Switzerland" },
   { label: "DKK", value: "DKK", symbol: "kr", country: "Denmark" },

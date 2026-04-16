@@ -53,6 +53,8 @@ export interface CreateExpenseInput {
   items?: ExpenseItem[];
   metadata?: Record<string, any>;
   notes?: string;
+  technicianName?: string;
+  technicianSpecialty?: string;
 }
 
 export interface UpdateExpenseInput {
@@ -67,6 +69,8 @@ export interface UpdateExpenseInput {
   items?: ExpenseItem[];
   metadata?: Record<string, any>;
   notes?: string;
+  technicianName?: string;
+  technicianSpecialty?: string;
 }
 
 export interface ExpenseCategory {
@@ -134,5 +138,11 @@ export interface ScanReceiptResponse {
   currency: string;
   category?: string;
   notes?: string;
+  technicianName?: string;
+  technicianSpecialty?: string;
+  partsCost?: number;
+  laborCost?: number;
+  originalAmount?: number;
+  originalCurrency?: string;
   receiptUrl: string;
 }
