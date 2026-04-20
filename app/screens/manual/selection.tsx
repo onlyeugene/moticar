@@ -190,20 +190,21 @@ export default function Selection() {
           <View className="border-b border-[#06454F]" />
         </View>
 
-        {/* Next Button */}
-        <View className="absolute bottom-10 left-0 right-0">
-          <TouchableOpacity
-            disabled={!selectedYear || !selectedFuelType}
-            onPress={handleNext}
-            activeOpacity={0.8}
-            className={`h-16 rounded-full items-center justify-center w-[90%] mx-auto ${
-              selectedYear && selectedFuelType ? "bg-[#29D7DE]" : "bg-[#004648]"
-            }`}
-          >
-            <Text className="font-lexendBold text-lg text-[#00343F]">Next</Text>
-          </TouchableOpacity>
-        </View>
       </Container>
+
+      {/* Anchored Next Button */}
+      <View className="px-4 pb-10">
+        <TouchableOpacity
+          disabled={!selectedYear || !selectedFuelType}
+          onPress={handleNext}
+          activeOpacity={0.8}
+          className={`h-16 rounded-full items-center justify-center w-full ${
+            selectedYear && selectedFuelType ? "bg-[#29D7DE]" : "bg-[#004648]"
+          }`}
+        >
+          <Text className="font-lexendBold text-lg text-[#00343F]">Next</Text>
+        </TouchableOpacity>
+      </View>
     </ScreenBackground>
   );
 }

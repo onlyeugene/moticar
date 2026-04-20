@@ -335,8 +335,8 @@ export default function CarDetailsScreen() {
 
           <ScrollView
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 120 }}
-            className="mt-4"
+            contentContainerStyle={{ paddingBottom: 60 }}
+            className="flex-1 mt-4"
           >
             <View className="px-5">
               <View className="bg-white rounded-[20px] border border-[#D6D5CA] overflow-hidden">
@@ -379,7 +379,7 @@ export default function CarDetailsScreen() {
           </ScrollView>
 
           {/* Action Button */}
-          <View className="absolute bottom-10 left-6 right-6">
+          <View className="pt-4 pb-12 px-6">
             <TouchableOpacity
               onPress={handleConfirm}
               activeOpacity={0.8}

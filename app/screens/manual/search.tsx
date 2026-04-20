@@ -1,4 +1,3 @@
-import Container from "@/components/shared/container";
 import { CarLogo } from "@/components/shared/CarLogo";
 import { ScreenBackground } from "@/components/ui/ScreenBackground";
 import { useSearchCars } from "@/hooks/useCars";
@@ -13,8 +12,11 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import CarTypeIcon from "@/components/shared/CarTypeIcon";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface CarResult {
   make: string;
@@ -31,6 +33,7 @@ interface CarResult {
 }
 
 export default function Search() {
+  const insets = useSafeAreaInsets();
   const [query, setQuery] = useState("");
   const [selectedCar, setSelectedCar] = useState<CarResult | null>(null);
 
@@ -138,126 +141,132 @@ export default function Search() {
 
   return (
     <ScreenBackground>
-      <Container>
-        <View className="flex-row items-center justify-between">
-          <Pressable onPress={() => router.back()}>
-            <Ionicons name="arrow-back" size={24} color="white" />
-          </Pressable>
-          <TouchableOpacity
-            onPress={() =>
-              router.push({
-                pathname: "/screens/manual/details",
-                params: { make: "", model: "", year: "" },
-              })
-            }
-          >
-            <View className="flex-row items-center">
-              <Text className="text-[#29D7DE] font-lexendMedium text-lg mr-1">
-                Skip
-              </Text>
-              <Ionicons name="chevron-forward" size={18} color="#29D7DE" />
-            </View>
-          </TouchableOpacity>
-        </View>
-
-        <View className="mt-8">
-          <Text className="text-white text-[32px] font-lexendMedium">
-            Search for your car
-          </Text>
-          <Text className="text-[#9BBABB] font-lexendRegular text-[14px] mt-2 leading-6">
-            Start by adding the details of your personal car for a rich user
-            experience
-          </Text>
-        </View>
-
-        {/* Search Input */}
-        <View className="mt-8 flex-row items-center bg-[#012227] border border-[#09515D] rounded-xl px-4 h-14">
-          <TextInput
-            className="flex-1 text-white font-lexendRegular text-base"
-            placeholder="Search by car name or moticode"
-            placeholderTextColor="#356D75"
-            value={query}
-            onChangeText={(text) => {
-              setQuery(text);
-              setSelectedCar(null);
-            }}
-            autoFocus
-            clearButtonMode="while-editing"
-          />
-          <Ionicons name="search-outline" size={20} color="#356D75" />
-        </View>
-
-        {/* Results */}
-        <View className="flex-1 mt-8">
-          {isLoading ? (
-            <View className="flex-1 items-center justify-center">
-              <ActivityIndicator color="#FDEF56" />
-            </View>
-          ) : isError ? (
-            <View className="flex-1 items-center justify-center">
-              <Ionicons
-                name="cloud-offline-outline"
-                size={48}
-                color="#ED5E5E"
-              />
-              <Text className="text-white font-lexendBold text-[18px] mt-4">
-                Network Error
-              </Text>
-              <Text className="text-[#9BBABB] font-lexendRegular text-center mt-2 px-6">
-                Something went wrong. Please check your connection and try
-                again.
-              </Text>
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="flex-1"
+        style={{ paddingTop: insets.top + 20 }}
+      >
+        <View className="px-4 flex-1">
+          {/* Fixed Header Content */}
+          <View>
+            <View className="flex-row items-center justify-between">
+              <Pressable onPress={() => router.replace('/(onboarding)')}>
+                <Ionicons name="arrow-back" size={24} color="white" />
+              </Pressable>
               <TouchableOpacity
-                onPress={handleRetry}
-                className="mt-6 px-8 py-3 bg-[#29D7DE] rounded-full"
+                onPress={() =>
+                  router.push({
+                    pathname: "/screens/manual/details",
+                    params: { make: "", model: "", year: "" },
+                  })
+                }
               >
-                <Text className="text-[#00343F] font-lexendBold">Retry</Text>
+                <View className="flex-row items-center">
+                  <Text className="text-[#29D7DE] font-lexendMedium text-lg mr-1">
+                    Skip
+                  </Text>
+                  <Ionicons name="chevron-forward" size={18} color="#29D7DE" />
+                </View>
               </TouchableOpacity>
             </View>
-          ) : query.length > 2 && Object.keys(groupedCars).length === 0 ? (
-            <View className="flex-1 items-center justify-center">
-              <Text className="text-[#9BBABB] font-lexendRegular text-center">
-                No cars found matching "{query}"
+
+            <View className="mt-8">
+              <Text className="text-white text-[32px] font-lexendMedium">
+                Search for your car
+              </Text>
+              <Text className="text-[#9BBABB] font-lexendRegular text-[14px] mt-2 leading-6">
+                Start by adding the details of your personal car for a rich user
+                experience
               </Text>
             </View>
-          ) : (
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: 120 }}
-            >
-              {Object.entries(groupedCars).map(([make, cars]) => (
-                <View key={make} className="mb-6">
-                  <View className="flex-row items-center mb-4">
-                    <Text className="text-[#99C1C7] font-lexendMedium text-lg uppercase mr-3">
-                      {make} 
-                    </Text>
-                    <View className="flex-1 h-[1px] bg-[#06454F]" />
+
+            {/* Search Input */}
+            <View className="mt-8 flex-row items-center bg-[#012227] border border-[#09515D] rounded-xl px-4 h-14">
+              <TextInput
+                className="flex-1 text-white font-lexendRegular text-base"
+                placeholder="Search by car name or moticode"
+                placeholderTextColor="#356D75"
+                value={query}
+                onChangeText={(text) => {
+                  setQuery(text);
+                  setSelectedCar(null);
+                }}
+                autoFocus
+                clearButtonMode="while-editing"
+              />
+              <Ionicons name="search-outline" size={20} color="#356D75" />
+            </View>
+          </View>
+
+          {/* Scrollable Results */}
+          <View className="flex-1 mt-8">
+            {isLoading ? (
+              <View className="flex-1 items-center justify-center">
+                <ActivityIndicator color="#FDEF56" />
+              </View>
+            ) : isError ? (
+              <View className="flex-1 items-center justify-center">
+                <Ionicons
+                  name="cloud-offline-outline"
+                  size={48}
+                  color="#ED5E5E"
+                />
+                <Text className="text-white font-lexendBold text-[18px] mt-4">
+                  Network Error
+                </Text>
+                <Text className="text-[#9BBABB] font-lexendRegular text-center mt-2 px-6">
+                  Something went wrong. Please check your connection and try
+                  again.
+                </Text>
+                <TouchableOpacity
+                  onPress={handleRetry}
+                  className="mt-6 px-8 py-3 bg-[#29D7DE] rounded-full"
+                >
+                  <Text className="text-[#00343F] font-lexendBold">Retry</Text>
+                </TouchableOpacity>
+              </View>
+            ) : query.length > 2 && Object.keys(groupedCars).length === 0 ? (
+              <View className="flex-1 items-center justify-center">
+                <Text className="text-[#9BBABB] font-lexendRegular text-center">
+                  No cars found matching "{query}"
+                </Text>
+              </View>
+            ) : (
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 20 }}
+                className="flex-1"
+              >
+                {Object.entries(groupedCars).map(([make, cars]) => (
+                  <View key={make} className="mb-6">
+                    <View className="flex-row items-center mb-4">
+                      <Text className="text-[#99C1C7] font-lexendMedium text-lg uppercase mr-3">
+                        {make} 
+                      </Text>
+                      <View className="flex-1 h-[1px] bg-[#06454F]" />
+                    </View>
+                    {cars.map(renderCarCard)}
                   </View>
-                  {cars.map(renderCarCard)}
-                </View>
-              ))}
-            </ScrollView>
-          )}
+                ))}
+              </ScrollView>
+            )}
+          </View>
         </View>
 
-        {/* Next Button */}
-        <View className="absolute bottom-10 left-0 right-0">
+        {/* Anchored Next Button */}
+        <View className="px-4 pb-10">
           <TouchableOpacity
             disabled={!selectedCar}
             onPress={handleNext}
             activeOpacity={0.8}
-            className={`h-16 rounded-full items-center justify-center w-[90%] mx-auto ${
-              selectedCar
-                ? "bg-[#29D7DE]"
-                : "bg-[#004648]"
+            className={`h-16 rounded-full items-center justify-center w-full ${
+              selectedCar ? "bg-[#29D7DE]" : "bg-[#004648]"
             }`}
           >
-            <Text className={`font-lexendBold text-lg text-[#00343F]`}>
-              Next
-            </Text>
+            <Text className="font-lexendBold text-lg text-[#00343F]">Next</Text>
           </TouchableOpacity>
         </View>
-      </Container>
+      </KeyboardAvoidingView>
     </ScreenBackground>
   );
 }

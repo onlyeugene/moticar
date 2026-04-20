@@ -136,6 +136,18 @@ export default function AddDocumentSheet({
     }
   }, [visible, category, initialData]);
 
+  // Auto-fill expiry date to +1 year when a start/issue date is selected
+  useEffect(() => {
+    const referenceDate = formState.issueDate || formState.testDate || formState.startDate;
+    // Only auto-fill if we have a reference date and expiry date hasn't been set yet (or is manually cleared)
+    // and we are currently in a state where auto-filling makes sense (not just loading initial data)
+    if (referenceDate && !formState.expiryDate) {
+      const nextYear = new Date(referenceDate);
+      nextYear.setFullYear(nextYear.getFullYear() + 1);
+      setFormState(prev => ({ ...prev, expiryDate: nextYear }));
+    }
+  }, [formState.issueDate, formState.testDate, formState.startDate]);
+
   const handlePickImage = async (field: keyof Pick<DocumentFormState, 'documentUrl' | 'receiptUrl' | 'invoiceUrl'>) => {
     Alert.alert("Select Photo", "Choose a source", [
       { text: "Take Photo", onPress: () => initiatePick(field, "camera") },

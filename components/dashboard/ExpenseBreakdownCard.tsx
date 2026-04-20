@@ -35,32 +35,42 @@ const ExpenseBreakdownCard: React.FC<ExpenseBreakdownCardProps> = ({
     setIsDetailVisible(true);
   };
 
-  // Derive sparkline data from expenses
+  // Derive sparkline data from expenses - cumulative
   const chartData = useMemo(() => {
-    const listToUse = expenses || spendData?.expenses;
-    if (!listToUse || listToUse.length === 0) return [];
+    const listToUse = expenses || spendData?.expenses || [];
+    const referenceMonth = spendData?.period?.month || new Date().getMonth() + 1;
+    const referenceYear = spendData?.period?.year || new Date().getFullYear();
+
+    // Get number of days in the month
+    const daysInMonth = new Date(referenceYear, referenceMonth, 0).getDate();
+    const today = new Date();
+    const isCurrentMonth = today.getMonth() + 1 === referenceMonth && today.getFullYear() === referenceYear;
+    const lastDayToRender = isCurrentMonth ? today.getDate() : daysInMonth;
 
     // Group expenses by date and sum amounts
     const dailyTotals: Record<number, number> = {};
     listToUse.forEach((exp) => {
       const date = new Date(exp.date);
-      const day = date.getDate();
-      dailyTotals[day] = (dailyTotals[day] || 0) + (exp.amount || 0);
+      if (date.getMonth() + 1 === referenceMonth && date.getFullYear() === referenceYear) {
+        const day = date.getDate();
+        dailyTotals[day] = (dailyTotals[day] || 0) + (exp.amount || 0);
+      }
     });
 
-    const days = Object.keys(dailyTotals)
-      .map(Number)
-      .sort((a, b) => a - b);
-
-    if (days.length === 0) return [];
-
-    // Ensure at least two points for the chart to render properly
-    if (days.length === 1) {
-      return [0, dailyTotals[days[0]]];
+    // Calculate cumulative sums for each day up to lastDayToRender
+    const cumulativeData: number[] = [];
+    let runningTotal = 0;
+    for (let day = 1; day <= lastDayToRender; day++) {
+      runningTotal += dailyTotals[day] || 0;
+      cumulativeData.push(runningTotal);
     }
 
-    return days.map((d) => dailyTotals[d]);
-  }, [expenses, spendData?.expenses]);
+    // Ensure at least two points for the chart to render properly
+    if (cumulativeData.length === 0) return [0, 0];
+    if (cumulativeData.length === 1) return [0, cumulativeData[0]];
+
+    return cumulativeData;
+  }, [expenses, spendData?.expenses, spendData?.period]);
 
   const expensesList = expenses || spendData?.expenses || [];
 
@@ -158,6 +168,7 @@ const ExpenseBreakdownCard: React.FC<ExpenseBreakdownCardProps> = ({
             <View className="my-2">
               <Sparkline
                 data={chartData}
+                budget={monthlyBudget}
                 width={containerWidth}
                 height={100}
                 currencySymbol={currencySymbol}

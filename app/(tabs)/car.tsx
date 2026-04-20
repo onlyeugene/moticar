@@ -24,6 +24,11 @@ import { router } from "expo-router";
 import { useMemo, useState, useCallback } from "react";
 import { ActivityIndicator, ScrollView, Text, View, Alert, RefreshControl } from "react-native";
 import { useQueryClient } from "@tanstack/react-query";
+import LogExpenseSheet from "@/components/sheets/LogExpenseSheet";
+import AddReminderSheet from "@/components/sheets/AddReminderSheet";
+import { type ExpenseCategory } from "@/types/expense";
+import { useExpenseCategories } from "@/hooks/useExpenses";
+import * as WebBrowser from 'expo-web-browser';
 
 export default function CarScreen() {
   const queryClient = useQueryClient();
@@ -55,6 +60,13 @@ export default function CarScreen() {
     useState<DiagnosticItem | null>(null);
   const [selectedTechnician, setSelectedTechnician] =
     useState<Technician | null>(null);
+  
+  const [isLogExpenseVisible, setIsLogExpenseVisible] = useState(false);
+  const [isAddReminderVisible, setIsAddReminderVisible] = useState(false);
+  const [targetExpenseCategory, setTargetExpenseCategory] = useState<ExpenseCategory | null>(null);
+  const [targetReminderCategory, setTargetReminderCategory] = useState<string>("Others");
+
+  const { data: expenseCategories } = useExpenseCategories(selectedCarId || "");
 
   const cars = carsData?.cars || [];
   const technicians = (techniciansData?.technicians || []) as Technician[];
@@ -98,6 +110,49 @@ export default function CarScreen() {
     if (item) {
       setSelectedDiagnostic(item);
     }
+  };
+
+  const handleRecordExpense = () => {
+    if (!selectedDiagnostic || !expenseCategories) return;
+    
+    // Map diagnostic key to expense category name
+    const mapping: Record<string, string> = {
+      fuel: "Fuel Top-Up",
+      engineOil: "Engine",
+      tyres: "Accessories & Parts",
+      brakePads: "Accessories & Parts",
+      battery: "Accessories & Parts",
+    };
+
+    const categoryName = mapping[selectedDiagnostic.key] || "Others";
+    const category = expenseCategories.categories.find((c: any) => c.name === categoryName);
+    
+    if (category) {
+      setTargetExpenseCategory(category);
+      setSelectedDiagnostic(null);
+      setIsLogExpenseVisible(true);
+    }
+  };
+
+  const handleSetReminder = () => {
+    if (!selectedDiagnostic) return;
+
+    // Map diagnostic key to reminder category
+    const mapping: Record<string, string> = {
+      fuel: "Others",
+      engineOil: "Servicing",
+      tyres: "Servicing",
+      brakePads: "Servicing",
+      battery: "Others",
+    };
+
+    setTargetReminderCategory(mapping[selectedDiagnostic.key] || "Others");
+    setSelectedDiagnostic(null);
+    setIsAddReminderVisible(true);
+  };
+
+  const handleFindFuelStation = () => {
+    WebBrowser.openBrowserAsync("https://www.google.com/maps/search/?api=1&query=fuel+stations+near+me");
   };
 
   return (
@@ -204,7 +259,22 @@ export default function CarScreen() {
         onClose={() => setSelectedDiagnostic(null)}
         item={selectedDiagnostic}
         activeCar={activeCar}
-        onRecordExpense={() => setSelectedDiagnostic(null)}
+        onRecordExpense={handleRecordExpense}
+        onSetReminder={handleSetReminder}
+        onFindFuelStation={handleFindFuelStation}
+      />
+
+      <LogExpenseSheet
+        visible={isLogExpenseVisible}
+        onClose={() => setIsLogExpenseVisible(false)}
+        category={targetExpenseCategory}
+      />
+
+      <AddReminderSheet
+        visible={isAddReminderVisible}
+        onClose={() => setIsAddReminderVisible(false)}
+        category={targetReminderCategory}
+        carId={selectedCarId || ""}
       />
 
       <TechnicianDetailSheet
