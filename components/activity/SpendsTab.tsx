@@ -599,6 +599,7 @@ const SpendsTab: React.FC<SpendsTabProps> = ({
         onClose={() => setIsBreakdownVisible(false)}
         expenses={selectedExpenses}
         currencySymbol={currencySymbol}
+        selectedDate={selectedDate}
       />
     </View>
   );

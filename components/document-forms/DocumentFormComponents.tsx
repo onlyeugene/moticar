@@ -9,6 +9,8 @@ import {
   Image,
   ActivityIndicator,
 } from "react-native";
+import { useAuthStore } from "@/store/useAuthStore";
+import { getCurrencySymbol } from "@/utils/currency";
 import PriceRuler from "../sheets/PriceRuler";
 import Photo from "@/assets/icons/camera_icon.svg";
 import Calendar from '@/assets/icons/calendar.svg'
@@ -239,13 +241,16 @@ export function AmountBlock({
   required?: boolean;
   disabled?: boolean;
 }) {
+  const user = useAuthStore((state) => state.user);
+  const currencySymbol = getCurrencySymbol(user?.preferredCurrency);
+
   return (
     <View className="py-6 items-center">
       <Text className="text-[#8B8B8B] font-lexendRegular text-[12px] mb-1">
         {label} {required && <Text className="text-[#00AEB5]">*</Text>}
       </Text>
       <Text className="text-[#001A1F] font-lexendBold text-[34px] mb-4">
-        ₦{value.toLocaleString()}
+        {currencySymbol}{value.toLocaleString()}
       </Text>
       {!disabled && <PriceRuler value={value} onValueChange={onChange} />}
     </View>

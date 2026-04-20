@@ -20,6 +20,7 @@ export default function Scan() {
         "We will try to make it very easy to get \nonly the needed details",
       completed: picturesCompleted,
       route: "/screens/scan/pictures",
+      required: true,
     },
     {
       id: 2,
@@ -28,14 +29,13 @@ export default function Scan() {
         "Cutting down the time to manually \nenter the details of your car only",
       completed: licenseCompleted,
       route: "/screens/scan/license",
+      required: false,
     },
   ];
 
   const handleNext = () => {
     if (!picturesCompleted) {
       router.push("/screens/scan/pictures");
-    } else if (!licenseCompleted) {
-      router.push("/screens/scan/license");
     } else if (isConfirmed) {
       router.push("/screens/scan/finalize");
     }
@@ -45,7 +45,8 @@ export default function Scan() {
     router.replace("/(onboarding)");
   };
 
-  const isFlowComplete = picturesCompleted && licenseCompleted;
+  // Licence is optional — pictures are enough to proceed
+  const isFlowComplete = picturesCompleted;
 
   return (
     <ScreenBackground>
@@ -138,14 +139,21 @@ export default function Scan() {
                     </View>
                   )}
                   <View className="">
-                    <Text
-                      className={`text-[16px] font-lexendSemiBold ${
-                        scan.completed ? "text-[#87ECF0]/60" : "text-[#87ECF0]"
-                      }`}
-                      numberOfLines={2}
-                    >
-                      {scan.title}
-                    </Text>
+                    <View className="flex-row items-center gap-2">
+                      <Text
+                        className={`text-[16px] font-lexendSemiBold ${
+                          scan.completed ? "text-[#87ECF0]/60" : "text-[#87ECF0]"
+                        }`}
+                        numberOfLines={2}
+                      >
+                        {scan.title}
+                      </Text>
+                      {!scan.required && (
+                        <Text className="text-[6px] font-lexendRegular text-[#506D72] border border-[#506D72] rounded-full px-2 py-0.5">
+                          Optional
+                        </Text>
+                      )}
+                    </View>
                     <Text
                       className={`text-[14px] font-lexendRegular mt-1 ${
                         scan.completed ? "text-[#9BBABB]/50" : "text-[#9BBABB]"

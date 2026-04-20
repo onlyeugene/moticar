@@ -23,6 +23,7 @@ import ScanIcon from "@/assets/icons/scan.svg";
 import Pen from "@/assets/icons/pen.svg";
 import Trash from "@/assets/icons/trash.svg";
 import { ActivityIndicator } from "react-native";
+import { useAuthStore } from "@/store/useAuthStore";
 
 interface AddDocumentSheetProps {
   visible: boolean;
@@ -69,6 +70,7 @@ export default function AddDocumentSheet({
   carId,
   initialData,
 }: AddDocumentSheetProps) {
+  const user = useAuthStore(state => state.user);
   const { data: carData } = useCarById(carId);
   const car = carData?.car;
 
@@ -269,7 +271,8 @@ export default function AddDocumentSheet({
       const payload = {
         ...finalData,
         type: category,
-        fileUrl: finalData.documentUrl
+        fileUrl: finalData.documentUrl,
+        currency: user?.preferredCurrency || 'NGN'
       };
 
       if (isExisting) {

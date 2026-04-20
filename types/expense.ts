@@ -29,6 +29,8 @@ export interface Expense {
   technicianId?: string | Technician;
   paymentMethod: 'Cash' | 'Bank Transfer' | 'Debit Card';
   items?: ExpenseItem[];
+  originalAmount?: number;
+  originalCurrency?: string;
   metadata?: Record<string, any>;
   notes?: string;
   createdAt: string;
@@ -51,6 +53,8 @@ export interface CreateExpenseInput {
   technicianId?: string;
   paymentMethod: string;
   items?: ExpenseItem[];
+  originalAmount?: number;
+  originalCurrency?: string;
   metadata?: Record<string, any>;
   notes?: string;
   technicianName?: string;
@@ -67,6 +71,8 @@ export interface UpdateExpenseInput {
   technicianId?: string;
   paymentMethod?: string;
   items?: ExpenseItem[];
+  originalAmount?: number;
+  originalCurrency?: string;
   metadata?: Record<string, any>;
   notes?: string;
   technicianName?: string;

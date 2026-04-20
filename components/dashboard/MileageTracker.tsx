@@ -89,7 +89,7 @@ export default function MileageTracker({
 
             <View className="items-end">
               <View className="flex-row items-center gap-1.5">
-                <Ionicons name="warning-outline" size={16} color="#F8953A" />
+                {/* <Ionicons name="warning-outline" size={16} color="#F8953A" /> */}
                 <Text className="text-[#006C70] font-lexendBold text-[32px] leading-[38px] tracking-tight">
                   {mileage.toLocaleString()}
                 </Text>

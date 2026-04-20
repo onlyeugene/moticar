@@ -11,6 +11,8 @@ import DiagnosticListSheet, {
   getDiagnosticItems,
   type DiagnosticItem,
 } from "@/components/sheets/DiagnosticListSheet";
+import { useAuthStore } from "@/store/useAuthStore";
+import { getCurrencySymbol } from "@/utils/currency";
 import DiagnosticDetailSheet from "@/components/sheets/DiagnosticDetailSheet";
 import TechnicianDetailSheet from "@/components/sheets/TechnicianDetailSheet";
 import { type Technician } from "@/types/technician";
@@ -89,7 +91,9 @@ export default function CarScreen() {
   });
 
   const handleSelectDiagnosticByKey = (key: string) => {
-    const items = getDiagnosticItems(activeCar);
+    const user = useAuthStore.getState().user;
+    const currencySymbol = getCurrencySymbol(user?.preferredCurrency);
+    const items = getDiagnosticItems(activeCar, currencySymbol);
     const item = items.find((i) => i.key === key);
     if (item) {
       setSelectedDiagnostic(item);

@@ -1,16 +1,13 @@
 export const LANGUAGES = [
-  { label: "English (US)", value: "en-US", flag: "🇺🇸" },
-  { label: "English (UK)", value: "en-GB", flag: "🇬🇧" },
-  { label: "Yoruba", value: "yo-NG", flag: "🇳🇬" },
-  { label: "Pidgin", value: "pcm-NG", flag: "🇳🇬" },
+  { label: "English", value: "en-GB", flag: "🇬🇧" },
   { label: "French", value: "fr-FR", flag: "🇫🇷" },
   { label: "German", value: "de-DE", flag: "🇩🇪" },
   { label: "Spanish", value: "es-ES", flag: "🇪🇸" },
   { label: "Chinese", value: "zh-CN", flag: "🇨🇳" },
+  { label: 'Portuguese', value: 'pt-PT', flag: '🇵🇹'}
 ];
 
 export const CURRENCIES = [
-  { label: "Naira", value: "NGN", symbol: "₦", country: "Nigeria" },
   { label: "US Dollar", value: "USD", symbol: "$", country: "United States" },
   { label: "British Pound", value: "GBP", symbol: "£", country: "United Kingdom" },
   { label: "Euro", value: "EUR", symbol: "€", country: "European Union" },
@@ -42,6 +39,7 @@ export const CURRENCIES = [
   { label: "UGX", value: "UGX", symbol: "USh", country: "Uganda" },
   { label: "XAF", value: "XAF", symbol: "FCFA", country: "Central Africa" },
   { label: "XOF", value: "XOF", symbol: "CFA", country: "West Africa" },
+  { label: "Naira", value: "NGN", symbol: "₦", country: "Nigeria" },
 ];
 
 export const getCurrencySymbol = (code?: string) => {

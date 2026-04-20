@@ -14,7 +14,7 @@ export const usePushNotifications = () => {
   const [notification] = useState<any | undefined>(undefined);
   
   const { user } = useAuthStore();
-  const userId = user?.id || user?._id;
+  const userId = user?.id;
 
   useEffect(() => {
     if (!userId) return;

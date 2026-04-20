@@ -38,7 +38,7 @@ export const RulerPicker = ({
   value,
   initialValue = 50000,
   onValueChange,
-  unitPrefix = "₦",
+  unitPrefix = "",
   title = "Estimated monthly budget",
   step = 50,
   unitStep = 500,

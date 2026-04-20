@@ -43,7 +43,9 @@
       [
         "expo-navigation-bar",
         {
-          "barStyle": "dark-content"
+          "position": "relative",
+          "barStyle": "light-content",
+          "backgroundColor": "#013037"
         }
       ]
     ],
@@ -52,9 +54,6 @@
     },
     "extra": {
       "router": {},
-      "expo-navigation-bar": {
-        "barStyle": "dark-content"
-      },
       "eas": {
         "projectId": "0aa8a012-aff2-45e1-852d-1a8660566bd8"
       }

@@ -74,7 +74,9 @@ export default function MoreScreen() {
   const [showCurrencySheet, setShowCurrencySheet] = useState(false);
 
   const currentCurrency =
-    CURRENCIES.find((c) => c.code === user?.preferredCurrency) || CURRENCIES[0];
+    CURRENCIES.find((c) => c.code === user?.preferredCurrency) || 
+    CURRENCIES.find((c) => c.code === "USD") || 
+    CURRENCIES[0];
 
   const handleLogout = () => {
     Alert.alert("Logout", "Are you sure you want to log out?", [

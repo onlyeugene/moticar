@@ -4,8 +4,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { Text, TouchableOpacity, View } from "react-native";
 import HomeIcon from "@/assets/icons/home.svg";
 import { BrandTags } from "@/lib";
+import { useAuthStore } from "@/store/useAuthStore";
+import { getCurrencySymbol } from "@/utils/currency";
 
-function getDetails(item: DiagnosticItem | null, activeCar: any) {
+function getDetails(item: DiagnosticItem | null, activeCar: any, currencySymbol: string) {
   if (!item) return [];
   switch (item.key) {
     case "fuel":
@@ -19,8 +21,8 @@ function getDetails(item: DiagnosticItem | null, activeCar: any) {
         {
           label: "Average Price Range",
           value: activeCar?.fuelSpec?.avgPriceRange
-            ? `₦${(activeCar.fuelSpec.avgPriceRange * (activeCar.fuelSpec.capacityLiters || 93)).toLocaleString()}`
-            : "₦62,000",
+            ? `${currencySymbol}${(activeCar.fuelSpec.avgPriceRange * (activeCar.fuelSpec.capacityLiters || 93)).toLocaleString()}`
+            : `${currencySymbol}62,000`,
         },
       ];
     case "engineOil":
@@ -83,7 +85,9 @@ export default function DiagnosticDetailSheet({
   activeCar,
   onRecordExpense,
 }: DiagnosticDetailSheetProps) {
-  const details = getDetails(item, activeCar);
+  const user = useAuthStore(state => state.user);
+  const currencySymbol = getCurrencySymbol(user?.preferredCurrency);
+  const details = getDetails(item, activeCar, currencySymbol);
   const showFuelStations = item?.key === "fuel";
 
   return (

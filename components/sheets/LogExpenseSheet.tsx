@@ -427,6 +427,7 @@ export default function LogExpenseSheet({
       category: category.name,
       name,
       amount: parseFloat(amount),
+      currency: user?.preferredCurrency || "NGN",
       date: date.toISOString(),
       paymentMethod,
       notes,
@@ -437,6 +438,8 @@ export default function LogExpenseSheet({
         laborCost,
       },
       receipts,
+      originalAmount,
+      originalCurrency,
       technicianName: selectedTechnician ? undefined : extractedTechnicianName,
       technicianSpecialty: selectedTechnician
         ? undefined

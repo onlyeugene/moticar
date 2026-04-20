@@ -210,14 +210,14 @@ export default function DashboardHeader() {
                 <Text className="text-[#7AE6EB] font-ukNumberPlate text-[14px] uppercase">
                   {selectedCar?.plate || "No plate registered"}
                 </Text>
-                {selectedCar && (
+                {/* {selectedCar && (
                   <View className="bg-[#EBE07A] px-1.5 py-0.5 rounded-full flex-row items-center gap-1">
                     <Crown width={12} />
                     <Text className="text-[#001013] font-lexendBold text-[10px]">
                       PRO
                     </Text>
                   </View>
-                )}
+                )} */}
               </View>
             </View>
           </TouchableOpacity>

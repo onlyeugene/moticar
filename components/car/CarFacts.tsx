@@ -6,8 +6,9 @@ import { Text, TouchableOpacity, View } from "react-native";
 import TyresIcon from "@/assets/facts/tyre.svg";
 import BatteryIcon from "@/assets/facts/battery.svg";
 import { BrandTags } from "@/lib";
-
 import { useAppStore } from "@/store/useAppStore";
+import { useAuthStore } from "@/store/useAuthStore";
+import { getCurrencySymbol } from "@/utils/currency";
 
 interface CarFactsProps {
   activeCarId: string;
@@ -23,18 +24,23 @@ export function CarFacts({
   onSelectDiagnostic,
 }: CarFactsProps) {
   const obdData = useAppStore((state) => state.obdData[activeCarId]);
+  const user = useAuthStore((state) => state.user);
+  const currencySymbol = getCurrencySymbol(user?.preferredCurrency);
+
   // Fuel Estimation Logic: Check if avgPriceRange is the total estimated cost or price per liter
   const getFuelEst = () => {
-    if (!activeCar?.fuelSpec) return "Est. ₦N/A";
+    if (!activeCar?.fuelSpec) return `Est. ${currencySymbol}N/A`;
     const { capacityLiters, avgPriceRange } = activeCar.fuelSpec;
-    if (!capacityLiters) return "Est. ₦N/A";
+    if (!capacityLiters) return `Est. ${currencySymbol}N/A`;
 
-    const price = avgPriceRange || 650;
+    const price = avgPriceRange || 0;
+    if (!price) return `Est. ${currencySymbol}N/A`;
+
     // If avgPriceRange is large (e.g. 60000), it's likely the total cost already.
     if (price > 10000) {
-      return `Est. ₦${price.toLocaleString()}`;
+      return `Est. ${currencySymbol}${price.toLocaleString()}`;
     }
-    return `Est. ₦${(capacityLiters * price).toLocaleString()}`;
+    return `Est. ${currencySymbol}${(capacityLiters * price).toLocaleString()}`;
   };
 
   return (

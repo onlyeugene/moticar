@@ -31,9 +31,8 @@ export default function MeScreen() {
   const { showSnackbar } = useSnackbar();
 
   const [menuVisible, setMenuVisible] = useState<string | null>(null);
-  const [deleteModalVisible, setDeleteModalVisible] = useState<string | null>(
-    null,
-  );
+  const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
+  const [deleteCarId, setDeleteCarId] = useState<string | null>(null);
 
   const cars = carsData?.cars || [];
   const activeCar =
@@ -59,7 +58,7 @@ export default function MeScreen() {
   };
 
   const handleDeleteCar = (carId: string) => {
-    setDeleteModalVisible(null);
+    setDeleteCarId(null);
     showSnackbar({
       type: "info",
       message: "Feature coming soon",
@@ -167,7 +166,15 @@ export default function MeScreen() {
                           backgroundColor: "#4ADE80",
                         }}
                       />
-                      <TouchableOpacity onPress={() => setMenuVisible(carId)}>
+                      <TouchableOpacity 
+                        onPress={(e) => {
+                          const carId = car.id || car._id;
+                          e.currentTarget.measure((x, y, width, height, px, py) => {
+                            setMenuPosition({ x: px, y: py });
+                            setMenuVisible(carId);
+                          });
+                        }}
+                      >
                         <Ionicons
                           name="ellipsis-vertical"
                           size={20}
@@ -200,46 +207,6 @@ export default function MeScreen() {
                   </View>
                 </View>
 
-                {/* Float Menu */}
-                {menuVisible === carId && (
-                  <View className="absolute right-10 top-2 bg-[#001D22] rounded-xl overflow-hidden z-50 w-32 shadow-2xl">
-                    <TouchableOpacity
-                      className="flex-row items-center gap-3 p-3 border-b border-white/10"
-                      onPress={() => {
-                        setMenuVisible(null);
-                        router.push({
-                          pathname: "/(onboarding)",
-                          params: { editCarId: carId },
-                        });
-                      }}
-                    >
-                      <Ionicons
-                        name="pencil-outline"
-                        size={18}
-                        color="#29D7DE"
-                      />
-                      <Text className="text-white font-lexendMedium text-[12px]">
-                        Edit
-                      </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      className="flex-row items-center gap-3 p-3"
-                      onPress={() => {
-                        setMenuVisible(null);
-                        setDeleteModalVisible(carId);
-                      }}
-                    >
-                      <Ionicons
-                        name="trash-outline"
-                        size={18}
-                        color="#29D7DE"
-                      />
-                      <Text className="text-white font-lexendMedium text-[12px]">
-                        Delete
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                )}
               </View>
             );
           })}
@@ -255,52 +222,174 @@ export default function MeScreen() {
         </TouchableOpacity>
       </ScrollView>
 
-      {/* Delete Confirmation Modal */}
-      <Modal visible={!!deleteModalVisible} transparent animationType="fade">
+      {/* Float Menu — rendered in a Modal so it sits above all views */}
+      <Modal
+        visible={!!menuVisible}
+        transparent
+        animationType="none"
+        onRequestClose={() => setMenuVisible(null)}
+      >
+        {/* Backdrop: tap outside closes menu */}
         <Pressable
-          className="flex-1 bg-black/40 items-center justify-center px-6"
-          onPress={() => setDeleteModalVisible(null)}
+          style={{ flex: 1 }}
+          onPress={() => setMenuVisible(null)}
+        >
+          {/* Menu sheet — positioned top-right */}
+          <View
+            style={{
+              position: "absolute",
+              top: menuPosition.y + 24, // Positioned right under the dots
+              right: 24,
+              backgroundColor: "#001D22",
+              borderRadius: 12,
+              overflow: "hidden",
+              width: 140,
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.4,
+              shadowRadius: 8,
+              elevation: 10,
+            }}
+          >
+            <TouchableOpacity
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 10,
+                padding: 14,
+                borderBottomWidth: 1,
+                borderBottomColor: "rgba(255,255,255,0.1)",
+              }}
+              onPress={() => {
+                const carId = menuVisible!;
+                setMenuVisible(null);
+                router.push({
+                  pathname: "/(onboarding)",
+                  params: { editCarId: carId },
+                });
+              }}
+            >
+              <Ionicons name="pencil-outline" size={18} color="#29D7DE" />
+              <Text style={{ color: "white", fontFamily: "Lexend-Medium", fontSize: 13 }}>Edit</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 10,
+                padding: 14,
+              }}
+              onPress={() => {
+                const carId = menuVisible!;
+                setMenuVisible(null);
+                setDeleteCarId(carId);
+              }}
+            >
+              <Ionicons name="trash-outline" size={18} color="#FF6B6B" />
+              <Text style={{ color: "#FF6B6B", fontFamily: "Lexend-Medium", fontSize: 13 }}>Delete</Text>
+            </TouchableOpacity>
+          </View>
+        </Pressable>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        visible={!!deleteCarId}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setDeleteCarId(null)}
+      >
+        <Pressable
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0,0,0,0.5)",
+            alignItems: "center",
+            justifyContent: "center",
+            paddingHorizontal: 24,
+          }}
+          onPress={() => setDeleteCarId(null)}
         >
           <View
-            className="bg-[#001D22] w-full rounded-[24px] p-8 items-center shadow-2xl"
+            style={{
+              backgroundColor: "#001D22",
+              width: "100%",
+              borderRadius: 24,
+              padding: 32,
+              alignItems: "center",
+            }}
             onStartShouldSetResponder={() => true}
           >
-            <Text className="text-white font-lexendBold text-[20px] mb-8 text-center">
-              Are you sure you want to delete?
+            {/* Icon */}
+            <View
+              style={{
+                width: 60,
+                height: 60,
+                borderRadius: 30,
+                backgroundColor: "rgba(255, 107, 107, 0.15)",
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: 16,
+              }}
+            >
+              <Ionicons name="trash-outline" size={28} color="#FF6B6B" />
+            </View>
+
+            <Text
+              style={{
+                color: "white",
+                fontFamily: "Lexend-Bold",
+                fontSize: 20,
+                textAlign: "center",
+                marginBottom: 8,
+              }}
+            >
+              Delete Car?
+            </Text>
+            <Text
+              style={{
+                color: "#9BBABB",
+                fontFamily: "Lexend-Regular",
+                fontSize: 14,
+                textAlign: "center",
+                marginBottom: 32,
+                lineHeight: 22,
+              }}
+            >
+              This action cannot be undone. All data for this vehicle will be permanently removed.
             </Text>
 
-            <View className="flex-row gap-4 w-full">
+            <View style={{ flexDirection: "row", gap: 12, width: "100%" }}>
               <TouchableOpacity
-                className="flex-1 border border-red-500 rounded-full py-4 items-center"
-                onPress={() =>
-                  deleteModalVisible && handleDeleteCar(deleteModalVisible)
-                }
+                style={{
+                  flex: 1,
+                  borderWidth: 1,
+                  borderColor: "#1E4A54",
+                  borderRadius: 999,
+                  paddingVertical: 16,
+                  alignItems: "center",
+                }}
+                onPress={() => setDeleteCarId(null)}
               >
-                <Text className="text-red-500 font-lexendBold text-[16px]">
-                  Yes
-                </Text>
+                <Text style={{ color: "#9BBABB", fontFamily: "Lexend-Bold", fontSize: 16 }}>Cancel</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
-                className="flex-1 border border-[#29D7DE] rounded-full py-4 items-center"
-                onPress={() => setDeleteModalVisible(null)}
+                style={{
+                  flex: 1,
+                  backgroundColor: "#FF6B6B",
+                  borderRadius: 999,
+                  paddingVertical: 16,
+                  alignItems: "center",
+                }}
+                onPress={() => deleteCarId && handleDeleteCar(deleteCarId)}
               >
-                <Text className="text-[#29D7DE] font-lexendBold text-[16px]">
-                  No
-                </Text>
+                <Text style={{ color: "white", fontFamily: "Lexend-Bold", fontSize: 16 }}>Delete</Text>
               </TouchableOpacity>
             </View>
           </View>
         </Pressable>
       </Modal>
-
-      {/* Dismiss Menu Overlay */}
-      {menuVisible && (
-        <Pressable
-          style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
-          onPress={() => setMenuVisible(null)}
-        />
-      )}
 
       <LoadingModal
         visible={logout.isPending}
