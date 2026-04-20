@@ -67,11 +67,11 @@ export const useCreateReminder = () => {
   });
 };
 
-export const useActivitySpends = (carId: string, month?: string, year?: string) => {
+export const useActivitySpends = (carId: string, month?: string, year?: string, interval?: string) => {
   return useQuery({
-    queryKey: ["activity", "spends", carId, month, year],
+    queryKey: ["activity", "spends", carId, month, year, interval],
     queryFn: async () => {
-      const breakdown = await activityService.getSpendsChart(carId, month, year);
+      const breakdown = await activityService.getSpendsChart(carId, month, year, interval);
       // We still fetch all expenses for historical charts (like CPM) 
       // but we store them separately to avoid polluting the monthly breakdown.
       const allExpenses = await expenseService.getExpensesByCarId(carId);

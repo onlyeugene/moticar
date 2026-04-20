@@ -1,97 +1,129 @@
-import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import { Text, TouchableOpacity, View, ScrollView } from "react-native";
 import BottomSheet from "@/components/shared/BottomSheet";
 import { Ionicons } from "@expo/vector-icons";
-
-export const CURRENCIES = [
-  { code: "AED", name: "United Arab Emirates Dirham", symbol: "د.إ" },
-  { code: "AUD", name: "Australian Dollar", symbol: "A$" },
-  { code: "BRL", name: "Brazilian Real", symbol: "R$" },
-  { code: "CAD", name: "Canadian Dollar", symbol: "C$" },
-  { code: "CHF", name: "Swiss Franc", symbol: "Fr" },
-  { code: "CNY", name: "Chinese Yuan", symbol: "¥" },
-  { code: "DKK", name: "Danish Krone", symbol: "kr" },
-  { code: "EGP", name: "Egyptian Pound", symbol: "E£" },
-  { code: "EUR", name: "Euro", symbol: "€" },
-  { code: "GBP", name: "British Pound Sterling", symbol: "£" },
-  { code: "GHS", name: "Ghanaian Cedi", symbol: "₵" },
-  { code: "HKD", name: "Hong Kong Dollar", symbol: "HK$" },
-  { code: "ILS", name: "Israeli New Shekel", symbol: "₪" },
-  { code: "INR", name: "Indian Rupee", symbol: "₹" },
-  { code: "JPY", name: "Japanese Yen", symbol: "¥" },
-  { code: "KES", name: "Kenyan Shilling", symbol: "KSh" },
-  { code: "KRW", name: "South Korean Won", symbol: "₩" },
-  { code: "MAD", name: "Moroccan Dirham", symbol: "DH" },
-  { code: "MXN", name: "Mexican Peso", symbol: "$" },
-  { code: "NGN", name: "Nigerian Naira", symbol: "₦" },
-  { code: "NOK", name: "Norwegian Krone", symbol: "kr" },
-  { code: "NZD", name: "New Zealand Dollar", symbol: "NZ$" },
-  { code: "RUB", name: "Russian Ruble", symbol: "₽" },
-  { code: "RWF", name: "Rwandan Franc", symbol: "RF" },
-  { code: "SAR", name: "Saudi Riyal", symbol: "ر.س" },
-  { code: "SEK", name: "Swedish Krona", symbol: "kr" },
-  { code: "SGD", name: "Singapore Dollar", symbol: "S$" },
-  { code: "TRY", name: "Turkish Lira", symbol: "₺" },
-  { code: "TZS", name: "Tanzanian Shilling", symbol: "TSh" },
-  { code: "UGX", name: "Ugandan Shilling", symbol: "USh" },
-  { code: "USD", name: "United States Dollar", symbol: "$" },
-  { code: "XAF", name: "Central African CFA Franc", symbol: "FCFA" },
-  { code: "XOF", name: "West African CFA Franc", symbol: "CFA" },
-  { code: "ZAR", name: "South African Rand", symbol: "R" },
-];
+import { CURRENCIES } from "@/utils/currency";
+import { SvgProps } from "react-native-svg";
+import XeIcon from '@/assets/icons/xe.svg'
 
 interface CurrencySelectionSheetProps {
   visible: boolean;
   onClose: () => void;
-  onSelect: (currencyCode: string) => void;
+  onSave: (currencyCode: string, country: string) => void;
   currentCurrency?: string;
 }
 
 export default function CurrencySelectionSheet({
   visible,
   onClose,
-  onSelect,
+  onSave,
   currentCurrency,
 }: CurrencySelectionSheetProps) {
+  const [selected, setSelected] = useState(currentCurrency || "USD");
+
+  const handleSave = () => {
+    const item = CURRENCIES.find((c) => c.value === selected);
+    if (item) onSave(item.value, item.country);
+    onClose();
+  };
+
   return (
     <BottomSheet
       visible={visible}
       onClose={onClose}
-      title="Select Currency"
-      height="50%"
-      backgroundColor="#FFFFFF"
+      title="Currency"
+      height="70%"
+      backgroundColor="#F0F0F0"
+      scrollable={false}
+      headerRight={
+        <TouchableOpacity
+          onPress={handleSave}
+          className="bg-[#00AEB5] px-5 py-1.5 rounded-full"
+        >
+          <Text className="text-white font-lexendSemiBold text-[14px]">
+            Save
+          </Text>
+        </TouchableOpacity>
+      }
     >
-      <View className="px-2 pb-10">
-        {CURRENCIES.map((currency) => {
-          const isSelected = currentCurrency === currency.code;
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 24 }}
+      >
+        {CURRENCIES.map((item) => {
+          const isSelected = selected === item.value;
+          const Icon = typeof item.icon !== "string" ? (item.icon as React.FC<SvgProps>) : null;
+
           return (
             <TouchableOpacity
-              key={currency.code}
-              onPress={() => onSelect(currency.code)}
-              className="flex-row items-center justify-between py-4 border-b border-[#F5F5F5]"
+              key={item.value}
+              onPress={() => setSelected(item.value)}
+              className={`flex-row items-center justify-between px-4 py-3 rounded-[8px] mb-2 ${
+                isSelected
+                  ? "border-[#00AEB5] border-2 bg-white"
+                  : "border-[#D4D4D4] border"
+              }`}
             >
-              <View className="flex-row items-center gap-4">
-                <View className="w-10 h-10 rounded-full bg-[#EEF5F5] items-center justify-center">
-                  <Text className="text-[#006C70] text-[18px] font-lexendBold">
-                    {currency.symbol}
+              {/* Left: flag + name + country pill */}
+              <View className="flex-row items-center gap-3 flex-1">
+                {Icon ? (
+                  <Icon width={20} height={20} />
+                ) : (
+                  <View className="w-8 h-8 rounded-full bg-[#EEF5F5] items-center justify-center">
+                    <Text className="text-[#006C70] font-lexendBold text-[11px]">
+                      {item.value.slice(0, 2)}
+                    </Text>
+                  </View>
+                )}
+                <View className="flex-row items-center gap-2 flex-wrap">
+                  <Text
+                    className={`font-lexendRegular text-[15px] ${
+                      isSelected ? "text-[#00343F]" : "text-[#5E7A7A]"
+                    }`}
+                  >
+                    {item.label}
                   </Text>
-                </View>
-                <View>
-                  <Text className="text-[#00343F] text-[15px] font-lexendBold">
-                    {currency.code}
-                  </Text>
-                  <Text className="text-[#879090] text-[12px] font-lexendRegular">
-                    {currency.name}
-                  </Text>
+                  <View className="bg-[#5E9597] px-2 py-0.5 rounded-[4px]">
+                    <Text className="text-[#FFFFFF] font-lexendSemiBold text-[9px] uppercase">
+                      {item.country}
+                    </Text>
+                  </View>
                 </View>
               </View>
-              {isSelected && (
-                <Ionicons name="checkmark-circle" size={24} color="#29D7DE" />
-              )}
+
+              {/* Right: symbol + check */}
+              <View className="flex-row items-center gap-3">
+                <Text
+                  className={`font-lexendBold text-[15px] text-[#00AEB5]`}
+                >
+                  {item.symbol}
+                </Text>
+                <View
+                  className={`w-7 h-7 rounded-full items-center justify-center ${
+                    isSelected ? "bg-[#00AEB5]" : "bg-[#CFD7D8]"
+                  }`}
+                >
+                  <Ionicons
+                    name="checkmark"
+                    size={14}
+                    color={isSelected ? "#FFFFFF" : "#FFFFFF"}
+                  />
+                </View>
+              </View>
             </TouchableOpacity>
           );
         })}
-      </View>
+
+        {/* XE disclaimer */}
+        <View className="flex-row items-start gap-3 mt-4 px-1 mb-4">
+          <View className="">
+            <XeIcon />
+          </View>
+          <Text className="text-[#717272] font-lexendRegular text-[10px] flex-1 leading-5">
+           Please note that changing the currency would convert all pre-existing entries to new values to reflect change of currency. The exchange rate to be applied would be as gotten from XE as at the time of conversion.
+          </Text>
+        </View>
+      </ScrollView>
     </BottomSheet>
   );
 }

@@ -5,6 +5,34 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useAppStore } from "@/store/useAppStore";
 import { AuthResponse, SignupResponse, User } from "@/types/auth";
 import { router } from "expo-router";
+import * as Localization from "expo-localization";
+import { CURRENCIES, LANGUAGES } from "@/utils/currency";
+
+const getDefaultPreferences = (user: Partial<User> | null) => {
+  const deviceLocales = Localization.getLocales();
+  const deviceCurrency = deviceLocales[0]?.currencyCode;
+  const deviceLanguageTag = deviceLocales[0]?.languageTag;
+  const deviceLanguageCode = deviceLocales[0]?.languageCode;
+
+  const resolvedLang =
+    LANGUAGES.find((l) => l.value === user?.preferredLanguage) ||
+    LANGUAGES.find((l) => l.value === deviceLanguageTag) ||
+    LANGUAGES.find((l) => l.value.startsWith(deviceLanguageCode || "en")) ||
+    LANGUAGES.find((l) => l.value === "en-GB") ||
+    LANGUAGES[0];
+
+  const resolvedCurr =
+    CURRENCIES.find((c) => c.value === user?.preferredCurrency) ||
+    CURRENCIES.find((c) => c.value === deviceCurrency) ||
+    CURRENCIES.find((c) => c.value === "USD") ||
+    CURRENCIES[0];
+
+  return {
+    preferredLanguage: resolvedLang.value,
+    preferredCurrency: resolvedCurr.value,
+    country: resolvedCurr.country,
+  };
+};
 
 /**
  * Authentication Hooks
@@ -25,23 +53,44 @@ export const useVerifyEmail = () => {
 };
 
 export const useSetPassword = () => {
+  const user = useAuthStore((state) => state.user);
   return useMutation({
     mutationFn: (data: { 
       email: string; 
       password: string; 
       otp: string;
       preferredCurrency?: string;
+      preferredLanguage?: string;
       country?: string;
       deviceType?: string;
-    }) => authService.setPassword(data),
+    }) => {
+      const defaults = getDefaultPreferences(user);
+      const payload = {
+        ...data,
+        preferredLanguage: data.preferredLanguage || defaults.preferredLanguage,
+        preferredCurrency: data.preferredCurrency || defaults.preferredCurrency,
+        country: data.country || defaults.country,
+      };
+      return authService.setPassword(payload);
+    },
   });
 };
 
 export const useLogin = () => {
   const setAuth = useAuthStore((state) => state.setAuth);
   const clearAppState = useAppStore((state) => state.clearAppState);
+  const user = useAuthStore((state) => state.user);
   return useMutation({
-    mutationFn: (data: { emailOrUsername: string; password: string; deviceType?: string }) => authService.login(data),
+    mutationFn: (data: { emailOrUsername: string; password: string; deviceType?: string, preferredLanguage?: string, preferredCurrency?: string, country?: string }) => {
+      const defaults = getDefaultPreferences(user);
+      const payload = {
+        ...data,
+        preferredLanguage: data.preferredLanguage || defaults.preferredLanguage,
+        preferredCurrency: data.preferredCurrency || defaults.preferredCurrency,
+        country: data.country || defaults.country,
+      };
+      return authService.login(payload);
+    },
     onSuccess: (data) => {
       if (data.token && data.refreshToken && data.user) {
         clearAppState();
@@ -54,6 +103,7 @@ export const useLogin = () => {
 export const useSocialLogin = () => {
   const setAuth = useAuthStore((state) => state.setAuth);
   const clearAppState = useAppStore((state) => state.clearAppState);
+  const user = useAuthStore((state) => state.user);
   return useMutation({
     mutationFn: (data: { 
       email: string; 
@@ -61,10 +111,20 @@ export const useSocialLogin = () => {
       providerId: string; 
       name: string;
       preferredCurrency?: string;
+      preferredLanguage?: string;
       country?: string;
       deviceType?: string;
       idToken?: string;
-    }) => authService.socialLogin(data),
+    }) => {
+      const defaults = getDefaultPreferences(user);
+      const payload = {
+        ...data,
+        preferredLanguage: data.preferredLanguage || defaults.preferredLanguage,
+        preferredCurrency: data.preferredCurrency || defaults.preferredCurrency,
+        country: data.country || defaults.country,
+      };
+      return authService.socialLogin(payload);
+    },
     onSuccess: (data) => {
       if (data.token && data.refreshToken && data.user) {
         clearAppState();
@@ -165,6 +225,9 @@ export const useUpdateProfile = () => {
       country?: string; 
       preferredCurrency?: string;
       preferredLanguage?: string;
+      dob?: string;
+      gender?: string;
+      avatar?: string;
       onboardingCompleted?: boolean;
     }) => authService.updateProfile(data),
     onSuccess: (data, variables) => {

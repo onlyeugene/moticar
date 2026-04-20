@@ -153,11 +153,17 @@ export default function Dashboard() {
             {/* User Greeting & Year */}
             <View className="flex-row items-center justify-between p-2 pt-4">
               <View className="flex-row items-center gap-3">
-                <View className="w-12 h-12 rounded-full border-2 border-white shadow-sm overflow-hidden">
-                  <Image
-                    source={{ uri: "https://i.pravatar.cc/150?u=moticar" }}
-                    className="w-full h-full"
-                  />
+                <View className="w-12 h-12 rounded-full border-2 border-white shadow-sm overflow-hidden bg-[#00AEB5]/10 items-center justify-center">
+                  {user?.avatar ? (
+                    <Image
+                      source={{ uri: user.avatar }}
+                      className="w-full h-full"
+                    />
+                  ) : (
+                    <Text className="text-[#00AEB5] font-lexendBold text-[16px]">
+                      {(user?.name || "U")[0].toUpperCase()}
+                    </Text>
+                  )}
                 </View>
                 <Text className="text-[#00232A] font-lexendBold text-[20px]">
                   Hi, {user?.name?.split(" ")[0] || "User"}

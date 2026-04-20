@@ -28,6 +28,7 @@ import InteriorIcon from "@/assets/icons/car/parts/interior.svg";
 import LightingIcon from "@/assets/icons/car/parts/lighting.svg";
 import ToolsIcon from "@/assets/icons/car/parts/toolsEquipments.svg";
 import AccessoriesIcon from "@/assets/icons/car/parts/carAccessories.svg";
+import SwapIcon from '@/assets/icons/swap.svg'
 
 if (
   Platform.OS === "android" &&
@@ -197,7 +198,7 @@ export default function ExpenseListItem({
           </View>
 
           <View className="items-end">
-            <View className="flex-row items-center gap-1">
+            <View className="flex-row items-center gap-2">
                {!!expense.originalCurrency &&
                 expense.originalCurrency !== expense.currency && (
                   <TouchableOpacity
@@ -211,7 +212,7 @@ export default function ExpenseListItem({
                     }}
                     className="ml-2 "
                   >
-                    <Ionicons name="help-circle" size={14} color="#00AEB5" />
+                    <SwapIcon width={15} height={15}/>
                   </TouchableOpacity>
                 )}
               <Text className="text-[#1FCAE3] font-lexendMedium text-[16px]">

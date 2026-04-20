@@ -1,12 +1,27 @@
 import { Platform } from "react-native";
 import * as AppleAuthentication from "expo-apple-authentication";
-import * as Google from "expo-auth-session/providers/google";
-import * as WebBrowser from "expo-web-browser";
 import { useSocialLogin } from "./useAuth";
-import { useEffect } from "react";
 
-// Required for Google Auth Session
-WebBrowser.maybeCompleteAuthSession();
+let GoogleSignin: any = {
+  configure: () => {},
+  hasPlayServices: async () => {},
+  signIn: async () => ({}),
+};
+let statusCodes: any = {};
+
+try {
+  // We use require inside a try-catch to prevent a hard crash in Expo Go
+  const GoogleModule = require("@react-native-google-signin/google-signin");
+  GoogleSignin = GoogleModule.GoogleSignin;
+  statusCodes = GoogleModule.statusCodes;
+
+  GoogleSignin.configure({
+    webClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_WEB || "PLACEHOLDER_WEB_ID",
+    iosClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_IOS || "PLACEHOLDER_IOS_ID",
+  });
+} catch (e) {
+  console.warn("⚠️ Google Sign-in native module not found. Skipping initialization for Expo Go.");
+}
 
 /**
  * useSocialAuth Hook
@@ -19,25 +34,6 @@ export const useSocialAuth = (callbacks?: {
   onError?: (error: any) => void;
 }) => {
   const socialLogin = useSocialLogin();
-
-  // 1. Google Auth Configuration
-  // Note: These IDs should ideally be in env variables
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    iosClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_IOS || "PLACEHOLDER_IOS_ID",
-    androidClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_ANDROID || "PLACEHOLDER_ANDROID_ID",
-    webClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_WEB || "PLACEHOLDER_WEB_ID",
-  });
-
-  // Handle Google Response
-  useEffect(() => {
-    if (response?.type === "success") {
-      const { authentication } = response;
-      if (authentication?.idToken) {
-        // We use the idToken for backend verification
-        handleSocialAuthSuccess("google", authentication.idToken);
-      }
-    }
-  }, [response]);
 
   const decodeIdToken = (token: string) => {
     try {
@@ -130,14 +126,34 @@ export const useSocialAuth = (callbacks?: {
     }
   };
 
-  const loginWithGoogle = () => {
-    promptAsync();
+  const loginWithGoogle = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo: any = await GoogleSignin.signIn();
+      
+      // Handle v12/v13 structure change
+      const idToken = userInfo?.data?.idToken || userInfo?.idToken;
+      const userDetails = userInfo?.data?.user || userInfo?.user;
+      
+      if (idToken) {
+        handleSocialAuthSuccess("google", idToken, userDetails);
+      }
+    } catch (error: any) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        // User cancelled the login flow
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        // Operation in progress
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        console.error("Play services not available or outdated");
+      } else {
+        console.error("Google Auth Error:", error);
+      }
+    }
   };
 
   return {
     loginWithApple,
     loginWithGoogle,
     isPending: socialLogin.isPending,
-    googleRequest: request,
   };
 };

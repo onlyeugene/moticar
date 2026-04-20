@@ -10,9 +10,10 @@ import {
 import * as WebBrowser from "expo-web-browser";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useLogout, useDeleteAccount, useUpdateProfile } from "@/hooks/useAuth";
-import CurrencySelectionSheet, {
-  CURRENCIES,
-} from "@/components/sheets/CurrencySelectionSheet";
+import CurrencySelectionSheet from "@/components/sheets/CurrencySelectionSheet";
+import LanguageSelectionSheet from "@/components/sheets/LanguageSelectionSheet";
+import EditProfileSheet from "@/components/sheets/EditProfileSheet";
+import { CURRENCIES, LANGUAGES } from "@/utils/currency";
 import React, { useState } from "react";
 import { router } from "expo-router";
 import BookIcon from "@/assets/more/book.svg";
@@ -72,11 +73,18 @@ export default function MoreScreen() {
   const deleteAccount = useDeleteAccount();
   const updateProfile = useUpdateProfile();
   const [showCurrencySheet, setShowCurrencySheet] = useState(false);
+  const [showLanguageSheet, setShowLanguageSheet] = useState(false);
+  const [showProfileSheet, setShowProfileSheet] = useState(false);
 
   const currentCurrency =
-    CURRENCIES.find((c) => c.code === user?.preferredCurrency) || 
-    CURRENCIES.find((c) => c.code === "USD") || 
+    CURRENCIES.find((c) => c.value === user?.preferredCurrency) ||
+    CURRENCIES.find((c) => c.value === "USD") ||
     CURRENCIES[0];
+
+  const currentLanguage =
+    LANGUAGES.find((l) => l.value === user?.preferredLanguage) ||
+    LANGUAGES.find((l) => l.value === "en-GB") ||
+    LANGUAGES[0];
 
   const handleLogout = () => {
     Alert.alert("Logout", "Are you sure you want to log out?", [
@@ -112,14 +120,22 @@ export default function MoreScreen() {
         </Text>
 
         {/* Profile Card */}
-        <TouchableOpacity className="bg-[#ECE6B7] rounded-[8px] p-4 flex-row items-center justify-between mb-8 border border-[#F8E761]">
+        <TouchableOpacity onPress={() => setShowProfileSheet(true)} className="bg-[#ECE6B7] rounded-[8px] p-4 flex-row items-center justify-between mb-8 border border-[#F8E761]">
           <View className="flex-row items-center gap-4 flex-1 mr-2">
             <View>
               <View className="w-[64px] h-[64px] rounded-full bg-[#F4EBFF] items-center justify-center border-2 border-[#F4EBFF] overflow-hidden">
                 <View className="bg-white w-full h-full items-center justify-center">
-                  <Text className="text-[#006C70] text-[24px] font-lexendBold">
-                    {user?.name?.charAt(0) || user?.username?.charAt(0) || "U"}
-                  </Text>
+                  {user?.avatar ? (
+                    <Image 
+                      source={{ uri: user.avatar }} 
+                      className="w-full h-full"
+                      resizeMode="cover"
+                    />
+                  ) : (
+                    <Text className="text-[#006C70] text-[24px] font-lexendBold">
+                      {user?.name?.charAt(0) || user?.username?.charAt(0) || "U"}
+                    </Text>
+                  )}
                 </View>
               </View>
               <View className="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-[#22C55E] border-2 border-[#FEF9C3]" />
@@ -133,7 +149,7 @@ export default function MoreScreen() {
                 numberOfLines={1}
                 ellipsizeMode="tail"
               >
-                {user?.preferredName || ""}
+                {user?.username || ""}
               </Text>
               <View className="bg-[#29D7DE] px-2 py-2 rounded-[8px] mt-1 self-start">
                 <Text className="text-[#00343F] text-[12px] font-lexendRegular">
@@ -168,13 +184,14 @@ export default function MoreScreen() {
           <SettingItem
             icon={CoinStack}
             label="Currency"
-            value={`${currentCurrency.code} [ ${currentCurrency.symbol} ]`}
+            value={`${currentCurrency.value} [ ${currentCurrency.symbol} ]`}
             onPress={() => setShowCurrencySheet(true)}
           />
           <SettingItem
             icon={Translate}
             label="Language"
-            value="English"
+            value={currentLanguage.label}
+            onPress={() => setShowLanguageSheet(true)}
             isLast={true}
           />
         </View>
@@ -219,10 +236,25 @@ export default function MoreScreen() {
         visible={showCurrencySheet}
         onClose={() => setShowCurrencySheet(false)}
         currentCurrency={user?.preferredCurrency}
-        onSelect={(code) => {
+        onSave={(code) => {
           updateProfile.mutate({ preferredCurrency: code });
           setShowCurrencySheet(false);
         }}
+      />
+
+      <LanguageSelectionSheet
+        visible={showLanguageSheet}
+        onClose={() => setShowLanguageSheet(false)}
+        currentLanguage={user?.preferredLanguage}
+        onSave={(code) => {
+          updateProfile.mutate({ preferredLanguage: code });
+          setShowLanguageSheet(false);
+        }}
+      />
+
+      <EditProfileSheet
+        visible={showProfileSheet}
+        onClose={() => setShowProfileSheet(false)}
       />
 
       <LoadingModal

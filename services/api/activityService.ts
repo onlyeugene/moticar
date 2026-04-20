@@ -44,9 +44,9 @@ export const activityService = {
   },
 
   /** Get monthly spend aggregation chart */
-  getSpendsChart: async (carId: string, month?: string, year?: string): Promise<SpendBreakdown> => {
+  getSpendsChart: async (carId: string, month?: string, year?: string, interval?: string): Promise<SpendBreakdown> => {
     const response = await apiClient.get(API_ROUTES.ACTIVITY.SPENDS, { 
-      params: { carId, month, year } 
+      params: { carId, month, year, interval } 
     });
     return response.data;
   },

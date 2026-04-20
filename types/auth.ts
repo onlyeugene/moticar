@@ -12,6 +12,11 @@ export interface User {
   preferredName?: string;
   deviceType?: 'ios' | 'android';
   emailNotificationsEnabled?: boolean;
+  dob?: string;
+  gender?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  avatar?: string;
 }
 
 export interface AuthState {

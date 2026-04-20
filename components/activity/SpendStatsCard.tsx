@@ -47,7 +47,7 @@ const SpendStatsCard: React.FC<SpendStatsCardProps> = ({
   const isByTechnician = filterType === "By Car Technicians";
 
   const chartInfo = useMemo(() => {
-    const expenses = spendData?.expenses || [];
+    const expenses = (spendData as any)?.allExpenses || spendData?.expenses || [];
     const labels: string[] = [];
     const data: { current: number; prev: number }[] = [];
     const anchorDate = selectedDate;
@@ -132,15 +132,14 @@ const SpendStatsCard: React.FC<SpendStatsCardProps> = ({
     }
 
     const allValues = data.flatMap((d) => [d.current, d.prev]);
-    const maxVal = Math.max(...allValues, 100000);
+    const maxVal = Math.max(...allValues, 1) * 1.1; // Add 10% ceiling
     return { labels, data, maxVal };
   }, [spendData?.expenses, timeFilter, selectedDate]);
 
   const { labels, data: chartData, maxVal } = chartInfo;
 
-  // Latest data point
-  const latestData = chartData[chartData.length - 1] || { current: 0, prev: 0 };
-  const currentTotal = latestData.current;
+  // Total for the entire selected period (week/month/year)
+  const currentTotal = chartData.reduce((sum, item) => sum + item.current, 0);
 
   return (
     <View className="bg-white rounded-[10px] p-6 mb-8 shadow-sm border border-[#F0F0F0]">
@@ -212,13 +211,22 @@ const SpendStatsCard: React.FC<SpendStatsCardProps> = ({
       ) : (
         <View className="items-center justify-center py-6">
           {(() => {
-            const expenses = spendData?.expenses || [];
-            const filteredExpenses = expenses.filter((exp) => {
+            const expenses = (spendData as any)?.allExpenses || spendData?.expenses || [];
+            const filteredExpenses = expenses.filter((exp: any) => {
               const expDate = new Date(exp.date);
-              return (
-                isSameMonth(expDate, selectedDate) &&
-                isSameYear(expDate, selectedDate)
-              );
+              if (timeFilter === "Monthly") {
+                return (
+                  isSameMonth(expDate, selectedDate) &&
+                  isSameYear(expDate, selectedDate)
+                );
+              } else if (timeFilter === "Weekly") {
+                const start = startOfWeek(selectedDate, { weekStartsOn: 0 });
+                const end = addWeeks(start, 1);
+                return expDate >= start && expDate < end;
+              } else if (timeFilter === "Yearly") {
+                return isSameYear(expDate, selectedDate);
+              }
+              return true;
             });
 
             if (filteredExpenses.length === 0) {
