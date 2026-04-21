@@ -25,6 +25,7 @@ import { usePushNotifications } from "../hooks/usePushNotifications";
 import { QueryProvider } from "../providers/QueryProvider";
 import { SnackbarProvider } from "../providers/SnackbarProvider";
 import { SocketProvider } from "../providers/SocketProvider";
+import { PreferenceInitializer } from "@/components/shared/PreferenceInitializer";
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
@@ -107,6 +108,7 @@ export default function RootLayout() {
         <SnackbarProvider>
           <QueryProvider>
             <SocketProvider>
+              <PreferenceInitializer />
               <Stack screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="index" />
                 <Stack.Screen name="(auth)" />

@@ -20,7 +20,7 @@ interface DocumentManagementSheetProps {
   onUpload: (type: string) => void;
   uploadingType: string | null;
   carId: string;
-  onAddRequest: (category: DocumentCategory) => void;
+  onAddRequest: (category: DocumentCategory, doc?: CarDocument) => void;
   onPreviewRequest: (url: string) => void;
 }
 
@@ -153,7 +153,13 @@ export default function DocumentManagementSheet({
               key={index}
               activeOpacity={0.7}
               onPress={() => {
-                if (info.fileUrl) {
+                const docObj = documents.find((d) => d.type === doc.type);
+                const hasEntries =
+                  docObj && (docObj.vin || docObj.expiryDate || docObj.amount || docObj.issueDate);
+
+                if (hasEntries) {
+                  onAddRequest(doc.type as DocumentCategory, docObj);
+                } else if (info.fileUrl) {
                   onPreviewRequest(info.fileUrl);
                 } else {
                   onAddRequest(doc.type as DocumentCategory);

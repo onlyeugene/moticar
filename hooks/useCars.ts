@@ -121,3 +121,15 @@ export const useUploadDocument = () => {
     },
   });
 };
+
+/** Delete a car */
+export const useDeleteCar = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: carService.deleteCar,
+    onSuccess: () => {
+      // Invalidate the user's list of cars
+      queryClient.invalidateQueries({ queryKey: ["cars", "user"] });
+    },
+  });
+};

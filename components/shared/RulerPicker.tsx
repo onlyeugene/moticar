@@ -1,14 +1,14 @@
+import { LinearGradient } from "expo-linear-gradient";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
+  Dimensions,
   FlatList,
   NativeScrollEvent,
   NativeSyntheticEvent,
   Text,
-  View,
-  Dimensions,
   TextInput,
+  View,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -141,7 +141,9 @@ export const RulerPicker = ({
 
     const tickHeight = isMajor ? MAJOR_TICK_HEIGHT : MINOR_TICK_HEIGHT;
     const tickWidth = 1;
-    const tickColor = isMajor ? "rgba(255,255,255,0.4)" : "rgba(255,255,255,0.15)";
+    const tickColor = isMajor
+      ? "rgba(255,255,255,0.4)"
+      : "rgba(255,255,255,0.15)";
 
     return (
       <View

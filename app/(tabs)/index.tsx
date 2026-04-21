@@ -32,15 +32,17 @@ import {
   View,
 } from "react-native";
 import ActivityScreen from "./activity";
+import { useRouter } from "expo-router";
 
 export default function Dashboard() {
+  const router = useRouter();
   const user = useAuthStore((state) => state.user);
   const currencySymbol = getCurrencySymbol(user?.preferredCurrency);
   const queryClient = useQueryClient();
   const { data: userData, isLoading: userLoading } = useMe();
 
   const [showLocationAlert, setShowLocationAlert] = useState(false);
-  const { selectedCarId, isDiagnosticActive } = useAppStore();
+  const { selectedCarId, isDiagnosticActive, setActiveActivityTab } = useAppStore();
   const [isAddMileageVisible, setIsAddMileageVisible] = useState(false);
   const { data: carsData, isLoading: carsLoading } = useUserCars();
 
@@ -286,6 +288,10 @@ export default function Dashboard() {
               approxKm={tripsData?.trips?.[0]?.distanceKm || 0}
               entriesCount={tripsData?.count || 0}
               onPress={() => setIsAddMileageVisible(true)}
+              onCardPress={() => {
+                setActiveActivityTab("Mileage Milestones");
+                router.push("/(tabs)/activity");
+              }}
             />
           </View>
 

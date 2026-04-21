@@ -17,6 +17,7 @@ export const API_ROUTES = {
     CHANGE_PASSWORD: "/auth/change-password",
     RESEND_OTP: "/auth/resend-otp",
     SET_NAME: "/auth/set-name",
+    CHECK_LOCATION_PUBLIC: "/auth/check-location",
   },
   USER: {
     ME: "/users/me",
@@ -41,6 +42,7 @@ export const API_ROUTES = {
     DOCUMENTS_LIST: (carId: string) => `/cars/${carId}/documents/list`,
     DOCUMENTS_MANUAL: (carId: string) => `/cars/${carId}/documents/manual`,
     DOCUMENTS_DETAIL: (carId: string, docId: string) => `/cars/${carId}/documents/${docId}`,
+    DELETE: (id: string) => `/cars/${id}`,
     SCAN_DOCUMENT: "/cars/scan-document",
   },
 

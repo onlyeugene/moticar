@@ -237,7 +237,10 @@ export default function MoreScreen() {
         onClose={() => setShowCurrencySheet(false)}
         currentCurrency={user?.preferredCurrency}
         onSave={(code) => {
-          updateProfile.mutate({ preferredCurrency: code });
+          updateProfile.mutate({ 
+            preferredCurrency: code,
+            hasManuallySetPreferences: true
+          });
           setShowCurrencySheet(false);
         }}
       />
@@ -247,7 +250,10 @@ export default function MoreScreen() {
         onClose={() => setShowLanguageSheet(false)}
         currentLanguage={user?.preferredLanguage}
         onSave={(code) => {
-          updateProfile.mutate({ preferredLanguage: code });
+          updateProfile.mutate({ 
+            preferredLanguage: code,
+            hasManuallySetPreferences: true
+          });
           setShowLanguageSheet(false);
         }}
       />

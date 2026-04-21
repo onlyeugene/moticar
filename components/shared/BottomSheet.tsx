@@ -24,6 +24,7 @@ interface BottomSheetProps {
   scrollable?: boolean;
   showCloseButton?: boolean;
   footer?: React.ReactNode;
+  contentPadding?: number;
 }
 
 export default function BottomSheet({
@@ -37,6 +38,7 @@ export default function BottomSheet({
   scrollable = true,
   showCloseButton = true,
   footer,
+  contentPadding = 10,
 }: BottomSheetProps) {
   const [keyboardHeight, setKeyboardHeight] = useState(0);
 
@@ -92,14 +94,14 @@ export default function BottomSheet({
                 showsVerticalScrollIndicator={false}
                 keyboardShouldPersistTaps="handled"
                 contentContainerStyle={{
-                  paddingHorizontal: 10,
+                  paddingHorizontal: contentPadding,
                   paddingBottom: keyboardHeight > 0 ? keyboardHeight + 40 : 40,
                 }}
               >
                 {children}
               </ScrollView>
             ) : (
-              <View style={{ flex: 1, paddingHorizontal: 10 }}>{children}</View>
+              <View style={{ flex: 1, paddingHorizontal: contentPadding }}>{children}</View>
             )}
           </View>
 

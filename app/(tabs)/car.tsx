@@ -7,6 +7,7 @@ import { MotiBuddieStatus } from "@/components/car/MotiBuddieStatus";
 import { TechnicianSection } from "@/components/car/TechnicianSection";
 import AddTechnicianSheet from "@/components/sheets/AddTechnicianSheet";
 import ValuationSheet from "@/components/sheets/ValuationSheet";
+import EditBudgetSheet from "@/components/sheets/EditBudgetSheet";
 import DiagnosticListSheet, {
   getDiagnosticItems,
   type DiagnosticItem,
@@ -29,6 +30,7 @@ import AddReminderSheet from "@/components/sheets/AddReminderSheet";
 import { type ExpenseCategory } from "@/types/expense";
 import { useExpenseCategories } from "@/hooks/useExpenses";
 import * as WebBrowser from 'expo-web-browser';
+import CarBudget from "@/components/car/CarBudget";
 
 export default function CarScreen() {
   const queryClient = useQueryClient();
@@ -63,6 +65,7 @@ export default function CarScreen() {
   
   const [isLogExpenseVisible, setIsLogExpenseVisible] = useState(false);
   const [isAddReminderVisible, setIsAddReminderVisible] = useState(false);
+  const [isEditBudgetVisible, setIsEditBudgetVisible] = useState(false);
   const [targetExpenseCategory, setTargetExpenseCategory] = useState<ExpenseCategory | null>(null);
   const [targetReminderCategory, setTargetReminderCategory] = useState<string>("Others");
 
@@ -200,6 +203,9 @@ export default function CarScreen() {
           />
         )}
 
+        {/* ── Car Budget ── */}
+        <CarBudget onEdit={() => setIsEditBudgetVisible(true)} />
+
         {/* ── Car Facts ── */}
         {hasCars && (
           <CarFacts
@@ -304,6 +310,14 @@ export default function CarScreen() {
             ],
           );
         }}
+      />
+
+      <EditBudgetSheet
+        visible={isEditBudgetVisible}
+        onClose={() => setIsEditBudgetVisible(false)}
+        carId={activeCar?._id || activeCar?.id || ""}
+        initialBudget={activeCar?.monthlyBudget || 0}
+        currencySymbol={getCurrencySymbol(useAuthStore.getState().user?.preferredCurrency)}
       />
     </View>
   );

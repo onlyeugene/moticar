@@ -282,8 +282,9 @@ export default function DashboardDocuments({
         onUpload={(type) => handlePickDocument(type)}
         uploadingType={uploadingType}
         carId={carId}
-        onAddRequest={(cat) => {
+        onAddRequest={(cat, doc) => {
           setSelectedCategory(cat);
+          setSelectedDocument(doc ? (doc as any) : null);
           setIsSheetVisible(false);
           setTimeout(() => {
             setIsAddSheetVisible(true);

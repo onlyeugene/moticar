@@ -1,8 +1,9 @@
 import React, { createContext, useContext, useState, useMemo } from 'react';
 import { Snackbar } from 'react-native-paper';
 import type { ReactNode } from 'react';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 import { SnackbarContextType, SnackbarMessage } from '@/types/snackbar';
+import { Ionicons } from '@expo/vector-icons';
 
 const SnackbarContext = createContext<SnackbarContextType | undefined>(undefined);
 
@@ -40,18 +41,50 @@ export function SnackbarProvider({ children }: { children: ReactNode }) {
           }
           style={{
             margin: 16,
-            borderRadius: 8,
-            backgroundColor:
-              snackbar.type === 'error'
-                ? '#B00020'
-                : snackbar.type === 'success'
-                  ? '#000000'
-                  : '#121212',
+            borderRadius: 16,
+            backgroundColor: '#002E35',
+            elevation: 10,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.3,
+            shadowRadius: 8,
           }}>
-          <Text style={{ color: '#FFFFFF', fontWeight: '600' }}>
-            {snackbar.message}
-            {snackbar.description ? `\n${snackbar.description}` : ''}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <View 
+              style={{ 
+                width: 32, 
+                height: 32, 
+                borderRadius: 16, 
+                backgroundColor: 
+                  snackbar.type === 'error' ? '#FF6B6B20' : 
+                  snackbar.type === 'success' ? '#4ADE8020' : '#29D7DE20',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <Ionicons 
+                name={
+                  snackbar.type === 'error' ? 'alert-circle' : 
+                  snackbar.type === 'success' ? 'checkmark-circle' : 'information-circle'
+                } 
+                size={20} 
+                color={
+                  snackbar.type === 'error' ? '#FF6B6B' : 
+                  snackbar.type === 'success' ? '#4ADE80' : '#29D7DE'
+                } 
+              />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 14 }}>
+                {snackbar.message}
+              </Text>
+              {snackbar.description && (
+                <Text style={{ color: '#9BBABB', fontWeight: '400', fontSize: 12, marginTop: 2 }}>
+                  {snackbar.description}
+                </Text>
+              )}
+            </View>
+          </View>
         </Snackbar>
       )}
     </SnackbarContext.Provider>

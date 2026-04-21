@@ -1,24 +1,29 @@
+import MotiIcon from "@/assets/icons/device.svg";
+import EmptyIcon from "@/assets/icons/empty.svg";
+import Logo from "@/assets/icons/logo.svg";
+import { CarLogo } from "@/components/shared/CarLogo";
+import CarTypeIcon from "@/components/shared/CarTypeIcon";
+import { CarDetailsSheet } from "@/components/sheets/CarDetailsSheet";
+import BottomSheet from "@/components/shared/BottomSheet";
+import { useDeleteAccount, useLogout } from "@/hooks/useAuth";
+import { useDeleteCar, useUserCars } from "@/hooks/useCars";
+import { useSnackbar } from "@/providers/SnackbarProvider";
+import { useAppStore } from "@/store/useAppStore";
+import { useAuthStore } from "@/store/useAuthStore";
+import { Car } from "@/types/car";
 import { Ionicons } from "@expo/vector-icons";
+import { format } from "date-fns";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
-  ActivityIndicator,
   Alert,
   Modal,
+  Pressable,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
-  Pressable,
 } from "react-native";
-import Logo from "@/assets/icons/logo.svg";
-import MotiIcon from "@/assets/icons/device.svg";
-import { useAuthStore } from "@/store/useAuthStore";
-import { useAppStore } from "@/store/useAppStore";
-import { useUserCars } from "@/hooks/useCars";
-import { CarLogo } from "@/components/shared/CarLogo";
-import { useLogout, useDeleteAccount } from "@/hooks/useAuth";
-import { useSnackbar } from "@/providers/SnackbarProvider";
 
 import { LoadingModal } from "@/components/ui/LoadingModal";
 
@@ -33,6 +38,12 @@ export default function MeScreen() {
   const [menuVisible, setMenuVisible] = useState<string | null>(null);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const [deleteCarId, setDeleteCarId] = useState<string | null>(null);
+  const [showDetailsSheet, setShowDetailsSheet] = useState(false);
+  const [selectedCarDetails, setSelectedCarDetails] = useState<Car | null>(
+    null,
+  );
+
+  const deleteCar = useDeleteCar();
 
   const cars = carsData?.cars || [];
   const activeCar =
@@ -58,11 +69,24 @@ export default function MeScreen() {
   };
 
   const handleDeleteCar = (carId: string) => {
-    setDeleteCarId(null);
-    showSnackbar({
-      type: "info",
-      message: "Feature coming soon",
-      description: "Car deletion is currently being finalized.",
+    deleteCar.mutate(carId, {
+      onSuccess: () => {
+        setDeleteCarId(null);
+        showSnackbar({
+          type: "success",
+          message: "Car successfully deleted",
+          description: "All records for this vehicle have been removed.",
+        });
+      },
+      onError: () => {
+        setDeleteCarId(null);
+        showSnackbar({
+          type: "error",
+          message: "Deletion failed",
+          description:
+            "There was a problem removing the vehicle. Please try again.",
+        });
+      },
     });
   };
 
@@ -132,94 +156,185 @@ export default function MeScreen() {
           </View>
         )}
 
-        <View className="mt-5">
-          {/* Your Garage Section */}
-          <Text className="text-[#00343F] font-lexendMedium text-[26px] mb-6">
+        <View className="mt-4">
+          <Text className="text-[#00343F] font-lexendBold text-[26px] mb-6">
             Your Garage
           </Text>
 
-          {cars.map((car) => {
-            const carId = car.id || car._id;
-            return (
-              <View
-                key={carId}
-                className=" rounded-[10px] border border-[#08BFC7] p-4 mb-4 flex-row items-center gap-4 relative shadow-sm"
-              >
-                <View className="bg-white  rounded-full items-center justify-center">
-                  <CarLogo make={car.make} size={40} />
-                </View>
+          {cars.length === 0 ? (
+            <View className="items-center py-16 bg-[#0FC3CB] rounded-[32px] shadow-sm mb-8">
+              <View className="w-20 h-20 bg-[#B8F2F4] rounded-full items-center justify-center mb-6">
+                <EmptyIcon width={48} height={48} />
+              </View>
+              <Text className="text-[#00343F] font-lexendBold text-[18px] mb-2">
+                No car added yet
+              </Text>
+            </View>
+          ) : (
+            <View className="bg-[#B8F2F4] rounded-[20px] overflow-hidden mb-8">
+              {cars.map((car, index) => {
+                const carId = car.id || car._id;
+                const createdAt = car.createdAt
+                  ? format(new Date(car.createdAt), "do MMM, yyyy")
+                  : "N/A";
+                const isLast = index === cars.length - 1;
 
-                <View className="flex-1">
-                  <View className="flex-row items-center justify-between mb-1">
-                    <Text
-                      className="text-[#00343F] font-lexendBold text-[16px]"
-                      numberOfLines={1}
-                    >
-                      {car.make} {car.carModel}
-                    </Text>
-                    <View className="flex-row items-center gap-2">
-                      <View
-                        style={{
-                          width: 6,
-                          height: 6,
-                          borderRadius: 3,
-                          backgroundColor: "#4ADE80",
-                        }}
-                      />
-                      <TouchableOpacity 
-                        onPress={(e) => {
-                          const carId = car.id || car._id;
-                          e.currentTarget.measure((x, y, width, height, px, py) => {
-                            setMenuPosition({ x: px, y: py });
-                            setMenuVisible(carId);
-                          });
-                        }}
-                      >
-                        <Ionicons
-                          name="ellipsis-vertical"
-                          size={20}
-                          color="#00343F"
-                          opacity={0.3}
+                return (
+                  <View
+                    key={carId}
+                    className={`p-6 ${!isLast ? "border-b border-[#08BFC7]" : ""}`}
+                  >
+                    <View className="flex-row items-start gap-4">
+                      <View className="w-12 h-12 bg-white rounded-xl shadow-sm border border-[#F0F4F4] items-center justify-center">
+                        <CarLogo make={car.make} size={32} />
+                      </View>
+
+                      <View className="flex-row justify-between w-full flex-1">
+                        <View className="">
+                          <Text className="text-[14px] font-lexendMedium text-[#013037]">
+                            {car.make} {car.carModel}
+                          </Text>
+                          <Text className="font-ukNumberPlate text-[18px] text-[#006C70] mt-3">
+                            {car.plate}
+                          </Text>
+                        </View>
+
+                        <View className="flex-row items-start gap-2">
+                          {/* @ts-ignore */}
+                          <CarTypeIcon type={car.bodyStyle} size={45} color="#002E35" />
+                          <TouchableOpacity
+                            onPress={(e) => {
+                              e.currentTarget.measure(
+                                (x, y, width, height, px, py) => {
+                                  setMenuPosition({ x: px, y: py });
+                                  setMenuVisible(carId);
+                                },
+                              );
+                            }}
+                            // className="p-1"
+                          >
+                            <Ionicons
+                              name="ellipsis-vertical"
+                              size={18}
+                              color="#5E9597"
+                            />
+                          </TouchableOpacity>
+                        </View>
+                      </View>
+                    </View>
+                    <View className="flex-row items-center justify-between flex-1 w-full">
+                      <View className="flex-row items-center gap-2 mx-10">
+                        <View
+                          style={{ backgroundColor: car.color || "#ACB7B7" }}
+                          className="w-3 h-3 rounded-[2px]"
                         />
-                      </TouchableOpacity>
+                        <View className="bg-[#8FE2E5] px-3 py-0.5 rounded-[4px]">
+                          <Text className="text-[#40585C] font-lexendRegular text-[10px]">
+                            {car.transmission || "Manual"}
+                          </Text>
+                        </View>
+                        <View className="bg-[#8FE2E5] px-3 py-0.5 rounded-[4px]">
+                          <Text className="text-[#40585C] font-lexendRegular text-[10px]">
+                            {car.fuelType || "Petrol"}
+                          </Text>
+                        </View>
+                      </View>
+                      <Text className="text-[#5E9597] font-lexendRegular text-[8px] mt-2">
+                        Added : {createdAt}
+                      </Text>
+
+                      {/* <View className="flex-1">
+                        <View className="flex-row items-center justify-between">
+                          <View className="flex-row items-center gap-2 flex-1">
+                            <Text
+                              className="text-[#00343F] font-lexendMedium text-[14px]"
+                              numberOfLines={1}
+                            >
+                              {car.make} {car.carModel}
+                            </Text>
+                            <View className="w-2 h-2 rounded-full bg-[#4ADE80]" />
+                          </View>
+                          <TouchableOpacity
+                            onPress={(e) => {
+                              e.currentTarget.measure(
+                                (x, y, width, height, px, py) => {
+                                  setMenuPosition({ x: px, y: py });
+                                  setMenuVisible(carId);
+                                },
+                              );
+                            }}
+                            // className="p-1"
+                          >
+                            <Ionicons
+                              name="ellipsis-vertical"
+                              size={18}
+                              color="#ACB7B7"
+                            />
+                          </TouchableOpacity>
+                        </View>
+
+                        <View className="flex-row items-center justify-between">
+                          <View>
+                            <Text className="text-[#00343F] font-ukNumberPlate text-[14px]">
+                              {car.plate}
+                            </Text>
+
+                            <View className="flex-row items-center gap-2">
+                              <View 
+                                style={{ backgroundColor: car.color || "#ACB7B7" }}
+                                className="w-3 h-3 rounded-[2px]" 
+                              />
+                              <View className="bg-[#29D7DE20] px-3 py-0.5 rounded-full">
+                                <Text className="text-[#00343F] font-lexendMedium text-[10px]">
+                                  {car.transmission || "Manual"}
+                                </Text>
+                              </View>
+                              <View className="bg-[#29D7DE20] px-3 py-0.5 rounded-full">
+                                <Text className="text-[#00343F] font-lexendMedium text-[10px]">
+                                  {car.fuelType || "Petrol"}
+                                </Text>
+                              </View>
+                            </View>
+                          </View>
+
+                          <View className="items-end">
+                            <CarTypeIcon
+                              type={car.bodyStyle}
+                              size={45}
+                            />
+                            <Text className="text-[#ACB7B7] font-lexendRegular text-[9px] mt-2">
+                              Added : {createdAt}
+                            </Text>
+                          </View>
+                        </View>
+                      </View> */}
                     </View>
                   </View>
+                );
+              })}
+            </View>
+          )}
 
-                  <Text className="text-[#09515D] font-ukNumberPlate text-[14px] mb-2 opacity-60">
-                    {car.plate}
-                  </Text>
+          {cars.length > 0 && (
+            <TouchableOpacity
+              className="bg-[#FBE74C] rounded-full py-6 items-center"
+              onPress={() => router.push("/(onboarding)")}
+            >
+              <Text className="text-[#00343F] font-lexendSemiBold text-[16px]">
+                Add another car
+              </Text>
+            </TouchableOpacity>
+          )}
 
-                  <View className="flex-row gap-2">
-                    {[
-                      car.bodyStyle || "SUV",
-                      car.year,
-                      car.transmission || "CVT",
-                    ].map((tag, idx) => (
-                      <View
-                        key={idx}
-                        className="bg-[#5E9597] px-2 py-0.5 rounded-md"
-                      >
-                        <Text className="text-[#002E35] font-lexendMedium text-[10px] opacity-60">
-                          {String(tag)}
-                        </Text>
-                      </View>
-                    ))}
-                  </View>
-                </View>
-
-              </View>
-            );
-          })}
+          <View className="items-center mt-8 mb-12">
+            <Text className="text-[#0E525C] font-lexendBold text-[12px] mb-1">
+              moticar
+            </Text>
+            <Text className="text-[#0E525C] font-lexendRegular text-[10px]">
+              version 1.0.1 (73)
+            </Text>
+          </View>
         </View>
-
-        <TouchableOpacity
-          className="bg-[#FFE352] rounded-full py-5 items-center mt-4"
-          onPress={() => router.push("/(onboarding)")}
-        >
-          <Text className="text-[#00343F] font-lexendBold text-[16px]">
-            Add another car
-          </Text>
-        </TouchableOpacity>
       </ScrollView>
 
       {/* Float Menu — rendered in a Modal so it sits above all views */}
@@ -230,25 +345,18 @@ export default function MeScreen() {
         onRequestClose={() => setMenuVisible(null)}
       >
         {/* Backdrop: tap outside closes menu */}
-        <Pressable
-          style={{ flex: 1 }}
-          onPress={() => setMenuVisible(null)}
-        >
+        <Pressable style={{ flex: 1 }} onPress={() => setMenuVisible(null)}>
           {/* Menu sheet — positioned top-right */}
           <View
             style={{
               position: "absolute",
               top: menuPosition.y + 24, // Positioned right under the dots
               right: 24,
-              backgroundColor: "#001D22",
+              backgroundColor: "#FFFFFFD9",
               borderRadius: 12,
               overflow: "hidden",
               width: 140,
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.4,
-              shadowRadius: 8,
-              elevation: 10,
+
             }}
           >
             <TouchableOpacity
@@ -262,15 +370,20 @@ export default function MeScreen() {
               }}
               onPress={() => {
                 const carId = menuVisible!;
+                const car = cars.find((c) => (c.id || c._id) === carId);
                 setMenuVisible(null);
-                router.push({
-                  pathname: "/(onboarding)",
-                  params: { editCarId: carId },
-                });
+                if (car) {
+                  setSelectedCarDetails(car);
+                  setShowDetailsSheet(true);
+                }
               }}
             >
-              <Ionicons name="pencil-outline" size={18} color="#29D7DE" />
-              <Text style={{ color: "white", fontFamily: "Lexend-Medium", fontSize: 13 }}>Edit</Text>
+              <Ionicons name="pencil-outline" size={18} color="#00AEB5" />
+              <Text
+                className="text-[#000000] font-lexendRegular text-[14px]"
+              >
+                Edit
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -286,114 +399,70 @@ export default function MeScreen() {
                 setDeleteCarId(carId);
               }}
             >
-              <Ionicons name="trash-outline" size={18} color="#FF6B6B" />
-              <Text style={{ color: "#FF6B6B", fontFamily: "Lexend-Medium", fontSize: 13 }}>Delete</Text>
+              <Ionicons name="trash-outline" size={18} color="#00AEB5" />
+              <Text
+                className="text-[#000000] font-lexendRegular text-[14px]"
+              >
+                Delete
+              </Text>
             </TouchableOpacity>
           </View>
         </Pressable>
       </Modal>
 
-      {/* Delete Confirmation Modal */}
-      <Modal
+      {/* Delete Confirmation BottomSheet */}
+      <BottomSheet
         visible={!!deleteCarId}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setDeleteCarId(null)}
+        onClose={() => setDeleteCarId(null)}
+        title=""
+        backgroundColor="#002D36"
+        showCloseButton={false}
+        height="30%"
       >
-        <Pressable
-          style={{
-            flex: 1,
-            backgroundColor: "rgba(0,0,0,0.5)",
-            alignItems: "center",
-            justifyContent: "center",
-            paddingHorizontal: 24,
-          }}
-          onPress={() => setDeleteCarId(null)}
-        >
-          <View
-            style={{
-              backgroundColor: "#001D22",
-              width: "100%",
-              borderRadius: 24,
-              padding: 32,
-              alignItems: "center",
-            }}
-            onStartShouldSetResponder={() => true}
-          >
-            {/* Icon */}
-            <View
-              style={{
-                width: 60,
-                height: 60,
-                borderRadius: 30,
-                backgroundColor: "rgba(255, 107, 107, 0.15)",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: 16,
-              }}
-            >
-              <Ionicons name="trash-outline" size={28} color="#FF6B6B" />
-            </View>
+        <View className="items-center py-6">
+          <Text className="text-[#FFFFFF] font-lexendBold text-[18px] mb-8 text-center px-4">
+            Are you sure you want to delete?
+          </Text>
 
-            <Text
-              style={{
-                color: "white",
-                fontFamily: "Lexend-Bold",
-                fontSize: 20,
-                textAlign: "center",
-                marginBottom: 8,
-              }}
+          <View className="flex-row gap-4 w-full px-4">
+            <TouchableOpacity
+              className="bg-[#FF0000] flex-1 rounded-full h-[52px] items-center justify-center shadow-sm"
+              onPress={() => deleteCarId && handleDeleteCar(deleteCarId)}
             >
-              Delete Car?
-            </Text>
-            <Text
-              style={{
-                color: "#9BBABB",
-                fontFamily: "Lexend-Regular",
-                fontSize: 14,
-                textAlign: "center",
-                marginBottom: 32,
-                lineHeight: 22,
-              }}
+              <Text className="text-white font-lexendBold text-[16px]">
+                Yes
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              className="flex-1 border border-[#00AEB5] rounded-full h-[52px] items-center justify-center"
+              onPress={() => setDeleteCarId(null)}
             >
-              This action cannot be undone. All data for this vehicle will be permanently removed.
-            </Text>
-
-            <View style={{ flexDirection: "row", gap: 12, width: "100%" }}>
-              <TouchableOpacity
-                style={{
-                  flex: 1,
-                  borderWidth: 1,
-                  borderColor: "#1E4A54",
-                  borderRadius: 999,
-                  paddingVertical: 16,
-                  alignItems: "center",
-                }}
-                onPress={() => setDeleteCarId(null)}
-              >
-                <Text style={{ color: "#9BBABB", fontFamily: "Lexend-Bold", fontSize: 16 }}>Cancel</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={{
-                  flex: 1,
-                  backgroundColor: "#FF6B6B",
-                  borderRadius: 999,
-                  paddingVertical: 16,
-                  alignItems: "center",
-                }}
-                onPress={() => deleteCarId && handleDeleteCar(deleteCarId)}
-              >
-                <Text style={{ color: "white", fontFamily: "Lexend-Bold", fontSize: 16 }}>Delete</Text>
-              </TouchableOpacity>
-            </View>
+              <Text className="text-[#00AEB5] font-lexendBold text-[16px]">
+                No
+              </Text>
+            </TouchableOpacity>
           </View>
-        </Pressable>
-      </Modal>
+        </View>
+      </BottomSheet>
+
+      <CarDetailsSheet
+        isVisible={showDetailsSheet}
+        onClose={() => setShowDetailsSheet(false)}
+        car={selectedCarDetails}
+        onEdit={(car) => {
+          router.push({
+            pathname: "/(onboarding)",
+            params: { editCarId: car.id || car._id },
+          });
+        }}
+        onDelete={(carId) => {
+          setDeleteCarId(carId);
+        }}
+      />
 
       <LoadingModal
-        visible={logout.isPending}
-        message="Logging out..."
+        visible={logout.isPending || deleteCar.isPending}
+        message={logout.isPending ? "Logging out..." : "Deleting car..."}
       />
     </View>
   );

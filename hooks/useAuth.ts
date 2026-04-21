@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { authService } from "@/services/api/authService";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useAppStore } from "@/store/useAppStore";
-import { AuthResponse, SignupResponse, User } from "@/types/auth";
+import { AuthResponse, SignupResponse, User, UpdateProfilePayload } from "@/types/auth";
 import { router } from "expo-router";
 import * as Localization from "expo-localization";
 import { CURRENCIES, LANGUAGES } from "@/utils/currency";
@@ -63,6 +63,7 @@ export const useSetPassword = () => {
       preferredLanguage?: string;
       country?: string;
       deviceType?: string;
+      hasManuallySetPreferences?: boolean;
     }) => {
       const defaults = getDefaultPreferences(user);
       const payload = {
@@ -81,7 +82,7 @@ export const useLogin = () => {
   const clearAppState = useAppStore((state) => state.clearAppState);
   const user = useAuthStore((state) => state.user);
   return useMutation({
-    mutationFn: (data: { emailOrUsername: string; password: string; deviceType?: string, preferredLanguage?: string, preferredCurrency?: string, country?: string }) => {
+    mutationFn: (data: { emailOrUsername: string; password: string; deviceType?: string, preferredLanguage?: string, preferredCurrency?: string, country?: string, hasManuallySetPreferences?: boolean }) => {
       const defaults = getDefaultPreferences(user);
       const payload = {
         ...data,
@@ -115,6 +116,7 @@ export const useSocialLogin = () => {
       country?: string;
       deviceType?: string;
       idToken?: string;
+      hasManuallySetPreferences?: boolean;
     }) => {
       const defaults = getDefaultPreferences(user);
       const payload = {
@@ -214,22 +216,20 @@ export const useCheckLocation = (ip?: string) => {
   });
 };
 
+export const useCheckLocationPublic = (ip?: string, enabled: boolean = true) => {
+  return useQuery({
+    queryKey: ["user", "location", "public", ip],
+    queryFn: () => authService.checkLocationPublic(ip),
+    enabled,
+  });
+};
+
 export const useUpdateProfile = () => {
   const queryClient = useQueryClient();
   const updateUser = useAuthStore((state) => state.updateUser);
 
   return useMutation({
-    mutationFn: (data: { 
-      name?: string; 
-      username?: string; 
-      country?: string; 
-      preferredCurrency?: string;
-      preferredLanguage?: string;
-      dob?: string;
-      gender?: string;
-      avatar?: string;
-      onboardingCompleted?: boolean;
-    }) => authService.updateProfile(data),
+    mutationFn: (data: UpdateProfilePayload) => authService.updateProfile(data),
     onSuccess: (data, variables) => {
       console.log("🔄 [useUpdateProfile] Success:", { data, variables });
       
@@ -262,8 +262,18 @@ export const useUpdateProfile = () => {
 
 
 export const useSetName = () => {
+  const user = useAuthStore((state) => state.user);
   return useMutation({
-    mutationFn: authService.setName,
+    mutationFn: (data: { email: string; name: string; preferredName?: string; preferredCurrency?: string; preferredLanguage?: string; country?: string, hasManuallySetPreferences?: boolean }) => {
+      const defaults = getDefaultPreferences(user);
+      const payload = {
+        ...data,
+        preferredLanguage: data.preferredLanguage || defaults.preferredLanguage,
+        preferredCurrency: data.preferredCurrency || defaults.preferredCurrency,
+        country: data.country || defaults.country,
+      };
+      return authService.setName(payload);
+    },
   });
 };
 

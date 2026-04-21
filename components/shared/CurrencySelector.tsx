@@ -54,7 +54,10 @@ export default function CurrencySelector({
   const handleSelectLanguage = (item: (typeof LANGUAGES)[0]) => {
     if (token) {
       updateProfile(
-        { preferredLanguage: item.value },
+        { 
+          preferredLanguage: item.value,
+          hasManuallySetPreferences: true
+        },
         {
           onSuccess: () => {
             showSnackbar({
@@ -78,7 +81,11 @@ export default function CurrencySelector({
   const handleSelectCurrency = (item: (typeof CURRENCIES)[0]) => {
     if (token) {
       updateProfile(
-        { preferredCurrency: item.value, country: item.country },
+        { 
+          preferredCurrency: item.value, 
+          country: item.country,
+          hasManuallySetPreferences: true
+        },
         {
           onSuccess: () => {
             showSnackbar({
@@ -90,7 +97,11 @@ export default function CurrencySelector({
         },
       );
     } else {
-      updateUser({ preferredCurrency: item.value, country: item.country });
+      updateUser({ 
+        preferredCurrency: item.value, 
+        country: item.country,
+        hasManuallySetPreferences: true 
+      });
       showSnackbar({
         type: "success",
         message: "Currency Selected",

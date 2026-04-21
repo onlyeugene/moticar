@@ -22,7 +22,7 @@ export function CarCard({ activeCar, onAddCar, onValuation }: CarCardProps) {
   const resaleValue = activeCar?.resaleValue;
 
   return (
-    <View className="bg-white rounded-[24px] overflow-hidden mb-6 ">
+    <View className="bg-white rounded-[12px] overflow-hidden mb-4 ">
       <View className="p-5">
         {/* Top row: Logo + Plate */}
         <View className="flex-row justify-between items-center mb-4">

@@ -164,5 +164,11 @@ export const carService = {
     const response = await apiClient.delete(API_ROUTES.CARS.DOCUMENTS_DETAIL(carId, docId));
     return response.data;
   },
+
+  /** Delete car */
+  deleteCar: async (id: string): Promise<any> => {
+    const response = await apiClient.delete(API_ROUTES.CARS.DELETE(id));
+    return response.data;
+  },
 };
 
