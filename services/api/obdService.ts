@@ -6,13 +6,18 @@ import { API_ROUTES } from "@/config/apiRoutes";
  */
 export const obdService = {
   /**
-   * Register a MotiBuddie device with a car by its IMEI.
+   * New-car discovery: register a MotiBuddie by IMEI, server auto-creates the car.
    */
-  pairDevice: async (carId: string, imei: string): Promise<any> => {
-    const response = await apiClient.post(API_ROUTES.OBD.PAIR, { 
-      carId, 
-      imei 
-    });
+  pairDevice: async (imei: string): Promise<any> => {
+    const response = await apiClient.post(API_ROUTES.OBD.PAIR, { imei });
+    return response.data;
+  },
+
+  /**
+   * Upgrade an existing car to OBD tracking.
+   */
+  enableObd: async (carId: string, imei: string): Promise<any> => {
+    const response = await apiClient.post(API_ROUTES.OBD.ENABLE, { carId, imei });
     return response.data;
   },
 

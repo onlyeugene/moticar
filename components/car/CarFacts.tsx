@@ -43,6 +43,8 @@ export function CarFacts({
     return `Est. ${currencySymbol}${(capacityLiters * price).toLocaleString()}`;
   };
 
+  const isEV = activeCar?.fuelType === 'EV' || activeCar?.fuelType === 'Electric';
+
   return (
     <View className="mb-6 bg-white rounded-[8px] p-4">
       <View className="flex-row justify-between items-center mb-4">
@@ -54,66 +56,68 @@ export function CarFacts({
         </TouchableOpacity>
       </View>
 
-      {/* Row 1: Engine Oil + Fuel */}
-      <View className="flex-row gap-3 mb-3">
-        {/* Engine Oil */}
-        <TouchableOpacity
-          className="flex-1 bg-[#F5F5F5] rounded-[4px] p-4"
-          onPress={() => onSelectDiagnostic?.("engineOil")}
-        >
-          <View className="flex-row justify-between items-start mb-2">
-            <EngineOilIcon width={30} height={30} />
-            <Text className="text-[#006C70] text-[24px] font-lexendRegular">
-              {activeCar?.engineOil?.capacityLiters
-                ? `${activeCar.engineOil.capacityLiters}L`
-                : "N/A"}
-            </Text>
-          </View>
-          <Text className="text-[#006C70] text-[14px] font-lexendRegular mb-1">
-            Engine Oil
-          </Text>
-          <Text
-            className="text-[#879090] text-[10px] font-lexendRegular mb-2"
-            numberOfLines={1}
+      {!isEV && (
+        /* Row 1: Engine Oil + Fuel */
+        <View className="flex-row gap-3 mb-3">
+          {/* Engine Oil */}
+          <TouchableOpacity
+            className="flex-1 bg-[#F5F5F5] rounded-[4px] p-4"
+            onPress={() => onSelectDiagnostic?.("engineOil")}
           >
-            Grade: {activeCar?.engineOil?.recommendedGrade || "N/A"}
-          </Text>
-          {/* <BrandTags brands={activeCar?.engineOil?.reputableBrands} /> */}
-        </TouchableOpacity>
-
-        {/* Fuel */}
-        <TouchableOpacity
-          className="flex-1 bg-[#F5F5F5] rounded-[4px] p-4"
-          onPress={() => onSelectDiagnostic?.("fuel")}
-        >
-          <View className="flex-row justify-between items-start mb-2">
-            <FuelIcon width={30} height={30} />
-            <Text className="text-[#006C70] text-[24px] font-lexendRegular">
-              {obdData?.fuelLevel !== undefined
-                ? `${obdData.fuelLevel}%`
-                : activeCar?.fuelSpec?.capacityLiters
-                  ? `${activeCar.fuelSpec.capacityLiters}L`
+            <View className="flex-row justify-between items-start mb-2">
+              <EngineOilIcon width={30} height={30} />
+              <Text className="text-[#006C70] text-[24px] font-lexendRegular">
+                {activeCar?.engineOil?.capacityLiters
+                  ? `${activeCar.engineOil.capacityLiters}L`
                   : "N/A"}
-            </Text>
-          </View>
-          <Text className="text-[#006C70] text-[14px] font-lexendRegular mb-2">
-            Fuel {obdData?.fuelLevel !== undefined && "(Live)"}
-          </Text>
-          <View className="justify-between flex-row items-center mt-3">
-            <Text className="text-[#879090] text-[10px] font-lexendRegular ">
-              Full Tank
-            </Text>
-            <View className="flex-row items-center ">
-              <View className="bg-[#FEF597] px-2 py-0.5 rounded-full">
-                <Text className="text-[#425658] text-[8px] font-lexendRegular">
-                  {getFuelEst()}
-                </Text>
-              </View>
-              <Ionicons name="chevron-forward" size={12} color="#888282" />
+              </Text>
             </View>
-          </View>
-        </TouchableOpacity>
-      </View>
+            <Text className="text-[#006C70] text-[14px] font-lexendRegular mb-1">
+              Engine Oil
+            </Text>
+            <Text
+              className="text-[#879090] text-[10px] font-lexendRegular mb-2"
+              numberOfLines={1}
+            >
+              Grade: {activeCar?.engineOil?.recommendedGrade || "N/A"}
+            </Text>
+            {/* <BrandTags brands={activeCar?.engineOil?.reputableBrands} /> */}
+          </TouchableOpacity>
+
+          {/* Fuel */}
+          <TouchableOpacity
+            className="flex-1 bg-[#F5F5F5] rounded-[4px] p-4"
+            onPress={() => onSelectDiagnostic?.("fuel")}
+          >
+            <View className="flex-row justify-between items-start mb-2">
+              <FuelIcon width={30} height={30} />
+              <Text className="text-[#006C70] text-[24px] font-lexendRegular">
+                {obdData?.fuelLevel !== undefined
+                  ? `${obdData.fuelLevel}%`
+                  : activeCar?.fuelSpec?.capacityLiters
+                    ? `${activeCar.fuelSpec.capacityLiters}L`
+                    : "N/A"}
+              </Text>
+            </View>
+            <Text className="text-[#006C70] text-[14px] font-lexendRegular mb-2">
+              Fuel {obdData?.fuelLevel !== undefined && "(Live)"}
+            </Text>
+            <View className="justify-between flex-row items-center mt-3">
+              <Text className="text-[#879090] text-[10px] font-lexendRegular ">
+                Full Tank
+              </Text>
+              <View className="flex-row items-center ">
+                <View className="bg-[#FEF597] px-2 py-0.5 rounded-full">
+                  <Text className="text-[#425658] text-[8px] font-lexendRegular">
+                    {getFuelEst()}
+                  </Text>
+                </View>
+                <Ionicons name="chevron-forward" size={12} color="#888282" />
+              </View>
+            </View>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* Row 2: Tyres full width */}
       <TouchableOpacity

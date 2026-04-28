@@ -75,7 +75,7 @@ export default function AddMileageSheet({
       onClose={onClose}
       title="Enter Mileage"
       headerRight={headerRight}
-      height="50%"
+      height="70%"
     >
       <View className="px-4 pt-4">
         {/* Mileage Input Section */}

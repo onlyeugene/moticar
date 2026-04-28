@@ -18,10 +18,12 @@ export default function TabLayout() {
 
   const { data: categoriesData } = useExpenseCategories(activeCarId);
   const categories = categoriesData?.categories || [];
+  const activeCar = carsData?.cars?.find((c) => (c.id || (c as any)._id) === activeCarId);
+  const isEV = activeCar?.fuelType === "EV" || activeCar?.fuelType === "Electric";
 
   return (
     <Tabs
-      tabBar={(props) => <TabBar {...props} categories={categories} />}
+      tabBar={(props) => <TabBar {...props} categories={categories} isEV={isEV} />}
       screenOptions={{ headerShown: false }}
     >
       <Tabs.Screen name="index" />

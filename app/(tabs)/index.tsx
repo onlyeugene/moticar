@@ -10,6 +10,7 @@ import MileageTracker from "@/components/dashboard/MileageTracker";
 import LocationAlert from "@/components/shared/LocationAlert";
 import { RulerPicker } from "@/components/shared/RulerPicker";
 import AddMileageSheet from "@/components/sheets/AddMileageSheet";
+import DiagnosisSheet from "@/components/sheets/DiagnosisSheet";
 import { ScreenBackground } from "@/components/ui/ScreenBackground";
 
 import { useActivitySpends, useTrips } from "@/hooks/useActivity";
@@ -44,6 +45,7 @@ export default function Dashboard() {
   const [showLocationAlert, setShowLocationAlert] = useState(false);
   const { selectedCarId, isDiagnosticActive, setActiveActivityTab } = useAppStore();
   const [isAddMileageVisible, setIsAddMileageVisible] = useState(false);
+  const [isDiagnosisVisible, setIsDiagnosisVisible] = useState(false);
   const { data: carsData, isLoading: carsLoading } = useUserCars();
 
   const userCar =
@@ -332,7 +334,10 @@ export default function Dashboard() {
             advice that can help prolong the lifetime of yor car
           </Text>
 
-          <TouchableOpacity className="bg-[#29D7DE] p-4 rounded-full mt-5 w-[70%] items-center">
+          <TouchableOpacity 
+            onPress={() => setIsDiagnosisVisible(true)}
+            className="bg-[#29D7DE] p-4 rounded-full mt-5 w-[70%] items-center"
+          >
             <Text className="text-[#00343F] font-lexendBold text-[16px]">
               Get Car Advice
             </Text>
@@ -344,6 +349,12 @@ export default function Dashboard() {
           onClose={() => setIsAddMileageVisible(false)}
           carId={userCar?.id || (userCar as any)?._id || ""}
           initialMileage={userCar?.mileage}
+        />
+
+        <DiagnosisSheet
+          visible={isDiagnosisVisible}
+          onClose={() => setIsDiagnosisVisible(false)}
+          carId={userCar?.id || (userCar as any)?._id || ""}
         />
       </ScrollView>
 

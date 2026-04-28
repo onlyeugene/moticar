@@ -71,6 +71,7 @@ export const API_ROUTES = {
   },
   OBD: {
     PAIR: "/obd/pair",
+    ENABLE: "/obd/enable",
     STATUS: (deviceId: string) => `/obd/device/${deviceId}/status`,
     DIAGNOSTIC: (carId: string) => `/obd/car/${carId}/diagnostic`,
     ACTIVATE: (carId: string) => `/obd/car/${carId}/activate`,

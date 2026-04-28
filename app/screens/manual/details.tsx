@@ -109,6 +109,7 @@ export default function CarDetailsScreen() {
       // Technical specs
       bodyStyle: carData.bodyStyle,
       engineDesc: carData.engine,
+      fuelType: carData.fuelType,
       transmission: carData.transmission,
       driveType: carData.driveType,
       segment: carData.segment,
@@ -173,6 +174,12 @@ export default function CarDetailsScreen() {
 
   const getYearOptions = () => {
     if (availableYearsList.length > 0) return availableYearsList;
+    
+    const availableYears = detailsData?.details?.features?.availableYears;
+    if (availableYears && availableYears.length > 0) {
+      return availableYears.map((y: any) => y.toString());
+    }
+
     const range = detailsData?.details?.features?.yearRange;
     if (range && range.includes("-")) {
       const [start, end] = range.split("-").map((s) => parseInt(s.trim()));

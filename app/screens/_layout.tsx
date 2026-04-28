@@ -65,6 +65,10 @@ export default function ScreensLayout() {
           presentation: "transparentModal",
         }} 
       />
+      <Stack.Screen name="legal/terms-and-conditions" options={{ animation: "slide_from_right" }} />
+      <Stack.Screen name="legal/membership-terms" options={{ animation: "slide_from_right" }} />
+      <Stack.Screen name="legal/privacy-policy" options={{ animation: "slide_from_right" }} />
+      <Stack.Screen name="legal/faq" options={{ animation: "slide_from_right" }} />
     </Stack>
   );
 }

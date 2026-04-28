@@ -1,38 +1,36 @@
-import React, { useState, useMemo } from "react";
+import Calendar from "@/assets/icons/calendar.svg";
+import EmptyIcon from "@/assets/icons/empty.svg";
+import Filter from "@/assets/icons/filter.svg";
+import { useActivitySpends } from "@/hooks/useActivity";
+import { useAppStore } from "@/store/useAppStore";
+import { Expense } from "@/types/expense";
+import { Ionicons } from "@expo/vector-icons";
 import {
+  addMonths,
+  addWeeks,
+  addYears,
+  eachWeekOfInterval,
+  endOfMonth,
+  format,
+  isSameMonth,
+  isSameYear,
+  startOfMonth,
+  startOfWeek,
+  subMonths,
+  subWeeks,
+  subYears,
+} from "date-fns";
+import React, { useMemo, useState } from "react";
+import {
+  Modal,
+  Pressable,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
-  Modal,
-  Pressable,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { SpendBreakdown } from "@/types/activity";
-import SpendStatsCard from "./SpendStatsCard";
-import ActivityEmptyState from "./ActivityEmptyState";
-import { Expense } from "@/types/expense";
-import {
-  format,
-  startOfWeek,
-  startOfMonth,
-  isSameMonth,
-  isSameYear,
-  addMonths,
-  subMonths,
-  addYears,
-  subYears,
-  addWeeks,
-  subWeeks,
-  eachWeekOfInterval,
-  endOfMonth,
-} from "date-fns";
-import Calendar from "@/assets/icons/calendar.svg";
-import EmptyIcon from "@/assets/icons/empty.svg";
 import ExpenseBreakdownSheet from "../sheets/ExpenseBreakdownSheet";
-import Filter from "@/assets/icons/filter.svg";
-import { useActivitySpends } from "@/hooks/useActivity";
-import { useAppStore } from "@/store/useAppStore";
+import SpendStatsCard from "./SpendStatsCard";
 
 interface SpendsTabProps {
   currencySymbol: string;
@@ -289,13 +287,18 @@ const SpendsTab: React.FC<SpendsTabProps> = ({
       ? (selectedDate.getMonth() + 1).toString()
       : undefined;
   const yearParam = selectedDate.getFullYear().toString();
-  const intervalParam = timeFilter === "Weekly" ? "week" : timeFilter === "Yearly" ? "year" : "month";
+  const intervalParam =
+    timeFilter === "Weekly"
+      ? "week"
+      : timeFilter === "Yearly"
+        ? "year"
+        : "month";
 
   const { data: spendData, isLoading } = useActivitySpends(
     selectedCarId || "",
     monthParam,
     yearParam,
-    intervalParam
+    intervalParam,
   );
 
   const [isScaleMenuOpen, setIsScaleMenuOpen] = useState(false);

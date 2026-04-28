@@ -29,7 +29,9 @@ interface DiagnosticListSheetProps {
 }
 
 export function getDiagnosticItems(activeCar: any, currencySymbol: string): DiagnosticItem[] {
-  return [
+  const isEV = activeCar?.fuelType === 'EV' || activeCar?.fuelType === 'Electric';
+  
+  const allItems: DiagnosticItem[] = [
     {
       key: "tyres",
       label: "Tyres",
@@ -80,6 +82,12 @@ export function getDiagnosticItems(activeCar: any, currencySymbol: string): Diag
       brands: activeCar?.batterySpec?.providers,
     },
   ];
+
+  if (isEV) {
+    return allItems.filter(item => item.key !== 'engineOil' && item.key !== 'fuel');
+  }
+
+  return allItems;
 }
 
 export default function DiagnosticListSheet({

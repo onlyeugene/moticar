@@ -69,6 +69,7 @@ import WalletIcon from "@/assets/new/wallet.svg";
 import NotesIcon from "@/assets/new/notes.svg";
 import TechnicianIcon from "@/assets/new/technician.svg";
 import CostIcon from "@/assets/new/cost.svg";
+import { LoadingModal } from "../ui/LoadingModal";
 
 interface LogExpenseSheetProps {
   visible: boolean;
@@ -533,11 +534,8 @@ export default function LogExpenseSheet({
             tint="light"
             className="absolute inset-0 z-50 items-center justify-center bg-white/30"
           >
-            <View className="bg-white p-6 rounded-2xl shadow-xl items-center gap-4">
-              <ActivityIndicator size="large" color="#29D7DE" />
-              <Text className="text-[#00343F] font-lexendMedium text-[14px]">
-                Scanning receipt...
-              </Text>
+            <View className=" ">
+              <LoadingModal visible={true} message="Scanning receipt..." />
             </View>
           </BlurView>
         )}

@@ -18,6 +18,8 @@ import {
 } from "@/types/technician";
 import { useAddTechnician, useUpdateTechnician } from "@/hooks/useTechnicians";
 import { useUploadImage } from "@/hooks/useUpload";
+import { useAuthStore } from "@/store/useAuthStore";
+import { getPhoneCodeByCountry } from "@/utils/phone";
 import TechnicianSpecialtySheet from "./TechnicianSpecialtySheet";
 import Spanner from "@/assets/icons/spanner.svg";
 
@@ -108,13 +110,15 @@ export default function AddTechnicianSheet({
   const { mutateAsync: uploadImage } = useUploadImage();
 
   const isEditing = !!technician;
+  const user = useAuthStore((s) => s.user);
+  const defaultPhoneCode = getPhoneCodeByCountry(user?.country);
   const [isUploading, setIsUploading] = useState(false);
 
   // Form state
   const [form, setForm] = useState({
     name: "",
     specialty: "" as TechnicianCategory,
-    phone: "",
+    phone: defaultPhoneCode,
     email: "",
     location: "",
     notes: "",
@@ -140,7 +144,7 @@ export default function AddTechnicianSheet({
       setForm({
         name: "",
         specialty: "" as TechnicianCategory,
-        phone: "",
+        phone: defaultPhoneCode,
         email: "",
         location: "",
         notes: "",
@@ -319,7 +323,7 @@ export default function AddTechnicianSheet({
             <FieldRow label="Phone Number" icon={PhoneIcon}>
               <TextInput
                 className="text-[#00343F] font-lexendMedium text-[14px] pb-2 ml-10 pt-3 border-b border-[#F0F0F0]"
-                placeholder="+234"
+                placeholder={defaultPhoneCode}
                 placeholderTextColor="#B4B1B1"
                 keyboardType="phone-pad"
                 value={form.phone}

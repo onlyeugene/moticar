@@ -93,6 +93,7 @@ export default function BottomSheet({
               <ScrollView
                 showsVerticalScrollIndicator={false}
                 keyboardShouldPersistTaps="handled"
+                keyboardDismissMode="none"
                 contentContainerStyle={{
                   paddingHorizontal: contentPadding,
                   paddingBottom: keyboardHeight > 0 ? keyboardHeight + 40 : 40,

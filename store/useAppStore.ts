@@ -12,6 +12,7 @@ export const useAppStore = create<AppState>()(
       isAppReady: false,
       theme: "system",
       selectedCarId: undefined,
+      isPairing: false,
       scanningProgress: {
         picturesCompleted: false,
         licenseCompleted: false,
@@ -34,6 +35,7 @@ export const useAppStore = create<AppState>()(
       setScannedLicenseData: (data) => set({ scannedLicenseData: data }),
       setActiveActivityTab: (tab) => set({ activeActivityTab: tab }),
       setDiagnosticActive: (active) => set({ isDiagnosticActive: active }),
+      setIsPairing: (pairing) => set({ isPairing: pairing }),
       setObdData: (carId, data) =>
         set((state) => ({
           obdData: {

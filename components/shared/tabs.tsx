@@ -61,6 +61,7 @@ export default function TabBar({
   descriptors,
   navigation,
   categories = [],
+  isEV = false,
 }: any) {
   const [fabOpen, setFabOpen] = useState(false);
   const [fabClosing, setFabClosing] = useState(false);
@@ -195,6 +196,11 @@ export default function TabBar({
     return <Ionicons name={item.icon as any} size={size} color="#002D36" />;
   };
 
+  const filteredFabItems = FAB_ITEMS.filter((item) => {
+    if (!isEV) return true;
+    return item.label !== "Fuel Top-Up" && item.label !== "Engine Oil";
+  });
+
   return (
     <>
       {/* Blur overlay — pointerEvents none when closing to prevent bleed-through */}
@@ -216,7 +222,7 @@ export default function TabBar({
           className="absolute right-5 bottom-40 z-20 items-end gap-3"
           pointerEvents={fabClosing ? "none" : "box-none"}
         >
-          {FAB_ITEMS.map((item, index) => {
+          {filteredFabItems.map((item, index) => {
             const anim = itemAnims[index];
             return (
               <Animated.View

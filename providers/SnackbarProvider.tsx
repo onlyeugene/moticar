@@ -62,7 +62,7 @@ export function SnackbarProvider({ children }: { children: ReactNode }) {
                 justifyContent: 'center'
               }}
             >
-              <Ionicons 
+              {/* <Ionicons 
                 name={
                   snackbar.type === 'error' ? 'alert-circle' : 
                   snackbar.type === 'success' ? 'checkmark-circle' : 'information-circle'
@@ -72,7 +72,7 @@ export function SnackbarProvider({ children }: { children: ReactNode }) {
                   snackbar.type === 'error' ? '#FF6B6B' : 
                   snackbar.type === 'success' ? '#4ADE80' : '#29D7DE'
                 } 
-              />
+              /> */}
             </View>
             <View style={{ flex: 1 }}>
               <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 14 }}>

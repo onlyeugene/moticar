@@ -9,7 +9,7 @@ import AddReminderSheet from "@/components/sheets/AddReminderSheet";
 import ReminderCategorySheet from "@/components/sheets/ReminderCategorySheet";
 import { ScreenBackground } from "@/components/ui/ScreenBackground";
 import { useReminders } from "@/hooks/useActivity";
-import { Trip } from "@/types/activity";
+import { Reminder, Trip } from "@/types/activity";
 
 import { useAppStore } from "@/store/useAppStore";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -31,6 +31,7 @@ export default function ActivityScreen() {
   const [isCategoryListVisible, setIsCategoryListVisible] = useState(false);
   const [selectedReminderCategory, setSelectedReminderCategory] = useState("Toll Fee");
   const [selectedTripForEdit, setSelectedTripForEdit] = useState<Trip | null>(null);
+  const [selectedReminderForEdit, setSelectedReminderForEdit] = useState<Reminder | null>(null);
 
   const user = useAuthStore((state) => state.user);
   const currencySymbol = getCurrencySymbol(user?.preferredCurrency);
@@ -135,9 +136,13 @@ export default function ActivityScreen() {
 
       <AddReminderSheet 
         visible={isAddReminderVisible}
-        onClose={() => setIsAddReminderVisible(false)}
+        onClose={() => {
+          setIsAddReminderVisible(false);
+          setSelectedReminderForEdit(null);
+        }}
         category={selectedReminderCategory}
         carId={selectedCarId || ""}
+        reminder={selectedReminderForEdit}
       />
 
       <ReminderCategorySheet
@@ -147,6 +152,11 @@ export default function ActivityScreen() {
         reminders={categoryReminders}
         onAdd={() => {
           setIsCategoryListVisible(false);
+          setIsAddReminderVisible(true);
+        }}
+        onEditReminder={(reminder) => {
+          setIsCategoryListVisible(false);
+          setSelectedReminderForEdit(reminder);
           setIsAddReminderVisible(true);
         }}
       />

@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import * as WebBrowser from "expo-web-browser";
+
 import { useAuthStore } from "@/store/useAuthStore";
 import { useLogout, useDeleteAccount, useUpdateProfile } from "@/hooks/useAuth";
 import CurrencySelectionSheet from "@/components/sheets/CurrencySelectionSheet";
@@ -202,16 +202,25 @@ export default function MoreScreen() {
         </Text>
         <View className="bg-white rounded-[16px] px-4 mb-8">
           <SettingItem icon={Headset} label="Contact Us" />
-          <SettingItem icon={HelpIcon} label="FAQ" />
-          <SettingItem 
-            icon={BookIcon} 
-            label="Terms of Service" 
-            onPress={() => WebBrowser.openBrowserAsync("https://usemoticar.com/terms-of-service/")}
+          <SettingItem
+            icon={HelpIcon}
+            label="FAQ"
+            onPress={() => router.push("/screens/legal/faq")}
           />
-          <SettingItem 
-            icon={BookIcon} 
-            label="Privacy Policy" 
-            onPress={() => WebBrowser.openBrowserAsync("https://usemoticar.com/privacy-policy/")}
+          <SettingItem
+            icon={BookIcon}
+            label="Terms of Use"
+            onPress={() => router.push("/screens/legal/terms-and-conditions")}
+          />
+          <SettingItem
+            icon={BookIcon}
+            label="Membership Terms"
+            onPress={() => router.push("/screens/legal/membership-terms")}
+          />
+          <SettingItem
+            icon={BookIcon}
+            label="Privacy Policy"
+            onPress={() => router.push("/screens/legal/privacy-policy")}
           />
           <SettingItem icon={Command} label="Community" isLast={true} />
         </View>

@@ -7,6 +7,7 @@ import { DateNavigator, DateGrain } from "@/components/shared/DateNavigator";
 import FilterGrainSheet from "@/components/sheets/FilterGrainSheet";
 import { useTrips, useDeleteTrip } from "@/hooks/useActivity";
 import { useAppStore } from "@/store/useAppStore";
+import { LoadingModal } from "../ui/LoadingModal";
 
 interface TripsTabProps {
   onAddTrip?: () => void;
@@ -79,8 +80,18 @@ const TripsTab: React.FC<TripsTabProps> = ({
      return new Date(groupedTrips[b][0].startTime).getTime() - new Date(groupedTrips[a][0].startTime).getTime();
   });
 
+
+    // if (isLoading) {
+    //   return (
+    //     <View className="flex-1 items-center justify-center pt-20">
+    //       <LoadingModal visible={true} />
+    //     </View>
+    //   );
+    // }
+
   return (
     <View className="flex-1">
+      <LoadingModal visible={isLoading} />
       <DateNavigator
         selectedDate={selectedDate}
         onChange={setSelectedDate}

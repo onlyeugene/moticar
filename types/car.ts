@@ -209,6 +209,7 @@ export interface CarDetails {
       topSpeed?: string;
       acceleration?: string;
       yearRange?: string;
+      availableYears?: number[];
       bodyColor?: string;
       [key: string]: any;
     };

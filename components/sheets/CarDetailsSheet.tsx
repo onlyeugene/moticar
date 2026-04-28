@@ -14,7 +14,7 @@ import HorseIcon from "@/assets/icons/car/horse.svg";
 import CalendarIcon from "@/assets/icons/car/calendar.svg";
 import CylinderIcon from "@/assets/icons/car/cylinder.svg";
 import AttributeEditSheet, { EditMode } from "../scan/AttributeEditSheet";
-import { useUpdateCar } from "@/hooks/useCars";
+import { useUpdateCar, useCarDetails } from "@/hooks/useCars";
 
 interface CarDetailsSheetProps {
   isVisible: boolean;
@@ -51,6 +51,11 @@ export const CarDetailsSheet = ({
   } | null>(null);
 
   const updateCar = useUpdateCar();
+  const { data: detailsData } = useCarDetails({
+    make: localCar?.make || "",
+    model: localCar?.carModel || "",
+    year: localCar?.year || 0,
+  });
 
   useEffect(() => {
     if (isVisible) {
@@ -142,8 +147,16 @@ export const CarDetailsSheet = ({
     </View>
   );
 
+  const getYearOptions = () => {
+    const availableYears = detailsData?.details?.features?.availableYears;
+    if (availableYears && availableYears.length > 0) {
+      return availableYears.map((y: any) => y.toString());
+    }
+    return Array.from({length: 30}, (_, i) => (new Date().getFullYear() - i).toString());
+  };
+
   const specs = [
-    { label: "Year of Production:", value: localCar.year, icon: CalendarIcon, key: "year", mode: "chips" as EditMode, options: Array.from({length: 30}, (_, i) => (new Date().getFullYear() - i).toString()) },
+    { label: "Year of Production:", value: localCar.year, icon: CalendarIcon, key: "year", mode: "chips" as EditMode, options: getYearOptions() },
     { label: "Fuel Type", value: localCar.fuelType || "N/A", icon: FuelIcon, key: "fuelType", mode: "chips" as EditMode, options: FUEL_TYPES },
     {
       label: "Gearbox",

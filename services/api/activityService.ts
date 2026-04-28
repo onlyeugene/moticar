@@ -42,6 +42,18 @@ export const activityService = {
     const response = await apiClient.post(API_ROUTES.ACTIVITY.REMINDERS, data);
     return response.data;
   },
+  
+  /** Update an existing reminder */
+  updateReminder: async (id: string, data: Partial<CreateReminderInput>): Promise<{ message: string; reminder: Reminder }> => {
+    const response = await apiClient.patch(`${API_ROUTES.ACTIVITY.REMINDERS}/${id}`, data);
+    return response.data;
+  },
+
+  /** Delete a reminder */
+  deleteReminder: async (id: string): Promise<{ message: string }> => {
+    const response = await apiClient.delete(`${API_ROUTES.ACTIVITY.REMINDERS}/${id}`);
+    return response.data;
+  },
 
   /** Get monthly spend aggregation chart */
   getSpendsChart: async (carId: string, month?: string, year?: string, interval?: string): Promise<SpendBreakdown> => {

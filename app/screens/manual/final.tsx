@@ -20,6 +20,8 @@ import {
   Text,
   TouchableOpacity,
   View,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import Animated, {
   FadeInDown,
@@ -72,7 +74,7 @@ export default function FinalDetailsScreen() {
     mode: "onChange",
     defaultValues: {
       condition: "Newly Purchased",
-      purchaseDate: "12-02-2025",
+      purchaseDate: new Date().toLocaleDateString("en-GB").replace(/\//g, "-"),
       dontRememberDate: false,
       monthlyBudget: params.recommendedBudget
         ? parseInt(params.recommendedBudget)
@@ -136,7 +138,11 @@ export default function FinalDetailsScreen() {
 
   return (
     <ScreenBackground withSafeArea>
-      <View className="flex-1 mt-20 px-4">
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="flex-1"
+      >
+        <View className="flex-1 mt-20 px-4">
         {/* Header */}
         <View className="flex-row items-center justify-between mb-8">
           <TouchableOpacity onPress={() => router.replace('/(onboarding)')}>
@@ -199,6 +205,8 @@ export default function FinalDetailsScreen() {
 
         <ScrollView
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="none"
           contentContainerStyle={{ paddingBottom: 150 }}
           className="flex-1"
         >
@@ -216,7 +224,7 @@ export default function FinalDetailsScreen() {
               value={watch("monthlyBudget")}
               onValueChange={(val) => setValue("monthlyBudget", val)}
               unitPrefix={currencySymbol}
-              min={1000}
+              min={0}
               max={1000000}
               step={100}
               unitStep={500}
@@ -390,6 +398,7 @@ export default function FinalDetailsScreen() {
           </TouchableOpacity>
         </View>
       </View>
+      </KeyboardAvoidingView>
     </ScreenBackground>
   );
 }

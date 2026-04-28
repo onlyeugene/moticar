@@ -113,6 +113,8 @@ export interface ValuationBreakdown {
     modifications: string;
   };
   assumptions: string[];
+  createdAt?: string;
+  valuationDate?: string;
 }
 
 export interface PriceRecommendationInput {
