@@ -10,6 +10,7 @@ import MileageTracker from "@/components/dashboard/MileageTracker";
 import LocationAlert from "@/components/shared/LocationAlert";
 import { RulerPicker } from "@/components/shared/RulerPicker";
 import AddMileageSheet from "@/components/sheets/AddMileageSheet";
+import DiagnosisSheet from "@/components/sheets/DiagnosisSheet";
 import { ScreenBackground } from "@/components/ui/ScreenBackground";
 
 import { useActivitySpends, useTrips } from "@/hooks/useActivity";
@@ -32,16 +33,19 @@ import {
   View,
 } from "react-native";
 import ActivityScreen from "./activity";
+import { useRouter } from "expo-router";
 
 export default function Dashboard() {
+  const router = useRouter();
   const user = useAuthStore((state) => state.user);
   const currencySymbol = getCurrencySymbol(user?.preferredCurrency);
   const queryClient = useQueryClient();
   const { data: userData, isLoading: userLoading } = useMe();
 
   const [showLocationAlert, setShowLocationAlert] = useState(false);
-  const { selectedCarId, isDiagnosticActive } = useAppStore();
+  const { selectedCarId, isDiagnosticActive, setActiveActivityTab } = useAppStore();
   const [isAddMileageVisible, setIsAddMileageVisible] = useState(false);
+  const [isDiagnosisVisible, setIsDiagnosisVisible] = useState(false);
   const { data: carsData, isLoading: carsLoading } = useUserCars();
 
   const userCar =
@@ -153,11 +157,17 @@ export default function Dashboard() {
             {/* User Greeting & Year */}
             <View className="flex-row items-center justify-between p-2 pt-4">
               <View className="flex-row items-center gap-3">
-                <View className="w-12 h-12 rounded-full border-2 border-white shadow-sm overflow-hidden">
-                  <Image
-                    source={{ uri: "https://i.pravatar.cc/150?u=moticar" }}
-                    className="w-full h-full"
-                  />
+                <View className="w-12 h-12 rounded-full border-2 border-white shadow-sm overflow-hidden bg-[#00AEB5]/10 items-center justify-center">
+                  {user?.avatar ? (
+                    <Image
+                      source={{ uri: user.avatar }}
+                      className="w-full h-full"
+                    />
+                  ) : (
+                    <Text className="text-[#00AEB5] font-lexendBold text-[16px]">
+                      {(user?.name || "U")[0].toUpperCase()}
+                    </Text>
+                  )}
                 </View>
                 <Text className="text-[#00232A] font-lexendBold text-[20px]">
                   Hi, {user?.name?.split(" ")[0] || "User"}
@@ -280,6 +290,10 @@ export default function Dashboard() {
               approxKm={tripsData?.trips?.[0]?.distanceKm || 0}
               entriesCount={tripsData?.count || 0}
               onPress={() => setIsAddMileageVisible(true)}
+              onCardPress={() => {
+                setActiveActivityTab("Mileage Milestones");
+                router.push("/(tabs)/activity");
+              }}
             />
           </View>
 
@@ -320,7 +334,10 @@ export default function Dashboard() {
             advice that can help prolong the lifetime of yor car
           </Text>
 
-          <TouchableOpacity className="bg-[#29D7DE] p-4 rounded-full mt-5 w-[70%] items-center">
+          <TouchableOpacity 
+            onPress={() => setIsDiagnosisVisible(true)}
+            className="bg-[#29D7DE] p-4 rounded-full mt-5 w-[70%] items-center"
+          >
             <Text className="text-[#00343F] font-lexendBold text-[16px]">
               Get Car Advice
             </Text>
@@ -332,6 +349,12 @@ export default function Dashboard() {
           onClose={() => setIsAddMileageVisible(false)}
           carId={userCar?.id || (userCar as any)?._id || ""}
           initialMileage={userCar?.mileage}
+        />
+
+        <DiagnosisSheet
+          visible={isDiagnosisVisible}
+          onClose={() => setIsDiagnosisVisible(false)}
+          carId={userCar?.id || (userCar as any)?._id || ""}
         />
       </ScrollView>
 

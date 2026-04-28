@@ -67,11 +67,33 @@ export const useCreateReminder = () => {
   });
 };
 
-export const useActivitySpends = (carId: string, month?: string, year?: string) => {
+export const useUpdateReminder = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<CreateReminderInput> }) => 
+      activityService.updateReminder(id, data),
+    onSuccess: (response) => {
+      queryClient.invalidateQueries({ queryKey: ["activity", "reminders", response.reminder.carId] });
+    },
+  });
+};
+
+export const useDeleteReminder = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, carId }: { id: string; carId: string }) => 
+      activityService.deleteReminder(id),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["activity", "reminders", variables.carId] });
+    },
+  });
+};
+
+export const useActivitySpends = (carId: string, month?: string, year?: string, interval?: string) => {
   return useQuery({
-    queryKey: ["activity", "spends", carId, month, year],
+    queryKey: ["activity", "spends", carId, month, year, interval],
     queryFn: async () => {
-      const breakdown = await activityService.getSpendsChart(carId, month, year);
+      const breakdown = await activityService.getSpendsChart(carId, month, year, interval);
       // We still fetch all expenses for historical charts (like CPM) 
       // but we store them separately to avoid polluting the monthly breakdown.
       const allExpenses = await expenseService.getExpensesByCarId(carId);

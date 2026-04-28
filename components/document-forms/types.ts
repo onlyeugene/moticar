@@ -63,7 +63,7 @@ export interface DocumentFormProps {
 }
 
 export const CATEGORY_DEFAULTS: DocumentFormState = {
-  amount: 50000,
+  amount: 0,
   startDate: null,
   expiryDate: null,
   issueDate: null,

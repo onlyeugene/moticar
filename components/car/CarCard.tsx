@@ -22,12 +22,12 @@ export function CarCard({ activeCar, onAddCar, onValuation }: CarCardProps) {
   const resaleValue = activeCar?.resaleValue;
 
   return (
-    <View className="bg-white rounded-[24px] overflow-hidden mb-6 ">
+    <View className="bg-white rounded-[12px] overflow-hidden mb-4 ">
       <View className="p-5">
         {/* Top row: Logo + Plate */}
         <View className="flex-row justify-between items-center mb-4">
           <View className=" flex-1">
-            <CarIcon make={activeCar?.make || ""} size={32} />
+            <CarIcon make={activeCar?.make || ""} size={50} />
           </View>
           <View className="bg-white border border-dashed border-[#E5E5E5] px-4 h-[44px] items-center justify-center rounded-lg">
             <Text className="text-[#00343F] text-[18px] font-ukNumberPlate">
@@ -37,7 +37,7 @@ export function CarCard({ activeCar, onAddCar, onValuation }: CarCardProps) {
         </View>
 
         {/* Car name + health score row */}
-        <View className="flex-row justify-between items-start mt-5">
+        <View className="flex-row justify-between items-start">
           {/* Left: name + meta */}
           <View className="flex-1 mr-4">
             <Text className="text-[#00AEB5] text-[16px] font-lexendMedium mb-1">
@@ -68,7 +68,7 @@ export function CarCard({ activeCar, onAddCar, onValuation }: CarCardProps) {
             </Text>
             <View className="">
               <Text className="text-[#29D7DE] text-[33px] font-lexendBold">
-                {healthScore ? `${healthScore}%` : "--%"}
+                {healthScore ? `${healthScore}%` : "N/A"}
               </Text>
             </View>
           </View>

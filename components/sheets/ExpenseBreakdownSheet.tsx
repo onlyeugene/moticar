@@ -27,12 +27,20 @@ export default function ExpenseBreakdownSheet({
   monthlyBudget,
   selectedDate,
 }: ExpenseBreakdownSheetProps) {
-  const [filterScale, setFilterScale] = useState<"Weekly" | "Monthly" | "Yearly" | "All Time">("Monthly");
+  const [filterScale, setFilterScale] = useState<"Weekly" | "Monthly" | "Yearly" | "All Time">(
+    spendData ? "Monthly" : "All Time"
+  );
   const [isScaleMenuOpen, setIsScaleMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const [isDetailVisible, setIsDetailVisible] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (!spendData) {
+      setFilterScale("All Time");
+    }
+  }, [spendData, expenses]);
 
   const handlePressDetails = (expense: Expense) => {
     setSelectedExpense(expense);
@@ -50,7 +58,7 @@ export default function ExpenseBreakdownSheet({
     return pool.filter((exp: any) => {
       const d = new Date(exp.date);
       if (filterScale === "Weekly") return isSameWeek(d, selectedDate);
-      if (filterScale === "Monthly") return isSameMonth(d, selectedDate);
+      if (filterScale === "Monthly") return isSameMonth(d, selectedDate) && isSameYear(d, selectedDate);
       if (filterScale === "Yearly") return isSameYear(d, selectedDate);
       return true;
     });

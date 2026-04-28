@@ -23,6 +23,7 @@ import ScanIcon from "@/assets/icons/scan.svg";
 import Pen from "@/assets/icons/pen.svg";
 import Trash from "@/assets/icons/trash.svg";
 import { ActivityIndicator } from "react-native";
+import { useAuthStore } from "@/store/useAuthStore";
 
 interface AddDocumentSheetProps {
   visible: boolean;
@@ -69,6 +70,7 @@ export default function AddDocumentSheet({
   carId,
   initialData,
 }: AddDocumentSheetProps) {
+  const user = useAuthStore(state => state.user);
   const { data: carData } = useCarById(carId);
   const car = carData?.car;
 
@@ -133,6 +135,18 @@ export default function AddDocumentSheet({
       }
     }
   }, [visible, category, initialData]);
+
+  // Auto-fill expiry date to +1 year when a start/issue date is selected
+  useEffect(() => {
+    const referenceDate = formState.issueDate || formState.testDate || formState.startDate;
+    // Only auto-fill if we have a reference date and expiry date hasn't been set yet (or is manually cleared)
+    // and we are currently in a state where auto-filling makes sense (not just loading initial data)
+    if (referenceDate && !formState.expiryDate) {
+      const nextYear = new Date(referenceDate);
+      nextYear.setFullYear(nextYear.getFullYear() + 1);
+      setFormState(prev => ({ ...prev, expiryDate: nextYear }));
+    }
+  }, [formState.issueDate, formState.testDate, formState.startDate]);
 
   const handlePickImage = async (field: keyof Pick<DocumentFormState, 'documentUrl' | 'receiptUrl' | 'invoiceUrl'>) => {
     Alert.alert("Select Photo", "Choose a source", [
@@ -269,7 +283,8 @@ export default function AddDocumentSheet({
       const payload = {
         ...finalData,
         type: category,
-        fileUrl: finalData.documentUrl
+        fileUrl: finalData.documentUrl,
+        currency: user?.preferredCurrency || 'NGN'
       };
 
       if (isExisting) {

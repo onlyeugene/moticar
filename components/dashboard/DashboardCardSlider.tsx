@@ -147,7 +147,7 @@ export default function DashboardCardSlider({ carId, month, year, monthlyBudget 
             </Text>
             <Text className="text-[#9BBABB] font-lexendRegular text-[14px] mt-1">than last month</Text>
 
-            <View className="bg-[#B8F2F4]/60 p-5 rounded-[24px] mt-8 w-full">
+            <View className="bg-[#B8F2F4]/60 p-3 rounded-[24px] mt-8 w-full">
               <View className="flex-row items-start justify-between">
                 <View>
                   <Text className="text-[#1A3B41] font-lexendBold text-[11px] uppercase tracking-wider opacity-60">

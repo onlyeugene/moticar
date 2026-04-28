@@ -1,9 +1,11 @@
-import { useCreateReminder } from "@/hooks/useActivity";
+import { useCreateReminder, useUpdateReminder, useDeleteReminder } from "@/hooks/useActivity";
 import { useAuthStore } from "@/store/useAuthStore";
-import { ReminderCategory } from "@/types/activity";
+import { Reminder, ReminderCategory } from "@/types/activity";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useCallback, useState } from "react";
 import {
+  ActivityIndicator,
+  Alert,
   Modal,
   Pressable,
   ScrollView,
@@ -27,6 +29,7 @@ interface AddReminderSheetProps {
   onClose: () => void;
   category: string;
   carId: string;
+  reminder?: Reminder | null;
 }
 
 const FORM_MAP: Record<string, React.ComponentType<any>> = {
@@ -43,16 +46,53 @@ export default function AddReminderSheet({
   onClose,
   category,
   carId,
+  reminder,
 }: AddReminderSheetProps) {
   const user = useAuthStore((s) => s.user);
-  const { mutate: createReminder, isPending } = useCreateReminder();
+  const { mutate: createReminder, isPending: isCreating } = useCreateReminder();
+  const { mutate: updateReminder, isPending: isUpdating } = useUpdateReminder();
+  const { mutate: deleteReminder, isPending: isDeleting } = useDeleteReminder();
+  
+  const isPending = isCreating || isUpdating || isDeleting;
+
+  const [isEditing, setIsEditing] = useState(!reminder);
   const [formState, setFormState] = useState<ReminderFormState>({
     ...CATEGORY_DEFAULTS,
   });
 
   React.useEffect(() => {
-    if (visible) setFormState({ ...CATEGORY_DEFAULTS });
-  }, [visible, category]);
+    if (visible) {
+      if (reminder) {
+        const dets = reminder.details || {};
+        const primaryDateStr = dets.date || dets.dueDate || dets.startDate;
+        
+        setFormState({
+          name: reminder.name || "",
+          amount: dets.amount || dets.estimatedCost || dets.budget || 0,
+          date: primaryDateStr ? new Date(primaryDateStr) : null,
+          endDate: dets.endDate ? new Date(dets.endDate) : null,
+          lastServiceDate: dets.lastServiceDate ? new Date(dets.lastServiceDate) : null,
+          time: dets.time || "",
+          frequency: (dets.frequency || dets.repeatInterval || "") as string,
+          frequencyMode: (dets.frequencyType || (dets.repeatInterval ? "Repeat" : "One-Time")) as string,
+          severity: dets.severity || "",
+          emailNotify: reminder.emailNotify || false,
+          notes: reminder.notes || "",
+          paymentMethod: dets.paymentMethod || "",
+          serviceCategory: (dets.serviceCategory || dets.duesCategory || dets.penaltyCategory || dets.tripCategory || dets.othersCategory || "") as string,
+          dueTrigger: dets.dueTrigger || "",
+          mileage: dets.currentMileage ? dets.currentMileage.toString() : "",
+          technician: null, // IDs usually don't resolve back easily without fetching
+          issuingAuthority: dets.issuingAuthority || "",
+          reference: dets.referenceNumber || "",
+          destination: dets.destination || "",
+        });
+      } else {
+        setFormState({ ...CATEGORY_DEFAULTS });
+      }
+      setIsEditing(!reminder);
+    }
+  }, [visible, category, reminder]);
 
   const saveEnabled =
     !!formState.date !== null &&
@@ -137,23 +177,66 @@ export default function AddReminderSheet({
       }
     };
 
-    createReminder(
-      {
-        carId,
-        category: category as ReminderCategory,
-        name: formState.name || formState.serviceCategory || category,
-        emailNotify: formState.emailNotify,
-        notes: formState.notes,
-        details: buildDetails(),
-      },
-      {
-        onSuccess: () => {
-          onClose();
-          setFormState({ ...CATEGORY_DEFAULTS });
+    if (reminder) {
+      updateReminder(
+        {
+          id: reminder.id || (reminder as any)._id,
+          data: {
+            category: category as ReminderCategory,
+            name: formState.name || formState.serviceCategory || category,
+            emailNotify: formState.emailNotify,
+            notes: formState.notes,
+            details: buildDetails(),
+          },
         },
-      },
+        {
+          onSuccess: () => {
+            onClose();
+          },
+        },
+      );
+    } else {
+      createReminder(
+        {
+          carId,
+          category: category as ReminderCategory,
+          name: formState.name || formState.serviceCategory || category,
+          emailNotify: formState.emailNotify,
+          notes: formState.notes,
+          details: buildDetails(),
+        },
+        {
+          onSuccess: () => {
+            onClose();
+          },
+        },
+      );
+    }
+  }, [formState, carId, category, createReminder, updateReminder, reminder, onClose]);
+
+  const handleDelete = useCallback(() => {
+    if (!reminder) return;
+    
+    Alert.alert(
+      "Delete Reminder",
+      "Are you sure you want to delete this reminder?",
+      [
+        { text: "Cancel", style: "cancel" },
+        { 
+          text: "Delete", 
+          style: "destructive",
+          onPress: () => {
+            deleteReminder({ 
+              id: reminder.id || (reminder as any)._id, 
+              carId 
+            }, {
+              onSuccess: () => onClose()
+            });
+          }
+        }
+      ]
     );
-  }, [formState, carId, category, createReminder, onClose]);
+  }, [reminder, carId, deleteReminder, onClose]);
 
   const ActiveForm = FORM_MAP[category];
 
@@ -181,15 +264,27 @@ export default function AddReminderSheet({
                   {category}
                 </Text>
               </View>
-              <TouchableOpacity
-                onPress={handleSave}
-                disabled={!saveEnabled || isPending}
-                className={`px-5 py-2 rounded-full mt-1 ${saveEnabled && !isPending ? "bg-[#29D7DE]" : "bg-[#29D7DE]/40"}`}
-              >
-                <Text className="text-[#00343F] font-lexendBold text-[14px]">
-                  {isPending ? "Saving..." : "Save"}
-                </Text>
-              </TouchableOpacity>
+
+              {!isEditing && reminder ? (
+                <View className="flex-row items-center gap-4 mt-1">
+                  <TouchableOpacity onPress={() => setIsEditing(true)}>
+                    <Ionicons name="create-outline" size={24} color="#293536" />
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={handleDelete}>
+                    <Ionicons name="trash-outline" size={24} color="#FF3B30" />
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <TouchableOpacity
+                  onPress={handleSave}
+                  disabled={!saveEnabled || isPending}
+                  className={`px-5 py-2 rounded-full mt-1 ${saveEnabled && !isPending ? "bg-[#29D7DE]" : "bg-[#29D7DE]/40"}`}
+                >
+                  <Text className="text-[#00343F] font-lexendBold text-[14px]">
+                    {isPending ? "Saving..." : "Save"}
+                  </Text>
+                </TouchableOpacity>
+              )}
             </View>
 
             <ScrollView
@@ -198,14 +293,20 @@ export default function AddReminderSheet({
               keyboardShouldPersistTaps="handled"
               contentContainerStyle={{ paddingBottom: 60, paddingTop: 8 }}
             >
-              {ActiveForm && (
-                <ActiveForm
-                  state={formState}
-                  setState={setFormState}
-                  userEmail={user?.email || "your email"}
-                  carId={carId}
-                />
-              )}
+              <View 
+                pointerEvents={isEditing ? "auto" : "none"}
+                style={{ opacity: isEditing ? 1 : 0.8 }}
+              >
+                {ActiveForm && (
+                  <ActiveForm
+                    state={formState}
+                    setState={setFormState}
+                    userEmail={user?.email || "your email"}
+                    carId={carId}
+                  />
+                )}
+              </View>
+
             </ScrollView>
           </SafeAreaView>
         </View>

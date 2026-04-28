@@ -24,7 +24,7 @@ export const usePushNotifications = () => {
   const responseListener = useRef<Notifications.Subscription | null>(null);
   
   const { user } = useAuthStore();
-  const userId = user?.id || user?._id;
+  const userId = user?.id;
 
   useEffect(() => {
     if (!userId) return;

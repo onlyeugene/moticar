@@ -13,6 +13,7 @@ import CarWashIcon from "@/assets/tabs/carwash.svg";
 import FuelIcon from "@/assets/tabs/fuel.svg";
 import MechanicalIcon from "@/assets/tabs/mechanic.svg";
 import TyresIcon from "@/assets/tabs/tyreguage.svg";
+import { useAppStore } from "@/store/useAppStore";
 import { ExpenseCategory } from "@/types/expense";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
@@ -28,7 +29,6 @@ import {
 import ExpenseCategorySheet from "../sheets/ExpenseCategorySheet";
 import LogExpenseSheet from "../sheets/LogExpenseSheet";
 import SuccessModal from "./SuccessModal";
-import { useAppStore } from "@/store/useAppStore";
 
 const FAB_ITEMS = [
   { label: "Accessories & Parts", icon: AccessoriesIcon },
@@ -61,6 +61,7 @@ export default function TabBar({
   descriptors,
   navigation,
   categories = [],
+  isEV = false,
 }: any) {
   const [fabOpen, setFabOpen] = useState(false);
   const [fabClosing, setFabClosing] = useState(false);
@@ -76,7 +77,8 @@ export default function TabBar({
   const isHomeRoute = currentRouteName === "index";
   const isActivityRoute = currentRouteName === "activity";
   const isCarRoute = currentRouteName === "car";
-  const showFab = isHomeRoute || (isActivityRoute && activeActivityTab === "Trips");
+  const showFab =
+    isHomeRoute || (isActivityRoute && activeActivityTab === "Trips");
 
   const overlayAnim = useRef(new Animated.Value(0)).current;
   const fabRotate = useRef(new Animated.Value(0)).current;
@@ -194,6 +196,11 @@ export default function TabBar({
     return <Ionicons name={item.icon as any} size={size} color="#002D36" />;
   };
 
+  const filteredFabItems = FAB_ITEMS.filter((item) => {
+    if (!isEV) return true;
+    return item.label !== "Fuel Top-Up" && item.label !== "Engine Oil";
+  });
+
   return (
     <>
       {/* Blur overlay — pointerEvents none when closing to prevent bleed-through */}
@@ -203,15 +210,8 @@ export default function TabBar({
           style={{ opacity: overlayAnim }}
           pointerEvents={fabClosing ? "none" : "auto"}
         >
-          <Pressable
-            className="absolute inset-0"
-            onPress={() => closeFab()}
-          >
-            <BlurView
-              intensity={50}
-              tint="dark"
-              className="absolute inset-0"
-            />
+          <Pressable className="absolute inset-0" onPress={() => closeFab()}>
+            <BlurView intensity={50} tint="dark" className="absolute inset-0" />
           </Pressable>
         </Animated.View>
       )}
@@ -222,7 +222,7 @@ export default function TabBar({
           className="absolute right-5 bottom-40 z-20 items-end gap-3"
           pointerEvents={fabClosing ? "none" : "box-none"}
         >
-          {FAB_ITEMS.map((item, index) => {
+          {filteredFabItems.map((item, index) => {
             const anim = itemAnims[index];
             return (
               <Animated.View
@@ -266,7 +266,9 @@ export default function TabBar({
       {showFab && (
         <TouchableOpacity
           className={`absolute bottom-[90px] right-5 w-14 h-14 rounded-full items-center justify-center z-30 ${
-            fabOpen ? "bg-transparent border border-brand-yellow" : "bg-brand-yellow"
+            fabOpen
+              ? "bg-transparent border border-brand-yellow"
+              : "bg-brand-yellow"
           }`}
           onPress={toggleFab}
           activeOpacity={0.85}
@@ -287,12 +289,16 @@ export default function TabBar({
         {/* Tab bar */}
         <View
           className="flex-1 h-16 rounded-full overflow-hidden border border-[#DFDFDF]"
-          style={Platform.OS === "ios" ? {
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 8 },
-            shadowOpacity: 0.3,
-            shadowRadius: 16,
-          } : { elevation: 12 }}
+          style={
+            Platform.OS === "ios"
+              ? {
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 8 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 16,
+                }
+              : { elevation: 12 }
+          }
         >
           <BlurView
             intensity={25}

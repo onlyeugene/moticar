@@ -11,16 +11,17 @@ const TOTAL_ITEMS = MAX_VALUE / STEP;
 interface PriceRulerProps {
   value: number;
   onValueChange: (value: number) => void;
+  unitPrefix?: string;
 }
 
-const PriceRulerItem = memo(({ item, index }: { item: number; index: number }) => {
+const PriceRulerItem = memo(({ item, index, unitPrefix }: { item: number; index: number; unitPrefix: string }) => {
   const isMajor = index % MAJOR_STEP === 0;
   
   return (
     <View style={[styles.itemContainer, { width: ITEM_WIDTH }]}>
       {isMajor && (
         <Text style={styles.majorLabel}>
-          {item >= 1000 ? `${item / 1000}k` : item}
+          {unitPrefix}{item >= 1000 ? `${item / 1000}k` : item}
         </Text>
       )}
       <View style={[styles.tick, isMajor ? styles.majorTick : styles.minorTick]} />
@@ -28,7 +29,7 @@ const PriceRulerItem = memo(({ item, index }: { item: number; index: number }) =
   );
 });
 
-const PriceRuler: React.FC<PriceRulerProps> = ({ value, onValueChange }) => {
+const PriceRuler: React.FC<PriceRulerProps> = ({ value, onValueChange, unitPrefix = "₦" }) => {
   const flatListRef = useRef<FlatList>(null);
   const isScrollingRef = useRef(false);
   const isProgrammaticScrollRef = useRef(false);
@@ -86,7 +87,7 @@ const PriceRuler: React.FC<PriceRulerProps> = ({ value, onValueChange }) => {
       <FlatList
         ref={flatListRef}
         data={data}
-        renderItem={({ item, index }) => <PriceRulerItem item={item} index={index} />}
+        renderItem={({ item, index }) => <PriceRulerItem item={item} index={index} unitPrefix={unitPrefix} />}
         keyExtractor={(item) => item.toString()}
         horizontal
         showsHorizontalScrollIndicator={false}

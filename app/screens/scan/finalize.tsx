@@ -21,6 +21,8 @@ import {
   Text,
   TouchableOpacity,
   View,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import Animated, {
   FadeInDown,
@@ -67,7 +69,7 @@ export default function FinalizeScan() {
     mode: "onChange",
     defaultValues: {
       condition: "Newly Purchased",
-      purchaseDate: "12-02-2025",
+      purchaseDate: new Date().toLocaleDateString("en-GB").replace(/\//g, "-"),
       dontRememberDate: false,
       monthlyBudget: 50000,
     },
@@ -167,7 +169,11 @@ export default function FinalizeScan() {
 
   return (
     <ScreenBackground withSafeArea>
-      <View className="flex-1 mt-20 px-4">
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="flex-1"
+      >
+        <View className="flex-1 mt-20 px-4">
         {/* Header */}
         <View className="flex-row items-center justify-between mb-8">
           <TouchableOpacity onPress={() => router.back()}>
@@ -259,6 +265,8 @@ export default function FinalizeScan() {
 
         <ScrollView
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="none"
           contentContainerStyle={{ paddingBottom: 150 }}
           className="flex-1"
         >
@@ -276,7 +284,7 @@ export default function FinalizeScan() {
               value={watch("monthlyBudget")}
               onValueChange={(val) => setValue("monthlyBudget", val)}
               unitPrefix={currencySymbol}
-              min={1000}
+              min={0}
               max={1000000}
               step={100}
               unitStep={500}
@@ -416,6 +424,7 @@ export default function FinalizeScan() {
           </TouchableOpacity>
         </View>
       </View>
+      </KeyboardAvoidingView>
     </ScreenBackground>
   );
 }

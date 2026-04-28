@@ -30,6 +30,10 @@
       "predictiveBackGestureEnabled": false,
       "package": "com.moticar.app"
     },
+    "androidStatusBar": {
+      "translucent": true,
+      "backgroundColor": "#00000000"
+    },
     "web": {
       "bundler": "metro",
       "output": "static",
@@ -40,10 +44,13 @@
       "expo-font",
       "expo-web-browser",
       "expo-apple-authentication",
+      "@react-native-google-signin/google-signin",
       [
         "expo-navigation-bar",
         {
-          "barStyle": "dark-content"
+          "position": "relative",
+          "barStyle": "light-content",
+          "backgroundColor": "#013037"
         }
       ]
     ],
@@ -52,9 +59,6 @@
     },
     "extra": {
       "router": {},
-      "expo-navigation-bar": {
-        "barStyle": "dark-content"
-      },
       "eas": {
         "projectId": "0aa8a012-aff2-45e1-852d-1a8660566bd8"
       }

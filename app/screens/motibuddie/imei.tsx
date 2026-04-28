@@ -32,18 +32,20 @@ export default function ImeiEntry() {
   const [showScanner, setShowScanner] = React.useState(false);
   const [isPairing, setIsPairing] = React.useState(false);
 
-  const selectedCarId = useAppStore((state) => state.selectedCarId);
   const { showSnackbar } = useSnackbar();
 
   const handlePairing = async (imei: string) => {
     setIsPairing(true);
     try {
-      console.log("📡 Initiating Pairing for IMEI:", imei, "Linked Car:", selectedCarId || "None (Discovery)");
-      await obdService.pairDevice(selectedCarId || "", imei);
-      
+      console.log("📡 Initiating Pairing for IMEI:", imei);
+
+      const result = await obdService.pairDevice(imei);
+
+      const deviceId = result?.device?._id as string | undefined;
+
       router.push({
         pathname: "/screens/motibuddie/connecting",
-        params: { imei }
+        params: { imei, deviceId: deviceId ?? "" }
       });
     } catch (error: any) {
       console.error("Pairing Error:", error);
@@ -51,15 +53,15 @@ export default function ImeiEntry() {
       const message = error.response?.data?.error || error.response?.data?.message;
 
       if (status === 403) {
-        showSnackbar({ 
-          message: "Device already claimed", 
+        showSnackbar({
+          message: "Device already claimed",
           description: "This MotiBuddie is already registered to another user.",
-          type: "error" 
+          type: "error"
         });
       } else {
-        showSnackbar({ 
-          message: message || "Failed to initiate pairing", 
-          type: "error" 
+        showSnackbar({
+          message: message || "Failed to initiate pairing",
+          type: "error"
         });
       }
     } finally {

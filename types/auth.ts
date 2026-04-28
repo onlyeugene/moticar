@@ -11,7 +11,13 @@ export interface User {
   preferredLanguage?: string;
   preferredName?: string;
   deviceType?: 'ios' | 'android';
+  hasManuallySetPreferences?: boolean;
   emailNotificationsEnabled?: boolean;
+  dob?: string;
+  gender?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  avatar?: string;
 }
 
 export interface AuthState {
@@ -29,6 +35,20 @@ export interface AuthResponse {
   access_token?: string;
   refreshToken: string;
   user: User;
+}
+
+export interface UpdateProfilePayload {
+  name?: string;
+  username?: string;
+  country?: string;
+  preferredCurrency?: string;
+  preferredLanguage?: string;
+  preferredName?: string;
+  dob?: string;
+  gender?: string;
+  avatar?: string;
+  onboardingCompleted?: boolean;
+  hasManuallySetPreferences?: boolean;
 }
 
 export interface SignupResponse {

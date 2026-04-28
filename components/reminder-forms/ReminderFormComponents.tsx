@@ -8,6 +8,8 @@ import { Switch, Text, TextInput, TouchableOpacity, View } from "react-native";
 import DatePickerSheet from "../sheets/DatePickerSheet";
 import PriceRuler from "../sheets/PriceRuler";
 import TimePickerSheet from "../sheets/TimePickerSheet";
+import { useAuthStore } from "@/store/useAuthStore";
+import { getCurrencySymbol } from "@/utils/currency";
 
 // ─── Name Field ───────────────────────────────────────────────────────────────
 
@@ -252,15 +254,18 @@ export function AmountBlock({
   value: number;
   onChange: (v: number) => void;
 }) {
+  const user = useAuthStore(state => state.user);
+  const currencySymbol = getCurrencySymbol(user?.preferredCurrency);
+
   return (
     <SectionCard>
       <Text className="text-[#8B8B8B] font-lexendRegular text-[12px] mb-1 text-center">
         {label} <Text className="text-[#00AEB5]">*</Text>
       </Text>
       <Text className="text-[#001A1F] font-lexendBold text-[34px] text-center mb-2">
-        ₦{value.toLocaleString()}
+        {currencySymbol}{value.toLocaleString()}
       </Text>
-      <PriceRuler value={value} onValueChange={onChange} />
+      <PriceRuler value={value} onValueChange={onChange} unitPrefix={currencySymbol} />
     </SectionCard>
   );
 }

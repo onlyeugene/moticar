@@ -9,6 +9,7 @@ interface MileageTrackerProps {
   approxKm?: number;
   entriesCount?: number;
   onPress?: () => void;
+  onCardPress?: () => void;
 }
 
 export default function MileageTracker({
@@ -17,6 +18,7 @@ export default function MileageTracker({
   approxKm = 0,
   entriesCount = 0,
   onPress,
+  onCardPress,
 }: MileageTrackerProps) {
   const hasMileage = mileage !== undefined && mileage !== null && mileage > 0;
 
@@ -32,7 +34,7 @@ export default function MileageTracker({
   if (!hasMileage) {
     return (
       <View className="px-4 mb-4">
-        <TouchableOpacity onPress={onPress}>
+        <TouchableOpacity activeOpacity={0.7} onPress={onCardPress}>
           <View className="w-full">
             <View className="flex-row justify-between items-center">
               <View>
@@ -43,9 +45,11 @@ export default function MileageTracker({
                   No entry has been recorded
                 </Text>
               </View>
-              <View className="w-12 h-12 bg-white rounded-full items-center justify-center">
-                <Ionicons name="add" size={24} color="#00AEB5" />
-              </View>
+              <TouchableOpacity onPress={onPress}>
+                <View className="w-12 h-12 bg-white rounded-full items-center justify-center">
+                  <Ionicons name="add" size={24} color="#00AEB5" />
+                </View>
+              </TouchableOpacity>
             </View>
 
             <View className="mt-10 flex-row items-start justify-between">
@@ -62,7 +66,7 @@ export default function MileageTracker({
 
   return (
     <View className="px-4 mb-4">
-      <View>
+      <TouchableOpacity activeOpacity={0.9} onPress={onCardPress}>
         <View className=" rounded-[24px] p-2 overflow-hidden">
           {/* Header */}
           <View className="flex-row justify-between items-start">
@@ -75,7 +79,7 @@ export default function MileageTracker({
               </Text>
             </View>
             <TouchableOpacity onPress={onPress}>
-              <View className="w-12 h-12 bg-white rounded-full items-center justify-center">
+              <View className="w-12 h-12 bg-white rounded-[8px] items-center justify-center">
                 <Ionicons name="add" size={24} color="#00AEB5" />
               </View>
             </TouchableOpacity>
@@ -88,27 +92,20 @@ export default function MileageTracker({
             </View>
 
             <View className="items-end">
-              <View className="flex-row items-center gap-1.5">
-                <Ionicons name="warning-outline" size={16} color="#F8953A" />
-                <Text className="text-[#006C70] font-lexendBold text-[32px] leading-[38px] tracking-tight">
-                  {mileage.toLocaleString()}
-                </Text>
-              </View>
-
-              <View className="flex-row items-center gap-2.5 mt-1.5">
-                <Text className="text-[#00AEB5] font-lexendMedium text-[14px]">
-                  approx. {approxKm}km
-                </Text>
-                <View className="bg-[#F8E761] px-2.5 py-1 rounded-full items-center justify-center">
-                  <Text className="text-[#425658] font-lexendBold text-[10px] uppercase tracking-wider">
+              <View className="flex-row items-end gap-1.5">
+                <View className="bg-[#F8E761] px-2.5 py-1 rounded-[5px] items-center justify-center">
+                  <Text className="text-[#425658] font-lexendRegular text-[10px] text-center tracking-wider">
                     {entriesCount} Entries
                   </Text>
                 </View>
+                <Text className="text-[#006C70] font-lexendMedium text-[32px] leading-[38px] tracking-tight">
+                  {mileage.toLocaleString()}
+                </Text>
               </View>
             </View>
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 }

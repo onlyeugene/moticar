@@ -25,6 +25,10 @@ export default function LicenseScan() {
     (state) => state.setScannedLicenseData,
   );
   const setScanningProgress = useAppStore((state) => state.setScanningProgress);
+
+  const handleSkip = () => {
+    router.back();
+  };
   
   // Cropping State
   const [croppingVisible, setCroppingVisible] = useState(false);
@@ -145,6 +149,10 @@ export default function LicenseScan() {
             <View className="w-[42px] h-[10px] rounded-full bg-[#29D7DE]" />
             <View className="w-[42px] h-[10px] rounded-full bg-[#29D7DE]" />
           </View>
+
+          <TouchableOpacity onPress={handleSkip}>
+            <Text className="text-[#29D7DE] font-lexendRegular text-[14px]">Skip</Text>
+          </TouchableOpacity>
         </View>
 
         <ScrollView

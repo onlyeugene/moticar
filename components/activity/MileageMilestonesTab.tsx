@@ -6,6 +6,7 @@ import AddMileageSheet from "../sheets/AddMileageSheet";
 import { format, isToday, isYesterday } from "date-fns";
 import MilestoneAttentionSheet from "../sheets/MilestoneAttentionSheet";
 import EmptyIcon from "@/assets/icons/empty.svg";
+import{ LoadingModal} from "@/components/ui/LoadingModal";
 
 interface MileageMilestonesTabProps {
   carId: string;
@@ -47,17 +48,9 @@ export default function MileageMilestonesTab({ carId }: MileageMilestonesTabProp
 
   const sections = groupMilestonesByDate(milestonesWithDelta);
 
-  if (isLoading) {
-    return (
-      <View className="flex-1 items-center justify-center pt-20">
-        <ActivityIndicator size="large" color="#00AEB5" />
-      </View>
-    );
-  }
-
-
   return (
     <View className="flex-1">
+      <LoadingModal visible={isLoading} />
       {/* <TouchableOpacity 
         onPress={() => setIsAddVisible(true)}
         className="border border-[#00AEB5] rounded-full h-[40px] items-center justify-center mb-8"

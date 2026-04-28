@@ -24,6 +24,7 @@ export interface AppState {
   isAppReady: boolean;
   theme: "light" | "dark" | "system";
   selectedCarId?: string;
+  isPairing: boolean;
   obdData: Record<string, ObdTelemetry>;
   scanningProgress: {
     picturesCompleted: boolean;
@@ -43,6 +44,7 @@ export interface AppState {
   setScannedLicenseData: (data: ScannedLicenseData | null) => void;
   setActiveActivityTab: (tab: string) => void;
   setDiagnosticActive: (active: boolean) => void;
+  setIsPairing: (pairing: boolean) => void;
   setObdData: (carId: string, data: Partial<ObdTelemetry>) => void;
   resetScanningState: () => void;
   clearAppState: () => void;

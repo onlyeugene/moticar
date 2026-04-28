@@ -7,8 +7,10 @@ import TyresIcon from "@/assets/facts/tyre.svg";
 import BottomSheet from "@/components/shared/BottomSheet";
 import { Ionicons } from "@expo/vector-icons";
 import { Text, TouchableOpacity, View } from "react-native";
+import { useAuthStore } from "@/store/useAuthStore";
+import { getCurrencySymbol } from "@/utils/currency";
 
-interface DiagnosticItem {
+export interface DiagnosticItem {
   key: string;
   label: string;
   value: string;
@@ -26,8 +28,10 @@ interface DiagnosticListSheetProps {
   onSelectItem: (item: DiagnosticItem) => void;
 }
 
-export function getDiagnosticItems(activeCar: any): DiagnosticItem[] {
-  return [
+export function getDiagnosticItems(activeCar: any, currencySymbol: string): DiagnosticItem[] {
+  const isEV = activeCar?.fuelType === 'EV' || activeCar?.fuelType === 'Electric';
+  
+  const allItems: DiagnosticItem[] = [
     {
       key: "tyres",
       label: "Tyres",
@@ -55,7 +59,7 @@ export function getDiagnosticItems(activeCar: any): DiagnosticItem[] {
         : "93L",
       sub: "Full Tank",
       Icon: FuelIcon,
-      tag: `Est. ₦${((activeCar?.fuelSpec?.capacityLiters || 93) * (activeCar?.fuelSpec?.avgPriceRange || 650)).toLocaleString()}`,
+      tag: `Est. ${currencySymbol}${((activeCar?.fuelSpec?.capacityLiters || 93) * (activeCar?.fuelSpec?.avgPriceRange || 0)).toLocaleString()}`,
       brands: activeCar?.fuelSpec?.reputableStations,
     },
     {
@@ -78,6 +82,12 @@ export function getDiagnosticItems(activeCar: any): DiagnosticItem[] {
       brands: activeCar?.batterySpec?.providers,
     },
   ];
+
+  if (isEV) {
+    return allItems.filter(item => item.key !== 'engineOil' && item.key !== 'fuel');
+  }
+
+  return allItems;
 }
 
 export default function DiagnosticListSheet({
@@ -86,7 +96,9 @@ export default function DiagnosticListSheet({
   activeCar,
   onSelectItem,
 }: DiagnosticListSheetProps) {
-  const items = getDiagnosticItems(activeCar);
+  const user = useAuthStore(state => state.user);
+  const currencySymbol = getCurrencySymbol(user?.preferredCurrency);
+  const items = getDiagnosticItems(activeCar, currencySymbol);
 
   return (
     <BottomSheet
@@ -133,7 +145,7 @@ export default function DiagnosticListSheet({
                       {item.sub}
                     </Text>
                     <View className="flex-row items-center gap-1">
-                      {item.tag && (
+                      {item.tag && item.tag.indexOf('N/A') === -1 && item.tag.indexOf('0') === -1 && (
                         <View className="bg-[#FEF597] px-2 py-0.5 rounded-full">
                           <Text className="text-[#555] text-[8px] font-lexendRegular">
                             {item.tag}
@@ -157,4 +169,3 @@ export default function DiagnosticListSheet({
   );
 }
 
-export type { DiagnosticItem };

@@ -25,6 +25,9 @@ export interface Car {
   segment?: string;
   imei?: string;
   deviceId?: string;
+  cylinder:string;
+  horsepower:string
+  doors: number
   engineOil?: {
     capacityLiters: number;
     recommendedGrade: string;
@@ -142,6 +145,9 @@ export interface CarUpdateInput {
   brakesFront?: string;
   brakesRear?: string;
   yearRange?: string;
+  color?: string;
+  doors?: number;
+  fuelType?: string;
 }
 
 export interface CarSearchResponse {
@@ -203,6 +209,7 @@ export interface CarDetails {
       topSpeed?: string;
       acceleration?: string;
       yearRange?: string;
+      availableYears?: number[];
       bodyColor?: string;
       [key: string]: any;
     };

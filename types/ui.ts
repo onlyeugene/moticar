@@ -46,6 +46,8 @@ export interface OtpInputProps {
 export interface LoadingModalProps {
   visible: boolean;
   message?: string;
+  riveSource?: number;
+  riveResourceName?: string;
 }
 
 export interface ErrorTextProps {

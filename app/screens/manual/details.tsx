@@ -109,6 +109,7 @@ export default function CarDetailsScreen() {
       // Technical specs
       bodyStyle: carData.bodyStyle,
       engineDesc: carData.engine,
+      fuelType: carData.fuelType,
       transmission: carData.transmission,
       driveType: carData.driveType,
       segment: carData.segment,
@@ -173,6 +174,12 @@ export default function CarDetailsScreen() {
 
   const getYearOptions = () => {
     if (availableYearsList.length > 0) return availableYearsList;
+    
+    const availableYears = detailsData?.details?.features?.availableYears;
+    if (availableYears && availableYears.length > 0) {
+      return availableYears.map((y: any) => y.toString());
+    }
+
     const range = detailsData?.details?.features?.yearRange;
     if (range && range.includes("-")) {
       const [start, end] = range.split("-").map((s) => parseInt(s.trim()));
@@ -335,8 +342,8 @@ export default function CarDetailsScreen() {
 
           <ScrollView
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 120 }}
-            className="mt-4"
+            contentContainerStyle={{ paddingBottom: 60 }}
+            className="flex-1 mt-4"
           >
             <View className="px-5">
               <View className="bg-white rounded-[20px] border border-[#D6D5CA] overflow-hidden">
@@ -379,7 +386,7 @@ export default function CarDetailsScreen() {
           </ScrollView>
 
           {/* Action Button */}
-          <View className="absolute bottom-10 left-6 right-6">
+          <View className="pt-4 pb-12 px-6">
             <TouchableOpacity
               onPress={handleConfirm}
               activeOpacity={0.8}

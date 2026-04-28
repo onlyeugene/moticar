@@ -99,8 +99,8 @@ export const CarLogo = ({ make, size = 40, color, style }: CarLogoProps) => {
   if (!LogoComponent) {
     // Return a placeholder or the first letter if logo not found
     return (
-      <View 
-        style={[{ 
+      <View
+        style={[{
           width: size, 
           height: size, 
           borderRadius: size / 2, 
@@ -108,7 +108,7 @@ export const CarLogo = ({ make, size = 40, color, style }: CarLogoProps) => {
           alignItems: "center", 
           justifyContent: "center",
           opacity: color ? 0.3 : 1
-        }, style]} 
+        }, style]}
       >
         <Text className="text-white text-[10px] uppercase font-lexendBold">
           {make.charAt(0)}

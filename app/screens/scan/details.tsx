@@ -12,8 +12,8 @@ import AttributeEditSheet, {
   EditMode,
 } from "@/components/scan/AttributeEditSheet";
 import { CarLogo } from "@/components/shared/CarLogo";
-import { ScreenBackground } from "@/components/ui/ScreenBackground";
 import { useAppStore } from "@/store/useAppStore";
+import { useCarDetails } from "@/hooks/useCars";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
@@ -24,6 +24,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { ScreenBackground } from "@/components/ui/ScreenBackground";
 
 export default function ScanDetailsScreen() {
   const { scannedCarData, setScannedCarData, setScanningProgress } =
@@ -37,6 +38,12 @@ export default function ScanDetailsScreen() {
     options?: string[];
   } | null>(null);
   const [tempValue, setTempValue] = useState<any>("");
+
+  const { data: detailsData } = useCarDetails({
+    make: scannedCarData?.make || "",
+    model: scannedCarData?.carModel || scannedCarData?.model || "",
+    year: scannedCarData?.year || 0,
+  });
 
   if (!scannedCarData) {
     return (
@@ -79,14 +86,47 @@ export default function ScanDetailsScreen() {
     router.replace("/screens/scan/scan");
   };
 
+  const getYearOptions = () => {
+    // 1. Check if we have availableYears from catalog
+    const availableYears = detailsData?.details?.features?.availableYears;
+    if (availableYears && availableYears.length > 0) {
+      return availableYears.map((y: any) => y.toString());
+    }
+
+    // 2. Fallback to yearRange from catalog
+    const range = detailsData?.details?.features?.yearRange;
+    if (range && range.includes("-")) {
+      const [start, end] = range.split("-").map((s) => parseInt(s.trim()));
+      const years = [];
+      for (let i = end; i >= start; i--) {
+        years.push(i.toString());
+      }
+      return years;
+    }
+
+    // 3. Fallback to yearRange from AI
+    const aiRange = scannedCarData.yearRange;
+    if (aiRange && aiRange.includes("-")) {
+      const [start, end] = aiRange.split("-").map((s: string) => parseInt(s.trim()));
+      const years = [];
+      for (let i = end; i >= start; i--) {
+        years.push(i.toString());
+      }
+      return years;
+    }
+
+    // 4. Ultimate fallback
+    return [scannedCarData.year?.toString() || new Date().getFullYear().toString()];
+  };
+
   const detailItems = [
     {
       label: "Year of Production",
-      key: "yearRange",
-      value: scannedCarData.yearRange || scannedCarData.year?.toString() || "",
+      key: "year",
+      value: scannedCarData.year || scannedCarData.yearRange || "",
       icon: CalendarIcon,
       mode: "chips" as const,
-      options: ["2013-2018", "2013", "2014", "2015", "2016", "2017", "2018"],
+      options: getYearOptions(),
       isEditable: true,
     },
     {

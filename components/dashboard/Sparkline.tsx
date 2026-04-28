@@ -14,6 +14,7 @@ import Svg, {
 
 interface SparklineProps {
   data: number[];
+  budget?: number;
   color?: string;
   width?: number;
   height?: number;
@@ -24,6 +25,7 @@ interface SparklineProps {
 
 export default function Sparkline({
   data,
+  budget,
   color = "#00AEB5",
   width = 120,
   height = 40,
@@ -37,32 +39,30 @@ export default function Sparkline({
   // Use a minimal default dataset if no data is provided to ensure something is visible
   const chartData = data && data.length >= 2 ? data : [10, 15, 12, 20, 18, 25];
 
-  const max = Math.max(...chartData);
-  const min = Math.min(...chartData);
-  const range = (max - min) || 1;
+  const maxVal = Math.max(...chartData, budget || 0);
+  const minVal = 0; // Always start from 0 for cumulative spend
+  const range = (maxVal - minVal) || 1;
   const paddingY = 40; // Increased padding for the tooltip
   const chartHeight = height - paddingY - 10; // 10px bottom padding
   const stepX = width / (chartData.length - 1);
 
   const points = chartData.map((val, i) => ({
     x: i * stepX,
-    y: paddingY + chartHeight - ((val - min) / range) * chartHeight,
+    y: paddingY + chartHeight - ((val - minVal) / range) * chartHeight,
   }));
 
-  // Helper for smooth bezier curves
-  const getCurvePath = (p: { x: number; y: number }[]) => {
+  // Helper for polyline path (straight lines)
+  const getPolylinePath = (p: { x: number; y: number }[]) => {
     if (p.length < 2) return "";
-    let d = `M ${p[0].x} ${p[0].y}`;
-    for (let i = 0; i < p.length - 1; i++) {
-      const cx = (p[i].x + p[i + 1].x) / 2;
-      d += ` Q ${p[i].x} ${p[i].y} ${cx} ${(p[i].y + p[i + 1].y) / 2}`;
-    }
-    d += ` L ${p[p.length - 1].x} ${p[p.length - 1].y}`;
-    return d;
+    return `M ${p.map(pt => `${pt.x} ${pt.y}`).join(' L ')}`;
   };
 
-  const lineD = getCurvePath(points);
+  const lineD = getPolylinePath(points);
   const fillD = `${lineD} L ${points[points.length - 1].x} ${height} L ${points[0].x} ${height} Z`;
+
+  const budgetY = budget 
+    ? paddingY + chartHeight - ((budget - minVal) / range) * chartHeight 
+    : null;
 
   const handleTouch = (event: any) => {
     const x = event.nativeEvent.locationX;
@@ -73,10 +73,11 @@ export default function Sparkline({
   };
 
   const activePoint = activeIndex !== null ? points[activeIndex] : null;
+  const activeValue = activeIndex !== null ? chartData[activeIndex] : null;
   
   // Bounds checking for tooltip
   const getTooltipX = (x: number) => {
-    const tooltipWidth = 85; // Slightly wider for full currency labels
+    const tooltipWidth = 85; 
     if (x - tooltipWidth / 2 < 0) return 0;
     if (x + tooltipWidth / 2 > width) return width - tooltipWidth;
     return x - tooltipWidth / 2;
@@ -98,16 +99,32 @@ export default function Sparkline({
           </LinearGradient>
         </Defs>
 
-        {/* Dashed background line - subtly angled */}
-        <Line
-          x1="0"
-          y1={paddingY + chartHeight * 0.7}
-          x2={width}
-          y2={paddingY + chartHeight * 0.4}
-          stroke="#E0E0E0"
-          strokeWidth="1"
-          strokeDasharray="4,4"
-        />
+        {/* Dashed budget trajectory line - from 0 to full budget */}
+        {budget !== undefined && (
+          <>
+            <Line
+              x1="0"
+              y1={paddingY + chartHeight}
+              x2={width}
+              y2={budgetY!}
+              stroke="#E0E0E0"
+              strokeWidth="1.5"
+              strokeDasharray="6,6"
+            />
+            {/* Budget Label at the end */}
+            <SvgText
+              x={width - 5}
+              y={budgetY! - 8}
+              fill="#9BBABB"
+              fontSize="10"
+              fontWeight="bold"
+              textAnchor="end"
+              fontFamily="Lexend-Bold"
+            >
+              {currencySymbol}{budget.toLocaleString()}
+            </SvgText>
+          </>
+        )}
 
         <Path d={fillD} fill="url(#gradient)" stroke="none" />
         <Path
@@ -147,7 +164,7 @@ export default function Sparkline({
                 textAnchor="middle"
                 fontFamily="Lexend-Bold"
               >
-                {label}
+                {currencySymbol}{activeValue?.toLocaleString()} spent
               </SvgText>
             </G>
           </G>

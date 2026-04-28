@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -48,7 +48,7 @@ const WheelPicker = ({ data, initialValue, onValueChange, width = 80 }: WheelPic
         }, 100);
       }
     }
-  }, [initialValue]);
+  }, [initialValue, data]);
 
   return (
     <View style={{ height: ITEM_HEIGHT * VISIBLE_ITEMS, width, overflow: "hidden" }}>
@@ -105,51 +105,115 @@ interface FormWheelDatePickerProps {
   initialDate?: string; // Format: DD.MM.YYYY
 }
 
-export const FormWheelDatePicker = ({ onDateChange, initialDate = "12.02.2025" }: FormWheelDatePickerProps) => {
-  const [day, month, year] = initialDate.split(/[-.]/).map((v, i) => parseInt(v));
+export const FormWheelDatePicker = ({ 
+  onDateChange, 
+  initialDate 
+}: FormWheelDatePickerProps) => {
+  const now = new Date();
+  const currentDay = now.getDate();
+  const currentMonth = now.getMonth() + 1;
+  const currentYear = now.getFullYear();
+
+  const MONTHS = useMemo(() => ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], []);
+
+  const getInitialValues = useCallback(() => {
+    if (initialDate) {
+      const parts = initialDate.split(/[-.]/);
+      if (parts.length === 3) {
+        return parts.map(v => parseInt(v));
+      }
+    }
+    return [currentDay, currentMonth, currentYear];
+  }, [initialDate, currentDay, currentMonth, currentYear]);
+
+  const [initialDay, initialMonth, initialYear] = getInitialValues();
   
-  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  const DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
-  const YEARS = Array.from({ length: 30 }, (_, i) => new Date().getFullYear() - i);
+  const [selectedDay, setSelectedDay] = useState(Number(initialDay));
+  const [selectedMonth, setSelectedMonth] = useState(MONTHS[initialMonth - 1] || MONTHS[currentMonth - 1]);
+  const [selectedYear, setSelectedYear] = useState(Number(initialYear));
 
-  const [selectedDay, setSelectedDay] = useState(day || 1);
-  const [selectedMonth, setSelectedMonth] = useState(MONTHS[(month || 1) - 1] || MONTHS[0]);
-  const [selectedYear, setSelectedYear] = useState(year || new Date().getFullYear());
+  const YEARS = useMemo(() => Array.from({ length: 50 }, (_, i) => currentYear - i), [currentYear]);
 
+  // Sync state when initialDate changes externally
   useEffect(() => {
     if (initialDate) {
-      const [d, m, y] = initialDate.split(/[-.]/).map((v) => parseInt(v));
-      if (d) setSelectedDay(d);
-      if (m && MONTHS[m - 1]) setSelectedMonth(MONTHS[m - 1]);
-      if (y) setSelectedYear(y);
+      const parts = initialDate.split(/[-.]/);
+      if (parts.length === 3) {
+        const [d, m, y] = parts.map(v => parseInt(v));
+        setSelectedDay(Number(d));
+        setSelectedMonth(MONTHS[m - 1]);
+        setSelectedYear(Number(y));
+      }
     }
-  }, [initialDate]);
+  }, [initialDate, MONTHS]);
+
+  const monthIndex = useMemo(() => MONTHS.indexOf(selectedMonth) + 1, [selectedMonth, MONTHS]);
+
+  // Function to get valid days for current month/year
+  const daysInMonth = useMemo(() => {
+    return new Date(selectedYear, monthIndex, 0).getDate();
+  }, [selectedYear, monthIndex]);
+
+  const DAYS = useMemo(() => Array.from({ length: daysInMonth }, (_, i) => i + 1), [daysInMonth]);
+
+  // Filter months if selected year is current year
+  const availableMonths = useMemo(() => {
+    if (Number(selectedYear) === Number(currentYear)) {
+      return MONTHS.slice(0, currentMonth);
+    }
+    return MONTHS;
+  }, [selectedYear, currentYear, currentMonth, MONTHS]);
+
+  // Filter days if selected year and month are current
+  const availableDays = useMemo(() => {
+    if (Number(selectedYear) === Number(currentYear) && Number(monthIndex) === Number(currentMonth)) {
+      return DAYS.slice(0, currentDay);
+    }
+    return DAYS;
+  }, [selectedYear, currentYear, monthIndex, currentMonth, currentDay, DAYS]);
 
   useEffect(() => {
-    const monthIndex = MONTHS.indexOf(selectedMonth) + 1;
+    // Validation: ensure month is not in future if year is current
+    if (Number(selectedYear) === Number(currentYear) && Number(monthIndex) > Number(currentMonth)) {
+      setSelectedMonth(MONTHS[currentMonth - 1]);
+      return;
+    }
+
+    // Validation: ensure day is not in future if year and month are current
+    if (Number(selectedYear) === Number(currentYear) && Number(monthIndex) === Number(currentMonth) && Number(selectedDay) > Number(currentDay)) {
+      setSelectedDay(currentDay);
+      return;
+    }
+
+    // Validation: ensure day is valid for the month
+    if (Number(selectedDay) > Number(daysInMonth)) {
+      setSelectedDay(daysInMonth);
+      return;
+    }
+
     const formattedMonth = monthIndex.toString().padStart(2, "0");
     const formattedDay = selectedDay.toString().padStart(2, "0");
     onDateChange(`${formattedDay}-${formattedMonth}-${selectedYear}`);
-  }, [selectedDay, selectedMonth, selectedYear]);
+  }, [selectedDay, selectedMonth, selectedYear, daysInMonth, monthIndex, currentDay, currentMonth, currentYear, MONTHS]);
 
   return (
     <View className="flex-row items-center justify-center gap-10 mt-6 mb-10">
       <WheelPicker
-        data={DAYS}
+        data={availableDays}
         initialValue={selectedDay}
-        onValueChange={(val) => setSelectedDay(val as number)}
+        onValueChange={(val) => setSelectedDay(Number(val))}
         width={50}
       />
       <WheelPicker
-        data={MONTHS}
+        data={availableMonths}
         initialValue={selectedMonth}
-        onValueChange={(val) => setSelectedMonth(val as string)}
+        onValueChange={(val) => setSelectedMonth(String(val))}
         width={70}
       />
       <WheelPicker
         data={YEARS}
         initialValue={selectedYear}
-        onValueChange={(val) => setSelectedYear(val as number)}
+        onValueChange={(val) => setSelectedYear(Number(val))}
         width={90}
       />
     </View>

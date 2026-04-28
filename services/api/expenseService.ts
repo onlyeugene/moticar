@@ -109,6 +109,12 @@ export const expenseService = {
     return response.data;
   },
 
+  /** Get valuation status (canGenerate, daysRemaining) */
+  getValuationStatus: async (carId: string): Promise<any> => {
+    const response = await apiClient.get(`${API_ROUTES.EXPENSES.VALUATION(carId)}/status`);
+    return response.data;
+  },
+
   /** Get AI-powered price recommendation for a category */
   getPriceRecommendation: async (data: PriceRecommendationInput): Promise<PriceRecommendation> => {
     const response = await apiClient.post(API_ROUTES.EXPENSES.RECOMMEND_PRICE, data);

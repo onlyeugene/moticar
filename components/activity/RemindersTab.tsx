@@ -7,10 +7,12 @@ import Certificate from "@/assets/tabs/certificate.svg";
 import Luggage from "@/assets/tabs/luggage.svg";
 import CarInfoIcon from "@/assets/tabs/car.svg";
 import TicketIcon from "@/assets/tabs/ticket.svg";
+import {LoadingModal} from "@/components/ui/LoadingModal";
 
 
 interface RemindersTabProps {
   summary?: Record<string, number>;
+  isLoading?: boolean;
   onAdd: (category: string) => void;
   onSelectCategory: (category: string) => void;
 }
@@ -77,7 +79,7 @@ const CategoryCard = ({
   );
 };
 
-const RemindersTab: React.FC<RemindersTabProps> = ({ summary, onAdd, onSelectCategory }) => {
+const RemindersTab: React.FC<RemindersTabProps> = ({ summary, isLoading, onAdd, onSelectCategory }) => {
   const rows: CategoryItem[][] = [];
   for (let i = 0; i < CATEGORIES.length; i += 2) {
     rows.push(CATEGORIES.slice(i, i + 2));
@@ -85,6 +87,7 @@ const RemindersTab: React.FC<RemindersTabProps> = ({ summary, onAdd, onSelectCat
 
   return (
     <View className="flex-1 min-h-[500px]">
+      <LoadingModal visible={isLoading || false} />
       <Text className="text-[#5D8689] font-lexendRegular text-[12px] leading-4 mb-8 px-2">
         Never be late to attend to issues or concerns surrounding your car.
         Schedule reminders and keep revisions, maintenance and payments up to date.

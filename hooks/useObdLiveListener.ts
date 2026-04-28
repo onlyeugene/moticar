@@ -8,10 +8,13 @@ import { useAppStore } from "@/store/useAppStore";
 export function useObdLiveListener() {
   const { socket, isConnected } = useSocket();
   const selectedCarId = useAppStore((state) => state.selectedCarId);
+  const isPairing = useAppStore((state) => state.isPairing);
   const setObdData = useAppStore((state) => state.setObdData);
 
   useEffect(() => {
-    if (!isConnected || !socket || !selectedCarId) return;
+    // Do not subscribe to a car room while a new device is being paired —
+    // it would re-link the device to the old car and return wrong data.
+    if (!isConnected || !socket || !selectedCarId || isPairing) return;
 
     console.log(`📡 Subscribing to Live OBD Data for Car: ${selectedCarId}`);
     socket.emit("subscribe_car", { carId: selectedCarId });
@@ -54,5 +57,5 @@ export function useObdLiveListener() {
       socket.off("obd:location_update");
       socket.off("obd:trip_status");
     };
-  }, [isConnected, socket, selectedCarId]);
+  }, [isConnected, socket, selectedCarId, isPairing]);
 }

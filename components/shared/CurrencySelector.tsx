@@ -12,6 +12,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useUpdateProfile } from "@/hooks/useAuth";
 import { useSnackbar } from "@/providers/SnackbarProvider";
 import { CURRENCIES, LANGUAGES } from "@/utils/currency";
+import * as Localization from "expo-localization";
 
 interface CurrencySelectorProps {
   onSelect?: (currency: string) => void;
@@ -31,17 +32,32 @@ export default function CurrencySelector({
   const { mutate: updateProfile, isPending } = useUpdateProfile();
   const { showSnackbar } = useSnackbar();
 
+  // Auto-detect fallbacks from device if the user hasn't explicitly set them
+  const deviceLocales = Localization.getLocales();
+  const deviceCurrency = deviceLocales[0]?.currencyCode;
+  const deviceLanguageTag = deviceLocales[0]?.languageTag; // e.g., "en-US"
+  const deviceLanguageCode = deviceLocales[0]?.languageCode; // e.g., "en"
+
   const currentLang =
-    LANGUAGES.find((l) => l.value === (user?.preferredLanguage || "en-US")) ||
+    LANGUAGES.find((l) => l.value === user?.preferredLanguage) ||
+    LANGUAGES.find((l) => l.value === deviceLanguageTag) ||
+    LANGUAGES.find((l) => l.value.startsWith(deviceLanguageCode || "en")) ||
+    LANGUAGES.find((l) => l.value === "en-GB") ||
     LANGUAGES[0];
+
   const currentCurrency =
-    CURRENCIES.find((c) => c.value === (user?.preferredCurrency || "NGN")) ||
+    CURRENCIES.find((c) => c.value === user?.preferredCurrency) ||
+    CURRENCIES.find((c) => c.value === deviceCurrency) ||
+    CURRENCIES.find((c) => c.value === "USD") ||
     CURRENCIES[0];
 
   const handleSelectLanguage = (item: (typeof LANGUAGES)[0]) => {
     if (token) {
       updateProfile(
-        { preferredLanguage: item.value },
+        { 
+          preferredLanguage: item.value,
+          hasManuallySetPreferences: true
+        },
         {
           onSuccess: () => {
             showSnackbar({
@@ -65,7 +81,11 @@ export default function CurrencySelector({
   const handleSelectCurrency = (item: (typeof CURRENCIES)[0]) => {
     if (token) {
       updateProfile(
-        { preferredCurrency: item.value, country: item.country },
+        { 
+          preferredCurrency: item.value, 
+          country: item.country,
+          hasManuallySetPreferences: true
+        },
         {
           onSuccess: () => {
             showSnackbar({
@@ -77,7 +97,11 @@ export default function CurrencySelector({
         },
       );
     } else {
-      updateUser({ preferredCurrency: item.value, country: item.country });
+      updateUser({ 
+        preferredCurrency: item.value, 
+        country: item.country,
+        hasManuallySetPreferences: true 
+      });
       showSnackbar({
         type: "success",
         message: "Currency Selected",
@@ -94,7 +118,7 @@ export default function CurrencySelector({
           onPress={() => setShowModal(true)}
           className="flex-row items-center gap-2"
         >
-          <Text className="text-[25px]">{currentLang.flag}</Text>
+          <currentLang.flag width={20} height={20} />
           <Text className="text-white font-lexendSemiBold text-[15px]">
             {currentCurrency.symbol}
           </Text>
@@ -108,7 +132,7 @@ export default function CurrencySelector({
         onPress={() => setShowModal(true)}
         className="bg-[#00AEB5]/20 px-3 py-1.5 rounded-full border border-[#00AEB5]/30 flex-row items-center gap-1.5"
       >
-        <Text className="text-[14px]">{currentLang.flag}</Text>
+        <currentLang.flag width={16} height={16} />
         <Text className="text-[#00AEB5] font-lexendMedium text-[12px]">
           {currentCurrency.value}
         </Text>
@@ -148,25 +172,31 @@ export default function CurrencySelector({
               className="mb-8"
               contentContainerStyle={{ gap: 12, paddingRight: 20 }}
             >
-              {LANGUAGES.map((item) => (
-                <TouchableOpacity
-                  key={item.value}
-                  onPress={() => handleSelectLanguage(item)}
-                  className={`w-[70px] h-[70px] rounded-2xl items-center justify-center border-2 ${
-                    currentLang.value === item.value
-                      ? "bg-[#00AEB5]/20 border-[#00AEB5]"
-                      : "bg-[#09515D]/20 border-[#09515D]/40"
-                  }`}
-                >
-                  <Text className="text-2xl">{item.flag}</Text>
-                  <Text
-                    className="text-[10px] text-white font-lexendRegular mt-1 text-center"
-                    numberOfLines={1}
+              {LANGUAGES.map((item) => {
+                const isFlagString = typeof item.flag === "string";
+                return (
+                  <TouchableOpacity
+                    key={item.value}
+                    onPress={() => handleSelectLanguage(item)}
+                    className={`w-[70px] h-[70px] rounded-2xl items-center justify-center  ${
+                      currentLang.value === item.value
+                        ? "border-2 border-[#00AEB5]"
+                        : "border border-[#09515D]"
+                    }`}
                   >
-                    {item.label.split(" ")[0]}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+                  
+                      <item.flag width={28} height={28} />
+                   
+                  
+                    <Text
+                      className="text-[12px] text-white font-lexendRegular mt-2 text-center"
+                      numberOfLines={1}
+                    >
+                      {item.label.split(" ")[0]}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
             </ScrollView>
 
             {/* Currency Section */}
@@ -183,39 +213,42 @@ export default function CurrencySelector({
                   key={item.value}
                   onPress={() => handleSelectCurrency(item)}
                   disabled={isPending}
-                  className={`p-4 rounded-[20px] flex-row items-center justify-between ${
+                  className={`p-4 rounded-[8px] flex-row items-center justify-between ${
                     currentCurrency.value === item.value
-                      ? "bg-[#00AEB5]/20 border border-[#00AEB5]/40"
-                      : "bg-[#09515D]/20 border border-[#09515D]/40"
+                      ? " border-2 border-[#1A8798]"
+                      : "border border-[#09515D]"
                   }`}
                 >
-                  <View className="flex-row items-center gap-4">
-                    <View
-                      className={`w-10 h-10 rounded-full items-center justify-center ${
-                        currentCurrency.value === item.value
-                          ? "bg-[#00AEB5]/30"
-                          : "bg-[#09515D]/40"
-                      }`}
-                    >
-                      <Text className="text-white font-lexendBold text-[16px]">
-                        {item.symbol}
+                  <View className="flex-row items-center gap-4 flex-shrink">
+                    {typeof item.icon !== 'string' && item.icon ? (
+                      <item.icon width={28} height={28} />
+                    ) : (
+                      <View className="w-7 h-7 rounded-full bg-[#09515D]/40 items-center justify-center border border-[#09515D]">
+                        <Text className="text-white font-lexendSemiBold text-[10px] uppercase">
+                          {item.value.slice(0, 2)}
+                        </Text>
+                      </View>
+                    )}
+                    <View className="flex-row items-center flex-wrap gap-1">
+                      <Text className={`font-lexendRegular text-[14px] ${currentCurrency.value === item.value ? "text-[#FFFFFF]" : "text-[#9BBABB]"}`}>
+                        {item.label}
                       </Text>
-                    </View>
-                    <View>
-                      <Text className="text-white font-lexendSemiBold text-[15px]">
-                        {item.country}
-                      </Text>
-                      <Text className="text-[#9BBABB] font-lexendRegular text-[12px]">
-                        {item.label} ({item.value})
-                      </Text>
+                      <View className="rounded-[4px] px-2 py-0.5 bg-[#5E9597] border border-[#5E9597] justify-center ml-1">
+                        <Text className="text-[#002E35] uppercase font-lexendSemiBold text-[8px]">
+                          {item.country}
+                        </Text>
+                      </View>
                     </View>
                   </View>
 
-                  {currentCurrency.value === item.value && (
-                    <View className="bg-[#00AEB5] p-1.5 rounded-full">
-                      <Ionicons name="checkmark" size={12} color="#00232A" />
+                  <View className="flex-row items-center gap-3">
+                    <Text className={`font-lexendBold text-[14px] ${currentCurrency.value === item.value ? "text-[#00AEB5]" : "text-[#9BBABB]"}`}>
+                      {item.symbol}
+                    </Text>
+                    <View className={`p-1.5 rounded-full ${currentCurrency.value === item.value ? "bg-[#00AEB5]" : "bg-[#09515D]"}`}>
+                      <Ionicons name="checkmark" size={12} color={currentCurrency.value === item.value ? "#FFFFFF" : "#00232A"} />
                     </View>
-                  )}
+                  </View>
                 </TouchableOpacity>
               ))}
             </ScrollView>

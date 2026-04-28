@@ -1,10 +1,10 @@
 import Pen from "@/assets/icons/pen.svg";
 import Trash from "@/assets/icons/trash.svg";
 import BottomSheet from "@/components/shared/BottomSheet";
+import { Technician } from "@/types/technician";
 import { Ionicons } from "@expo/vector-icons";
 import { format, isToday, isYesterday } from "date-fns";
-import { Text, TouchableOpacity, View } from "react-native";
-import { Technician } from "@/types/technician";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 
 interface TechnicianDetailSheetProps {
   visible: boolean;
@@ -21,7 +21,7 @@ function DetailRow({
   subValue,
   isNote = false,
   isPhone = false,
-  isName = false
+  isName = false,
 }: {
   icon: string;
   label?: string;
@@ -123,23 +123,33 @@ export default function TechnicianDetailSheet({
         {/* Avatar */}
         <View className="items-center my-6">
           <View className="relative">
-            <View className="w-[130px] h-[130px] rounded-full bg-[#F9F5FF] items-center justify-center">
-              <Text className="text-[#7F56D9] text-[32px] font-lexendMedium">
-                {technician?.name
-                  ?.split(" ")
-                  .map((n) => n[0])
-                  .join("")
-                  .toUpperCase()
-                  .slice(0, 2) || "?"}
-              </Text>
+            <View className="w-[130px] h-[130px] rounded-full bg-[#F9F5FF] items-center justify-center overflow-hidden">
+              {technician?.avatarUrl ? (
+                <Image
+                  source={{ uri: technician.avatarUrl }}
+                  className="w-full h-full"
+                />
+              ) : (
+                <Text className="text-[#7F56D9] text-[32px] font-lexendMedium">
+                  {technician?.name
+                    ?.split(" ")
+                    .map((n) => n[0])
+                    .join("")
+                    .toUpperCase()
+                    .slice(0, 2) || "?"}
+                </Text>
+              )}
             </View>
-            <View className="absolute bottom-2 right-2 w-6 h-6 rounded-full bg-[#29D7DE] border-[3px] border-white" />
           </View>
         </View>
 
         {/* Detail rows */}
         <View className="bg-white rounded-[12px] p-5 ">
-          <DetailRow icon="person-outline" value={technician?.name} isName={true}/>
+          <DetailRow
+            icon="person-outline"
+            value={technician?.name}
+            isName={true}
+          />
           <DetailRow
             icon="call-outline"
             value={technician?.phone}

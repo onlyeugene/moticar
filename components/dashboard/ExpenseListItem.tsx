@@ -28,6 +28,7 @@ import InteriorIcon from "@/assets/icons/car/parts/interior.svg";
 import LightingIcon from "@/assets/icons/car/parts/lighting.svg";
 import ToolsIcon from "@/assets/icons/car/parts/toolsEquipments.svg";
 import AccessoriesIcon from "@/assets/icons/car/parts/carAccessories.svg";
+import SwapIcon from '@/assets/icons/swap.svg'
 
 if (
   Platform.OS === "android" &&
@@ -197,10 +198,30 @@ export default function ExpenseListItem({
           </View>
 
           <View className="items-end">
-            <Text className="text-[#1FCAE3] font-lexendMedium text-[16px]">
-              {currencySymbol}
-              {expense.amount.toLocaleString()}
-            </Text>
+            <View className="flex-row items-center gap-2">
+               {!!expense.originalCurrency &&
+                expense.originalCurrency !== expense.currency && (
+                  <TouchableOpacity
+                    onPress={(e) => {
+                      e.stopPropagation();
+                      Alert.alert(
+                        "Original Currency",
+                        `This expense was originally logged in ${expense.originalCurrency}.\n\nOriginal Amount: ${expense.originalCurrency} ${expense.originalAmount?.toLocaleString()}`,
+                        [{ text: "Close", style: "default" }]
+                      );
+                    }}
+                    className="ml-2 "
+                  >
+                    <SwapIcon width={15} height={15}/>
+                  </TouchableOpacity>
+                )}
+              <Text className="text-[#1FCAE3] font-lexendMedium text-[16px]">
+                {currencySymbol}
+                {expense.amount.toLocaleString()}
+              </Text>
+              {/* Converted Currency Indicator */}
+             
+            </View>
             <Text className="text-[#CDC270] font-lexendRegular text-[12px] mt-0.5">
               {expense.paymentMethod}
             </Text>

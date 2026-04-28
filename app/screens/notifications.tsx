@@ -10,6 +10,8 @@ import { router } from "expo-router";
 import { useReminders } from "@/hooks/useActivity";
 import { useNotifications, useNotificationActions } from "@/hooks/useNotifications";
 import { useAppStore } from "@/store/useAppStore";
+import { useAuthStore } from "@/store/useAuthStore";
+import { getCurrencySymbol } from "@/utils/currency";
 import { format } from "date-fns";
 import Empty from "@/assets/icons/empty.svg";
 
@@ -19,6 +21,9 @@ export default function NotificationsScreen() {
   const [activeTab, setActiveTab] = useState("Alerts");
   const { selectedCarId } = useAppStore();
   const { data: remindersData } = useReminders(selectedCarId || "");
+  
+  const user = useAuthStore(state => state.user);
+  const currencySymbol = getCurrencySymbol(user?.preferredCurrency);
   
   // Map UI tabs to backend types
   const tabTypeMap: Record<string, any> = {
@@ -133,7 +138,7 @@ export default function NotificationsScreen() {
                     </View>
                     {amount ? (
                       <Text className="text-[#001A1F] font-lexendMedium text-[14px]">
-                        ₦{Number(amount).toLocaleString()}
+                        {currencySymbol}{Number(amount).toLocaleString()}
                       </Text>
                     ) : null}
                   </View>

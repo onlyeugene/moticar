@@ -20,6 +20,7 @@ interface ReminderCategorySheetProps {
   category: string;
   reminders: Reminder[];
   onAdd: () => void;
+  onEditReminder?: (reminder: Reminder) => void;
 }
 
 const CATEGORY_ICONS: Record<string, any> = {
@@ -100,6 +101,7 @@ export default function ReminderCategorySheet({
   category,
   reminders,
   onAdd,
+  onEditReminder,
 }: ReminderCategorySheetProps) {
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
@@ -183,7 +185,10 @@ export default function ReminderCategorySheet({
               data={filtered}
               keyExtractor={(item) => item.id || item._id || Math.random().toString()}
               renderItem={({ item }) => (
-                <ReminderRow reminder={item} onPress={() => {}} />
+                <ReminderRow 
+                  reminder={item} 
+                  onPress={() => onEditReminder?.(item)} 
+                />
               )}
               contentContainerStyle={{ paddingBottom: 40 }}
               showsVerticalScrollIndicator={false}

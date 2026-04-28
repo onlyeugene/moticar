@@ -33,34 +33,49 @@ export function TechnicianSection({
       </View>
 
       {/* Category pills */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        className="mb-5"
-        contentContainerStyle={{ gap: 10 }}
-      >
-        {TECHNICIAN_CATEGORIES.map((category) => (
-          <TouchableOpacity
-            key={category}
-            onPress={() => onSelectCategory(category)}
-            className={`px-[18px] py-2 rounded-full border ${
-              selectedCategory === category
-                ? "bg-[#7AE6EB] border-[#7AE6EB]"
-                : "bg-white border-[#C1C3C3]"
-            }`}
-          >
-            <Text
-              className={`text-[11px] font-lexendMedium ${
+      <View className="flex-row items-center mb-5">
+        <TouchableOpacity
+          onPress={() => onSelectCategory("")}
+          className={`px-[18px] py-2 rounded-full border mr-2.5 ${
+            selectedCategory === ""
+              ? "bg-[#7AE6EB] border-[#7AE6EB]"
+              : "bg-white border-[#C1C3C3]"
+          }`}
+        >
+          <Text className="text-[11px] font-lexendMedium text-[#425658]">
+            All
+          </Text>
+        </TouchableOpacity>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ gap: 10 }}
+          className="flex-1"
+        >
+          {TECHNICIAN_CATEGORIES.map((category) => (
+            <TouchableOpacity
+              key={category}
+              onPress={() => onSelectCategory(category)}
+              className={`px-[18px] py-2 rounded-full border ${
                 selectedCategory === category
-                  ? "text-[#425658]"
-                  : "text-[#425658]"
+                  ? "bg-[#7AE6EB] border-[#7AE6EB]"
+                  : "bg-white border-[#C1C3C3]"
               }`}
             >
-              {category}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+              <Text
+                className={`text-[11px] font-lexendMedium ${
+                  selectedCategory === category
+                    ? "text-[#425658]"
+                    : "text-[#425658]"
+                }`}
+              >
+                {category}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
 
       {/* Technicians grid */}
       {filteredTechnicians.length > 0 ? (

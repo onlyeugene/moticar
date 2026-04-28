@@ -171,11 +171,14 @@ export default function ExpenseDetailSheet({
             amount: editedExpense.amount,
             date: editedExpense.date,
             category: editedExpense.category,
+            currency: editedExpense.currency,
             notes: editedExpense.notes,
             paymentMethod: editedExpense.paymentMethod,
             items: editedExpense.items,
             metadata: editedExpense.metadata,
             receipts: editedExpense.receipts,
+            originalAmount: editedExpense.originalAmount,
+            originalCurrency: editedExpense.originalCurrency,
             technicianId:
               typeof editedExpense.technicianId === "object"
                 ? editedExpense.technicianId?._id ||
@@ -441,10 +444,31 @@ export default function ExpenseDetailSheet({
                   </View>
                 ) : (
                   <View className="items-end">
-                    <Text className="text-[32px] font-lexendBold text-[#1A3B41]">
-                      {currencySymbol}
-                      {editedExpense.amount.toLocaleString()}
-                    </Text>
+                    <View className="flex-row items-center gap-2">
+                      <Text className="text-[32px] font-lexendBold text-[#1A3B41]">
+                        {currencySymbol}
+                        {editedExpense.amount.toLocaleString()}
+                      </Text>
+                      {!!editedExpense.originalCurrency &&
+                        editedExpense.originalCurrency !==
+                          editedExpense.currency && (
+                          <TouchableOpacity
+                            onPress={() => {
+                              Alert.alert(
+                                "Currency Conversion",
+                                `This expense was originally logged in ${editedExpense.originalCurrency}. The original amount was ${editedExpense.originalCurrency} ${editedExpense.originalAmount?.toLocaleString()}.`
+                              );
+                            }}
+                            className="bg-white p-1.5 rounded-full shadow-sm"
+                          >
+                            <Ionicons
+                              name="help-circle"
+                              size={20}
+                              color="#00AEB5"
+                            />
+                          </TouchableOpacity>
+                        )}
+                    </View>
                   </View>
                 )}
               </View>

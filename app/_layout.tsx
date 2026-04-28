@@ -4,25 +4,28 @@
 // ThemeProvider removed - in React Navigation v7 it calls useNavigation() internally
 // which causes "Couldn't find a navigation context" during API-driven re-renders
 import { useFonts } from "expo-font";
+import * as NavigationBar from "expo-navigation-bar";
 import { Stack } from "expo-router";
-import { useEffect, useState, useRef } from "react";
+import * as SplashScreen from "expo-splash-screen";
+import { StatusBar } from "expo-status-bar";
+import { useEffect, useRef, useState } from "react";
 import { Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { PaperProvider } from "react-native-paper";
-import * as NavigationBar from "expo-navigation-bar";
-import * as SplashScreen from "expo-splash-screen";
-import { StatusBar } from "expo-status-bar";
-import { configureReanimatedLogger, ReanimatedLogLevel } from 'react-native-reanimated';
+import {
+  configureReanimatedLogger,
+  ReanimatedLogLevel,
+} from "react-native-reanimated";
 
-import { LoadingModal } from "../components/ui/LoadingModal";
-import { SnackbarProvider } from "../providers/SnackbarProvider";
-import { QueryProvider } from "../providers/QueryProvider";
-import { SocketProvider } from "../providers/SocketProvider";
-import { OfflineBanner } from "../components/ui/OfflineBanner";
-import { useAuthStore } from "@/store/useAuthStore";
 import { useAppStore } from "@/store/useAppStore";
-import { usePushNotifications } from "../hooks/usePushNotifications";
+import { useAuthStore } from "@/store/useAuthStore";
+import { LoadingModal } from "../components/ui/LoadingModal";
 import "../global.css";
+import { usePushNotifications } from "../hooks/usePushNotifications";
+import { QueryProvider } from "../providers/QueryProvider";
+import { SnackbarProvider } from "../providers/SnackbarProvider";
+import { SocketProvider } from "../providers/SocketProvider";
+import { PreferenceInitializer } from "@/components/shared/PreferenceInitializer";
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
@@ -43,7 +46,7 @@ export default function RootLayout() {
     "LexendDeca-Bold": require("../assets/fonts/LexendDeca-Bold.ttf"),
     "LexendDeca-ExtraBold": require("../assets/fonts/LexendDeca-ExtraBold.ttf"),
     "LexendDeca-Black": require("../assets/fonts/LexendDeca-Black.ttf"),
-    "UkNumberPlate": require("../assets/fonts/UKNumberPlate.ttf")
+    UkNumberPlate: require("../assets/fonts/UKNumberPlate.ttf"),
   });
 
   useEffect(() => {
@@ -94,7 +97,6 @@ export default function RootLayout() {
   // Initialize Push Notifications
   usePushNotifications();
 
-
   if (!fontsLoaded || !isHydrated) {
     return null;
   }
@@ -106,6 +108,7 @@ export default function RootLayout() {
         <SnackbarProvider>
           <QueryProvider>
             <SocketProvider>
+              <PreferenceInitializer />
               <Stack screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="index" />
                 <Stack.Screen name="(auth)" />
