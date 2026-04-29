@@ -6,6 +6,7 @@ import {
   Modal,
   Pressable,
   StyleSheet,
+  ScrollView,
 } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -35,6 +36,7 @@ export default function DatePickerSheet({
 }: DatePickerSheetProps) {
   const [selectedDate, setSelectedDate] = useState(initialDate || new Date());
   const [viewDate, setViewDate] = useState(new Date((initialDate || new Date()).getFullYear(), (initialDate || new Date()).getMonth(), 1));
+  const [isYearMode, setIsYearMode] = useState(false);
 
   // Sync internal state when initialDate changes or sheet becomes visible
   useEffect(() => {
@@ -42,8 +44,20 @@ export default function DatePickerSheet({
       const baseDate = initialDate || new Date();
       setSelectedDate(baseDate);
       setViewDate(new Date(baseDate.getFullYear(), baseDate.getMonth(), 1));
+      setIsYearMode(false);
     }
   }, [visible, initialDate?.getTime()]);
+
+  const years = useMemo(() => {
+    const currentYear = new Date().getFullYear();
+    const startYear = currentYear - 100;
+    const endYear = currentYear + 20;
+    const list = [];
+    for (let i = endYear; i >= startYear; i--) {
+      list.push(i);
+    }
+    return list;
+  }, []);
 
   const calendarDays = useMemo(() => {
     const year = viewDate.getFullYear();
@@ -87,6 +101,11 @@ export default function DatePickerSheet({
 
   const handleNextMonth = () => {
     setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1));
+  };
+
+  const handleSelectYear = (year: number) => {
+    setViewDate(new Date(year, viewDate.getMonth(), 1));
+    setIsYearMode(false);
   };
 
   const handleSave = () => {
@@ -148,68 +167,93 @@ export default function DatePickerSheet({
           </View>
 
           {/* Calendar Body */}
-          <View className="px-6">
+          <View className="px-6 flex-1">
             {/* Month Navigation */}
             <View className="flex-row justify-between items-center py-4">
               <TouchableOpacity onPress={handlePrevMonth}>
-                <MaterialCommunityIcons name="chevron-double-left" size={16} color="#00343F" />
+                <MaterialCommunityIcons name="chevron-double-left" size={20} color="#00AEB5" />
               </TouchableOpacity>
-              <Text className="text-[#00AEB5] text-[14px] font-lexendBold">
-                {MONTHS[viewDate.getMonth()]} {viewDate.getFullYear()}
-              </Text>
-              <TouchableOpacity onPress={handleNextMonth}>
-                <MaterialCommunityIcons name="chevron-double-right" size={16} color="#00343F" />
-              </TouchableOpacity>
-            </View>
-
-            {/* Weekday Labels */}
-            <View className="flex-row justify-around mb-4">
-              {WEEKDAYS.map((day) => (
-                <Text key={day} className="text-[#333333] font-lexendBold text-[14px] w-[40px] text-center">
-                  {day}
+              <TouchableOpacity onPress={() => setIsYearMode(!isYearMode)}>
+                <Text className="text-[#00AEB5] text-[16px] font-lexendBold">
+                  {MONTHS[viewDate.getMonth()]} {viewDate.getFullYear()}
+                  <Ionicons name={isYearMode ? "chevron-up" : "chevron-down"} size={14} color="#00AEB5" />
                 </Text>
-              ))}
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleNextMonth}>
+                <MaterialCommunityIcons name="chevron-double-right" size={20} color="#00AEB5" />
+              </TouchableOpacity>
             </View>
 
-            {/* Days Grid */}
-            <View className="flex-row flex-wrap justify-around">
-              {calendarDays.map((dateObj, idx) => {
-                const selected = isSelected(dateObj.fullDate);
-                const disabled = isFuture(dateObj.fullDate);
-                
-                return (
-                  <TouchableOpacity
-                    key={idx}
-                    onPress={() => !disabled && setSelectedDate(dateObj.fullDate)}
-                    disabled={disabled}
-                    className="w-[40px] h-[40px] items-center justify-center mb-2"
-                  >
-                    <View className={`w-[36px] h-[36px] items-center justify-center rounded-full ${selected ? 'bg-[#FBE74C]' : ''}`}>
-                      <Text className={`font-lexendRegular text-[12px] ${
-                        disabled
-                          ? 'text-[#C1C3C3]'
-                          : dateObj.type === 'current' 
-                            ? (selected ? 'text-[#202A2A]' : 'text-[#202A2A]') 
-                            : 'text-[#92BEC1]'
-                      }`}>
-                        {dateObj.day}
+            {!isYearMode ? (
+              <>
+                {/* Weekday Labels */}
+                <View className="flex-row mb-4">
+                  {WEEKDAYS.map((day) => (
+                    <Text key={day} className="text-[#333333] font-lexendBold text-[14px] flex-1 text-center">
+                      {day}
+                    </Text>
+                  ))}
+                </View>
+
+                {/* Days Grid */}
+                <View className="flex-row flex-wrap">
+                  {calendarDays.map((dateObj, idx) => {
+                    const selected = isSelected(dateObj.fullDate);
+                    const disabled = isFuture(dateObj.fullDate);
+                    
+                    return (
+                      <TouchableOpacity
+                        key={idx}
+                        onPress={() => !disabled && setSelectedDate(dateObj.fullDate)}
+                        disabled={disabled}
+                        className="w-[14.28%] aspect-square items-center justify-center mb-1"
+                      >
+                        <View className={`w-[36px] h-[36px] items-center justify-center rounded-full ${selected ? 'bg-[#FBE74C]' : ''}`}>
+                          <Text className={`font-lexendRegular text-[12px] ${
+                            disabled
+                              ? 'text-[#C1C3C3]'
+                              : dateObj.type === 'current' 
+                                ? (selected ? 'text-[#202A2A]' : 'text-[#202A2A]') 
+                                : 'text-[#92BEC1]'
+                          }`}>
+                            {dateObj.day}
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              </>
+            ) : (
+              <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+                <View className="flex-row flex-wrap justify-between px-1">
+                  {years.map((year) => (
+                    <TouchableOpacity
+                      key={year}
+                      onPress={() => handleSelectYear(year)}
+                      className={`w-[23%] py-3 mb-2 rounded-xl items-center ${viewDate.getFullYear() === year ? 'bg-[#FBE74C]' : 'bg-[#F5F5F5]'}`}
+                    >
+                      <Text className={`font-lexendMedium text-[14px] ${viewDate.getFullYear() === year ? 'text-[#202A2A]' : 'text-[#00343F]'}`}>
+                        {year}
                       </Text>
-                    </View>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </ScrollView>
+            )}
           </View>
 
           {/* Footer Save Button */}
-          <View className="pb-10">
-            <TouchableOpacity 
-              onPress={handleSave}
-              className="bg-[#00343F] w-[80%] py-5 rounded-full items-center mx-auto"
-            >
-              <Text className="text-white font-lexendBold text-[18px]">Save</Text>
-            </TouchableOpacity>
-          </View>
+          {!isYearMode && (
+            <View className="pb-10 pt-4">
+              <TouchableOpacity 
+                onPress={handleSave}
+                className="bg-[#00343F] w-[80%] py-5 rounded-full items-center mx-auto"
+              >
+                <Text className="text-white font-lexendBold text-[18px]">Save</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       </View>
     </Modal>
@@ -226,6 +270,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
+    maxHeight: '90%',
     minHeight: 500,
   },
 });

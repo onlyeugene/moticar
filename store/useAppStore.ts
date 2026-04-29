@@ -23,6 +23,8 @@ export const useAppStore = create<AppState>()(
       activeActivityTab: "Trips",
       isDiagnosticActive: false,
       obdData: {},
+      motiBuddieDismissed: false,
+      lastMotiBuddieCrossSellShown: undefined,
       setAppReady: (ready) => set({ isAppReady: ready }),
       setTheme: (theme) => set({ theme }),
       setSelectedCarId: (id) => set({ selectedCarId: id }),
@@ -43,6 +45,8 @@ export const useAppStore = create<AppState>()(
             [carId]: { ...(state.obdData[carId] || {}), ...data },
           },
         })),
+      setMotiBuddieDismissed: (dismissed) => set({ motiBuddieDismissed: dismissed }),
+      setLastMotiBuddieCrossSellShown: (timestamp) => set({ lastMotiBuddieCrossSellShown: timestamp }),
       resetScanningState: () =>
         set({
           scanningProgress: {
@@ -75,6 +79,8 @@ export const useAppStore = create<AppState>()(
         selectedCarId: state.selectedCarId,
         activeActivityTab: state.activeActivityTab,
         obdData: state.obdData,
+        motiBuddieDismissed: state.motiBuddieDismissed,
+        lastMotiBuddieCrossSellShown: state.lastMotiBuddieCrossSellShown,
       }),
     }
   )

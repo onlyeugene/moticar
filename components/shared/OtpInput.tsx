@@ -4,7 +4,7 @@ import { OtpInputProps } from "@/types/ui";
 
 /**
  * A custom OTP input component with multiple boxes.
- * Handles auto-focus and backspace navigation.
+ * Handles auto-focus, backspace navigation, and automatic prefill (autofill).
  */
 export const OtpInput: React.FC<OtpInputProps> = ({ value, onChange, length = 5 }) => {
   const inputRefs = useRef<TextInput[]>([]);
@@ -13,17 +13,26 @@ export const OtpInput: React.FC<OtpInputProps> = ({ value, onChange, length = 5 
   const digits = value.split("").concat(new Array(length).fill("")).slice(0, length);
 
   const handleChange = (text: string, index: number) => {
+    // If text length is > 1, it's likely a paste or autofill event
+    if (text.length > 1) {
+      const pasteData = text.replace(/[^0-9]/g, "").slice(0, length);
+      onChange(pasteData);
+      
+      // Focus the last filled box or the next empty box
+      const nextIndex = Math.min(pasteData.length, length - 1);
+      inputRefs.current[nextIndex]?.focus();
+      return;
+    }
+
     const newDigits = [...digits];
-    // If text is provided, we take only the last character (in case of paste or double input)
-    // If text is empty, it means clear
-    const char = text.slice(-1);
-    newDigits[index] = char;
+    // If text is empty, it means clear, otherwise take the character
+    newDigits[index] = text;
     
     const newCode = newDigits.join("").slice(0, length);
     onChange(newCode);
 
-    // Auto focus next input
-    if (char && index < length - 1) {
+    // Auto focus next input if a character was entered
+    if (text && index < length - 1) {
       inputRefs.current[index + 1]?.focus();
     }
   };
@@ -57,10 +66,13 @@ export const OtpInput: React.FC<OtpInputProps> = ({ value, onChange, length = 5 
             onChangeText={(text) => handleChange(text, index)}
             onKeyPress={(e) => handleKeyPress(e, index)}
             keyboardType="number-pad"
-            maxLength={1}
+            maxLength={index === 0 ? length : 1} // Allow first box to receive full code for autofill/paste
             className="text-white text-[24px] font-lexendBold text-center w-full h-full"
             style={{ textAlignVertical: "center" }}
             selectionColor="#43E4E9"
+            textContentType="oneTimeCode" // Essential for iOS autofill
+            autoComplete="one-time-code" // Essential for Android autofill
+            importantForAutofill="yes"
           />
         </View>
       ))}

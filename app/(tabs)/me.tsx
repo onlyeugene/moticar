@@ -175,7 +175,7 @@ export default function MeScreen() {
               {cars.map((car, index) => {
                 const carId = car.id || car._id;
                 const createdAt = car.createdAt
-                  ? format(new Date(car.createdAt), "do MMM, yyyy")
+                  ? format(new Date(car.createdAt), "do MMMM, yyyy")
                   : "N/A";
                 const isLast = index === cars.length - 1;
 

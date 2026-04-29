@@ -36,14 +36,14 @@ interface DiagnosisSheetProps {
   carId: string;
 }
 
-type DiagnosisState = "start" | "loading" | "result" | "locked";
+type DiagnosisState = "initializing" | "start" | "loading" | "result" | "locked";
 
 export default function DiagnosisSheet({
   visible,
   onClose,
   carId,
 }: DiagnosisSheetProps) {
-  const [state, setState] = useState<DiagnosisState>("start");
+  const [state, setState] = useState<DiagnosisState>("initializing");
   const [status, setStatus] = useState<IDiagnosisStatus | null>(null);
   const [diagnosis, setDiagnosis] = useState<IDiagnosis | null>(null);
   const [car, setCar] = useState<any>(null);
@@ -55,6 +55,7 @@ export default function DiagnosisSheet({
 
   useEffect(() => {
     if (visible && carId) {
+      setState("initializing");
       fetchStatus();
       fetchCar();
     }
@@ -435,6 +436,7 @@ export default function DiagnosisSheet({
         ) : null
       }
     >
+      {state === "initializing" && <LoadingModal visible message=""/>}
       {state === "start" && renderStart()}
       {state === "loading" && renderLoading()}
       {state === "result" && renderResult()}

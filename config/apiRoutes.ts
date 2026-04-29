@@ -71,16 +71,21 @@ export const API_ROUTES = {
   },
   OBD: {
     PAIR: "/obd/pair",
+    LINK_DEVICE: "/obd/link-device",
     ENABLE: "/obd/enable",
     STATUS: (deviceId: string) => `/obd/device/${deviceId}/status`,
     DIAGNOSTIC: (carId: string) => `/obd/car/${carId}/diagnostic`,
     ACTIVATE: (carId: string) => `/obd/car/${carId}/activate`,
+    COMMAND: "/obd/command",
   },
   NOTIFICATIONS: {
     BASE: "/notifications",
     REGISTER_TOKEN: "/notifications/register-token",
     MARK_AS_READ: (notificationId: string) => `/notifications/${notificationId}/read`,
     MARK_ALL_AS_READ: "/notifications/mark-all-read",
+  },
+  INSURANCE: {
+    PROVIDERS: (countryCode: string) => `/insurance/providers/${countryCode}`,
   },
 };
 

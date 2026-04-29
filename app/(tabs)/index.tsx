@@ -11,6 +11,7 @@ import LocationAlert from "@/components/shared/LocationAlert";
 import { RulerPicker } from "@/components/shared/RulerPicker";
 import AddMileageSheet from "@/components/sheets/AddMileageSheet";
 import DiagnosisSheet from "@/components/sheets/DiagnosisSheet";
+import MotiBuddieCrossSellSheet from "@/components/sheets/MotiBuddieCrossSellSheet";
 import { ScreenBackground } from "@/components/ui/ScreenBackground";
 
 import { useActivitySpends, useTrips } from "@/hooks/useActivity";
@@ -51,6 +52,32 @@ export default function Dashboard() {
   const userCar =
     carsData?.cars?.find((c) => (c.id || (c as any)._id) === selectedCarId) ||
     carsData?.cars?.[0];
+
+  const { 
+    motiBuddieDismissed, 
+    lastMotiBuddieCrossSellShown, 
+    setMotiBuddieDismissed, 
+    setLastMotiBuddieCrossSellShown 
+  } = useAppStore();
+  const [isCrossSellVisible, setIsCrossSellVisible] = useState(false);
+
+  useEffect(() => {
+    // Show cross-sell if car has no OBD device and hasn't been permanently dismissed
+    if (userCar && !userCar.deviceId && !motiBuddieDismissed) {
+      const now = Date.now();
+      const sevenDays = 7 * 24 * 60 * 60 * 1000;
+      
+      // Show if it's the first time or if 7 days have passed since last nudge
+      if (!lastMotiBuddieCrossSellShown || (now - lastMotiBuddieCrossSellShown) > sevenDays) {
+        const timer = setTimeout(() => {
+          setIsCrossSellVisible(true);
+          setLastMotiBuddieCrossSellShown(now);
+        }, 5000); // 5 second delay for a better UX
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [userCar?.deviceId, motiBuddieDismissed, lastMotiBuddieCrossSellShown]);
+
   const { data: locationData } = useCheckLocation();
 
   const [refreshing, setRefreshing] = useState(false);
@@ -355,6 +382,20 @@ export default function Dashboard() {
           visible={isDiagnosisVisible}
           onClose={() => setIsDiagnosisVisible(false)}
           carId={userCar?.id || (userCar as any)?._id || ""}
+        />
+
+        <MotiBuddieCrossSellSheet
+          visible={isCrossSellVisible}
+          onClose={() => setIsCrossSellVisible(false)}
+          onDontShowAgain={(val) => setMotiBuddieDismissed(val)}
+          onLearnMore={() => {
+            setIsCrossSellVisible(false);
+            // Navigate to learn more page or open a link
+          }}
+          onGetOne={() => {
+            setIsCrossSellVisible(false);
+            // Navigate to shop or pairing page
+          }}
         />
       </ScrollView>
 

@@ -56,7 +56,7 @@ export function PreferenceInitializer() {
 
             if (matchedCurrency) {
               updateUser({
-                country: matchedCurrency.country,
+                country: isoCode,
                 preferredCurrency: matchedCurrency.value,
                 ...(matchedLang ? { preferredLanguage: matchedLang.value } : {}),
               });

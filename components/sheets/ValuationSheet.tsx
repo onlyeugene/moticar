@@ -27,14 +27,14 @@ interface ValuationSheetProps {
   carId: string;
 }
 
-type ValuationState = "start" | "loading" | "result" | "locked";
+type ValuationState = "initializing" | "start" | "loading" | "result" | "locked";
 
 export default function ValuationSheet({
   visible,
   onClose,
   carId,
 }: ValuationSheetProps) {
-  const [state, setState] = useState<ValuationState>("start");
+  const [state, setState] = useState<ValuationState>("initializing");
   const [status, setStatus] = useState<any>(null);
   const [valuation, setValuation] = useState<any>(null);
   const [isAssumptionsVisible, setIsAssumptionsVisible] = useState(false);
@@ -45,6 +45,7 @@ export default function ValuationSheet({
 
   useEffect(() => {
     if (visible && carId) {
+      setState("initializing");
       fetchStatus();
     }
   }, [visible, carId]);
@@ -419,6 +420,7 @@ export default function ValuationSheet({
         </TouchableOpacity>
       </View>
 
+      {state === "initializing" && <LoadingModal visible />}
       {state === "start" && renderStart()}
       {state === "loading" && renderLoading()}
       {state === "locked" && renderLocked()}

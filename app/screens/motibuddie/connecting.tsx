@@ -1,6 +1,6 @@
 import MotiBuddieIcon from "@/assets/icons/motibuddie.svg";
-import Container from "@/components/shared/container";
 import { ScreenBackground } from "@/components/ui/ScreenBackground";
+import Container from "@/components/shared/container";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
@@ -11,7 +11,6 @@ import Animated, {
   withSequence,
   withTiming,
 } from "react-native-reanimated";
-
 import { useSocket } from "@/providers/SocketProvider";
 import { useAppStore } from "@/store/useAppStore";
 import { useSnackbar } from "@/providers/SnackbarProvider";
@@ -25,27 +24,16 @@ export default function Connecting() {
   const { showSnackbar } = useSnackbar();
   const [statusText, setStatusText] = useState("Please keep the vehicle in idle");
 
-  // Block useObdLiveListener from re-linking the device to a stale car
-  // while we're waiting for the new connection to come through.
+  // Block useObdLiveListener from interfering during pairing
   React.useEffect(() => {
     useAppStore.getState().setIsPairing(true);
-    return () => { useAppStore.getState().setIsPairing(false); };
+    return () => {
+      useAppStore.getState().setIsPairing(false);
+    };
   }, []);
 
-  // Shared handler so both socket and REST poll can trigger navigation
-  const handleOnline = React.useCallback(
-    (carId: string) => {
-      showSnackbar({ message: "MotiBuddie Connected!", type: "success" });
-      useAppStore.getState().setSelectedCarId(carId);
-      router.replace({
-        pathname: "/screens/motibuddie/details",
-        params: { carId },
-      });
-    },
-    [showSnackbar],
-  );
-
   useEffect(() => {
+    // Pulse animation
     scale.value = withRepeat(
       withSequence(
         withTiming(1.5, { duration: 2000 }),
@@ -63,27 +51,43 @@ export default function Connecting() {
       true,
     );
 
-    let done = false; // prevents double-navigation if both paths fire
-    let pollInterval: any;
-    let discoveryTimeout: any;
+    let done = false;
+    let pollInterval: ReturnType<typeof setInterval> | null = null;
+    let discoveryTimeout: ReturnType<typeof setTimeout> | null = null;
 
-    const onlineGuard = (carId: string) => {
+    // ── Navigate to details screen with prefill data ──
+    const handleDetected = (prefillData: Record<string, any>, imei: string) => {
       if (done) return;
       done = true;
-      clearTimeout(discoveryTimeout);
-      clearInterval(pollInterval);
-      handleOnline(carId);
+      if (discoveryTimeout) clearTimeout(discoveryTimeout);
+      if (pollInterval) clearInterval(pollInterval);
+
+      showSnackbar({ message: "MotiBuddie Connected!", type: "success" });
+
+      // Navigate to details screen — pass prefill data as params
+      router.replace({
+        pathname: "/screens/motibuddie/details",
+        params: {
+          imei,
+          prefillData: JSON.stringify(prefillData),
+        },
+      });
     };
 
-    // --- REST polling fallback (every 15s) ---
-    // Runs regardless of socket state so we always have a safety net.
+    // ── REST polling fallback (every 15s) ──
     if (params.deviceId) {
       pollInterval = setInterval(async () => {
         try {
           const res = await obdService.getConnectionStatus(params.deviceId!);
+          // If REST poll says connected and car already exists (upgrade flow)
           if (res?.status === "connected" && res?.carId) {
-            console.log("✅ REST poll: device connected", res.carId);
-            onlineGuard(res.carId);
+            if (done) return;
+            done = true;
+            if (discoveryTimeout) clearTimeout(discoveryTimeout);
+            if (pollInterval) clearInterval(pollInterval);
+            showSnackbar({ message: "MotiBuddie Connected!", type: "success" });
+            useAppStore.getState().setSelectedCarId(res.carId);
+            router.replace("/(tabs)/car");
           }
         } catch {
           // silent — keep polling
@@ -91,25 +95,74 @@ export default function Connecting() {
       }, 15000);
     }
 
-    // --- Socket path ---
+    // ── Socket listeners ──
     if (isConnected && socket && params.imei) {
-      console.log("📡 Subscribing to Device (Discovery):", params.imei);
+      console.log("📡 Joining device room:", params.imei);
       socket.emit("subscribe_device", { imei: params.imei });
 
-      socket.on("obd:device_silent", (data: { imei: string; message: string }) => {
-        console.log("⏳ Device silent:", data.message);
-        setStatusText("Device found! Waiting for first GPS signal...");
-        showSnackbar({
-          message: "Device Found!",
-          description: "Waiting for the first GPS signal. This may take a moment.",
-          type: "success",
-        });
-      });
+      // Device registered but no GPS signal yet
+      socket.on(
+        "obd:device_silent",
+        (data: { imei: string; message: string }) => {
+          console.log("⏳ Device silent:", data.message);
+          setStatusText("Device found! Waiting for first GPS signal...");
+          showSnackbar({
+            message: "Device Found!",
+            description:
+              "Waiting for GPS signal. Keep the engine running.",
+            type: "success",
+          });
+        },
+      );
 
-      socket.on("obd:device_online", (data: { imei: string; car_id: string; metadata?: any }) => {
-        console.log("✅ Socket: MotiBuddie is Online!", data);
-        if (data.car_id) onlineGuard(data.car_id);
-      });
+      // ── New event: device detected, prefill data ready ──
+      socket.on(
+        "obd:device_detected",
+        (data: {
+          imei: string;
+          prefillData: Record<string, any>;
+          hasVin: boolean;
+          message: string;
+        }) => {
+          console.log("✅ Socket: obd:device_detected", data);
+          setStatusText(data.message || "Device connected!");
+          handleDetected(data.prefillData, data.imei);
+        },
+      );
+
+      // ── Upgrade flow: device already linked to a car ──
+      socket.on(
+        "obd:device_online",
+        (data: { imei: string; car_id: string; metadata?: any }) => {
+          console.log("✅ Socket: obd:device_online", data);
+          if (data.car_id) {
+            if (done) return;
+            done = true;
+            if (discoveryTimeout) clearTimeout(discoveryTimeout);
+            if (pollInterval) clearInterval(pollInterval);
+            showSnackbar({ message: "MotiBuddie Connected!", type: "success" });
+            useAppStore.getState().setSelectedCarId(data.car_id);
+            router.replace("/(tabs)/car");
+          }
+        },
+      );
+
+      // ── Timeout from server ──
+      socket.on(
+        "obd:pairing_timeout",
+        (data: { imei: string; message: string }) => {
+          if (done) return;
+          done = true;
+          if (discoveryTimeout) clearTimeout(discoveryTimeout);
+          if (pollInterval) clearInterval(pollInterval);
+          showSnackbar({
+            message: "Connection timeout",
+            description: data.message,
+            type: "error",
+          });
+          router.back();
+        },
+      );
 
       socket.on("error", (err: { message: string }) => {
         if (done) return;
@@ -118,14 +171,14 @@ export default function Connecting() {
       });
     }
 
-    // 10-minute timeout — server keeps polling indefinitely so give it more time
+    // 10-minute client-side timeout as last resort
     discoveryTimeout = setTimeout(() => {
       if (done) return;
-      clearInterval(pollInterval);
+      if (pollInterval) clearInterval(pollInterval);
       showSnackbar({
         message: "Still connecting...",
         description:
-          "We couldn't detect your MotiBuddie yet. Make sure it's plugged in and the engine is running.",
+          "We couldn't detect your MotiBuddie. Make sure it's plugged in and the engine is running.",
         type: "error",
       });
       router.back();
@@ -133,15 +186,17 @@ export default function Connecting() {
 
     return () => {
       done = true;
-      clearTimeout(discoveryTimeout);
-      clearInterval(pollInterval);
+      if (discoveryTimeout) clearTimeout(discoveryTimeout);
+      if (pollInterval) clearInterval(pollInterval);
       if (socket) {
         socket.off("obd:device_online");
+        socket.off("obd:device_detected");
         socket.off("obd:device_silent");
+        socket.off("obd:pairing_timeout");
         socket.off("error");
       }
     };
-  }, [isConnected, socket, params.imei, params.deviceId, handleOnline]);
+  }, [isConnected, socket, params.imei, params.deviceId]);
 
   const glowStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
@@ -153,7 +208,6 @@ export default function Connecting() {
       <Container>
         <View className="flex-1 items-center justify-center -mt-32">
           <View className="items-center justify-center">
-            {/* Animated Glow Layers */}
             <Animated.View
               style={[styles.glow, glowStyle]}
               className="absolute w-48 h-48 rounded-full bg-[#29D7DE]"
@@ -162,8 +216,6 @@ export default function Connecting() {
               style={[styles.glow, { opacity: 0.1 }]}
               className="absolute w-64 h-64 rounded-full bg-[#29D7DE]/20"
             />
-
-            {/* Device Icon Container */}
             <View className="w-40 h-40 rounded-full bg-[#032529] border border-[#09515D] items-center justify-center shadow-2xl">
               <MotiBuddieIcon width={85} height={65} />
             </View>
@@ -178,8 +230,6 @@ export default function Connecting() {
             </Text>
           </View>
         </View>
-
-        {/* Optional: Add a subtle loading indicator at the bottom if needed */}
       </Container>
     </ScreenBackground>
   );

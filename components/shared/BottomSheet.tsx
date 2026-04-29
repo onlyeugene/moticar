@@ -23,6 +23,7 @@ interface BottomSheetProps {
   backgroundColor?: string;
   scrollable?: boolean;
   showCloseButton?: boolean;
+  leftIcon?: keyof typeof Ionicons.glyphMap;
   footer?: React.ReactNode;
   contentPadding?: number;
 }
@@ -37,6 +38,7 @@ export default function BottomSheet({
   height,
   scrollable = true,
   showCloseButton = true,
+  leftIcon = "close",
   footer,
   contentPadding = 10,
 }: BottomSheetProps) {
@@ -73,7 +75,7 @@ export default function BottomSheet({
             <View className="flex-row items-center gap-4 flex-1">
               {showCloseButton && (
                 <TouchableOpacity onPress={onClose}>
-                  <Ionicons name="close" size={24} color="#101828" />
+                  <Ionicons name={leftIcon} size={24} color="#101828" />
                 </TouchableOpacity>
               )}
               {typeof title === "string" ? (
