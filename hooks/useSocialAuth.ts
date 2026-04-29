@@ -74,7 +74,7 @@ export const useSocialAuth = (callbacks?: {
         name = prefix.charAt(0).toUpperCase() + prefix.slice(1);
       }
 
-      const providerId = extraData?.user || decoded.sub;
+      const providerId = extraData?.id || extraData?.user || decoded.sub;
 
       if (!email || !providerId) {
         throw new Error("Unable to retrieve necessary account identifiers from provider.");
