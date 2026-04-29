@@ -37,7 +37,7 @@ export default function ActivityScreen() {
   const currencySymbol = getCurrencySymbol(user?.preferredCurrency);
 
   // Reminders fetching (global for the tab)
-  const { data: remindersData } = useReminders(selectedCarId || "");
+  const { data: remindersData, isLoading: isRemindersLoading } = useReminders(selectedCarId || "");
 
   // Get reminders for the currently selected category
   const categoryReminders = (remindersData?.reminders || []).filter(
@@ -111,6 +111,7 @@ export default function ActivityScreen() {
           {activeActivityTab === "Reminders" && (
             <RemindersTab 
               summary={remindersData?.summary} 
+              isLoading={isRemindersLoading}
               onAdd={(cat) => {
                 setSelectedReminderCategory(cat);
                 setIsAddReminderVisible(true);

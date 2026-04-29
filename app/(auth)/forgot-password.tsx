@@ -21,9 +21,7 @@ const schema = z.object({
   email: emailSchema,
 });
 
-interface ForgotPasswordFormData {
-  email: string;
-}
+type ForgotPasswordFormData = z.infer<typeof schema>;
 
 export default function ForgotPassword() {
   const { showSnackbar } = useSnackbar();
@@ -74,26 +72,23 @@ export default function ForgotPassword() {
   return (
     <ScreenBackground>
       <Container>
-        <View className="flex-row items-center gap-4">
-          <Pressable onPress={() => router.back()}>
+        <View className="flex-row items-center justify-between">
+          <Pressable onPress={() => router.back()} className="p-2 -ml-2">
             <Ionicons name="arrow-back" size={24} color="white" />
           </Pressable>
         </View>
 
-        <View className="mt-10">
-          <Text className="text-white text-[32px] font-lexendMedium">
-            Forgot Password
+        <View className="mt-8">
+          <Text className="text-white text-[26px] font-lexendMedium leading-10">
+            Reset Password
           </Text>
-          <Text className="text-[#9BBABB] font-lexendRegular text-[16px] mt-2 leading-6">
-            Enter your email address to receive a 5-digit verification code.
+          <Text className="text-[#9BBABB] font-lexendRegular text-[14px] mt-2 leading-6">
+            Enter the email associated with your moticar account
           </Text>
         </View>
 
-        <View className="mt-10">
-          <Text className="text-[#32717B] font-lexendMedium text-[14px] mb-3">
-            Email Address
-          </Text>
-          <ControlledInput
+        <View className="mt-7">
+             <ControlledInput
             control={control}
             name="email"
             leftIcon="mail-outline"
@@ -104,17 +99,19 @@ export default function ForgotPassword() {
           />
         </View>
 
-        <View className="mt-10">
+        <View className="flex-1" />
+
+        <View className="mb-10">
           <Pressable
             disabled={isButtonDisabled}
             onPress={handleSubmit(onSubmit)}
-            className={`w-full h-[50px] rounded-full items-center justify-center active:opacity-90 ${isButtonDisabled ? "bg-[#09515D]/60" : "bg-[#29D7DE]"}`}
+            className={`w-full h-[54px] rounded-full items-center justify-center active:opacity-90 ${isButtonDisabled ? "bg-[#09515D]/60" : "bg-[#29D7DE]"}`}
           >
             {forgotPassword.isPending ? (
               <ActivityIndicator color="#00343F" />
             ) : (
               <Text className="font-lexendBold text-[16px] text-[#00343F]">
-                Send Reset Code
+                Reset password
               </Text>
             )}
           </Pressable>

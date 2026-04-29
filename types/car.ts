@@ -102,7 +102,10 @@ export interface CarCreateInput {
   fuelType?: string;
   color?: string;
   purchaseDate?: string;
-  condition?: "Newly Purchased" | "Used";
+  condition?: "Newly Purchased" | "Used" | "Already had an existing user"; 
+  entryMethod?: "manual" | "ai_scan" | "obd"; 
+  currency?: string; 
+  status?: string; 
   monthlyBudget?: number;
   deviceId?: string;
   // Technical Specs
@@ -121,7 +124,6 @@ export interface CarCreateInput {
   brakesRear?: string;
   yearRange?: string;
   doors?: number;
-  entryMethod?: "manual" | "ai_scan";
 }
 
 export interface CarUpdateInput {

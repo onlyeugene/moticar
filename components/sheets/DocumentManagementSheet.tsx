@@ -100,6 +100,41 @@ export default function DocumentManagementSheet({
     };
   };
 
+  const getDocInfoForEntry = (entry: { name: string, type: string, id: string }) => {
+    const doc = documents.find(d => d._id === entry.id);
+    if (!doc) return getDocInfo('none');
+
+    const expiryDate = doc.expiryDate ? new Date(doc.expiryDate) : null;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    let status = "Active";
+    if (expiryDate) {
+        const expire = new Date(expiryDate);
+        expire.setHours(0, 0, 0, 0);
+        const diffTime = expire.getTime() - today.getTime();
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        status = diffDays < 0 ? "Expired" : diffDays <= 30 ? "Pending" : "Active";
+    } else if ((doc as any).doesNotExpire) {
+        status = "Active";
+    }
+
+    const inputDate = doc.createdAt ? new Date(doc.createdAt) : (doc.issueDate ? new Date(doc.issueDate) : null);
+    const formattedDate = inputDate ? inputDate.toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }) : "";
+
+    return {
+      id: doc._id,
+      date: formattedDate ? `Added ${formattedDate}` : "",
+      status,
+      fileUrl: doc.fileUrl || (doc as any).receiptUrl,
+      meta: (doc as any).subCategory || ""
+    };
+  };
+
   const handleDelete = (docId: string, typeName: string) => {
     Alert.alert(
       "Delete Document",
@@ -137,7 +172,7 @@ export default function DocumentManagementSheet({
       backgroundColor="#F5F5F5"
       headerRight={
         <TouchableOpacity
-          onPress={() => onAddRequest("MOT")}
+          onPress={() => onAddRequest("New Entry")}
           className="w-10 h-10 items-center justify-center bg-white rounded-full shadow-sm"
         >
           <Ionicons name="add" size={24} color="#00AEB5" />
@@ -145,17 +180,17 @@ export default function DocumentManagementSheet({
       }
     >
       <View className="flex-1 px-2 pt-2 pb-10">
-        {documentTypes.map((doc, index) => {
-          const info = getDocInfo(doc.type);
+        {[...documentTypes, ...documents.filter(d => d.type === 'New Entry').map(d => ({ name: (d as any).documentName || 'Other Document', type: 'New Entry', id: d._id }))].map((doc, index) => {
+          const info = doc.type === 'New Entry' ? getDocInfoForEntry(doc as any) : getDocInfo(doc.type);
 
           return (
             <TouchableOpacity
               key={index}
               activeOpacity={0.7}
               onPress={() => {
-                const docObj = documents.find((d) => d.type === doc.type);
+                const docObj = doc.type === 'New Entry' ? documents.find(d => d._id === (doc as any).id) : documents.find((d) => d.type === doc.type);
                 const hasEntries =
-                  docObj && (docObj.vin || docObj.expiryDate || docObj.amount || docObj.issueDate);
+                  docObj && (docObj.vin || docObj.expiryDate || docObj.amount || docObj.issueDate || (docObj as any).documentName);
 
                 if (hasEntries) {
                   onAddRequest(doc.type as DocumentCategory, docObj);

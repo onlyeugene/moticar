@@ -6,7 +6,8 @@ export type DocumentCategory =
   | "Service History" 
   | "Driver’s License" 
   | "Insurance" 
-  | "Emissions / Inspection";
+  | "Emissions / Inspection"
+  | "New Entry";
 
 export interface DocumentFormState {
   // Common fields
@@ -49,6 +50,12 @@ export interface DocumentFormState {
   policyNumber: string;
   coverageType: "Third-party" | "Comprehensive" | "Fire & Theft" | "";
   paymentPlan: "Monthly" | "Annual" | "";
+
+  // New Entry specific
+  documentName: string;
+  subCategory: string;
+  doesNotExpire: boolean;
+  paymentFrequency: "One-time" | "Monthly" | "Annual" | "";
 }
 
 
@@ -97,4 +104,9 @@ export const CATEGORY_DEFAULTS: DocumentFormState = {
   policyNumber: "",
   coverageType: "",
   paymentPlan: "",
+
+  documentName: "",
+  subCategory: "",
+  doesNotExpire: false,
+  paymentFrequency: "",
 };

@@ -31,6 +31,7 @@ import {
 } from "react-native";
 import ExpenseBreakdownSheet from "../sheets/ExpenseBreakdownSheet";
 import SpendStatsCard from "./SpendStatsCard";
+import { LoadingModal } from "../ui/LoadingModal";
 
 interface SpendsTabProps {
   currencySymbol: string;
@@ -503,6 +504,8 @@ const SpendsTab: React.FC<SpendsTabProps> = ({
         currencySymbol={currencySymbol}
         selectedDate={selectedDate}
       />
+
+      <LoadingModal visible={isLoading} />
     </View>
   );
 };

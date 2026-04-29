@@ -143,21 +143,22 @@ export function PillSelector({
       <Text className="text-[#8B8B8B] font-lexendRegular text-[12px] mb-3">
         {label} {required && <Text className="text-[#00AEB5]">*</Text>}
       </Text>
-      <View className="flex-row flex-wrap gap-2">
+      <View className="flex-row flex-wrap gap-x-2 gap-y-3">
         {options.map((opt) => (
           <TouchableOpacity
             key={opt}
             onPress={() => onSelect(opt)}
             disabled={disabled}
-            className={`px-6 py-2.5 rounded-[8px] border items-center justify-center flex-1 ${
+            style={{ minWidth: '30%' }}
+            className={`px-4 py-3 rounded-[12px] border items-center justify-center ${
               selected === opt
                 ? "bg-[#00AEB5] border-[#00AEB5]"
-                : "border-[#E2E2E2]"
+                : "bg-[#F5F5F5] border-transparent"
             } ${disabled ? "opacity-60" : ""}`}
           >
             <Text
-              className={`font-lexendRegular text-[12px] ${
-                selected === opt ? "text-white" : "text-[#495353]"
+              className={`font-lexendMedium text-[12px] ${
+                selected === opt ? "text-white" : "text-[#AFB4B4]"
               }`}
             >
               {opt}

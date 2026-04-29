@@ -10,6 +10,9 @@ import {
   PillSelector,
 } from "./DocumentFormComponents";
 import DatePickerSheet from "../sheets/DatePickerSheet";
+import InsuranceProviderSheet from "../sheets/InsuranceProviderSheet";
+import { Ionicons } from "@expo/vector-icons";
+import { TouchableOpacity, Text } from "react-native";
 
 export function InsuranceForm({
   state,
@@ -19,6 +22,7 @@ export function InsuranceForm({
 }: DocumentFormProps) {
   const [showStartDate, setShowStartDate] = useState(false);
   const [showExpiryDate, setShowExpiryDate] = useState(false);
+  const [showProviderSheet, setShowProviderSheet] = useState(false);
 
   const updateState = (updates: Partial<DocumentFormState>) => {
     setState((prev) => ({ ...prev, ...updates }));
@@ -27,15 +31,24 @@ export function InsuranceForm({
   return (
     <View>
       <SectionCard>
-        <FormInput
-          label="Insurance Provider"
-          value={state.provider}
-          onChange={(v) => updateState({ provider: v })}
-          icon="business-outline"
-          placeholder="Select"
-          align="end"
+        <TouchableOpacity 
+          onPress={() => isEditing && setShowProviderSheet(true)}
+          className="flex-row items-center py-4 justify-between"
           disabled={!isEditing}
-        />
+        >
+          <View className="flex-row items-center flex-1">
+            <View className="mr-3">
+               <Ionicons name="business-outline" size={24} color="#C1C3C3" />
+            </View>
+            <Text className="text-[#707676] font-lexendRegular text-[12px]">Insurance Provider</Text>
+          </View>
+          <View className="flex-row items-center">
+            <Text className={`font-lexendMedium text-[14px] ${state.provider ? "text-[#202A2A]" : "text-[#C1C3C3]"}`}>
+              {state.provider || "Select"}
+            </Text>
+            <Ionicons name="chevron-forward" size={20} color="#ADADAD" className="ml-1" />
+          </View>
+        </TouchableOpacity>
       </SectionCard>
       <SectionCard>
         <FormInput
@@ -129,6 +142,12 @@ export function InsuranceForm({
         }}
         initialDate={state.expiryDate || new Date()}
         title="Select Expiry Date"
+      />
+      <InsuranceProviderSheet
+        visible={showProviderSheet}
+        onClose={() => setShowProviderSheet(false)}
+        onSelect={(p) => updateState({ provider: p })}
+        selectedProvider={state.provider}
       />
     </View>
   );

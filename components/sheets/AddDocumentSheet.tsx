@@ -14,6 +14,7 @@ import { ServiceHistoryForm } from "../document-forms/ServiceHistoryForm";
 import { DriversLicenseForm } from "../document-forms/DriversLicenseForm";
 import { InsuranceForm } from "../document-forms/InsuranceForm";
 import { EmissionsInspectionForm } from "../document-forms/EmissionsInspectionForm";
+import { NewEntryForm } from "../document-forms/NewEntryForm";
 import { useCarById } from "@/hooks/useCars";
 import { useCreateDocument, useScanDocument, useUpdateDocument, useDeleteDocument } from "@/hooks/useDocuments";
 import BottomSheet from "../shared/BottomSheet";
@@ -41,6 +42,7 @@ const FORM_MAP: Record<DocumentCategory, React.ComponentType<any>> = {
   "Driver’s License": DriversLicenseForm,
   "Insurance": InsuranceForm,
   "Emissions / Inspection": EmissionsInspectionForm,
+  "New Entry": NewEntryForm,
 };
 
 const SHEET_HEIGHTS: Record<DocumentCategory, DimensionValue> = {
@@ -51,6 +53,7 @@ const SHEET_HEIGHTS: Record<DocumentCategory, DimensionValue> = {
   "Driver’s License": "55%",
   "Insurance": "94%",
   "Emissions / Inspection": "60%",
+  "New Entry": "94%",
 };
 
 const CATEGORY_FIELDS: Record<DocumentCategory, (keyof DocumentFormState)[]> = {
@@ -61,6 +64,7 @@ const CATEGORY_FIELDS: Record<DocumentCategory, (keyof DocumentFormState)[]> = {
   "Service History": ["serviceDate", "mileage", "serviceType", "garageName", "partsReplaced", "amount", "invoiceUrl", "notes"],
   "Driver’s License": ["licenseNumber", "expiryDate", "documentUrl", "notes"],
   "Emissions / Inspection": ["testDate", "expiryDate", "result", "documentUrl", "notes"],
+  "New Entry": ["documentName", "subCategory", "issueDate", "expiryDate", "doesNotExpire", "amount", "issuingAuthority", "paymentFrequency", "receiptUrl", "notes"],
 };
 
 export default function AddDocumentSheet({
@@ -141,7 +145,7 @@ export default function AddDocumentSheet({
     const referenceDate = formState.issueDate || formState.testDate || formState.startDate;
     // Only auto-fill if we have a reference date and expiry date hasn't been set yet (or is manually cleared)
     // and we are currently in a state where auto-filling makes sense (not just loading initial data)
-    if (referenceDate && !formState.expiryDate) {
+    if (referenceDate && !formState.expiryDate && !formState.doesNotExpire) {
       const nextYear = new Date(referenceDate);
       nextYear.setFullYear(nextYear.getFullYear() + 1);
       setFormState(prev => ({ ...prev, expiryDate: nextYear }));
@@ -265,8 +269,8 @@ export default function AddDocumentSheet({
     const filteredData = Object.keys(formState).reduce((acc: any, key) => {
       if (allowedFields.includes(key as keyof DocumentFormState)) {
         const value = (formState as any)[key];
-        // 3. Still filter out empty values to keep the payload clean
-        if (value !== "" && value !== null && value !== undefined) {
+        // 3. Still filter out empty values to keep the payload clean, but allow nulls
+        if (value !== "" && value !== undefined) {
           if (key === 'partsReplaced' && Array.isArray(value)) {
             acc[key] = value.filter(p => p.item && p.item.trim() !== "");
           } else {
@@ -283,8 +287,12 @@ export default function AddDocumentSheet({
       const payload = {
         ...finalData,
         type: category,
+        expiryDate: finalData.doesNotExpire ? null : finalData.expiryDate,
         fileUrl: finalData.documentUrl,
-        currency: user?.preferredCurrency || 'NGN'
+        currency: user?.preferredCurrency || 'NGN',
+        documentName: finalData.documentName,
+        subCategory: finalData.subCategory,
+        paymentFrequency: finalData.paymentFrequency
       };
 
       if (isExisting) {

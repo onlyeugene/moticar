@@ -57,7 +57,9 @@
           "barStyle": "light-content",
           "backgroundColor": "#013037"
         }
-      ]
+      ],
+      "expo-asset",
+      "expo-localization"
     ],
     "experiments": {
       "typedRoutes": true

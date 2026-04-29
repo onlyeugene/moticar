@@ -35,6 +35,8 @@ export interface AppState {
   scannedLicenseData: ScannedLicenseData | null;
   activeActivityTab: string;
   isDiagnosticActive: boolean;
+  motiBuddieDismissed: boolean;
+  lastMotiBuddieCrossSellShown?: number;
   setAppReady: (ready: boolean) => void;
   setTheme: (theme: "light" | "dark" | "system") => void;
   setSelectedCarId: (id: string) => void;
@@ -46,6 +48,8 @@ export interface AppState {
   setDiagnosticActive: (active: boolean) => void;
   setIsPairing: (pairing: boolean) => void;
   setObdData: (carId: string, data: Partial<ObdTelemetry>) => void;
+  setMotiBuddieDismissed: (dismissed: boolean) => void;
+  setLastMotiBuddieCrossSellShown: (timestamp: number) => void;
   resetScanningState: () => void;
   clearAppState: () => void;
 }
