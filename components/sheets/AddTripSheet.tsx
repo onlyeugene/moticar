@@ -360,7 +360,7 @@ export default function AddTripSheet({
       disabled={!canSave}
       className={`px-6 py-2 rounded-full ${!canSave ? "bg-[#29D7DE]/50" : "bg-[#29D7DE]"}`}
     >
-      <Text className="text-[#00343F] font-lexendBold text-[14px]">
+      <Text className="text-[#00343F] font-lexendBold text-[0.875rem]">
         {isPending ? "Saving..." : "Save"}
       </Text>
     </TouchableOpacity>
@@ -394,7 +394,7 @@ export default function AddTripSheet({
                 <TextInput
                   placeholder="Journey Start"
                   placeholderTextColor="#ADADAD"
-                  className="flex-1 font-lexendRegular placeholder:text-[#ACB7B7] text-[12px] h-[40px]"
+                  className="flex-1 font-lexendRegular placeholder:text-[#ACB7B7] text-[0.75rem] h-[40px]"
                   value={
                     activeSearchField === "origin"
                       ? searchQuery
@@ -443,7 +443,7 @@ export default function AddTripSheet({
                 <TextInput
                   placeholder="Journey End"
                   placeholderTextColor="#ADADAD"
-                  className="flex-1 font-lexendRegular placeholder:text-[#ACB7B7] text-[12px] h-[40px]"
+                  className="flex-1 font-lexendRegular placeholder:text-[#ACB7B7] text-[0.75rem] h-[40px]"
                   value={
                     activeSearchField === "destination"
                       ? searchQuery
@@ -515,7 +515,7 @@ export default function AddTripSheet({
                       }}
                     >
                       <Text
-                        className="text-[#00343F] text-[12px] font-lexendRegular"
+                        className="text-[#00343F] text-[0.75rem] font-lexendRegular"
                         numberOfLines={1}
                       >
                         {item.address}
@@ -534,7 +534,7 @@ export default function AddTripSheet({
               <View className="items-center mt-5">
                 <View className="flex-row items-center gap-1">
                   <Route width={15} height={15} />
-                  <Text className="text-[#00AEB5] font-lexendMedium text-[14px]">
+                  <Text className="text-[#00AEB5] font-lexendMedium text-[0.875rem]">
                     approx. {distanceKm}km
                   </Text>
                 </View>
@@ -553,18 +553,18 @@ export default function AddTripSheet({
                 <Calendar width={24} />
               </View>
               <View className="flex-row">
-                <Text className="text-[#8B8B8B] text-[12px] font-lexendRegular">
+                <Text className="text-[#8B8B8B] text-[0.75rem] font-lexendRegular">
                   Date
                 </Text>
               </View>
             </View>
             <View className="flex-row items-center gap-2">
               <View className="flex-col items-end">
-                <Text className="text-[#050505] text-[14px] font-lexendRegular">
+                <Text className="text-[#050505] text-[0.875rem] font-lexendRegular">
                   {dateStr || "Select Date"}
                 </Text>
                 {dateLabel ? (
-                  <Text className="text-[#34A853] text-[10px] font-lexendRegular">
+                  <Text className="text-[#34A853] text-[0.625rem] font-lexendRegular">
                     {dateLabel}
                   </Text>
                 ) : null}
@@ -588,10 +588,10 @@ export default function AddTripSheet({
                 }}
                 className="items-end"
               >
-                <Text className="text-[#8B8B8B] text-[12px] font-lexendRegular">
+                <Text className="text-[#8B8B8B] text-[0.75rem] font-lexendRegular">
                   Start Time
                 </Text>
-                <Text className="text-[#2A2A2A] text-[14px] font-lexendRegular">
+                <Text className="text-[#2A2A2A] text-[0.875rem] font-lexendRegular">
                   {startTime}
                 </Text>
               </TouchableOpacity>
@@ -603,10 +603,10 @@ export default function AddTripSheet({
                 }}
                 className="items-end"
               >
-                <Text className="text-[#8B8B8B] text-[12px] font-lexendRegular">
+                <Text className="text-[#8B8B8B] text-[0.75rem] font-lexendRegular">
                   End Time
                 </Text>
-                <Text className="text-[#050505] text-[14px] font-lexendRegular">
+                <Text className="text-[#050505] text-[0.875rem] font-lexendRegular">
                   {endTime}
                 </Text>
               </TouchableOpacity>
@@ -622,7 +622,7 @@ export default function AddTripSheet({
               <View className="">
                 <Tciket width={24} />
               </View>
-              <Text className="text-[#8B8B8B] text-[12px] font-lexendRegular">
+              <Text className="text-[#8B8B8B] text-[0.75rem] font-lexendRegular">
                 Category
               </Text>
             </View>
@@ -637,7 +637,7 @@ export default function AddTripSheet({
                     className={`px-5 py-3 rounded-[8px] ${isSelected ? "bg-[#00AEB5]" : "bg-[#EEEEEE]"}`}
                   >
                     <Text
-                      className={`text-[12px] font-lexendRegular ${isSelected ? "text-white" : "text-[#8B8B8B]"}`}
+                      className={`text-[0.75rem] font-lexendRegular ${isSelected ? "text-white" : "text-[#8B8B8B]"}`}
                     >
                       {cat}
                     </Text>

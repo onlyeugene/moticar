@@ -56,7 +56,7 @@ export function ServicingForm({
             color="#8B8B8B"
             style={{ marginRight: 10 }}
           />
-          <Text className="text-[#8B8B8B] font-lexendRegular text-[12px]">
+          <Text className="text-[#8B8B8B] font-lexendRegular text-[0.75rem]">
             Due Trigger <Text className="text-[#00AEB5]">*</Text>
           </Text>
         </View>
@@ -68,7 +68,7 @@ export function ServicingForm({
               className={`flex-1 py-2.5 rounded-[8px] items-center border ${state.dueTrigger === opt ? "bg-[#00AEB5] border-[#00AEB5]" : "bg-[#F5F5F5] border-[#F0F0F0]"}`}
             >
               <Text
-                className={`font-lexendRegular text-[12px] ${state.dueTrigger === opt ? "text-white" : "text-[#8B8B8B]"}`}
+                className={`font-lexendRegular text-[0.75rem] ${state.dueTrigger === opt ? "text-white" : "text-[#8B8B8B]"}`}
               >
                 {opt}
               </Text>
@@ -89,7 +89,7 @@ export function ServicingForm({
               keyboardType="numeric"
               value={state.mileage}
               onChangeText={(v) => setState((p) => ({ ...p, mileage: v }))}
-              className="flex-1 font-lexendRegular text-[14px] text-[#001A1F]"
+              className="flex-1 font-lexendRegular text-[0.875rem] text-[#001A1F]"
             />
           </View>
         )}
@@ -122,10 +122,10 @@ export function ServicingForm({
             color="#8B8B8B"
             style={{ marginRight: 12 }}
           />
-          <Text className="flex-1 text-[#8B8B8B] font-lexendRegular text-[13px]">
+          <Text className="flex-1 text-[#8B8B8B] font-lexendRegular text-[0.8125rem]">
             Technician
           </Text>
-          <Text className="text-[#001A1F] font-lexendRegular text-[13px] mr-1">
+          <Text className="text-[#001A1F] font-lexendRegular text-[0.8125rem] mr-1">
             {state.technician ? state.technician.name : "Select"}
           </Text>
           <Ionicons name="chevron-forward" size={18} color="#C1C3C3" />

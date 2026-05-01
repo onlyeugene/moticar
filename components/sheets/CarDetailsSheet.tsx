@@ -129,7 +129,7 @@ export const CarDetailsSheet = ({
           <CarLogo make={localCar.make} size={48} />
         </View>
         
-        <Text className="text-[#00343F] font-lexendSemiBold text-[20px] mb-3 text-center">
+        <Text className="text-[#00343F] font-lexendSemiBold text-[1.25rem] mb-3 text-center">
           {localCar.make} {localCar.carModel}
         </Text>
         
@@ -138,7 +138,7 @@ export const CarDetailsSheet = ({
           onPress={() => openEditor("plate", "Plate Number", "plate")}
           className={`bg-white px-4 h-[44px] rounded-[4px] items-center justify-center border ${isEditing ? 'border-[#29D7DE]' : 'border-[#00000033]'} flex-row gap-2`}
         >
-          <Text className="text-[#002E35] font-ukNumberPlate text-[18px] tracking-widest uppercase">
+          <Text className="text-[#002E35] font-ukNumberPlate text-[1.125rem] tracking-widest uppercase">
             {localCar.plate || "N/A"}
           </Text>
           {isEditing && <Ionicons name="chevron-down" size={14} color="#29D7DE" />}
@@ -207,12 +207,12 @@ export const CarDetailsSheet = ({
                   >
                     <View className="flex-row items-center gap-2 mb-2">
                       <spec.icon width={16} height={16} color="#29D7DE" />
-                      <Text className="text-[#879090] font-lexendRegular text-[11px]">
+                      <Text className="text-[#879090] font-lexendRegular text-[0.6875rem]">
                         {spec.label}
                       </Text>
                     </View>
                     <View className="flex-row items-center justify-between">
-                      <Text className="text-[#002E35] font-lexendBold text-[15px]">
+                      <Text className="text-[#002E35] font-lexendBold text-[0.9375rem]">
                         {spec.value}
                       </Text>
                       {isEditing && <Ionicons name="chevron-down" size={14} color="#29D7DE" />}
@@ -228,12 +228,12 @@ export const CarDetailsSheet = ({
                     >
                       <View className="flex-row items-center gap-2 mb-2">
                         <nextSpec.icon width={16} height={16} color="#29D7DE" />
-                        <Text className="text-[#879090] font-lexendRegular text-[11px]">
+                        <Text className="text-[#879090] font-lexendRegular text-[0.6875rem]">
                           {nextSpec.label}
                         </Text>
                       </View>
                       <View className="flex-row items-center justify-between">
-                        <Text className="text-[#002E35] font-lexendBold text-[15px]">
+                        <Text className="text-[#002E35] font-lexendBold text-[0.9375rem]">
                           {nextSpec.value}
                         </Text>
                         {isEditing && <Ionicons name="chevron-down" size={14} color="#29D7DE" />}
@@ -254,10 +254,10 @@ export const CarDetailsSheet = ({
             >
               <View className="flex-row items-center gap-3">
                 <CalendarIcon width={18} height={18} color="#29D7DE" />
-                <Text className="text-[#879090] font-lexendRegular text-[12px]">Chassis Number</Text>
+                <Text className="text-[#879090] font-lexendRegular text-[0.75rem]">Chassis Number</Text>
               </View>
               <View className="flex-row items-center gap-2">
-                <Text className="text-[#002E35] font-lexendBold text-[14px]">{localCar.vin || "N/A"}</Text>
+                <Text className="text-[#002E35] font-lexendBold text-[0.875rem]">{localCar.vin || "N/A"}</Text>
                 {isEditing && <Ionicons name="chevron-down" size={14} color="#29D7DE" />}
               </View>
             </TouchableOpacity>
@@ -265,24 +265,24 @@ export const CarDetailsSheet = ({
             <View className="flex-row items-center justify-between p-5 border-b border-[#D6D5CA]">
               <View className="flex-row items-center gap-3">
                 <CalendarIcon width={18} height={18} color="#29D7DE" />
-                <Text className="text-[#879090] font-lexendRegular text-[12px]">Engine Number</Text>
+                <Text className="text-[#879090] font-lexendRegular text-[0.75rem]">Engine Number</Text>
               </View>
-              <Text className="text-[#002E35] font-lexendBold text-[14px]">{localCar.engine || "N/A"}</Text>
+              <Text className="text-[#002E35] font-lexendBold text-[0.875rem]">{localCar.engine || "N/A"}</Text>
             </View>
             <View className="flex-row">
               <View className="flex-1 p-5 border-r border-[#D6D5CA]">
                 <View className="flex-row items-center gap-2 mb-2">
                   <CalendarIcon width={16} height={16} color="#29D7DE" />
-                  <Text className="text-[#879090] font-lexendRegular text-[11px]">Date Issued</Text>
+                  <Text className="text-[#879090] font-lexendRegular text-[0.6875rem]">Date Issued</Text>
                 </View>
-                <Text className="text-[#002E35] font-lexendBold text-[14px]">20 May, 2020</Text>
+                <Text className="text-[#002E35] font-lexendBold text-[0.875rem]">20 May, 2020</Text>
               </View>
               <View className="flex-1 p-5">
                 <View className="flex-row items-center gap-2 mb-2">
                   <CalendarIcon width={16} height={16} color="#29D7DE" />
-                  <Text className="text-[#879090] font-lexendRegular text-[11px]">Expiry Date</Text>
+                  <Text className="text-[#879090] font-lexendRegular text-[0.6875rem]">Expiry Date</Text>
                 </View>
-                <Text className="text-[#002E35] font-lexendBold text-[14px]">20 May, 2021</Text>
+                <Text className="text-[#002E35] font-lexendBold text-[0.875rem]">20 May, 2021</Text>
               </View>
             </View>
           </View>
@@ -296,13 +296,13 @@ export const CarDetailsSheet = ({
                 className="flex-1 bg-[#FFEA52] rounded-[30px] py-5 items-center justify-center shadow-sm"
                 onPress={() => setIsEditing(true)}
               >
-                <Text className="text-[#013037] font-lexendBold text-[16px]">Edit</Text>
+                <Text className="text-[#013037] font-lexendBold text-[1rem]">Edit</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 className="flex-1 bg-[#F7F7E8] rounded-[30px] py-5 items-center justify-center border border-[#EBEBE0]"
                 onPress={() => onDelete(localCar.id || localCar._id as string)}
               >
-                <Text className="text-[#013037] font-lexendBold text-[16px] opacity-60">Delete</Text>
+                <Text className="text-[#013037] font-lexendBold text-[1rem] opacity-60">Delete</Text>
               </TouchableOpacity>
             </>
           ) : (
@@ -315,7 +315,7 @@ export const CarDetailsSheet = ({
                 {updateCar.isPending ? (
                   <ActivityIndicator color="#013037" />
                 ) : (
-                  <Text className="text-[#013037] font-lexendBold text-[16px]">Save Changes</Text>
+                  <Text className="text-[#013037] font-lexendBold text-[1rem]">Save Changes</Text>
                 )}
               </TouchableOpacity>
               <TouchableOpacity
@@ -325,7 +325,7 @@ export const CarDetailsSheet = ({
                   setLocalCar(car);
                 }}
               >
-                <Text className="text-[#013037] font-lexendBold text-[16px]">Cancel</Text>
+                <Text className="text-[#013037] font-lexendBold text-[1rem]">Cancel</Text>
               </TouchableOpacity>
             </>
           )}

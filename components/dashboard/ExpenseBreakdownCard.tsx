@@ -112,7 +112,7 @@ const ExpenseBreakdownCard: React.FC<ExpenseBreakdownCardProps> = ({
       <View className="flex-1 h-[1px] bg-[#FFAB2D] opacity-40" />
       <View className="bg-[#FFF8ED] border border-[#FFAB2D] rounded-[8px] px-3 py-1.5 flex-row items-center gap-2 mx-1.5">
         <Ionicons name="warning-outline" size={14} color="#FF7A00" />
-        <Text className="text-[#1A3B41] text-[11px] font-lexendRegular">
+        <Text className="text-[#1A3B41] text-[0.6875rem] font-lexendRegular">
           You exceeded your set monthly budget on{" "}
           <Text className="font-lexendBold">
             {currencySymbol}
@@ -131,7 +131,7 @@ const ExpenseBreakdownCard: React.FC<ExpenseBreakdownCardProps> = ({
         onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width - 32)} // padding sub
       >
         <View className="flex-row items-center justify-between mb-4">
-          <Text className="text-[#036D7D] font-lexendBold text-[20px]">
+          <Text className="text-[#036D7D] font-lexendBold text-[1.25rem]">
             Expense Breakdown
           </Text>
           <TouchableOpacity onPress={() => setIsSheetVisible(true)}>
@@ -148,12 +148,12 @@ const ExpenseBreakdownCard: React.FC<ExpenseBreakdownCardProps> = ({
           <>
             <View className="flex-row items-end justify-between mb-6">
               <View>
-                <Text className="text-[#1A3B41] font-lexendBold text-[32px]">
+                <Text className="text-[#1A3B41] font-lexendBold text-[2rem]">
                   {currencySymbol}
                   {spendData.totalSpend.toLocaleString()}
                 </Text>
                 <View className="flex-row items-center gap-1.5 mt-1">
-                  <Text className="text-[#9BBABB] font-lexendRegular text-[13px]">
+                  <Text className="text-[#9BBABB] font-lexendRegular text-[0.8125rem]">
                     Spent except bills
                   </Text>
                   <Ionicons
@@ -207,7 +207,7 @@ const ExpenseBreakdownCard: React.FC<ExpenseBreakdownCardProps> = ({
         ) : (
           <View className="items-center py-10">
             <Empty />
-            <Text className="text-[#888282] font-lexendRegular text-[14px] mt-4">
+            <Text className="text-[#888282] font-lexendRegular text-[0.875rem] mt-4">
               No transactions recorded
             </Text>
           </View>

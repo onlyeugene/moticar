@@ -110,7 +110,7 @@ export const CarLogo = ({ make, size = 40, color, style }: CarLogoProps) => {
           opacity: color ? 0.3 : 1
         }, style]}
       >
-        <Text className="text-white text-[10px] uppercase font-lexendBold">
+        <Text className="text-white text-[0.625rem] uppercase font-lexendBold">
           {make.charAt(0)}
         </Text>
       </View>

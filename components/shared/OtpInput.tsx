@@ -54,7 +54,7 @@ export const OtpInput: React.FC<OtpInputProps> = ({ value, onChange, length = 5 
       {digits.map((digit, index) => (
         <View 
           key={index}
-          className={`w-[60px] h-[70px] rounded-xl border items-center justify-center bg-[#012227] ${
+          className={`w-[3.75rem] h-[4.375rem] rounded-xl border items-center justify-center bg-[#012227] ${
             digit ? 'border-[#43E4E9]' : 'border-[#09515D]'
           }`}
         >
@@ -67,7 +67,7 @@ export const OtpInput: React.FC<OtpInputProps> = ({ value, onChange, length = 5 
             onKeyPress={(e) => handleKeyPress(e, index)}
             keyboardType="number-pad"
             maxLength={index === 0 ? length : 1} // Allow first box to receive full code for autofill/paste
-            className="text-white text-[24px] font-lexendBold text-center w-full h-full"
+            className="text-white text-[1.5rem] font-lexendBold text-center w-full h-full"
             style={{ textAlignVertical: "center" }}
             selectionColor="#43E4E9"
             textContentType="oneTimeCode" // Essential for iOS autofill

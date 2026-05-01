@@ -150,7 +150,7 @@ const SpendStatsCard: React.FC<SpendStatsCardProps> = ({
           <View>
             
           </View>
-          <Text className="text-[#001013] text-[20px] font-lexendSemiBold">
+          <Text className="text-[#001013] text-[1.25rem] font-lexendSemiBold">
             {currentTotal > 0
               ? `${currencySymbol}${currentTotal.toLocaleString()}`
               : "No data"}
@@ -169,13 +169,13 @@ const SpendStatsCard: React.FC<SpendStatsCardProps> = ({
           <View className="flex-row justify-center gap-6 mb-8">
             <View className="flex-row items-center gap-2">
               <View className="w-5 h-5 rounded-full border-2 border-[#29D7DE]" />
-              <Text className="text-[#848A9C] text-[14px] font-lexendRegular">
+              <Text className="text-[#848A9C] text-[0.875rem] font-lexendRegular">
                 Current
               </Text>
             </View>
             <View className="flex-row items-center gap-2">
               <View className="w-5 h-5 rounded-full border-2 border-[#FDEF56]" />
-              <Text className="text-[#848A9C] text-[14px] font-lexendRegular">
+              <Text className="text-[#848A9C] text-[0.875rem] font-lexendRegular">
                 Comparatively
               </Text>
             </View>
@@ -200,7 +200,7 @@ const SpendStatsCard: React.FC<SpendStatsCardProps> = ({
                       className="w-[6px] bg-[#FDEF56] rounded-full"
                     />
                   </View>
-                  <Text className="text-[#ADADAD] text-[10px] font-lexendRegular">
+                  <Text className="text-[#ADADAD] text-[0.625rem] font-lexendRegular">
                     {labels[i]}
                   </Text>
                 </View>
@@ -237,7 +237,7 @@ const SpendStatsCard: React.FC<SpendStatsCardProps> = ({
                     size={48}
                     color="#E2E2E2"
                   />
-                  <Text className="text-[#ADADAD] text-[12px] font-lexendRegular mt-2">
+                  <Text className="text-[#ADADAD] text-[0.75rem] font-lexendRegular mt-2">
                     No Technician Spend
                   </Text>
                 </View>

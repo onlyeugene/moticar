@@ -193,12 +193,12 @@ export default function WelcomeScreen() {
             {/* Slide body */}
             <View
               className="flex-1 items-center px-8"
-              style={{ paddingTop: 130 }}
+              style={{ paddingTop: 120 }}
             >
               {/* Character illustration + key icon */}
               <View
                 className="items-center justify-center w-full"
-                style={{ height: "42%" }}
+                style={{ height: 320, zIndex: 1 }}
               >
                 <Image
                   source={require("@/assets/icons/key.png")}
@@ -215,11 +215,17 @@ export default function WelcomeScreen() {
               </View>
 
               {/* Title + description */}
-              <View className="items-center w-full mt-2 px-2">
-                <Text className="text-white text-[26px] text-center font-lexendBold leading-[34px] mb-3">
+              <View className="items-center w-full mt-4 px-2" style={{ zIndex: 10 }}>
+                <Text 
+                  className="text-white text-[1.625rem] text-center font-lexendBold leading-[34px] mb-3"
+                  maxFontSizeMultiplier={1.2}
+                >
                   {item.title}
                 </Text>
-                <Text className="text-[#76D7E6] text-center font-lexendSemiBold px-1 text-[12px]">
+                <Text 
+                  className="text-[#76D7E6] text-center font-lexendSemiBold px-1 text-[0.75rem]"
+                  maxFontSizeMultiplier={1.3}
+                >
                   {item.description}
                 </Text>
               </View>
@@ -230,7 +236,7 @@ export default function WelcomeScreen() {
 
       {/* ── Fixed Bottom: Dots + Buttons ── */}
       <View
-        className="absolute bottom-14 w-full px-8 pb-5"
+        className="mt-auto w-full px-8 pb-14"
         style={{ zIndex: 50 }}
       >
         {/* Pagination dots */}
@@ -254,20 +260,44 @@ export default function WelcomeScreen() {
         <LoadingModal visible={socialPending} message="Signing you in..." />
 
         {/* Legal */}
-        <Text className="text-[#31828E] text-center font-lexendMedium mt-10 leading-[16px] text-[14px]">
+        <Text 
+          className="text-[#31828E] text-center font-lexendMedium mt-10 leading-[16px] text-[0.875rem]"
+          maxFontSizeMultiplier={1.3}
+        >
           By signing up, you accept moticar's{" "}
-          <Text className="text-[#FDEF56]">Terms of Service</Text> and{" "}
-          <Text className="text-[#FDEF56]">Membership Terms</Text>, and
-          acknowledge the <Text className="text-[#FDEF56]">Privacy Policy</Text>
+          <Text 
+            className="text-[#FDEF56]" 
+            onPress={() => router.push("/screens/legal/terms-and-conditions")}
+          >
+            Terms of Service
+          </Text> and{" "}
+          <Text 
+            className="text-[#FDEF56]"
+            onPress={() => router.push("/screens/legal/membership-terms")}
+          >
+            Membership Terms
+          </Text>, and
+          acknowledge the <Text 
+            className="text-[#FDEF56]"
+            onPress={() => router.push("/screens/legal/privacy-policy")}
+          >
+            Privacy Policy
+          </Text>
         </Text>
 
         {/* Sign in */}
         <View className="flex-row items-center justify-center mt-3 gap-1">
-          <Text className="text-white font-lexendMedium text-[18px]">
+          <Text 
+            className="text-white font-lexendMedium text-[1.125rem]"
+            maxFontSizeMultiplier={1.2}
+          >
             Already have an account?
           </Text>
           <TouchableOpacity onPress={() => router.push("/(auth)/login")}>
-            <Text className="text-[#29D7DE] font-lexendMedium text-[18px]">
+            <Text 
+              className="text-[#29D7DE] font-lexendMedium text-[1.125rem]"
+              maxFontSizeMultiplier={1.2}
+            >
               Sign in
             </Text>
           </TouchableOpacity>

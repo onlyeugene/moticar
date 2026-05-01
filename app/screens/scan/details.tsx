@@ -24,6 +24,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { rf } from "@/utils/responsive";
 import { ScreenBackground } from "@/components/ui/ScreenBackground";
 
 export default function ScanDetailsScreen() {
@@ -236,15 +237,15 @@ export default function ScanDetailsScreen() {
 
         <View className="bg-[#E8E7DC] rounded-t-[20px] shadow-2xl overflow-hidden px-6 pt-4 pb-4">
           <View className="items-center">
-            <Text className="text-[#8B8B8B] font-lexendRegular text-[12px] mb-3">
+            <Text className="text-[#8B8B8B] font-lexendRegular text-[0.75rem] mb-3">
               This is what we got
             </Text>
 
             <View className="items-center">
-              <View className="w-[48px] h-[48px] bg-white rounded-[10px] items-center justify-center border border-gray-50 mb-3">
-                <CarLogo make={scannedCarData.make || ""} size={40} />
+              <View className="w-12 h-12 bg-white rounded-[10px] items-center justify-center border border-gray-50 mb-3">
+                <CarLogo make={scannedCarData.make || ""} size={rf(40)} />
               </View>
-              <Text className="text-[#00343F] font-lexendBold text-[20px] text-center mb-3">
+              <Text className="text-[#00343F] font-lexendBold text-[1.25rem] text-center mb-3">
                 {scannedCarData.make}{" "}
                 {scannedCarData.carModel || scannedCarData.model}
               </Text>
@@ -252,9 +253,9 @@ export default function ScanDetailsScreen() {
               <TouchableOpacity
                 onPress={() => openEditor("plate", "Plate Number", "plate")}
                 activeOpacity={0.7}
-                className="bg-white h-[44px] px-8 rounded-lg border border-[#00000033] items-center justify-center"
+                className="bg-white h-11 px-8 rounded-lg border border-[#00000033] items-center justify-center"
               >
-                <Text className="text-[#00AEB5] font-ukNumberPlate text-[18px] uppercase tracking-wider">
+                <Text className="text-[#00AEB5] font-ukNumberPlate text-[1.125rem] uppercase tracking-wider">
                   {(scannedCarData.plate || "").replace(/-/g, " ")}
                 </Text>
               </TouchableOpacity>
@@ -264,7 +265,7 @@ export default function ScanDetailsScreen() {
               onPress={() => router.back()}
               className="absolute top-[-10px] right-0 p-2"
             >
-              <Ionicons name="close" size={24} color="#00343F" />
+              <Ionicons name="close" size={rf(24)} color="#00343F" />
             </TouchableOpacity>
           </View>
         </View>
@@ -277,7 +278,7 @@ export default function ScanDetailsScreen() {
             className="px-5"
           >
           <View className="items-center mb-3 mt-5">
-            <Text className="text-[#A8A477] font-lexendMedium text-[12px] uppercase tracking-widest">
+            <Text className="text-[#A8A477] font-lexendMedium text-[0.75rem] uppercase tracking-widest">
               Expected Features
             </Text>
           </View>

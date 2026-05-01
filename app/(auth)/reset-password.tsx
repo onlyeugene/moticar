@@ -110,11 +110,11 @@ export default function ResetPassword() {
               <DoneIcon />
             </View>
 
-            <Text className="text-white text-[26px] font-lexendBold text-center px-4 leading-9">
+            <Text className="text-white text-[1.625rem] font-lexendBold text-center px-4 leading-9">
               Your password has been successfully reset!
             </Text>
             
-            <Text className="text-[#9BBABB] font-lexendRegular text-[14px] text-center mt-4 px-6 leading-6">
+            <Text className="text-[#9BBABB] font-lexendRegular text-[0.875rem] text-center mt-4 px-6 leading-6">
               you can now use your new password to log back into your account
             </Text>
 
@@ -123,7 +123,7 @@ export default function ResetPassword() {
                 onPress={() => router.replace("/(auth)/login")}
                 className="w-full h-[54px] rounded-full bg-[#29D7DE] items-center justify-center active:opacity-90"
               >
-                <Text className="font-lexendBold text-[16px] text-[#00343F]">
+                <Text className="font-lexendBold text-[1rem] text-[#00343F]">
                   Log in
                 </Text>
               </Pressable>
@@ -147,10 +147,10 @@ export default function ResetPassword() {
         </View>
 
         <View className="mt-8">
-          <Text className="text-white text-[32px] font-lexendMedium leading-10">
+          <Text className="text-white text-[2rem] font-lexendMedium leading-10">
             Enter New Password
           </Text>
-          <Text className="text-[#9BBABB] font-lexendRegular text-[16px] mt-2 leading-6">
+          <Text className="text-[#9BBABB] font-lexendRegular text-[1rem] mt-2 leading-6">
             Your new password must be different from previous used passwords
           </Text>
         </View>
@@ -166,7 +166,7 @@ export default function ResetPassword() {
               // rightIcon="help-circle-outline"
               editable={!resetPassword.isPending}
             />
-            <Text className="text-[#5E7A7C] font-lexendMedium text-[14px] mt-2 ml-1">
+            <Text className="text-[#5E7A7C] font-lexendMedium text-[0.875rem] mt-2 ml-1">
               Must be at least 8 characters
             </Text>
           </View>
@@ -181,7 +181,7 @@ export default function ResetPassword() {
               // rightIcon="help-circle-outline"
               editable={!resetPassword.isPending}
             />
-            <Text className="text-[#5E7A7C] font-lexendMedium text-[14px] mt-2 ml-1">
+            <Text className="text-[#5E7A7C] font-lexendMedium text-[0.875rem] mt-2 ml-1">
               Must be at least 8 characters
             </Text>
           </View>
@@ -204,7 +204,7 @@ export default function ResetPassword() {
                 <Ionicons name="checkmark" size={12} color="#00232A" />
               )}
             </View>
-            <Text className="text-[#7BA0A3] font-lexendRegular text-[16px]">
+            <Text className="text-[#7BA0A3] font-lexendRegular text-[1rem]">
               8 characters minimum
             </Text>
           </View>
@@ -217,7 +217,7 @@ export default function ResetPassword() {
                 <Ionicons name="checkmark" size={12} color="#00232A" />
               )}
             </View>
-            <Text className="text-[#7BA0A3] font-lexendRegular text-[16px]">
+            <Text className="text-[#7BA0A3] font-lexendRegular text-[1rem]">
               a number
             </Text>
           </View>
@@ -230,7 +230,7 @@ export default function ResetPassword() {
                 <Ionicons name="checkmark" size={12} color="#00232A" />
               )}
             </View>
-            <Text className="text-[#7BA0A3] font-lexendRegular text-[16px]">
+            <Text className="text-[#7BA0A3] font-lexendRegular text-[1rem]">
               a symbol
             </Text>
           </View>
@@ -247,7 +247,7 @@ export default function ResetPassword() {
             {resetPassword.isPending ? (
               <ActivityIndicator color="#00343F" />
             ) : (
-              <Text className="font-lexendBold text-[16px] text-[#00343F]">
+              <Text className="font-lexendBold text-[1rem] text-[#00343F]">
                 Reset Password
               </Text>
             )}

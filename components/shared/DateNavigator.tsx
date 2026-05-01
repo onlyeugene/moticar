@@ -61,7 +61,7 @@ export const DateNavigator: React.FC<DateNavigatorProps> = ({
             className="items-center px-4"
           >
             <Text
-              className={`text-[14px] ${
+              className={`text-[0.875rem] ${
                 isActive
                   ? "text-[#00AEB5] font-lexendSemiBold"
                   : "text-[#A1B1B4] font-lexendRegular"
@@ -92,7 +92,7 @@ export const DateNavigator: React.FC<DateNavigatorProps> = ({
             className="items-center px-4 relative"
           >
             <Text
-              className={`text-[14px] ${
+              className={`text-[0.875rem] ${
                 isActive
                   ? "text-[#00AEB5] font-lexendSemiBold"
                   : "text-[#A1B1B4] font-lexendRegular"
@@ -134,7 +134,7 @@ export const DateNavigator: React.FC<DateNavigatorProps> = ({
             className="items-center px-4"
           >
             <Text
-              className={`text-[13px] ${
+              className={`text-[0.8125rem] ${
                 isSelected
                   ? "text-[#00AEB5] font-lexendSemiBold"
                   : "text-[#A1B1B4] font-lexendRegular"

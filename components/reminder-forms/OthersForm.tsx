@@ -62,7 +62,7 @@ export function OthersForm({ state, setState, userEmail }: ReminderFormProps) {
       </SectionCard>
 
       <SectionCard>
-        <Text className="text-[#8B8B8B] font-lexendRegular text-[12px] mb-3">
+        <Text className="text-[#8B8B8B] font-lexendRegular text-[0.75rem] mb-3">
           Frequency
         </Text>
         <View className="flex-row flex-wrap gap-2">
@@ -77,7 +77,7 @@ export function OthersForm({ state, setState, userEmail }: ReminderFormProps) {
               }`}
             >
               <Text
-                className={`font-lexendRegular text-[12px] ${state.frequency === opt ? "text-white" : "text-[#8B8B8B]"}`}
+                className={`font-lexendRegular text-[0.75rem] ${state.frequency === opt ? "text-white" : "text-[#8B8B8B]"}`}
               >
                 {opt}
               </Text>

@@ -151,7 +151,7 @@ export default function LicenseScan() {
           </View>
 
           <TouchableOpacity onPress={handleSkip}>
-            <Text className="text-[#29D7DE] font-lexendRegular text-[14px]">Skip</Text>
+            <Text className="text-[#29D7DE] font-lexendRegular text-[0.875rem]">Skip</Text>
           </TouchableOpacity>
         </View>
 
@@ -161,10 +161,10 @@ export default function LicenseScan() {
         >
           {/* Title and Subtitle */}
           <View className="px-2">
-            <Text className="text-[26px] font-lexendMedium text-[#FFFFFF]">
+            <Text className="text-[1.625rem] font-lexendMedium text-[#FFFFFF]">
               Capture your primary{"\n"}vehicle license
             </Text>
-            <Text className="text-[14px] font-lexendRegular text-[#9BBABB] mt-2 leading-5">
+            <Text className="text-[0.875rem] font-lexendRegular text-[#9BBABB] mt-2 leading-5">
               You would typically find it pasted on the right side of{"\n"}your
               windscreen or your compartment section.
             </Text>
@@ -195,7 +195,7 @@ export default function LicenseScan() {
               </View>
             </TouchableOpacity>
             <View className="mt-2">
-              <Text className="text-[#FFFFFF] font-lexendRegular text-[12px]">
+              <Text className="text-[#FFFFFF] font-lexendRegular text-[0.75rem]">
                 Front
               </Text>
             </View>
@@ -215,7 +215,7 @@ export default function LicenseScan() {
               <ActivityIndicator color="#00232A" />
             ) : (
               <Text
-                className={`font-lexendBold text-[16px] ${
+                className={`font-lexendBold text-[1rem] ${
                   image ? "text-[#00232A]" : "text-[#1E5B64]"
                 }`}
               >
@@ -234,7 +234,7 @@ export default function LicenseScan() {
             <Text className="mt-4 font-lexendMedium text-[#00343F]">
               Scanning your document...
             </Text>
-            <Text className="text-[12px] text-[#9BA0A0] mt-1">
+            <Text className="text-[0.75rem] text-[#9BA0A0] mt-1">
               Extracting chassis and engine data
             </Text>
           </View>

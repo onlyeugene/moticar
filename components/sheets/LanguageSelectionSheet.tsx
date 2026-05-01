@@ -37,7 +37,7 @@ export default function LanguageSelectionSheet({
           onPress={handleSave}
           className="bg-[#00AEB5] px-5 py-1.5 rounded-full"
         >
-          <Text className="text-white font-lexendSemiBold text-[14px]">
+          <Text className="text-white font-lexendSemiBold text-[0.875rem]">
             Save
           </Text>
         </TouchableOpacity>
@@ -60,7 +60,7 @@ export default function LanguageSelectionSheet({
             >
               <Icon width={30} height={30} />
               <Text
-                className={`mt-2 font-lexendRegular text-[12px] ${
+                className={`mt-2 font-lexendRegular text-[0.75rem] ${
                   isSelected ? "text-[#00343F]" : "text-[#5D7070]"
                 }`}
                 numberOfLines={1}

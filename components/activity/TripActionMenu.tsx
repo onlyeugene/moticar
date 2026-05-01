@@ -44,7 +44,7 @@ const TripActionMenu: React.FC<TripActionMenuProps> = ({
                 className="flex-row items-center gap-3 px-4 py-4 border-b border-[#00343F]"
               >
                 <Ionicons name="pencil-outline" size={20} color="#29D7DE" />
-                <Text className="text-[#29D7DE] text-[16px] font-lexendMedium">Edit</Text>
+                <Text className="text-[#29D7DE] text-[1rem] font-lexendMedium">Edit</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -55,7 +55,7 @@ const TripActionMenu: React.FC<TripActionMenuProps> = ({
                 className="flex-row items-center gap-3 px-4 py-4"
               >
                 <Ionicons name="trash-outline" size={20} color="#29D7DE" />
-                <Text className="text-[#29D7DE] text-[16px] font-lexendMedium">Delete</Text>
+                <Text className="text-[#29D7DE] text-[1rem] font-lexendMedium">Delete</Text>
               </TouchableOpacity>
             </View>
           </TouchableWithoutFeedback>

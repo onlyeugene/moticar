@@ -26,7 +26,7 @@ export const SocialAuthButtons = ({
         {!isAndroid && (
           <Pressable
             style={{ borderColor: appleBorder, backgroundColor: appleBg }}
-            className="flex-1 items-center justify-center border border-[#143E44] h-[52px] rounded-full active:opacity-80 shadow-sm"
+            className="flex-1 items-center justify-center border border-[#143E44] min-h-[52px] py-3 rounded-full active:opacity-80 shadow-sm"
             onPress={() => onAuth("apple")}
             disabled={disabled}
           >
@@ -36,7 +36,7 @@ export const SocialAuthButtons = ({
 
         <Pressable
           style={{ borderColor: googleBorder, backgroundColor: googleBg }}
-          className="flex-1 items-center justify-center border border-[#143E44] h-[52px] rounded-full active:opacity-80 shadow-sm"
+          className="flex-1 items-center justify-center border border-[#143E44] min-h-[52px] py-3 rounded-full active:opacity-80 shadow-sm"
           onPress={() => onAuth("google")}
           disabled={disabled}
         >
@@ -47,12 +47,15 @@ export const SocialAuthButtons = ({
       {/* Email Button */}
       {showEmail && (
         <Pressable
-          className="w-full bg-white h-[52px] rounded-full flex-row items-center justify-center active:opacity-90 shadow-md gap-3"
+          className="w-full bg-white min-h-[52px] py-3 rounded-full flex-row items-center justify-center active:opacity-90 shadow-md gap-3"
           onPress={() => router.push("/(auth)/create")}
           disabled={disabled}
         >
           <Ionicons name="mail-outline" size={24} color="black" />
-          <Text className="text-[#1E293B] font-lexendSemiBold text-base">
+          <Text 
+            className="text-[#1E293B] font-lexendSemiBold text-base"
+            maxFontSizeMultiplier={1.2}
+          >
             Sign up with Email
           </Text>
         </Pressable>

@@ -10,7 +10,7 @@ const ActivityEmptyState: React.FC<ActivityEmptyStateProps> = ({ tabName }) => {
   return (
     <View className="flex-1 px-4 items-center justify-center">
       <EmptyIcon />
-      <Text className="text-[#888282] text-[14px] font-lexendRegular mt-4">
+      <Text className="text-[#888282] text-[0.875rem] font-lexendRegular mt-4">
         No {tabName.toLowerCase()} recorded
       </Text>
     </View>

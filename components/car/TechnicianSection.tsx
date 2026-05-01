@@ -21,7 +21,7 @@ export function TechnicianSection({
   return (
     <View className="mb- bg-white rounded-[8px] p-4">
       <View className="flex-row justify-between items-center mb-5">
-        <Text className="text-[#036D7D] text-[20px] font-lexendMedium">
+        <Text className="text-[#036D7D] text-[1.25rem] font-lexendMedium">
           Your auto-technicians
         </Text>
         <TouchableOpacity
@@ -42,7 +42,7 @@ export function TechnicianSection({
               : "bg-white border-[#C1C3C3]"
           }`}
         >
-          <Text className="text-[11px] font-lexendMedium text-[#425658]">
+          <Text className="text-[0.6875rem] font-lexendMedium text-[#425658]">
             All
           </Text>
         </TouchableOpacity>
@@ -64,7 +64,7 @@ export function TechnicianSection({
               }`}
             >
               <Text
-                className={`text-[11px] font-lexendMedium ${
+                className={`text-[0.6875rem] font-lexendMedium ${
                   selectedCategory === category
                     ? "text-[#425658]"
                     : "text-[#425658]"
@@ -99,7 +99,7 @@ export function TechnicianSection({
                 )}
                 <View className="absolute bg-white/60 w-[75px] h-[105px] top-0 left-0 right-0 bottom-0" />
                   <Text
-                  className="text-[#293536] text-[11px] font-lexendRegular text-center absolute bottom-2 left-2"
+                  className="text-[#293536] text-[0.6875rem] font-lexendRegular text-center absolute bottom-2 left-2"
                     numberOfLines={2}
                   >
                     {tech.name}
@@ -111,7 +111,7 @@ export function TechnicianSection({
       ) : (
         <View className="bg-white p-10 rounded-[24px] items-center">
           <EmptyIcon width={95} height={88} />
-          <Text className="text-[#888282] text-[14px] font-lexendMedium mt-4">
+          <Text className="text-[#888282] text-[0.875rem] font-lexendMedium mt-4">
             No details recorded
           </Text>
         </View>

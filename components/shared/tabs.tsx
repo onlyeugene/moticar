@@ -246,7 +246,7 @@ export default function TabBar({
                   ],
                 }}
               >
-                <Text className="text-[16px] font-lexendRegular text-white tracking-[-0.3px]">
+                <Text className="text-[1rem] font-lexendRegular text-white tracking-[-0.3px]">
                   {item.label}
                 </Text>
                 <TouchableOpacity
@@ -339,7 +339,7 @@ export default function TabBar({
                       {isFocused ? iconSet.focused : iconSet.unfocused}
                     </View>
                     <Text
-                      className={`text-[11px] font-lexendRegular leading-[14px] ${
+                      className={`text-[0.6875rem] font-lexendRegular leading-[14px] ${
                         isFocused ? "text-dark" : "text-muted"
                       }`}
                     >

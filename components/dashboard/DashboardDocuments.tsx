@@ -246,12 +246,12 @@ export default function DashboardDocuments({
           </TouchableOpacity>
         </View>
         <View className="mt-5">
-          <Text className="text-[#050505] text-[16px] font-lexendRegular">
+          <Text className="text-[#050505] text-[1rem] font-lexendRegular">
             {label}
           </Text>
           <View className="flex-row items-center mt-1 gap-1">
             {StatusIcon}
-            <Text className={`text-[12px] font-lexendMedium ${statusColor}`}>
+            <Text className={`text-[0.75rem] font-lexendMedium ${statusColor}`}>
               {statusText}
             </Text>
           </View>
@@ -263,7 +263,7 @@ export default function DashboardDocuments({
   return (
     <View className="bg-white p-4 rounded-[12px]">
       <View className="flex-row justify-between items-center px-1">
-        <Text className="text-[#036D7D] text-[20px] font-lexendMedium">
+        <Text className="text-[#036D7D] text-[1.25rem] font-lexendMedium">
           Car Documents
         </Text>
         <TouchableOpacity onPress={() => setIsSheetVisible(true)}>

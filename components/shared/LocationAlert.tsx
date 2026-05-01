@@ -41,10 +41,10 @@ export default function LocationAlert({ country, suggestedCurrency, onDismiss, m
       </View>
       
       <View className="flex-1">
-        <Text className="text-white font-lexendSemiBold text-[15px]">
+        <Text className="text-white font-lexendSemiBold text-[0.9375rem]">
           {message || `New location detected: ${country}`}
         </Text>
-        <Text className="text-[#9BBABB] font-lexendRegular text-[13px] mt-1.5 leading-5">
+        <Text className="text-[#9BBABB] font-lexendRegular text-[0.8125rem] mt-1.5 leading-5">
           Would you like to switch your currency to {suggestedCurrency}? This will also convert your existing expenses.
         </Text>
         
@@ -57,7 +57,7 @@ export default function LocationAlert({ country, suggestedCurrency, onDismiss, m
             {isPending ? (
               <ActivityIndicator size="small" color="#00343F" />
             ) : (
-              <Text className="text-[#00343F] font-lexendBold text-[13px]">
+              <Text className="text-[#00343F] font-lexendBold text-[0.8125rem]">
                 Switch Now
               </Text>
             )}
@@ -68,7 +68,7 @@ export default function LocationAlert({ country, suggestedCurrency, onDismiss, m
             disabled={isPending}
             className="px-4 py-2.5 items-center justify-center"
           >
-            <Text className="text-[#9BBABB] font-lexendMedium text-[13px]">
+            <Text className="text-[#9BBABB] font-lexendMedium text-[0.8125rem]">
               Dismiss
             </Text>
           </TouchableOpacity>

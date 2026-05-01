@@ -270,10 +270,10 @@ export default function FinalizeScan() {
           contentContainerStyle={{ paddingBottom: 150 }}
           className="flex-1"
         >
-          <Text className="text-white font-lexendMedium text-[26px] mb-2">
+          <Text className="text-white font-lexendMedium text-[1.625rem] mb-2">
             Final Details
           </Text>
-          <Text className="text-[#9BBABB] font-lexendRegular text-[14px] mb-8">
+          <Text className="text-[#9BBABB] font-lexendRegular text-[0.875rem] mb-8">
             These details are used to verify your identity and keep {"\n"}your
             details safe
           </Text>
@@ -293,7 +293,7 @@ export default function FinalizeScan() {
 
           {/* Current Car Mileage */}
           <View className="mb-8">
-            <Text className="text-[#4FB8C8] font-lexendRegular text-[12px] mb-2 ">
+            <Text className="text-[#4FB8C8] font-lexendRegular text-[0.75rem] mb-2 ">
               Current Car Mileage
             </Text>
             <ControlledInput<FinalFormData>
@@ -301,9 +301,9 @@ export default function FinalizeScan() {
               name="mileage"
               placeholder="----"
               keyboardType="numeric"
-              inputClassName="text-center text-[24px] font-lexendRegular"
+              inputClassName="text-center text-[1.5rem] font-lexendRegular"
             />
-            <Text className="text-[#9BBABB] font-lexendRegular text-[12px] text-center -mt-2">
+            <Text className="text-[#9BBABB] font-lexendRegular text-[0.75rem] text-center -mt-2">
               You can find this on your dashboard
             </Text>
           </View>
@@ -311,7 +311,7 @@ export default function FinalizeScan() {
           {/* Date of Car Purchase */}
           <Animated.View layout={LinearTransition} className="mb-5">
             <View className="flex-row justify-between items-center mb-2">
-              <Text className="text-[#4FB8C8] font-lexendRegular text-[12px]">
+              <Text className="text-[#4FB8C8] font-lexendRegular text-[0.75rem]">
                 Date of Purchase
               </Text>
               <Pressable
@@ -323,7 +323,7 @@ export default function FinalizeScan() {
                   size={18}
                   color="#29D7DE"
                 />
-                <Text className="text-[#FFFFFF] font-lexendRegular text-[12px] ml-2">
+                <Text className="text-[#FFFFFF] font-lexendRegular text-[0.75rem] ml-2">
                   I dont remember
                 </Text>
               </Pressable>
@@ -344,7 +344,7 @@ export default function FinalizeScan() {
 
           {/* Condition */}
           <View className="mb-10">
-            <Text className="text-[#4FB8C8] font-lexendRegular text-[12px] mb-4 ">
+            <Text className="text-[#4FB8C8] font-lexendRegular text-[0.75rem] mb-4 ">
               Condition at the time of purchase
             </Text>
 
@@ -354,7 +354,7 @@ export default function FinalizeScan() {
                 className={`flex-row items-center justify-between p-5 ${condition === "Newly Purchased" ? "bg-[#043F48]" : ""}`}
               >
                 <Text
-                  className={`font-lexendMedium text-[14px] ${condition === "Newly Purchased" ? "text-[#FFFFFF]" : "text-[#899B9B]"}`}
+                  className={`font-lexendMedium text-[0.875rem] ${condition === "Newly Purchased" ? "text-[#FFFFFF]" : "text-[#899B9B]"}`}
                 >
                   Newly Purchased
                 </Text>
@@ -382,7 +382,7 @@ export default function FinalizeScan() {
                 className={`flex-row items-center justify-between p-5 ${condition === "Already had an existing user" ? "bg-[#043F48]" : ""}`}
               >
                 <Text
-                  className={`font-lexendMedium text-[14px] ${condition === "Already had an existing user" ? "text-[#FFFFFF]" : "text-[#899B9B]"}`}
+                  className={`font-lexendMedium text-[0.875rem] ${condition === "Already had an existing user" ? "text-[#FFFFFF]" : "text-[#899B9B]"}`}
                 >
                   Already had an existing user
                 </Text>

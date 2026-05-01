@@ -62,7 +62,7 @@ export default function AttributeEditSheet({
       style={{ opacity: isChanged ? 1 : 0.5 }}
       className={`${isChanged ? "bg-[#29D7DE]" : "bg-[#29D7DE]/40"} px-8 py-2.5 rounded-full`}
     >
-      <Text className={`${isChanged ? "text-[#00343F]" : "text-[#00343F]/90"} font-lexendBold text-[14px]`}>Save</Text>
+      <Text className={`${isChanged ? "text-[#00343F]" : "text-[#00343F]/90"} font-lexendBold text-[0.875rem]`}>Save</Text>
     </TouchableOpacity>
   );
 
@@ -81,7 +81,7 @@ export default function AttributeEditSheet({
                   className={`w-12 h-12 rounded-lg shadow-sm mb-2 ${value === color.name ? 'border-2 border-[#29D7DE]' : 'border border-gray-100'}`}
                   style={{ backgroundColor: color.hex }}
                 />
-                <Text className="text-[#8B8B8B] text-[10px] font-lexendRegular text-center">
+                <Text className="text-[#8B8B8B] text-[0.625rem] font-lexendRegular text-center">
                   {color.name}
                 </Text>
               </TouchableOpacity>
@@ -101,7 +101,7 @@ export default function AttributeEditSheet({
                 }`}
               >
                 <Text
-                  className={`font-lexendRegular text-[13px] ${
+                  className={`font-lexendRegular text-[0.8125rem] ${
                     value === opt ? "text-white" : "text-[#00343F]"
                   }`}
                 >
@@ -124,7 +124,7 @@ export default function AttributeEditSheet({
                 }`}
               >
                 <Text
-                  className={`font-lexendRegular text-[12px] ${
+                  className={`font-lexendRegular text-[0.75rem] ${
                     value === opt ? "text-white" : "text-[#00343F]"
                   }`}
                 >
@@ -146,7 +146,7 @@ export default function AttributeEditSheet({
                 multiline={multiline}
                 keyboardType={keyboardType}
                 placeholder="Enter value"
-                className={`text-[#00343F] font-lexendMedium ${multiline ? "text-[16px]" : "text-[24px] text-center"}`}
+                className={`text-[#00343F] font-lexendMedium ${multiline ? "text-[1rem]" : "text-[1.5rem] text-center"}`}
               />
             </View>
           </View>
@@ -162,7 +162,7 @@ export default function AttributeEditSheet({
                 autoFocus
                 autoCapitalize="characters"
                 placeholder="Enter Plate"
-                className="text-[#00343F] font-ukNumberPlate text-[32px] text-center uppercase"
+                className="text-[#00343F] font-ukNumberPlate text-[2rem] text-center uppercase"
               />
             </View>
           </View>

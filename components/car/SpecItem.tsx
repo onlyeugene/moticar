@@ -41,14 +41,14 @@ const SpecItem = ({
               )}
             </View>
           )}
-          <Text className="text-[#899B9B] font-lexendRegular text-[12px]" numberOfLines={1}>
+          <Text className="text-[#899B9B] font-lexendRegular text-[0.75rem]" numberOfLines={1}>
             {label}
           </Text>
         </View>
 
         <View className="flex-row items-center">
           <Text
-            className="text-[#202A2A] font-lexendSemiBold text-[16px] text-center"
+            className="text-[#202A2A] font-lexendSemiBold text-[1rem] text-center"
             numberOfLines={1}
           >
             {value || "---"}
@@ -79,12 +79,12 @@ const SpecItem = ({
       )}
 
       <View className="flex-1">
-        <Text className="text-[#899B9B] font-lexendRegular text-[12px] mb-0.5" numberOfLines={1}>
+        <Text className="text-[#899B9B] font-lexendRegular text-[0.75rem] mb-0.5" numberOfLines={1}>
           {label}
         </Text>
         <View className="flex-row items-center">
           <Text
-            className="text-[#202A2A] font-lexendSemiBold text-[15px]"
+            className="text-[#202A2A] font-lexendSemiBold text-[0.9375rem]"
             numberOfLines={1}
           >
             {value || "---"}

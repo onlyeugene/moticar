@@ -48,7 +48,7 @@ const CategoryCard = ({
       style={styles.cardShadow}
     >
       <View className="flex-row justify-between items-start mb-4">
-        <Text className="text-[#293536] font-lexendRegular text-[12px]">
+        <Text className="text-[#293536] font-lexendRegular text-[0.75rem]">
           {category.id}
         </Text>
         <View className="opacity-40">
@@ -62,7 +62,7 @@ const CategoryCard = ({
       </View>
 
       <View className="flex-row items-end justify-between mt-4">
-        <Text className="text-[#00AEB5] font-lexendMedium text-[32px]">
+        <Text className="text-[#00AEB5] font-lexendMedium text-[2rem]">
           {count}
         </Text>
         <TouchableOpacity
@@ -88,7 +88,7 @@ const RemindersTab: React.FC<RemindersTabProps> = ({ summary, isLoading, onAdd, 
   return (
     <View className="flex-1 min-h-[500px]">
       <LoadingModal visible={isLoading || false} />
-      <Text className="text-[#5D8689] font-lexendRegular text-[12px] leading-4 mb-8 px-2">
+      <Text className="text-[#5D8689] font-lexendRegular text-[0.75rem] leading-4 mb-8 px-2">
         Never be late to attend to issues or concerns surrounding your car.
         Schedule reminders and keep revisions, maintenance and payments up to date.
       </Text>

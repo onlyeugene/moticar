@@ -131,7 +131,7 @@ export default function ExpenseCategorySheet({
         <CategoryIcon name={item.name} />
       </View>
       <Text
-        className="text-[12px] font-lexendRegular text-[#8B8B8B] text-center"
+        className="text-[0.75rem] font-lexendRegular text-[#8B8B8B] text-center"
         numberOfLines={1}
       >
         {item.name}
@@ -145,7 +145,7 @@ export default function ExpenseCategorySheet({
       onClose={onClose}
       title={
         <View className="flex-row items-center flex-1 justify-center mr-8">
-          <Text className="text-[#00343F] text-[14px] font-lexendBold">
+          <Text className="text-[#00343F] text-[0.875rem] font-lexendBold">
             Select New Expense Category
           </Text>
         </View>
@@ -156,7 +156,7 @@ export default function ExpenseCategorySheet({
       <View className="p-4 bg-white rounded-[12px]">
         <View className="flex-row items-center bg-[#F8F8F8] border-b border-[#D4D4D4] px-2 py-3 mb-6">
           <TextInput
-            className="flex-1 ml-3 font-lexendRegular text-[12px] text-[#1C1C1E]"
+            className="flex-1 ml-3 font-lexendRegular text-[0.75rem] text-[#1C1C1E]"
             placeholder="Search category"
             placeholderTextColor="#9A9A9A"
             value={search}
@@ -170,10 +170,10 @@ export default function ExpenseCategorySheet({
             <View className="w-20 h-20 bg-[#F5F5F5] rounded-full items-center justify-center mb-6">
               <Ionicons name="car-outline" size={40} color="#00AEB5" />
             </View>
-            <Text className="text-[#00343F] text-[18px] font-lexendBold text-center mb-2">
+            <Text className="text-[#00343F] text-[1.125rem] font-lexendBold text-center mb-2">
               No Vehicle Found
             </Text>
-            <Text className="text-[#8B8B8B] text-[14px] font-lexendRegular text-center leading-5">
+            <Text className="text-[#8B8B8B] text-[0.875rem] font-lexendRegular text-center leading-5">
               You need to have a registered car to view expense categories and track budgets.
             </Text>
           </View>
@@ -184,7 +184,7 @@ export default function ExpenseCategorySheet({
             {sections.map((section) => (
               <View key={section.title} className="mb-6">
                 <View className="flex-row justify-between items-center mb-4">
-                  <Text className="text-[14px] font-lexendBold text-[#6C6C70] tracking-widest">
+                  <Text className="text-[0.875rem] font-lexendBold text-[#6C6C70] tracking-widest">
                     {section.title}
                   </Text>
                   {section.title === "ALL CATEGORIES" && (

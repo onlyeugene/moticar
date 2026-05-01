@@ -41,7 +41,7 @@ export default function CarBudget({ onEdit }: CarBudgetProps) {
   return (
     <View className="bg-[#F9FFE0] border-[#DEE5C0] border rounded-[8px] p-4 mb-4">
       <View className="flex-row justify-between items-center">
-        <Text className="text-[12px] text-[#036D7D] font-lexendMedium ">
+        <Text className="text-[0.75rem] text-[#036D7D] font-lexendMedium ">
           Estimated Monthly Budget
         </Text>
         <TouchableOpacity onPress={onEdit} activeOpacity={0.7}>
@@ -51,16 +51,16 @@ export default function CarBudget({ onEdit }: CarBudgetProps) {
 
       <View className="mt-3">
         <View className="items-center justify-center">
-          <Text className="text-[32px] text-[#006C70] font-lexendSemiBold ">
+          <Text className="text-[2rem] text-[#006C70] font-lexendSemiBold ">
             {currencySymbol}{userBudget.toLocaleString()}
           </Text>
 
           <View className="flex-row items-center justify-center mt-1">
             <View className="flex-row items-center gap-1.5 bg-[#CFDF88] px-2 py-1 ">
-              <Text className="text-[12px] text-[#013037] font-lexendSemiBold ">
+              <Text className="text-[0.75rem] text-[#013037] font-lexendSemiBold ">
                 Currently spent -
               </Text>
-              <Text className="text-[12px] text-[#013037] font-lexendSemiBold ">
+              <Text className="text-[0.75rem] text-[#013037] font-lexendSemiBold ">
                 {currencySymbol}{totalSpent.toLocaleString()}
               </Text>
             </View>

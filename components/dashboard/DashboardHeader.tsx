@@ -5,6 +5,7 @@ import { useUserCars } from "@/hooks/useCars";
 import { useAppStore } from "@/store/useAppStore";
 import { router } from "expo-router";
 import { CarIcon } from "@/utils/carIconHelper";
+import { rf, s, vs } from "@/utils/responsive";
 import { Car } from "@/types/car";
 import Circle from "@/assets/icons/circle.svg";
 import Crown from "@/assets/icons/crown.svg";
@@ -51,7 +52,7 @@ export default function DashboardHeader() {
           setSelectedCarId(car.id || car._id);
           setIsExpanded(false);
         }}
-        className={`w-[280px] p-4 rounded-[8px] border mr-4 relative ${
+        className={`w-[17.5rem] p-4 rounded-[8px] border mr-4 relative ${
           isSelected
             ? "border-[#1A8798] border-2 bg-[#002E35]"
             : "border-[#09515D] bg-[#00232A]"
@@ -60,12 +61,12 @@ export default function DashboardHeader() {
         <View className="flex-row items-start">
           <View className="flex-row items-start gap-3 flex-1 pr-8">
            <View className="bg-white rounded-[8px]">
-             <CarIcon make={car.make} size={40} color="#FFFFFF" />
+             <CarIcon make={car.make} size={rf(40)} color="#FFFFFF" />
            </View>
             <View className="flex-1 flex-col gap-1">
               <View className="flex-row items-center gap-2">
                 <Text
-                  className="text-[#FFFFFF] font-lexendBold text-[16px] max-w-[85%]"
+                  className="text-[#FFFFFF] font-lexendBold text-[1rem] max-w-[85%]"
                   numberOfLines={1}
                 >
                   {car.make} {car.carModel}
@@ -77,23 +78,23 @@ export default function DashboardHeader() {
                 )}
               </View>
 
-              <Text className="text-[#7AE6EB] font-ukNumberPlate uppercase text-[14px] mb-3">
+              <Text className="text-[#7AE6EB] font-ukNumberPlate uppercase text-[0.875rem] mb-3">
                 {car.plate}
               </Text>
 
               <View className="flex-row items-center gap-2">
                 <View className="bg-[#5E9597] px-2 py-1 rounded-[6px]">
-                  <Text className="text-[#002E35] text-[10px] font-lexendMedium uppercase">
+                  <Text className="text-[#002E35] text-[0.625rem] font-lexendMedium uppercase">
                     {car.bodyStyle || "SUV"}
                   </Text>
                 </View>
                 <View className="bg-[#5E9597] px-2 py-1 rounded-[6px]">
-                  <Text className="text-[#002E35] text-[10px] font-lexendMedium">
+                  <Text className="text-[#002E35] text-[0.625rem] font-lexendMedium">
                     {car.year}
                   </Text>
                 </View>
                 <View className="bg-[#5E9597] px-2 py-1 rounded-[6px]">
-                  <Text className="text-[#002E35] text-[10px] font-lexendMedium uppercase">
+                  <Text className="text-[#002E35] text-[0.625rem] font-lexendMedium uppercase">
                     {car.fuelType || "PETROL"}
                   </Text>
                 </View>
@@ -103,7 +104,7 @@ export default function DashboardHeader() {
 
           {isSelected && (
             <View className="absolute top-0 right-0">
-              <Circle width={26} height={26} />
+              <Circle width={rf(26)} height={rf(26)} />
             </View>
           )}
         </View>
@@ -124,11 +125,11 @@ export default function DashboardHeader() {
           className="px-5 pt-4 pb-6"
         >
           <View className="flex-row items-center justify-between mb-5">
-            <Text className="text-white font-lexendBold text-[16px]">
+            <Text className="text-white font-lexendBold text-[1rem]">
               Select a car
             </Text>
             <TouchableOpacity onPress={() => setIsExpanded(false)}>
-              <Ionicons name="chevron-up" size={24} color="#C1C3C3" />
+              <Ionicons name="chevron-up" size={rf(24)} color="#C1C3C3" />
             </TouchableOpacity>
           </View>
 
@@ -147,9 +148,9 @@ export default function DashboardHeader() {
               className="w-[140px] p-4 rounded-[20px] border border-dashed border-[#09515D] items-center justify-center bg-[#00232A]/50"
             >
               <View className="w-10 h-10 rounded-full bg-[#09515D] items-center justify-center mb-2">
-                <Ionicons name="add" size={24} color="#29D7DE" />
+                <Ionicons name="add" size={rf(24)} color="#29D7DE" />
               </View>
-              <Text className="text-[#29D7DE] font-lexendBold text-[12px] text-center">
+              <Text className="text-[#29D7DE] font-lexendBold text-[0.75rem] text-center">
                 Add New Car
               </Text>
             </TouchableOpacity>
@@ -174,14 +175,14 @@ export default function DashboardHeader() {
             className="flex-row items-center gap-1 flex-1 mr-4"
           >
            <View className="bg-white rounded-[8px] mr-1">
-             <CarIcon make={selectedCar?.make || ""} size={48} />
+             <CarIcon make={selectedCar?.make || ""} size={rf(48)} />
            </View>
 
             <View className="flex-1">
               {/* Car name + status dot */}
               <View className="flex-row items-start">
                 <Text
-                  className="text-white font-lexendBold text-[16px] shrink"
+                  className="text-white font-lexendBold text-[1rem] shrink"
                   numberOfLines={1}
                 >
                   {isLoading
@@ -198,7 +199,7 @@ export default function DashboardHeader() {
                   />
                   <Ionicons
                     name="chevron-down"
-                    size={14}
+                    size={rf(14)}
                     color="#C1C3C3"
                     className="shrink-0"
                   />
@@ -207,13 +208,13 @@ export default function DashboardHeader() {
 
               {/* Plate + PRO badge */}
               <View className="flex-row items-center gap-1.5">
-                <Text className="text-[#7AE6EB] font-ukNumberPlate text-[14px] uppercase">
+                <Text className="text-[#7AE6EB] font-ukNumberPlate text-[0.875rem] uppercase">
                   {selectedCar?.plate || "No plate registered"}
                 </Text>
                 {/* {selectedCar && (
                   <View className="bg-[#EBE07A] px-1.5 py-0.5 rounded-full flex-row items-center gap-1">
                     <Crown width={12} />
-                    <Text className="text-[#001013] font-lexendBold text-[10px]">
+                    <Text className="text-[#001013] font-lexendBold text-[0.625rem]">
                       PRO
                     </Text>
                   </View>
@@ -227,13 +228,13 @@ export default function DashboardHeader() {
             <View className="w-[1px] h-10 bg-[#0F6778]" />
             <TouchableOpacity onPress={() => router.push("/screens/notifications")}>
               <View className="relative">
-                <Ionicons name="notifications-outline" size={24} color="#FFFFFF" />
+                <Ionicons name="notifications-outline" size={rf(24)} color="#FFFFFF" />
                 {hasUnread && (
                   <View className="absolute top-0 right-0 w-[10px] h-[10px] bg-[#FF4B4B] rounded-full border-2 border-[#002E35]" />
                 )}
               </View>
             </TouchableOpacity>
-            <Ionicons name="menu" size={24} color="#FFFFFF" />
+            <Ionicons name="menu" size={rf(24)} color="#FFFFFF" />
           </View>
         </Animated.View>
       )}
@@ -244,7 +245,7 @@ export default function DashboardHeader() {
             onPress={() => setDiagnosticActive(true)}
             className="border-[#29D7DE] border w-11/12 my-5 mx-auto items-center justify-center h-[40px] rounded-[32px]"
           >
-            <Text className="text-[#00AEB5] font-lexendSemiBold text-[14px]">
+            <Text className="text-[#00AEB5] font-lexendSemiBold text-[0.875rem]">
               Diagnostic Check
             </Text>
           </TouchableOpacity>
@@ -253,7 +254,7 @@ export default function DashboardHeader() {
           //   onPress={() => router.push("/screens/motibuddie/imei")}
           //   className="border-[#C1C3C3] border w-11/12 my-5 mx-auto items-center justify-center h-[40px] rounded-[32px]"
           // >
-          //   <Text className="text-[#C1C3C3] font-lexendSemiBold text-[14px]">
+          //   <Text className="text-[#C1C3C3] font-lexendSemiBold text-[0.875rem]">
           //     Connect MotiBuddie
           //   </Text>
           // </TouchableOpacity>

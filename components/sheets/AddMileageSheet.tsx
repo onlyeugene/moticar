@@ -62,7 +62,7 @@ export default function AddMileageSheet({
       {isPending ? (
         <ActivityIndicator size="small" color="#00343F" />
       ) : (
-        <Text className="text-[#00343F] font-lexendBold text-[14px]">
+        <Text className="text-[#00343F] font-lexendBold text-[0.875rem]">
           Save
         </Text>
       )}
@@ -87,13 +87,13 @@ export default function AddMileageSheet({
             <Speedometer width={24} height={24} />
           </View>
           <View className="flex-1">
-            <Text className="text-[#8B8B8B] text-[12px] font-lexendRegular mb-1">
+            <Text className="text-[#8B8B8B] text-[0.75rem] font-lexendRegular mb-1">
               Current Mileage (km)
             </Text>
             <TextInput
               placeholder="e.g. 50,000"
               placeholderTextColor="#ADADAD"
-              className={`text-[#00343F] font-lexendBold text-[18px] p-0 ${isInvalid ? "text-red-500" : ""}`}
+              className={`text-[#00343F] font-lexendBold text-[1.125rem] p-0 ${isInvalid ? "text-red-500" : ""}`}
               value={mileage}
               onChangeText={setMileage}
               keyboardType="numeric"
@@ -104,7 +104,7 @@ export default function AddMileageSheet({
         {isInvalid && (
           <View className="px-1 mb-4 flex-row items-center gap-1">
             <Ionicons name="alert-circle" size={14} color="#EF4444" />
-            <Text className="text-red-500 font-lexendRegular text-[12px]">
+            <Text className="text-red-500 font-lexendRegular text-[0.75rem]">
               Mileage must be higher than {initialMileage.toLocaleString()} km
             </Text>
           </View>
@@ -118,21 +118,21 @@ export default function AddMileageSheet({
         >
           <View className="flex-row items-center gap-2 mb-2">
             <Ionicons name="document-text-outline" size={18} color="#8B8B8B" />
-            <Text className="text-[#8B8B8B] text-[12px] font-lexendRegular">
+            <Text className="text-[#8B8B8B] text-[0.75rem] font-lexendRegular">
               Notes / Description
             </Text>
           </View>
           <TextInput
             placeholder="e.g. Morning commute, Trip to Lagos"
             placeholderTextColor="#ADADAD"
-            className="text-[#00343F] font-lexendRegular text-[14px] p-0"
+            className="text-[#00343F] font-lexendRegular text-[0.875rem] p-0"
             value={description}
             onChangeText={setDescription}
             multiline
           />
         </View>
 
-        <Text className="text-[#4A8588] font-lexendRegular text-[12px] text-center px-6">
+        <Text className="text-[#4A8588] font-lexendRegular text-[0.75rem] text-center px-6">
           This reading will update your car's total mileage and help track maintenance schedules.
         </Text>
       </View>

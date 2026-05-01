@@ -162,7 +162,7 @@ export default function CarScreen() {
     <View className="flex-1 bg-[#F5F5F5]">
       {/* Fixed Header */}
       <View className="pt-[60px] pb-3 px-4 bg-[#F5F5F5]">
-        <Text className="text-[26px] font-lexendBold text-[#00343F]">Car</Text>
+        <Text className="text-[1.625rem] font-lexendBold text-[#00343F]">Car</Text>
       </View>
 
       <ScrollView

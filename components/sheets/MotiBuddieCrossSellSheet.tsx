@@ -43,11 +43,11 @@ export default function MotiBuddieCrossSellSheet({
           <Obd />
         </View>
 
-        <Text className="text-[#00343F] font-lexendBold text-[18px] text-center mb-4 mt-5">
+        <Text className="text-[#00343F] font-lexendBold text-[1.125rem] text-center mb-4 mt-5">
           You are better off with a buddie!
         </Text>
 
-        <Text className="text-[#00343F] font-lexendRegular text-[14px] text-center mb-10 leading-6">
+        <Text className="text-[#00343F] font-lexendRegular text-[0.875rem] text-center mb-10 leading-6">
           MotiBuddie is your eye on the car that helps with • log trips, track
           mileage, detect engine issues & predict maintenance
         </Text>
@@ -62,7 +62,7 @@ export default function MotiBuddieCrossSellSheet({
           >
             {dontShow && <Ionicons name="checkmark" size={14} color="#00AEB5" />}
           </View>
-          <Text className="text-[#695858] font-lexendRegular text-[14px]">
+          <Text className="text-[#695858] font-lexendRegular text-[0.875rem]">
             Don't show me this again
           </Text>
         </TouchableOpacity>
@@ -72,7 +72,7 @@ export default function MotiBuddieCrossSellSheet({
             onPress={onLearnMore}
             className="flex-1 py-4 rounded-full w-full border border-[#00343F] items-center"
           >
-            <Text className="text-[#00343F] font-lexendSemiBold text-[14px]">
+            <Text className="text-[#00343F] font-lexendSemiBold text-[0.875rem]">
               Learn More
             </Text>
           </TouchableOpacity>
@@ -81,7 +81,7 @@ export default function MotiBuddieCrossSellSheet({
             onPress={onGetOne}
             className="flex-1 py-4 rounded-full w-full bg-[#00343F] items-center"
           >
-            <Text className="text-[#FFFFFF] font-lexendBold text-[14px]">
+            <Text className="text-[#FFFFFF] font-lexendBold text-[0.875rem]">
               Get one today!
             </Text>
           </TouchableOpacity>

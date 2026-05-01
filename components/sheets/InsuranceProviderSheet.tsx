@@ -89,21 +89,21 @@ export default function InsuranceProviderSheet({
             disabled={!selectedProvider}
             className={`${selectedProvider ? "bg-[#29D7DE]" : "bg-[#29D7DE]/40"} px-4 py-2 rounded-full`}
           >
-            <Text className={`${selectedProvider ? "text-[#00343F]" : "text-[#00343F]/40"} font-lexendBold text-[14px]`}>select</Text>
+            <Text className={`${selectedProvider ? "text-[#00343F]" : "text-[#00343F]/40"} font-lexendBold text-[0.875rem]`}>select</Text>
           </TouchableOpacity>
         </View>
       }
     >
       <View className="p-5 bg-white">
         <View className="flex-row items-center justify-between mb-6">
-          <Text className="text-[#A6A8A8] font-lexendMedium text-[12px]">
+          <Text className="text-[#A6A8A8] font-lexendMedium text-[0.75rem]">
             Based on your current location
           </Text>
           <TouchableOpacity 
             onPress={() => setShowCountryList(!showCountryList)}
             className="flex-row items-center gap-2"
           >
-            <Text className="text-[#006C70] capitalize font-lexendMedium text-[12px]">
+            <Text className="text-[#006C70] capitalize font-lexendMedium text-[0.75rem]">
               {countryName}
             </Text>
             <Ionicons name={showCountryList ? "chevron-up" : "chevron-down"} size={16} color="#ADADAD" />
@@ -125,7 +125,7 @@ export default function InsuranceProviderSheet({
                 }}
                 className={`px-4 py-3 border-b border-[#EEE] ${selectedCountry === c.isoCode ? "bg-[#E6F7F8]" : ""}`}
               >
-                <Text className={`font-lexendMedium text-[13px] ${selectedCountry === c.isoCode ? "text-[#00AEB5]" : "text-[#4D5A5D]"}`}>
+                <Text className={`font-lexendMedium text-[0.8125rem] ${selectedCountry === c.isoCode ? "text-[#00AEB5]" : "text-[#4D5A5D]"}`}>
                   {c.country}
                 </Text>
               </TouchableOpacity>
@@ -150,7 +150,7 @@ export default function InsuranceProviderSheet({
                     : "bg-[#D9D9D980]"
                 }`}
               >
-                <Text className={`font-lexendMedium text-[12px] ${
+                <Text className={`font-lexendMedium text-[0.75rem] ${
                   activeFilter === filter.label ? "text-white" : "text-[#4D5A5D]"
                 }`}>
                   {filter.label}
@@ -174,7 +174,7 @@ export default function InsuranceProviderSheet({
                   selectedProvider === provider.name ? "border-[#00AEB5]" : "border-[#E2E2E2]"
                 }`}
               >
-                <Text className="text-[#001A1F] font-lexendMedium text-[15px]">
+                <Text className="text-[#001A1F] font-lexendMedium text-[0.9375rem]">
                   {provider.name}
                 </Text>
                 <View className={`w-7 h-7 rounded-full border items-center justify-center ${
@@ -194,7 +194,7 @@ export default function InsuranceProviderSheet({
                 onPress={() => setIsExpanded(true)}
                 className="mt-4 bg-[#E8E8E8] py-4 rounded-full flex-row items-center justify-center gap-2"
               >
-                <Text className="text-[#4D5A5D] font-lexendMedium text-[14px]">
+                <Text className="text-[#4D5A5D] font-lexendMedium text-[0.875rem]">
                   See more providers
                 </Text>
                 <Ionicons name="chevron-down" size={16} color="#4D5A5D" />
@@ -206,7 +206,7 @@ export default function InsuranceProviderSheet({
                 onPress={() => setIsExpanded(false)}
                 className="mt-4 bg-[#E8E8E8] py-4 rounded-full flex-row items-center justify-center gap-2"
               >
-                <Text className="text-[#4D5A5D] font-lexendMedium text-[14px]">
+                <Text className="text-[#4D5A5D] font-lexendMedium text-[0.875rem]">
                   See less
                 </Text>
                 <Ionicons name="chevron-up" size={16} color="#4D5A5D" />

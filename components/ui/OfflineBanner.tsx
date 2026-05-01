@@ -50,7 +50,7 @@ export function OfflineBanner() {
         style={styles.shadow}
       >
         <MaterialCommunityIcons name="wifi-off" size={20} color="#00343F" />
-        <Text className="text-[#00343F] font-lexendSemiBold text-[13px] ml-2">
+        <Text className="text-[#00343F] font-lexendSemiBold text-[0.8125rem] ml-2">
           No internet connection
         </Text>
       </View>

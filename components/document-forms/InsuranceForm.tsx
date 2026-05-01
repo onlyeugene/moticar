@@ -40,10 +40,10 @@ export function InsuranceForm({
             <View className="mr-3">
                <Ionicons name="business-outline" size={24} color="#C1C3C3" />
             </View>
-            <Text className="text-[#707676] font-lexendRegular text-[12px]">Insurance Provider</Text>
+            <Text className="text-[#707676] font-lexendRegular text-[0.75rem]">Insurance Provider</Text>
           </View>
           <View className="flex-row items-center">
-            <Text className={`font-lexendMedium text-[14px] ${state.provider ? "text-[#202A2A]" : "text-[#C1C3C3]"}`}>
+            <Text className={`font-lexendMedium text-[0.875rem] ${state.provider ? "text-[#202A2A]" : "text-[#C1C3C3]"}`}>
               {state.provider || "Select"}
             </Text>
             <Ionicons name="chevron-forward" size={20} color="#ADADAD" className="ml-1" />

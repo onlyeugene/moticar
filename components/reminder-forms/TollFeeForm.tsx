@@ -33,7 +33,7 @@ export function TollFeeForm({ state, setState, userEmail }: ReminderFormProps) {
       </SectionCard>
 
       <SectionCard>
-        <Text className="text-[#8B8B8B] font-lexendRegular text-[12px] mb-3">
+        <Text className="text-[#8B8B8B] font-lexendRegular text-[0.75rem] mb-3">
           Frequency <Text className="text-[#00AEB5]">*</Text>
         </Text>
         <View className="flex-row gap-2 mb-3">
@@ -45,7 +45,7 @@ export function TollFeeForm({ state, setState, userEmail }: ReminderFormProps) {
                 state.frequencyMode === opt ? "bg-[#00AEB5] border-[#00AEB5]" : "bg-[#F5F5F5] border-[#F0F0F0]"
               }`}
             >
-              <Text className={`font-lexendRegular text-[12px] ${state.frequencyMode === opt ? "text-white" : "text-[#8B8B8B]"}`}>{opt}</Text>
+              <Text className={`font-lexendRegular text-[0.75rem] ${state.frequencyMode === opt ? "text-white" : "text-[#8B8B8B]"}`}>{opt}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -59,7 +59,7 @@ export function TollFeeForm({ state, setState, userEmail }: ReminderFormProps) {
                   state.frequency === opt ? "bg-[#00AEB5] border-[#00AEB5]" : "bg-[#F5F5F5] border-[#F0F0F0]"
                 }`}
               >
-                <Text className={`font-lexendRegular text-[12px] ${state.frequency === opt ? "text-white" : "text-[#8B8B8B]"}`}>{opt}</Text>
+                <Text className={`font-lexendRegular text-[0.75rem] ${state.frequency === opt ? "text-white" : "text-[#8B8B8B]"}`}>{opt}</Text>
               </TouchableOpacity>
             ))}
           </View>

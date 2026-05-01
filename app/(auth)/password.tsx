@@ -104,10 +104,10 @@ export default function Password() {
           </Pressable>
         </View>
         <View className="mt-10">
-          <Text className="text-white text-[26px] font-lexendMedium">
+          <Text className="text-white text-[1.625rem] font-lexendMedium">
             Enter Password
           </Text>
-          <Text className="text-[#9BBABB] font-lexendRegular text-[14px] mt-2 leading-6">
+          <Text className="text-[#9BBABB] font-lexendRegular text-[0.875rem] mt-2 leading-6">
             We just sent 5-digit code to {email}, {"\n"}enter it below:
           </Text>
         </View>
@@ -124,7 +124,7 @@ export default function Password() {
             className="px-2 text-white"
           />
 
-          <Text className="text-[#5E7A7C] font-lexendMedium text-[14px] mt-">
+          <Text className="text-[#5E7A7C] font-lexendMedium text-[0.875rem] mt-">
             Must be at least 8 characters
           </Text>
 
@@ -146,7 +146,7 @@ export default function Password() {
                 )}
               </View>
               <Text
-                className={`${hasMinLength ? "text-[#7BA0A3]" : "text-[#7BA0A3]"} font-lexendRegular text-[14px]`}
+                className={`${hasMinLength ? "text-[#7BA0A3]" : "text-[#7BA0A3]"} font-lexendRegular text-[0.875rem]`}
               >
                 8 characters minimum
               </Text>
@@ -160,7 +160,7 @@ export default function Password() {
                 )}
               </View>
               <Text
-                className={`${hasNumber ? "text-[#7BA0A3]" : "text-[#7BA0A3]"} font-lexendRegular text-[14px]`}
+                className={`${hasNumber ? "text-[#7BA0A3]" : "text-[#7BA0A3]"} font-lexendRegular text-[0.875rem]`}
               >
                 a number
               </Text>
@@ -174,7 +174,7 @@ export default function Password() {
                 )}
               </View>
               <Text
-                className={`${hasSymbol ? "text-[#7BA0A3]" : "text-[#7BA0A3]"} font-lexendRegular text-[14px]`}
+                className={`${hasSymbol ? "text-[#7BA0A3]" : "text-[#7BA0A3]"} font-lexendRegular text-[0.875rem]`}
               >
                 one symbol minimum
               </Text>
@@ -191,7 +191,7 @@ export default function Password() {
             {setPassword.isPending ? (
               <ActivityIndicator color="#00343F" />
             ) : (
-              <Text className="font-lexendBold text-[16px] text-[#00343F]">
+              <Text className="font-lexendBold text-[1rem] text-[#00343F]">
                 Next
               </Text>
             )}

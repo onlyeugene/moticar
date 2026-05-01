@@ -384,10 +384,10 @@ export default function AddDocumentSheet({
       backgroundColor="#F5F5F5"
       title={
         <View className="flex-1">
-          <Text className="text-[#00AEB5] font-lexendRegular text-[11px] mb-0.5">
+          <Text className="text-[#00AEB5] font-lexendRegular text-[0.6875rem] mb-0.5">
             Car Documents
           </Text>
-          <Text className="text-[#001A1F] font-lexendBold text-[22px]">
+          <Text className="text-[#001A1F] font-lexendBold text-[1.375rem]">
             {category}
           </Text>
         </View>
@@ -403,7 +403,7 @@ export default function AddDocumentSheet({
                     disabled={isProcessing}
                     className="px-4 py-2 bg-white rounded-full shadow-sm"
                   >
-                    <Text className="text-[#8B8B8B] font-lexendMedium text-[14px]">Cancel</Text>
+                    <Text className="text-[#8B8B8B] font-lexendMedium text-[0.875rem]">Cancel</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={handleSave}
@@ -413,7 +413,7 @@ export default function AddDocumentSheet({
                     {isUpdating || isProcessing ? (
                       <ActivityIndicator size="small" color="#00343F" />
                     ) : (
-                      <Text className="text-[#00343F] font-lexendBold text-[14px]">Save</Text>
+                      <Text className="text-[#00343F] font-lexendBold text-[0.875rem]">Save</Text>
                     )}
                   </TouchableOpacity>
                 </>
@@ -459,7 +459,7 @@ export default function AddDocumentSheet({
                 disabled={isProcessing}
                 className={`px-6 py-2.5 rounded-full ${isProcessing ? "bg-[#29D7DE]" : "bg-[#29D7DE]/50"}`}
               >
-                <Text className="text-[#00343F] font-lexendBold text-[14px]">
+                <Text className="text-[#00343F] font-lexendBold text-[0.875rem]">
                   {isProcessing ? "Saving..." : "Save"}
                 </Text>
               </TouchableOpacity>

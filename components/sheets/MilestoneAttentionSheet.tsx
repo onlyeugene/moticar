@@ -53,11 +53,11 @@ export default function MilestoneAttentionSheet({
       backgroundColor="#001C21"
     >
       <View className="px-4">
-        <Text className="text-[#81B4B4] font-lexendRegular text-[14px] mb-6">
+        <Text className="text-[#81B4B4] font-lexendRegular text-[0.875rem] mb-6">
           We detected a discrepancy in your mileage readings. Please select the correct value to continue tracking accurately.
         </Text>
 
-        <Text className="text-[#4FB8C8] font-lexendBold text-[12px] uppercase mb-4 tracking-wider">
+        <Text className="text-[#4FB8C8] font-lexendBold text-[0.75rem] uppercase mb-4 tracking-wider">
           SELECT ONE MILEAGE
         </Text>
 
@@ -75,10 +75,10 @@ export default function MilestoneAttentionSheet({
               <Ionicons name="bluetooth" size={20} color={selectedMileage === milestone.mileage ? "#00343F" : "#00AEB5"} />
             </View>
             <View>
-              <Text className="text-white font-lexendBold text-[18px]">
+              <Text className="text-white font-lexendBold text-[1.125rem]">
                 {milestone.mileage.toLocaleString()}
               </Text>
-              <Text className="text-[#81B4B4] font-lexendRegular text-[12px]">
+              <Text className="text-[#81B4B4] font-lexendRegular text-[0.75rem]">
                 From Moticode
               </Text>
             </View>
@@ -102,10 +102,10 @@ export default function MilestoneAttentionSheet({
               <Ionicons name="create" size={20} color={selectedMileage === currentManualMileage ? "#00343F" : "#00AEB5"} />
             </View>
             <View>
-              <Text className="text-white font-lexendBold text-[18px]">
+              <Text className="text-white font-lexendBold text-[1.125rem]">
                 {currentManualMileage.toLocaleString()}
               </Text>
-              <Text className="text-[#81B4B4] font-lexendRegular text-[12px]">
+              <Text className="text-[#81B4B4] font-lexendRegular text-[0.75rem]">
                 From Manual Entry
               </Text>
             </View>
@@ -125,7 +125,7 @@ export default function MilestoneAttentionSheet({
           {isPending ? (
             <ActivityIndicator size="small" color="#00343F" />
           ) : (
-            <Text className="text-[#00343F] font-lexendBold text-[16px]">
+            <Text className="text-[#00343F] font-lexendBold text-[1rem]">
               Confirm mileage
             </Text>
           )}

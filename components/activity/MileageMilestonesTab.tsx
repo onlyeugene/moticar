@@ -55,14 +55,14 @@ export default function MileageMilestonesTab({ carId }: MileageMilestonesTabProp
         onPress={() => setIsAddVisible(true)}
         className="border border-[#00AEB5] rounded-full h-[40px] items-center justify-center mb-8"
       >
-        <Text className="text-[#00AEB5] text-[14px] font-lexendSemiBold">
+        <Text className="text-[#00AEB5] text-[0.875rem] font-lexendSemiBold">
           + Add manual mileage
         </Text>
       </TouchableOpacity> */}
 
       {sections.map((section) => (
         <View key={section.date} className="mb-6">
-          <Text className="text-[#81B4B4] font-lexendBold text-[12px] mb-4 px-1">
+          <Text className="text-[#81B4B4] font-lexendBold text-[0.75rem] mb-4 px-1">
             {section.date}
           </Text>
           {section.data.map((milestone) => (
@@ -85,7 +85,7 @@ export default function MileageMilestonesTab({ carId }: MileageMilestonesTabProp
       {sections.length === 0 && (
          <View className="flex-1 px-4 items-center justify-center">
               <EmptyIcon />
-              <Text className="text-[#888282] text-[14px] font-lexendRegular mt-4">
+              <Text className="text-[#888282] text-[0.875rem] font-lexendRegular mt-4">
                 No milestones recorded
               </Text>
             </View>

@@ -157,7 +157,7 @@ export default function DatePickerSheet({
               <Ionicons name="chevron-back" size={28} color="#00343F" />
             </TouchableOpacity>
             <View className="">
-              <Text className="text-[#00343F] text-[14px] font-lexendBold">
+              <Text className="text-[#00343F] text-[0.875rem] font-lexendBold">
                 {title}
               </Text>
             </View>
@@ -174,7 +174,7 @@ export default function DatePickerSheet({
                 <MaterialCommunityIcons name="chevron-double-left" size={20} color="#00AEB5" />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => setIsYearMode(!isYearMode)}>
-                <Text className="text-[#00AEB5] text-[16px] font-lexendBold">
+                <Text className="text-[#00AEB5] text-[1rem] font-lexendBold">
                   {MONTHS[viewDate.getMonth()]} {viewDate.getFullYear()}
                   <Ionicons name={isYearMode ? "chevron-up" : "chevron-down"} size={14} color="#00AEB5" />
                 </Text>
@@ -189,7 +189,7 @@ export default function DatePickerSheet({
                 {/* Weekday Labels */}
                 <View className="flex-row mb-4">
                   {WEEKDAYS.map((day) => (
-                    <Text key={day} className="text-[#333333] font-lexendBold text-[14px] flex-1 text-center">
+                    <Text key={day} className="text-[#333333] font-lexendBold text-[0.875rem] flex-1 text-center">
                       {day}
                     </Text>
                   ))}
@@ -209,7 +209,7 @@ export default function DatePickerSheet({
                         className="w-[14.28%] aspect-square items-center justify-center mb-1"
                       >
                         <View className={`w-[36px] h-[36px] items-center justify-center rounded-full ${selected ? 'bg-[#FBE74C]' : ''}`}>
-                          <Text className={`font-lexendRegular text-[12px] ${
+                          <Text className={`font-lexendRegular text-[0.75rem] ${
                             disabled
                               ? 'text-[#C1C3C3]'
                               : dateObj.type === 'current' 
@@ -233,7 +233,7 @@ export default function DatePickerSheet({
                       onPress={() => handleSelectYear(year)}
                       className={`w-[23%] py-3 mb-2 rounded-xl items-center ${viewDate.getFullYear() === year ? 'bg-[#FBE74C]' : 'bg-[#F5F5F5]'}`}
                     >
-                      <Text className={`font-lexendMedium text-[14px] ${viewDate.getFullYear() === year ? 'text-[#202A2A]' : 'text-[#00343F]'}`}>
+                      <Text className={`font-lexendMedium text-[0.875rem] ${viewDate.getFullYear() === year ? 'text-[#202A2A]' : 'text-[#00343F]'}`}>
                         {year}
                       </Text>
                     </TouchableOpacity>
@@ -250,7 +250,7 @@ export default function DatePickerSheet({
                 onPress={handleSave}
                 className="bg-[#00343F] w-[80%] py-5 rounded-full items-center mx-auto"
               >
-                <Text className="text-white font-lexendBold text-[18px]">Save</Text>
+                <Text className="text-white font-lexendBold text-[1.125rem]">Save</Text>
               </TouchableOpacity>
             </View>
           )}

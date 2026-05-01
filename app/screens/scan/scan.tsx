@@ -73,7 +73,7 @@ export default function Scan() {
             }}
             className="px-2"
           >
-            <Text className="text-[#29D7DE] font-lexendMedium text-[14px]">
+            <Text className="text-[#29D7DE] font-lexendMedium text-[0.875rem]">
               Reset
             </Text>
           </TouchableOpacity> */}
@@ -82,10 +82,10 @@ export default function Scan() {
         <View className="flex-1">
           {/* Title and Subtitle */}
           <View className="px-2 mt-5">
-            <Text className="text-[26px] font-lexendMedium text-[#FFFFFF]">
+            <Text className="text-[1.625rem] font-lexendMedium text-[#FFFFFF]">
               Add your first car!
             </Text>
-            <Text className="text-[14px] font-lexendRegular text-[#9BBABB] mt-2">
+            <Text className="text-[0.875rem] font-lexendRegular text-[#9BBABB] mt-2">
               Start by adding the details of your personal car for a rich user
               experience
             </Text>
@@ -128,7 +128,7 @@ export default function Scan() {
                       }`}
                     >
                       <Text
-                        className={`font-lexendBold text-[11px] ${
+                        className={`font-lexendBold text-[0.6875rem] ${
                           scan.id === 1 || picturesCompleted
                             ? "text-[#29D7DE]"
                             : "text-[#FFFFFF]"
@@ -141,7 +141,7 @@ export default function Scan() {
                   <View className="">
                     <View className="flex-row items-center gap-2">
                       <Text
-                        className={`text-[16px] font-lexendSemiBold ${
+                        className={`text-[1rem] font-lexendSemiBold ${
                           scan.completed ? "text-[#87ECF0]/60" : "text-[#87ECF0]"
                         }`}
                         numberOfLines={2}
@@ -149,13 +149,13 @@ export default function Scan() {
                         {scan.title}
                       </Text>
                       {!scan.required && (
-                        <Text className="text-[6px] font-lexendRegular text-[#506D72] border border-[#506D72] rounded-full px-2 py-0.5">
+                        <Text className="text-[0.375rem] font-lexendRegular text-[#506D72] border border-[#506D72] rounded-full px-2 py-0.5">
                           Optional
                         </Text>
                       )}
                     </View>
                     <Text
-                      className={`text-[14px] font-lexendRegular mt-1 ${
+                      className={`text-[0.875rem] font-lexendRegular mt-1 ${
                         scan.completed ? "text-[#9BBABB]/50" : "text-[#9BBABB]"
                       }`}
                       numberOfLines={2}
@@ -180,11 +180,11 @@ export default function Scan() {
                 <CarLogo make={scannedCarData.make || ""} size={48} />
               </View>
               <View className="flex-1">
-                <Text className="text-white font-lexendBold text-[16px]">
+                <Text className="text-white font-lexendBold text-[1rem]">
                   {scannedCarData.make} {scannedCarData.model}{" "}
                   {scannedCarData.year}
                 </Text>
-                <Text className="text-[#29D7DE] font-ukNumberPlate text-[12px] mt-0.5 uppercase tracking-wider">
+                <Text className="text-[#29D7DE] font-ukNumberPlate text-[0.75rem] mt-0.5 uppercase tracking-wider">
                   {(scannedCarData.plate || "No Plate Detected").replace(
                     /-/g,
                     " ",
@@ -213,7 +213,7 @@ export default function Scan() {
                 <Ionicons name="checkmark" size={16} color="#00232A" />
               )}
             </View>
-            <Text className="text-[#FFFFFF] text-[14px] font-lexendRegular flex-1">
+            <Text className="text-[#FFFFFF] text-[0.875rem] font-lexendRegular flex-1">
               I can confirm that the picture of the car {"\n"}taken is mine
             </Text>
           </Pressable>
@@ -228,7 +228,7 @@ export default function Scan() {
             }`}
             onPress={handleNext}
           >
-            <Text className="font-lexendBold text-[16px] text-[#00343F]">
+            <Text className="font-lexendBold text-[1rem] text-[#00343F]">
               {isFlowComplete ? "Finish Setup" : "Next"}
             </Text>
           </TouchableOpacity>

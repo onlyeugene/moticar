@@ -54,7 +54,7 @@ function ReminderRow({ reminder, onPress }: { reminder: Reminder; onPress: () =>
     >
       <View className="flex-1">
         <View className="flex-row items-center justify-between mb-1">
-          <Text className="text-[#001A1F] font-lexendMedium text-[16px] flex-1" numberOfLines={1}>
+          <Text className="text-[#001A1F] font-lexendMedium text-[1rem] flex-1" numberOfLines={1}>
             {reminder.name}
           </Text>
           <Ionicons name="chevron-forward" size={24} color="#ADADAD" />
@@ -64,30 +64,30 @@ function ReminderRow({ reminder, onPress }: { reminder: Reminder; onPress: () =>
           {severity && (
             <View className="flex-row items-center gap-1">
               <Ionicons name="bookmark-outline" size={24} color={severityStyle.icon} />
-              <Text className="font-lexendRegular text-[12px] text-[#969696]">
+              <Text className="font-lexendRegular text-[0.75rem] text-[#969696]">
                 {severity}
               </Text>
             </View>
           )}
           {severity && frequency && (
-            <Text className="text-[#A4A4A4] font-lexendRegular text-[12px]">·</Text>
+            <Text className="text-[#A4A4A4] font-lexendRegular text-[0.75rem]">·</Text>
           )}
           {frequency && (
-            <Text className="text-[#969696] font-lexendRegular text-[12px]">
+            <Text className="text-[#969696] font-lexendRegular text-[0.75rem]">
               {frequency}
             </Text>
           )}
           {/* {primaryDate && (
             <>
-              <Text className="text-[#C1C3C3] font-lexendRegular text-[12px]">·</Text>
-              <Text className="text-[#8B8B8B] font-lexendRegular text-[12px]">
+              <Text className="text-[#C1C3C3] font-lexendRegular text-[0.75rem]">·</Text>
+              <Text className="text-[#8B8B8B] font-lexendRegular text-[0.75rem]">
                 {format(new Date(primaryDate), "MMM d, yyyy")}
               </Text>
             </>
           )} */}
         </View>
 
-        <Text className="text-[#00AEB5] font-lexendRegular text-[12px]">
+        <Text className="text-[#00AEB5] font-lexendRegular text-[0.75rem]">
           Added {dateAdded}
         </Text>
       </View>
@@ -118,10 +118,10 @@ export default function ReminderCategorySheet({
 
   const headerTitle = (
     <View className="flex-1">
-      <Text className="text-[#00AEB5] font-lexendRegular text-[11px]">
+      <Text className="text-[#00AEB5] font-lexendRegular text-[0.6875rem]">
         Reminder
       </Text>
-      <Text className="text-[#001A1F] font-lexendBold text-[20px]">
+      <Text className="text-[#001A1F] font-lexendBold text-[1.25rem]">
         {category}
       </Text>
     </View>
@@ -155,7 +155,7 @@ export default function ReminderCategorySheet({
             <View className="flex-row items-center bg-white rounded-xl px-4 h-[44px]">
               <Ionicons name="search" size={16} color="#C1C3C3" />
               <TextInput
-                className="flex-1 ml-2 font-lexendRegular text-[14px] text-[#001A1F]"
+                className="flex-1 ml-2 font-lexendRegular text-[0.875rem] text-[#001A1F]"
                 placeholder="Search reminders..."
                 placeholderTextColor="#C1C3C3"
                 value={search}
@@ -176,7 +176,7 @@ export default function ReminderCategorySheet({
           {filtered.length === 0 ? (
             <View className="flex-1 items-center justify-center py-20">
               <Empty width={60} height={50} />
-              <Text className="text-[#8B8B8B] font-lexendRegular text-[14px] mt-4">
+              <Text className="text-[#8B8B8B] font-lexendRegular text-[0.875rem] mt-4">
                 No entry recorded
               </Text>
             </View>

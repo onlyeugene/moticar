@@ -205,7 +205,7 @@ export default function TimePickerSheet({
           onPress={handleSave}
           className="bg-[#00343F] w-full py-4 rounded-full items-center mt-8"
         >
-          <Text className="text-white font-lexendBold text-[16px]">Save Time</Text>
+          <Text className="text-white font-lexendBold text-[1rem]">Save Time</Text>
         </TouchableOpacity>
       </View>
     </BottomSheet>

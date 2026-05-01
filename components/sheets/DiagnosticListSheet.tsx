@@ -109,7 +109,7 @@ export default function DiagnosticListSheet({
           <View className="w-5 h-5 rounded-full bg-[#29D7DE]/20 items-center justify-center">
             <View className="w-2 h-2 rounded-full bg-[#29D7DE]" />
           </View>
-          <Text className="text-[#00343F] text-[16px] font-lexendBold">
+          <Text className="text-[#00343F] text-[1rem] font-lexendBold">
             Diagnostic Checklist
           </Text>
         </View>
@@ -130,10 +130,10 @@ export default function DiagnosticListSheet({
                 <item.Icon width={28} height={28} />
                 <View className="flex-1">
                   <View className="flex-row justify-between items-center">
-                    <Text className="text-[#006C70] text-[13px] font-lexendRegular">
+                    <Text className="text-[#006C70] text-[0.8125rem] font-lexendRegular">
                       {item.label}
                     </Text>
-                    <Text className="text-[#006C70] text-[18px] font-lexendRegular">
+                    <Text className="text-[#006C70] text-[1.125rem] font-lexendRegular">
                       {item.value}
                     </Text>
                   </View>
@@ -141,13 +141,13 @@ export default function DiagnosticListSheet({
                     <BrandTags size="small" brands={item.brands || []} />
                   )}
                   <View className="flex-row justify-between items-center mt-1">
-                    <Text className="text-[#879090] text-[10px] font-lexendRegular flex-1 mr-2">
+                    <Text className="text-[#879090] text-[0.625rem] font-lexendRegular flex-1 mr-2">
                       {item.sub}
                     </Text>
                     <View className="flex-row items-center gap-1">
                       {item.tag && item.tag.indexOf('N/A') === -1 && item.tag.indexOf('0') === -1 && (
                         <View className="bg-[#FEF597] px-2 py-0.5 rounded-full">
-                          <Text className="text-[#555] text-[8px] font-lexendRegular">
+                          <Text className="text-[#555] text-[0.5rem] font-lexendRegular">
                             {item.tag}
                           </Text>
                         </View>

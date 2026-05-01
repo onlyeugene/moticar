@@ -61,7 +61,7 @@ export const Header = ({ onClose }: { onClose: () => void }) => (
     <TouchableOpacity onPress={onClose}>
       <Ionicons name="chevron-back" size={24} color="#1A3B41" />
     </TouchableOpacity>
-    <Text className="text-[#00343F] font-lexendMedium text-[14px]">
+    <Text className="text-[#00343F] font-lexendMedium text-[0.875rem]">
       Select Item
     </Text>
     <TouchableOpacity onPress={onClose}>
@@ -100,7 +100,7 @@ export default function ItemSelectionSheet({
             selected ? "bg-[#00343F]" : "bg-[#002D36] opacity-50"
           }`}
         >
-          <Text className="text-white font-lexendBold text-[16px]">Save</Text>
+          <Text className="text-white font-lexendBold text-[1rem]">Save</Text>
         </TouchableOpacity>
       }
     >
@@ -124,7 +124,7 @@ export default function ItemSelectionSheet({
                 />
                 <Text
                   numberOfLines={2}
-                  className={`text-center text-[12px] font-lexendRegular mt-2 ${
+                  className={`text-center text-[0.75rem] font-lexendRegular mt-2 ${
                     isSelected ? "text-[#00343F]" : "text-[#00343F]"
                   }`}
                 >

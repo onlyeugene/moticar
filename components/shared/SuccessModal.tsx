@@ -41,11 +41,11 @@ export default function SuccessModal({
                />
             </View>
 
-            <Text className="text-[#00343F] text-[24px] font-lexendMedium text-center">
+            <Text className="text-[#00343F] text-[1.5rem] font-lexendMedium text-center">
               Success!
             </Text>
 
-            <Text className="text-[#00343F] text-[14px] font-lexendRegular text-center ">
+            <Text className="text-[#00343F] text-[0.875rem] font-lexendRegular text-center ">
               You have successfully added an {"\n"}expense to your timeline
             </Text>
           </View>

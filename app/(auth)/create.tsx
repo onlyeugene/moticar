@@ -108,17 +108,17 @@ export default function Login() {
           <CurrencySelector variant="auth" />
         </View>
         <View className="mt-10">
-          <Text className="text-white text-[32px] font-lexendMedium">
+          <Text className="text-white text-[2rem] font-lexendMedium">
             Create an account
           </Text>
-          <Text className="text-[#9BBABB] font-lexendRegular text-[16px] mt-2 leading-6">
+          <Text className="text-[#9BBABB] font-lexendRegular text-[1rem] mt-2 leading-6">
             Start by adding the details of your personal car for a{"\n"}rich
             user experience
           </Text>
         </View>
 
         <View className="mt-10">
-          <Text className="text-[#32717B] font-lexendMedium text-[14px] mb-3">
+          <Text className="text-[#32717B] font-lexendMedium text-[0.875rem] mb-3">
             Email Address
           </Text>
           <ControlledInput
@@ -144,7 +144,7 @@ export default function Login() {
               <Ionicons name="checkmark" size={16} color="#00232A" />
             )}
           </View>
-          <Text className="text-white font-lexendRegular text-[14px] ml-3">
+          <Text className="text-white font-lexendRegular text-[0.875rem] ml-3">
             I am over 18 years old
           </Text>
         </Pressable>
@@ -158,7 +158,7 @@ export default function Login() {
             {signup.isPending ? (
               <ActivityIndicator color="#00343F" />
             ) : (
-              <Text className={`font-lexendBold text-[16px] text-[#00343F]`}>
+              <Text className={`font-lexendBold text-[1rem] text-[#00343F]`}>
                 Signup
               </Text>
             )}
@@ -167,7 +167,7 @@ export default function Login() {
 
         <View className="mt-10 flex-row items-center justify-center gap-2">
           <View className="border-b border-[#204749] flex-1" />
-          <Text className="text-[#119EAC] font-lexendMedium text-[12px] border p-3 rounded-full border-[#204749]">
+          <Text className="text-[#119EAC] font-lexendMedium text-[0.75rem] border p-3 rounded-full border-[#204749]">
             OR
           </Text>
           <View className="border-b border-[#204749] flex-1" />
@@ -194,16 +194,31 @@ export default function Login() {
         <View className="flex-1" />
 
         <View className="mt-10 px-10 mb-9">
-          <Text className="text-[#31828E] text-center font-lexendMedium text-[14px] ">
+          <Text className="text-[#31828E] text-center font-lexendMedium text-[0.875rem] ">
             By signing up, you accept moticar’s{" "}
-            <Text className="text-[#FDEF56]">Terms of Service</Text> and
-            <Text className="text-[#FDEF56]">Membership Terms</Text>, and
+            <Text 
+              className="text-[#FDEF56]"
+              onPress={() => router.push("/screens/legal/terms-and-conditions")}
+            >
+              Terms of Service
+            </Text> and
+            <Text 
+              className="text-[#FDEF56]"
+              onPress={() => router.push("/screens/legal/membership-terms")}
+            >
+              Membership Terms
+            </Text>, and
             acknowledge the{" "}
-            <Text className="text-[#FDEF56]">Privacy Policy</Text>
+            <Text 
+              className="text-[#FDEF56]"
+              onPress={() => router.push("/screens/legal/privacy-policy")}
+            >
+              Privacy Policy
+            </Text>
           </Text>
 
           <View className="flex-row gap-2 items-center justify-center mt-6">
-            <Text className="text-[#FFFFFF] text-[16px] font-lexendMedium">
+            <Text className="text-[#FFFFFF] text-[1rem] font-lexendMedium">
               Already have an account?
             </Text>
             <TouchableOpacity
@@ -211,7 +226,7 @@ export default function Login() {
               disabled={signup.isPending}
             >
               <Text
-                className={`text-[#00AEB5] font-lexendBold text-[16px] ${signup.isPending ? "opacity-50" : ""}`}
+                className={`text-[#00AEB5] font-lexendBold text-[1rem] ${signup.isPending ? "opacity-50" : ""}`}
               >
                 Sign in
               </Text>

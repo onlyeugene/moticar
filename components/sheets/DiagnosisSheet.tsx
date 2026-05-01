@@ -128,14 +128,14 @@ export default function DiagnosisSheet({
       <View className="items-center justify-center mb-3">
         <LogoBlue />
       </View>
-      <Text className="text-[#013037] font-lexendRegular text-center text-[14px] mb-6">
+      <Text className="text-[#013037] font-lexendRegular text-center text-[0.875rem] mb-6">
         You are ready to carry out{"\n"}your diagonistic assessment
       </Text>
       <TouchableOpacity
         onPress={handleGenerate}
         className="bg-[#29D7DE] w-full py-4 rounded-full items-center"
       >
-        <Text className="text-[#00343F] font-lexendBold text-[14px]">
+        <Text className="text-[#00343F] font-lexendBold text-[0.875rem]">
           Get Car Advice
         </Text>
       </TouchableOpacity>
@@ -143,11 +143,11 @@ export default function DiagnosisSheet({
       <View className="border-b border-[#CED2DA] w-full mt-10" />
 
       <View className="mt-10">
-        <Text className="text-[#92999A] text-[10px] font-lexendRegular text-center">
+        <Text className="text-[#92999A] text-[0.625rem] font-lexendRegular text-center">
           This report is generated from your Moticar expense data and general{" "}
           {"\n"}maintenance guidelines for your vehicle type.
         </Text>
-        <Text className="text-[#92999A] text-[10px] font-lexendRegular text-center mt-5">
+        <Text className="text-[#92999A] text-[0.625rem] font-lexendRegular text-center mt-5">
           It is not a substitute for a professional mechanical inspection.{" "}
           {"\n"}Recommendations are suggestive, not diagnostic
         </Text>
@@ -195,23 +195,23 @@ export default function DiagnosisSheet({
             </G>
           </Svg>
           <View className="absolute top-1/2 items-center">
-            <Text className="text-[#131313] font-lexendMedium text-[32px]">
+            <Text className="text-[#131313] font-lexendMedium text-[2rem]">
               {days}/30
             </Text>
           </View>
         </View>
-        <Text className="text-[#888282] font-lexendRegular text-center text-[14px] -mt-4">
+        <Text className="text-[#888282] font-lexendRegular text-center text-[0.875rem] -mt-4">
           you can only carry out this{"\n"}exercise once in 30 days.
         </Text>
 
         <View className="border-b border-[#CED2DA] w-full mt-10" />
 
         <View className="mt-10">
-          <Text className="text-[#92999A] text-[10px] font-lexendRegular text-center">
+          <Text className="text-[#92999A] text-[0.625rem] font-lexendRegular text-center">
             This report is generated from your Moticar expense data and general{" "}
             {"\n"}maintenance guidelines for your vehicle type.
           </Text>
-          <Text className="text-[#92999A] text-[10px] font-lexendRegular text-center mt-5">
+          <Text className="text-[#92999A] text-[0.625rem] font-lexendRegular text-center mt-5">
             It is not a substitute for a professional mechanical inspection.{" "}
             {"\n"}Recommendations are suggestive, not diagnostic
           </Text>
@@ -221,7 +221,7 @@ export default function DiagnosisSheet({
             onPress={() => setState("result")}
             className="bg-[#29D7DE] w-full py-4 rounded-full items-center mt-8"
           >
-            <Text className="text-[#00343F] font-lexendBold text-[16px]">
+            <Text className="text-[#00343F] font-lexendBold text-[1rem]">
               View Last Report
             </Text>
           </TouchableOpacity>
@@ -241,7 +241,7 @@ export default function DiagnosisSheet({
         onPress={() => toggleSection(id)}
         className={`flex-row items-center justify-between py-4 ${expanded || id === "forecast" ? "" : "border-b border-[#92BEC1]"}`}
       >
-        <Text className="text-[#00343F] font-lexendBold text-[14px]">
+        <Text className="text-[#00343F] font-lexendBold text-[0.875rem]">
           {title}
         </Text>
         <Ionicons
@@ -276,22 +276,22 @@ export default function DiagnosisSheet({
                       <Ionicons name="car-outline" size={24} color="#EF1C39" />
                     </View>
                     <View>
-                      <Text className="text-[#484848] font-lexendBold text-[16px]">
+                      <Text className="text-[#484848] font-lexendBold text-[1rem]">
                         {car?.make} {car?.carModel}
                       </Text>
-                      <Text className="text-[#00AEB5] font-ukNumberPlate text-[18px] mt-2">
+                      <Text className="text-[#00AEB5] font-ukNumberPlate text-[1.125rem] mt-2">
                         {car?.plate || "N/A"}
                       </Text>
                     </View>
                   </View>
-                  <Text className="text-[#9F9F9F] text-[9px] font-lexendRegular leading-[15px]">
+                  <Text className="text-[#9F9F9F] text-[0.5625rem] font-lexendRegular leading-[15px]">
                     This score reflects your maintenance consistency, spending
                     patterns, and how your car's age and mileage compare to
                     recommended service intervals.
                   </Text>
                 </View>
                 <View className="items-center bg-[#EAFEFF] rounded-full w-[70px] h-[72px] flex justify-center">
-                  <Text className="text-[#7FA4A6] text-[9px] font-lexendSemiBold">
+                  <Text className="text-[#7FA4A6] text-[0.5625rem] font-lexendSemiBold">
                     Overall Score
                   </Text>
                   <Text className="text-[#29D7DE] text-[33px] font-lexendMedium">
@@ -307,7 +307,7 @@ export default function DiagnosisSheet({
               "Spending Summary",
               expandedSections.includes("spending"),
               <View>
-                <Text className="text-[#00343F] text-[12px] font-lexendRegular leading-5">
+                <Text className="text-[#00343F] text-[0.75rem] font-lexendRegular leading-5">
                   Total spent ({diagnosis.spendingSummary.periodMonths} months):{" "}
                   <Text className="">
                     {diagnosis.spendingSummary.currency}{" "}
@@ -328,7 +328,7 @@ export default function DiagnosisSheet({
                     .join(" ")}
                 </Text>
                 {diagnosis.spendingSummary.comparisonInsight && (
-                  <Text className="text-[#00343F] text-[12px] font-lexendRegular leading-5">
+                  <Text className="text-[#00343F] text-[0.75rem] font-lexendRegular leading-5">
                     {diagnosis.spendingSummary.comparisonInsight}
                   </Text>
                 )}
@@ -342,18 +342,18 @@ export default function DiagnosisSheet({
               <View className="gap-4">
                 {diagnosis.keyFindings.map((finding, i) => (
                   <View key={i} className="flex-row gap-2">
-                    <Text className="text-[#00343F] text-[12px] font-lexendBold">
+                    <Text className="text-[#00343F] text-[0.75rem] font-lexendBold">
                       {i + 1}.
                     </Text>
                     <View className="flex-1">
-                      <Text className="text-[#00343F] text-[12px] font-lexendBold mb-1">
+                      <Text className="text-[#00343F] text-[0.75rem] font-lexendBold mb-1">
                         {finding.title}
                       </Text>
-                      <Text className="text-[#425658] text-[12px] font-lexendRegular leading-5">
+                      <Text className="text-[#425658] text-[0.75rem] font-lexendRegular leading-5">
                         {finding.detail}
                       </Text>
                       {finding.recommendedAction && (
-                        <Text className="text-[#00AEB5] text-[11px] font-lexendSemiBold mt-1">
+                        <Text className="text-[#00AEB5] text-[0.6875rem] font-lexendSemiBold mt-1">
                           Action: {finding.recommendedAction}
                         </Text>
                       )}
@@ -370,7 +370,7 @@ export default function DiagnosisSheet({
               <View className="gap-2">
                 {diagnosis.maintenanceCalendar.map((item, i) => (
                   <View key={i} className="flex-row justify-between">
-                    <Text className="text-[#00343F] text-[12px] font-lexendRegular leading-5 flex-1">
+                    <Text className="text-[#00343F] text-[0.75rem] font-lexendRegular leading-5 flex-1">
                       {item.task} —{" "}
                       {item.dueDate
                         ? new Date(item.dueDate).toDateString()
@@ -378,7 +378,7 @@ export default function DiagnosisSheet({
                           ? `${item.dueMileage} km`
                           : "TBD"}
                     </Text>
-                    {/* <Text className={`text-[10px] font-lexendBold px-2 rounded ${item.priority === 'high' ? 'bg-red-100 text-red-600' : item.priority === 'medium' ? 'bg-orange-100 text-orange-600' : 'bg-blue-100 text-blue-600'}`}>
+                    {/* <Text className={`text-[0.625rem] font-lexendBold px-2 rounded ${item.priority === 'high' ? 'bg-red-100 text-red-600' : item.priority === 'medium' ? 'bg-orange-100 text-orange-600' : 'bg-blue-100 text-blue-600'}`}>
                       {item.priority.toUpperCase()}
                     </Text> */}
                   </View>
@@ -391,7 +391,7 @@ export default function DiagnosisSheet({
               "Cost Forecast",
               expandedSections.includes("forecast"),
               <View>
-                <Text className="text-[#00343F] text-[12px] font-lexendRegular leading-5">
+                <Text className="text-[#00343F] text-[0.75rem] font-lexendRegular leading-5">
                   {diagnosis.costForecast}
                 </Text>
               </View>,
@@ -399,14 +399,14 @@ export default function DiagnosisSheet({
             <View className="border-t border-[#CED2DA] my-2" />
 
             <View className="items-center mt-8 pb-10">
-              <Text className="text-[#92999A] text-[10px] font-lexendRegular text-center leading-[15px]">
+              <Text className="text-[#92999A] text-[0.625rem] font-lexendRegular text-center leading-[15px]">
                 This report is generated from your Moticar expense data and
                 general{"\n"}maintenance guidelines for your vehicle type.
                 {"\n\n"}
                 It is not a substitute for a professional mechanical inspection.
                 {"\n"}Recommendations are suggestive, not diagnostic.
               </Text>
-              <Text className="text-[#8C9698] font-lexendBold text-[12px] mt-4">
+              <Text className="text-[#8C9698] font-lexendBold text-[0.75rem] mt-4">
                 Generated: {new Date(diagnosis.generatedAt).toDateString()}
               </Text>
             </View>

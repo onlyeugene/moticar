@@ -59,7 +59,7 @@ const MetricCard = ({
       {warning && <Ionicons name="warning" size={12} color="#BA7C1B" />}
     </View>
     <View className="mt-auto">
-      <Text className="text-[#5E7A7C] font-lexendRegular text-[12px] mb-1">
+      <Text className="text-[#5E7A7C] font-lexendRegular text-[0.75rem] mb-1">
         {label}
       </Text>
       <Text className={`font-lexendRegular text-[23px] text-white`}>
@@ -114,11 +114,11 @@ const CircularProgress = ({
         />
       </Svg>
       <View className="absolute items-center justify-center">
-        <Text className="text-white font-lexendBold text-[18px]">
+        <Text className="text-white font-lexendBold text-[1.125rem]">
           {label || "--"}
         </Text>
         {subLabel && (
-          <Text className="text-[#81B4B4] font-lexendRegular text-[10px]">
+          <Text className="text-[#81B4B4] font-lexendRegular text-[0.625rem]">
             {subLabel}
           </Text>
         )}
@@ -165,7 +165,7 @@ export default function DiagnosticResults({ onCancel, report }: Props) {
       >
         {/* Main Health Score */}
         <View className="items-center justify-center ">
-          <Text className="text-[#7FA4A6] font-lexendSemiBold text-[14px]">
+          <Text className="text-[#7FA4A6] font-lexendSemiBold text-[0.875rem]">
             Car Health Score
           </Text>
           <Text className="text-white font-lexendMedium text-[53px]">
@@ -176,7 +176,7 @@ export default function DiagnosticResults({ onCancel, report }: Props) {
         {/* Top Indicators */}
         <View className="flex-row justify-around items-center my-4">
           <View className="items-center">
-            <Text className="text-[#7FA4A6] font-lexendSemiBold text-[14px] mb-2">
+            <Text className="text-[#7FA4A6] font-lexendSemiBold text-[0.875rem] mb-2">
               Fuel Range
             </Text>
             <CircularProgress
@@ -200,7 +200,7 @@ export default function DiagnosticResults({ onCancel, report }: Props) {
             <Plug width={51} height={28} />
           </View>
           <View className="items-center">
-            <Text className="text-[#7FA4A6] font-lexendSemiBold text-[14px] mb-2">
+            <Text className="text-[#7FA4A6] font-lexendSemiBold text-[0.875rem] mb-2">
               Next Service
             </Text>
             <CircularProgress

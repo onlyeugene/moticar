@@ -28,7 +28,7 @@ export function NameField({
 }) {
   return (
     <SectionCard>
-      <Text className="text-[#8B8B8B] font-lexendRegular text-[12px] mb-3">
+      <Text className="text-[#8B8B8B] font-lexendRegular text-[0.75rem] mb-3">
         Name of Reminder
       </Text>
       <TextInput
@@ -36,7 +36,7 @@ export function NameField({
         placeholderTextColor="#C1C3C3"
         value={value}
         onChangeText={onChange}
-        className="text-[#001A1F] font-lexendRegular text-[14px] border-b py-4 px-4 border-[#EFEFEF]"
+        className="text-[#001A1F] font-lexendRegular text-[0.875rem] border-b py-4 px-4 border-[#EFEFEF]"
       />
     </SectionCard>
   );
@@ -70,7 +70,7 @@ export function PillSelector({
         />
       )}
       <View className="flex-1">
-        <Text className="text-[#8B8B8B] font-lexendRegular text-[12px] mb-3">
+        <Text className="text-[#8B8B8B] font-lexendRegular text-[0.75rem] mb-3">
           {label} {required && <Text className="text-[#00AEB5]">*</Text>}
         </Text>
         <View className="flex-row flex-wrap gap-2">
@@ -85,7 +85,7 @@ export function PillSelector({
               }`}
             >
               <Text
-                className={`font-lexendRegular text-[12px] ${
+                className={`font-lexendRegular text-[0.75rem] ${
                   selected === opt ? "text-white" : "text-[#8B8B8B]"
                 }`}
               >
@@ -136,24 +136,24 @@ export function DateTimeRow({
           color="#8B8B8B"
           style={{ marginRight: 12 }}
         />
-        <Text className="flex-1 text-[#8B8B8B] font-lexendRegular text-[13px]">
+        <Text className="flex-1 text-[#8B8B8B] font-lexendRegular text-[0.8125rem]">
           {label}
           {required && <Text className="text-[#00AEB5]"> *</Text>}
         </Text>
         <View className="items-end">
           {date ? (
             <>
-              <Text className="text-[#001A1F] font-lexendRegular text-[13px]">
+              <Text className="text-[#001A1F] font-lexendRegular text-[0.8125rem]">
                 {format(date, "d MMMM, yyyy")}
               </Text>
               {relative ? (
-                <Text className="text-[#00AEB5] text-[10px] font-lexendRegular mt-0.5">
+                <Text className="text-[#00AEB5] text-[0.625rem] font-lexendRegular mt-0.5">
                   {relative}
                 </Text>
               ) : null}
             </>
           ) : (
-            <Text className="text-[#C1C3C3] font-lexendRegular text-[13px]">
+            <Text className="text-[#C1C3C3] font-lexendRegular text-[0.8125rem]">
               Select date
             </Text>
           )}
@@ -178,11 +178,11 @@ export function DateTimeRow({
             color="#8B8B8B"
             style={{ marginRight: 12 }}
           />
-          <Text className="flex-1 text-[#8B8B8B] font-lexendRegular text-[13px]">
+          <Text className="flex-1 text-[#8B8B8B] font-lexendRegular text-[0.8125rem]">
             Time
           </Text>
           <Text
-            className={`font-lexendRegular text-[13px] ${
+            className={`font-lexendRegular text-[0.8125rem] ${
               time ? "text-[#001A1F]" : "text-[#C1C3C3]"
             }`}
           >
@@ -224,12 +224,12 @@ export function DateRow({
         color="#8B8B8B"
         style={{ marginRight: 12 }}
       />
-      <Text className="flex-1 text-[#8B8B8B] font-lexendRegular text-[13px]">
+      <Text className="flex-1 text-[#8B8B8B] font-lexendRegular text-[0.8125rem]">
         {label}
         {required && <Text className="text-[#00AEB5]"> *</Text>}
       </Text>
       <Text
-        className={`font-lexendRegular text-[13px] ${date ? "text-[#001A1F]" : "text-[#C1C3C3]"}`}
+        className={`font-lexendRegular text-[0.8125rem] ${date ? "text-[#001A1F]" : "text-[#C1C3C3]"}`}
       >
         {date ? format(date, "d MMMM, yyyy") : "Select date"}
       </Text>
@@ -259,7 +259,7 @@ export function AmountBlock({
 
   return (
     <SectionCard>
-      <Text className="text-[#8B8B8B] font-lexendRegular text-[12px] mb-1 text-center">
+      <Text className="text-[#8B8B8B] font-lexendRegular text-[0.75rem] mb-1 text-center">
         {label} <Text className="text-[#00AEB5]">*</Text>
       </Text>
       <Text className="text-[#001A1F] font-lexendBold text-[34px] text-center mb-2">
@@ -288,7 +288,7 @@ export function PaymentMethod({
         style={{ marginRight: 12 }}
       />
       <View className="flex-1">
-        <Text className="text-[#8B8B8B] font-lexendRegular text-[12px] mb-3">
+        <Text className="text-[#8B8B8B] font-lexendRegular text-[0.75rem] mb-3">
           Method of Payment
         </Text>
         <View className="flex-row gap-2">
@@ -303,7 +303,7 @@ export function PaymentMethod({
               }`}
             >
               <Text
-                className={`font-lexendRegular text-[12px] ${
+                className={`font-lexendRegular text-[0.75rem] ${
                   selected === opt ? "text-white" : "text-[#AFB4B4]"
                 }`}
               >
@@ -328,7 +328,7 @@ export function SeverityPicker({
 }) {
   return (
     <View>
-      <Text className="text-[#8B8B8B] font-lexendRegular text-[12px] mb-3">
+      <Text className="text-[#8B8B8B] font-lexendRegular text-[0.75rem] mb-3">
         Tag Severity
       </Text>
       <View className="flex-row gap-2">
@@ -343,7 +343,7 @@ export function SeverityPicker({
             }`}
           >
             <Text
-              className={`font-lexendRegular text-[12px] ${
+              className={`font-lexendRegular text-[0.75rem] ${
                 selected === opt ? "text-white" : "text-[#AFB4B4]"
               }`}
             >
@@ -378,10 +378,10 @@ export function EmailToggle({
           thumbColor="white"
         />
         <View className="flex-1">
-          <Text className="text-[#000000] font-lexendMedium text-[14px] mb-0.5">
+          <Text className="text-[#000000] font-lexendMedium text-[0.875rem] mb-0.5">
             Also remind me via email
           </Text>
-          <Text className="text-[#8B8B8B] font-lexendRegular text-[11px]">
+          <Text className="text-[#8B8B8B] font-lexendRegular text-[0.6875rem]">
             we'll send a reminder to {email}
           </Text>
         </View>
@@ -401,7 +401,7 @@ export function NotesField({
 }) {
   return (
     <SectionCard>
-      <Text className="text-[#8B8B8B] font-lexendRegular text-[12px] mb-3">
+      <Text className="text-[#8B8B8B] font-lexendRegular text-[0.75rem] mb-3">
         Notes/Description
       </Text>
       <TextInput
@@ -410,7 +410,7 @@ export function NotesField({
         value={value}
         onChangeText={onChange}
         multiline
-        className="text-[#001A1F] font-lexendRegular text-[14px] min-h-[60px]"
+        className="text-[#001A1F] font-lexendRegular text-[0.875rem] min-h-[60px]"
       />
     </SectionCard>
   );

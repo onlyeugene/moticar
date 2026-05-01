@@ -110,16 +110,16 @@ export default function Otp() {
           </Pressable>
         </View>
         <View className="mt-10">
-          <Text className="text-white text-[32px] font-lexendMedium">
+          <Text className="text-white text-[2rem] font-lexendMedium">
             Verify Email
           </Text>
-          <Text className="text-[#9BBABB] font-lexendRegular text-[16px] mt-2 leading-6">
+          <Text className="text-[#9BBABB] font-lexendRegular text-[1rem] mt-2 leading-6">
             We just sent 5-digit code to {email || "your email"}, enter it
             below:
           </Text>
 
           <View className="mt-5">
-            <Text className="text-[#32717B] font-lexendRegular text-[12px] mb-2">
+            <Text className="text-[#32717B] font-lexendRegular text-[0.75rem] mb-2">
               Code
             </Text>
             <Controller
@@ -140,7 +140,7 @@ export default function Otp() {
               {verifyEmail.isPending ? (
                 <ActivityIndicator color="#00343F" />
               ) : (
-                <Text className="font-lexendBold text-[16px] text-[#00343F]">
+                <Text className="font-lexendBold text-[1rem] text-[#00343F]">
                   Verify Email
                 </Text>
               )}
@@ -148,7 +148,7 @@ export default function Otp() {
           </View>
 
           <View className="mt-6 items-center">
-            <Text className="text-[#7BA0A3] font-lexendRegular text-[16px]">
+            <Text className="text-[#7BA0A3] font-lexendRegular text-[1rem]">
               Didn't get code?{" "}
               <Text
                 onPress={handleResend}

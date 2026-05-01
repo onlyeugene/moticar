@@ -35,10 +35,10 @@ export default function Plug() {
 
           {/* Content */}
           <View className="mt-4">
-            <Text className="text-white text-[26px] font-lexendMedium">
+            <Text className="text-white text-[1.625rem] font-lexendMedium">
               Pairing your device
             </Text>
-            <Text className="text-[#9BBABB] font-lexendRegular text-[14px] mt-3">
+            <Text className="text-[#9BBABB] font-lexendRegular text-[0.875rem] mt-3">
               Please insert your motibuddie into the OBD2 port and start your car engine.
             </Text>
           </View>
@@ -50,7 +50,7 @@ export default function Plug() {
             onPress={() => router.push("/screens/motibuddie/imei")}
             className="w-full h-[50px] rounded-full bg-[#29D7DE] items-center justify-center"
           >
-            <Text className="font-lexendBold text-[16px] text-[#00343F]">
+            <Text className="font-lexendBold text-[1rem] text-[#00343F]">
               Start Pairing
             </Text>
           </Pressable>

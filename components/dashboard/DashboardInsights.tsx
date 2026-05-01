@@ -60,10 +60,10 @@ export default function DashboardInsights({
               <Ionicons name="bulb-outline" size={24} color="#00AEB5" />
             </View>
             <View className="flex-1">
-              <Text className="font-lexendBold text-[12px] text-[#404040]">
+              <Text className="font-lexendBold text-[0.75rem] text-[#404040]">
                 Insights
               </Text>
-              <Text className="text-[#1A3B41] font-lexendRegular text-[13px] leading-5">
+              <Text className="text-[#1A3B41] font-lexendRegular text-[0.8125rem] leading-5">
                 {currentItem.text}
               </Text>
             </View>

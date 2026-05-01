@@ -80,7 +80,7 @@ export default function AddCar() {
                   <ActivityIndicator size="small" color="#00AEB5" />
                 ) : (
                   <>
-                    <Text className="text-[#00AEB5] font-lexendMedium text-[16px]">
+                    <Text className="text-[#00AEB5] font-lexendMedium text-[1rem]">
                       Skip
                     </Text>
                     <Ionicons
@@ -95,10 +95,10 @@ export default function AddCar() {
           </View>
 
           <View className="mt-8">
-            <Text className="text-white text-[26px] font-lexendMedium">
+            <Text className="text-white text-[1.625rem] font-lexendMedium">
               Add your car details
             </Text>
-            <Text className="text-[#9BBABB] font-lexendRegular text-[14px] mt-2 leading-6">
+            <Text className="text-[#9BBABB] font-lexendRegular text-[0.875rem] mt-2 leading-6">
               Start by adding the details of your personal car for a {"\n"}rich
               user experience
             </Text>
@@ -115,22 +115,22 @@ export default function AddCar() {
               <View className="mb-4">
                 <MotiBuddieIcon width={68} height={52} />
               </View>
-              <Text className="text-white text-[16px] font-lexendMedium text-center">
+              <Text className="text-white text-[1rem] font-lexendMedium text-center">
                 Plug motiBuddie
               </Text>
-              <Text className="text-[#9BBABB] text-[12px] font-lexendRegular text-center mt-2">
+              <Text className="text-[#9BBABB] text-[0.75rem] font-lexendRegular text-center mt-2">
                 Get better precision on your car info using OBD2 device
               </Text>
 
               <View className="flex-row gap-4 mt-4 items-end">
                 <Pressable>
-                  <Text className="text-primary font-lexendRegular text-[12px]">
+                  <Text className="text-primary font-lexendRegular text-[0.75rem]">
                     Where to plug
                   </Text>
                 </Pressable>
                 <View className="rounded-full border border-[#9BBABB] bg-[#9BBABB] h-[2px] w-[2px]" />
                 <Pressable>
-                  <Text className="text-primary font-lexendRegular text-[12px]">
+                  <Text className="text-primary font-lexendRegular text-[0.75rem]">
                     Where to Buy
                   </Text>
                 </Pressable>
@@ -152,10 +152,10 @@ export default function AddCar() {
                   </View>
                 </View>
                 <View>
-                  <Text className="text-white text-[16px] font-lexendBold text-center">
+                  <Text className="text-white text-[1rem] font-lexendBold text-center">
                     Take Pictures
                   </Text>
-                  <Text className="text-[#9BBABB] text-[12px] font-lexendRegular text-center">
+                  <Text className="text-[#9BBABB] text-[0.75rem] font-lexendRegular text-center">
                     Get info by taking 3 photos of your car
                   </Text>
                 </View>
@@ -174,10 +174,10 @@ export default function AddCar() {
                   </View>
                 </View>
                 <View>
-                  <Text className="text-white text-[16px] font-lexendBold text-center">
+                  <Text className="text-white text-[1rem] font-lexendBold text-center">
                     Enter Manually
                   </Text>
-                  <Text className="text-[#9BBABB] text-[12px] font-lexendRegular text-center">
+                  <Text className="text-[#9BBABB] text-[0.75rem] font-lexendRegular text-center">
                     Doing it the crude way and entering data
                   </Text>
                 </View>
@@ -204,7 +204,7 @@ export default function AddCar() {
               !selectedOption ? "bg-[#09515D]/60" : "bg-[#29D7DE]"
             }`}
           >
-            <Text className="font-lexendBold text-[16px] text-[#00343F]">
+            <Text className="font-lexendBold text-[1rem] text-[#00343F]">
               Next
             </Text>
           </Pressable>

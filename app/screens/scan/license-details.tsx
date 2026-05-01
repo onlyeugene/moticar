@@ -96,7 +96,7 @@ export default function LicenseDetailsScreen() {
           <View className="bg-[#E8E7DC] px-6 pt-6 pb-4">
             <View className="flex-row justify-between items-center mb-4">
               <View className="flex-1" />
-              <Text className="text-[#767674] font-lexendRegular text-[14px] text-center">
+              <Text className="text-[#767674] font-lexendRegular text-[0.875rem] text-center">
                 This is what we got
               </Text>
               <TouchableOpacity
@@ -126,7 +126,7 @@ export default function LicenseDetailsScreen() {
           </View>
 
           <View className="items-center mt-8">
-            <Text className="text-[#A8A477] font-lexendMedium text-[12px] uppercase tracking-widest">
+            <Text className="text-[#A8A477] font-lexendMedium text-[0.75rem] uppercase tracking-widest">
               Information Extracted
             </Text>
           </View>
@@ -218,7 +218,7 @@ export default function LicenseDetailsScreen() {
               activeOpacity={0.8}
               className="h-16 rounded-[24px] items-center justify-center bg-[#FBE74C]"
             >
-              <Text className="text-[#00343F] font-lexendBold text-[16px]">
+              <Text className="text-[#00343F] font-lexendBold text-[1rem]">
                 That's correct
               </Text>
             </TouchableOpacity>

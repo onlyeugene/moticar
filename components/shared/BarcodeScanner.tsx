@@ -69,10 +69,10 @@ export default function BarcodeScanner({
       <Modal visible={isVisible} animationType="slide">
         <View className="flex-1 bg-[#00171B] items-center justify-center p-6">
           <Ionicons name="camera-outline" size={64} color="#29D7DE" />
-          <Text className="text-white text-[20px] font-lexendMedium mt-6 text-center">
+          <Text className="text-white text-[1.25rem] font-lexendMedium mt-6 text-center">
             Camera Permission Needed
           </Text>
-          <Text className="text-[#9BBABB] text-[15px] font-lexendRegular mt-4 text-center leading-6">
+          <Text className="text-[#9BBABB] text-[0.9375rem] font-lexendRegular mt-4 text-center leading-6">
             We need your permission to use the camera to scan the device barcode.
           </Text>
           <TouchableOpacity

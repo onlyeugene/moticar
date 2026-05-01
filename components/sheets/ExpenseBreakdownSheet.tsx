@@ -105,7 +105,7 @@ export default function ExpenseBreakdownSheet({
       <View className="flex-1 h-[1px] bg-[#F8953A]" />
       <View className="bg-[#FFF2C5] border border-[#F8953A] rounded-[4px] px-3 py-1.5 flex-row items-center gap-2 ">
         <Ionicons name="warning-outline" size={14} color="#F8953A" />
-        <Text className="text-[#425658] text-[10px] font-lexendRegular">
+        <Text className="text-[#425658] text-[0.625rem] font-lexendRegular">
           You exceeded your set monthly budget on{" "}
           <Text className="font-lexendBold">
             {currencySymbol}
@@ -167,16 +167,16 @@ export default function ExpenseBreakdownSheet({
   const title = (
     <View className="flex-col items-start gap-2">
       <View className="flex-row items-baseline gap-1">
-        <Text className="text-[#00343F] text-[16px] font-lexendBold">
+        <Text className="text-[#00343F] text-[1rem] font-lexendBold">
           Expense Breakdown
         </Text>
-        <Text className="text-[#8B8B8B] text-[12px] font-lexendRegular">
+        <Text className="text-[#8B8B8B] text-[0.75rem] font-lexendRegular">
           • {filterScale}
         </Text>
       </View>
-      <Text className="text-[#8B8B8B] text-[12px] font-lexendRegular">
+      <Text className="text-[#8B8B8B] text-[0.75rem] font-lexendRegular">
         Total{" "}
-        <Text className="text-[#00AEB5] text-[13px] font-lexendSemiBold">
+        <Text className="text-[#00AEB5] text-[0.8125rem] font-lexendSemiBold">
           {currencySymbol}
           {totalAmount.toLocaleString()}
         </Text>
@@ -200,7 +200,7 @@ export default function ExpenseBreakdownSheet({
             placeholder="Search"
             value={searchQuery}
             onChangeText={setSearchQuery}
-            className="flex-1 font-lexendRegular text-[14px] text-[#9A9A9A]"
+            className="flex-1 font-lexendRegular text-[0.875rem] text-[#9A9A9A]"
             placeholderTextColor="#C1C3C3"
           />
           <Ionicons name="search" size={20} color="#C1C3C3" />
@@ -210,7 +210,7 @@ export default function ExpenseBreakdownSheet({
         <View className="mt-6">
           {filteredGroupKeys.map((dateKey) => (
             <View key={dateKey} className="mb-6">
-              <Text className="text-[#6C6C70] font-lexendMedium text-[14px] mb-2">
+              <Text className="text-[#6C6C70] font-lexendMedium text-[0.875rem] mb-2">
                 {dateKey}
               </Text>
               {groupedExpenses[dateKey]
@@ -266,7 +266,7 @@ export default function ExpenseBreakdownSheet({
           onPress={() => setIsScaleMenuOpen(false)}
         >
           <View className="bg-white rounded-t-[24px] p-6 pb-12 shadow-lg">
-            <Text className="text-[#001A1F] text-[18px] font-lexendBold mb-4">
+            <Text className="text-[#001A1F] text-[1.125rem] font-lexendBold mb-4">
               Filter By Period
             </Text>
             {(["Weekly", "Monthly", "Yearly", "All Time"] as const).map((opt) => (
@@ -279,7 +279,7 @@ export default function ExpenseBreakdownSheet({
                 }}
               >
                 <Text
-                  className={`text-[16px] ${filterScale === opt ? "text-[#00AEB5] font-lexendBold" : "text-[#879090] font-lexendRegular"}`}
+                  className={`text-[1rem] ${filterScale === opt ? "text-[#00AEB5] font-lexendBold" : "text-[#879090] font-lexendRegular"}`}
                 >
                   {opt}
                 </Text>

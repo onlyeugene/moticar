@@ -79,10 +79,10 @@ export default function ForgotPassword() {
         </View>
 
         <View className="mt-8">
-          <Text className="text-white text-[26px] font-lexendMedium leading-10">
+          <Text className="text-white text-[1.625rem] font-lexendMedium leading-10">
             Reset Password
           </Text>
-          <Text className="text-[#9BBABB] font-lexendRegular text-[14px] mt-2 leading-6">
+          <Text className="text-[#9BBABB] font-lexendRegular text-[0.875rem] mt-2 leading-6">
             Enter the email associated with your moticar account
           </Text>
         </View>
@@ -110,7 +110,7 @@ export default function ForgotPassword() {
             {forgotPassword.isPending ? (
               <ActivityIndicator color="#00343F" />
             ) : (
-              <Text className="font-lexendBold text-[16px] text-[#00343F]">
+              <Text className="font-lexendBold text-[1rem] text-[#00343F]">
                 Reset password
               </Text>
             )}

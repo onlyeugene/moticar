@@ -119,7 +119,7 @@ export default function CurrencySelector({
           className="flex-row items-center gap-2"
         >
           <currentLang.flag width={20} height={20} />
-          <Text className="text-white font-lexendSemiBold text-[15px]">
+          <Text className="text-white font-lexendSemiBold text-[0.9375rem]">
             {currentCurrency.symbol}
           </Text>
           <Ionicons name="chevron-down" size={14} color="#5E858C" />
@@ -133,7 +133,7 @@ export default function CurrencySelector({
         className="bg-[#00AEB5]/20 px-3 py-1.5 rounded-full border border-[#00AEB5]/30 flex-row items-center gap-1.5"
       >
         <currentLang.flag width={16} height={16} />
-        <Text className="text-[#00AEB5] font-lexendMedium text-[12px]">
+        <Text className="text-[#00AEB5] font-lexendMedium text-[0.75rem]">
           {currentCurrency.value}
         </Text>
         <View className="w-1.5 h-1.5 bg-[#00AEB5] rounded-full" />
@@ -158,12 +158,12 @@ export default function CurrencySelector({
           <View className="bg-[#00232A] rounded-t-[40px] p-8 border-t border-[#09515D]/60 shadow-2xl">
             <View className="w-12 h-1.5 bg-[#09515D]/60 rounded-full self-center mb-8" />
 
-            <Text className="text-white text-[22px] font-lexendBold mb-6">
+            <Text className="text-white text-[1.375rem] font-lexendBold mb-6">
               Preferences
             </Text>
 
             {/* Language Section */}
-            <Text className="text-[#9BBABB] font-lexendBold text-[10px] uppercase mb-3 tracking-widest px-1">
+            <Text className="text-[#9BBABB] font-lexendBold text-[0.625rem] uppercase mb-3 tracking-widest px-1">
               Preferred Language (Flag)
             </Text>
             <ScrollView
@@ -189,7 +189,7 @@ export default function CurrencySelector({
                    
                   
                     <Text
-                      className="text-[12px] text-white font-lexendRegular mt-2 text-center"
+                      className="text-[0.75rem] text-white font-lexendRegular mt-2 text-center"
                       numberOfLines={1}
                     >
                       {item.label.split(" ")[0]}
@@ -200,7 +200,7 @@ export default function CurrencySelector({
             </ScrollView>
 
             {/* Currency Section */}
-            <Text className="text-[#9BBABB] font-lexendBold text-[10px] uppercase mb-3 tracking-widest px-1">
+            <Text className="text-[#9BBABB] font-lexendBold text-[0.625rem] uppercase mb-3 tracking-widest px-1">
               Preferred Currency (Symbol)
             </Text>
             <ScrollView
@@ -224,17 +224,17 @@ export default function CurrencySelector({
                       <item.icon width={28} height={28} />
                     ) : (
                       <View className="w-7 h-7 rounded-full bg-[#09515D]/40 items-center justify-center border border-[#09515D]">
-                        <Text className="text-white font-lexendSemiBold text-[10px] uppercase">
+                        <Text className="text-white font-lexendSemiBold text-[0.625rem] uppercase">
                           {item.value.slice(0, 2)}
                         </Text>
                       </View>
                     )}
                     <View className="flex-row items-center flex-wrap gap-1">
-                      <Text className={`font-lexendRegular text-[14px] ${currentCurrency.value === item.value ? "text-[#FFFFFF]" : "text-[#9BBABB]"}`}>
+                      <Text className={`font-lexendRegular text-[0.875rem] ${currentCurrency.value === item.value ? "text-[#FFFFFF]" : "text-[#9BBABB]"}`}>
                         {item.label}
                       </Text>
                       <View className="rounded-[4px] px-2 py-0.5 bg-[#5E9597] border border-[#5E9597] justify-center ml-1">
-                        <Text className="text-[#002E35] uppercase font-lexendSemiBold text-[8px]">
+                        <Text className="text-[#002E35] uppercase font-lexendSemiBold text-[0.5rem]">
                           {item.country}
                         </Text>
                       </View>
@@ -242,7 +242,7 @@ export default function CurrencySelector({
                   </View>
 
                   <View className="flex-row items-center gap-3">
-                    <Text className={`font-lexendBold text-[14px] ${currentCurrency.value === item.value ? "text-[#00AEB5]" : "text-[#9BBABB]"}`}>
+                    <Text className={`font-lexendBold text-[0.875rem] ${currentCurrency.value === item.value ? "text-[#00AEB5]" : "text-[#9BBABB]"}`}>
                       {item.symbol}
                     </Text>
                     <View className={`p-1.5 rounded-full ${currentCurrency.value === item.value ? "bg-[#00AEB5]" : "bg-[#09515D]"}`}>
@@ -257,7 +257,7 @@ export default function CurrencySelector({
               onPress={() => setShowModal(false)}
               className="mt-6 mb-4 w-full h-[55px] rounded-2xl items-center justify-center bg-[#09515D]/30"
             >
-              <Text className="text-[#9BBABB] font-lexendBold text-[16px]">
+              <Text className="text-[#9BBABB] font-lexendBold text-[1rem]">
                 Done
               </Text>
             </TouchableOpacity>

@@ -105,14 +105,14 @@ export default function DiagnosticDetailSheet({
     >
       <View className="flex-row items-center gap-2 px-2">
         <HomeIcon width={20} height={20} />
-        <Text className="text-[#00AEB5] text-[14px] font-lexendSemiBold">
+        <Text className="text-[#00AEB5] text-[0.875rem] font-lexendSemiBold">
           Diagnostic Checklist
         </Text>
       </View>
       <View className=" pb-10 px-2">
         {/* Item header */}
         <View className="flex-row justify-between items-center mb-6 mt-2">
-          <Text className="text-[#00343F] text-[22px] font-lexendSemiBold">
+          <Text className="text-[#00343F] text-[1.375rem] font-lexendSemiBold">
             {item?.label}
           </Text>
           <View className="bg-[#FFFFFF] w-[96px] h-[100px] rounded-lg flex items-center justify-center">
@@ -126,10 +126,10 @@ export default function DiagnosticDetailSheet({
             key={d.label}
             className="flex-row justify-between items-center py-4 border-b border-[#C1C3C3]"
           >
-            <Text className="text-[#001A1F] text-[14px] font-lexendRegular">
+            <Text className="text-[#001A1F] text-[0.875rem] font-lexendRegular">
               {d.label}
             </Text>
-            <Text className="text-[#006C70] text-[20px] font-lexendSemiBold">
+            <Text className="text-[#006C70] text-[1.25rem] font-lexendSemiBold">
               {d.value}
             </Text>
           </View>
@@ -138,7 +138,7 @@ export default function DiagnosticDetailSheet({
         {/* Brands/Manufacturers Section */}
         {item?.brands && item.brands.length > 0 && (
           <View className="py-4 border-b border-[#C1C3C3]">
-            <Text className="text-[#001A1F] text-[14px] font-lexendRegular mb-3">
+            <Text className="text-[#001A1F] text-[0.875rem] font-lexendRegular mb-3">
               {item.key === "tyres" ? "Manufacturers" : "Reputable Brands"}
             </Text>
             <BrandTags width={60} height={15} brands={item.brands} />
@@ -150,13 +150,13 @@ export default function DiagnosticDetailSheet({
           onPress={onRecordExpense}
           className="bg-[#29D7DE] h-[52px] rounded-full items-center justify-center mt-6 mb-4"
         >
-          <Text className="text-[#00343F] text-[16px] font-lexendBold">
+          <Text className="text-[#00343F] text-[1rem] font-lexendBold">
             Record an Expense
           </Text>
         </TouchableOpacity>
 
         {/* What next */}
-        <Text className="text-[#00343F] text-[14px] font-lexendSemiBold mb-3 mt-3">
+        <Text className="text-[#00343F] text-[0.875rem] font-lexendSemiBold mb-3 mt-3">
           What next?
         </Text>
 
@@ -166,7 +166,7 @@ export default function DiagnosticDetailSheet({
         >
           <View className="flex-row items-center gap-2">
             <Ionicons name="alarm-outline" size={24} color="#29D7DE" />
-            <Text className="text-[#006C70] text-[14px] font-lexendRegular">
+            <Text className="text-[#006C70] text-[0.875rem] font-lexendRegular">
               Set a reminder
             </Text>
           </View>
@@ -180,7 +180,7 @@ export default function DiagnosticDetailSheet({
           >
             <View className="flex-row items-center gap-2">
               <Ionicons name="location-outline" size={24} color="#29D7DE" />
-              <Text className="text-[#006C70] text-[14px] font-lexendRegular">
+              <Text className="text-[#006C70] text-[0.875rem] font-lexendRegular">
                 Find a fuel station near you
               </Text>
             </View>
@@ -192,7 +192,7 @@ export default function DiagnosticDetailSheet({
         {showFuelStations && (
           <View className="bg-[#FFE5E5] px-4 py-3 rounded-[10px] flex-row items-center gap-2">
             <Ionicons name="warning-outline" size={14} color="#E53935" />
-            <Text className="text-[#E53935] text-[11px] font-lexendRegular flex-1">
+            <Text className="text-[#E53935] text-[0.6875rem] font-lexendRegular flex-1">
               Your gauge is left with only 13% capacity
             </Text>
           </View>

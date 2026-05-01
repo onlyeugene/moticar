@@ -76,7 +76,7 @@ export default function EditBudgetSheet({
           disabled={isPending}
           className="bg-[#29D7DE] px-5 py-1.5 rounded-full"
         >
-          <Text className="text-white font-lexendSemiBold text-[14px]">
+          <Text className="text-white font-lexendSemiBold text-[0.875rem]">
             {isPending ? <ActivityIndicator /> : "Save"}
           </Text>
         </TouchableOpacity>

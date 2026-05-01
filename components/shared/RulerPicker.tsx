@@ -9,16 +9,17 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { rf, s, vs } from "@/utils/responsive";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 // Each item in FlatList = step units (passed via prop)
-const SUB_TICK_WIDTH = 10; // Balanced breathable spacing
+const SUB_TICK_WIDTH = s(10); // Balanced breathable spacing
 const STEP_WIDTH = SUB_TICK_WIDTH;
 const CENTER_OFFSET = SCREEN_WIDTH / 2;
-const RULER_HEIGHT = 60; // Increased to float labels higher
-const MAJOR_TICK_HEIGHT = 40;
-const MINOR_TICK_HEIGHT = 20;
+const RULER_HEIGHT = vs(60); // Increased to float labels higher
+const MAJOR_TICK_HEIGHT = vs(40);
+const MINOR_TICK_HEIGHT = vs(20);
 
 interface RulerPickerProps {
   min?: number;
@@ -159,10 +160,10 @@ export const RulerPicker = ({
           <Text
             style={{
               color: "#6A9A9B",
-              fontSize: 10,
+              fontSize: rf(10),
               position: "absolute",
-              top: 5,
-              width: 100,
+              top: vs(5),
+              width: s(100),
               textAlign: "center",
               fontFamily: "Lexend-Regular",
               letterSpacing: -0.3,
@@ -197,8 +198,8 @@ export const RulerPicker = ({
         style={{
           color: "#4FB8C8",
           fontFamily: "LexendDeca-Medium",
-          fontSize: 12,
-          marginBottom: 4,
+          fontSize: rf(12),
+          marginBottom: vs(4),
         }}
       >
         {title}
@@ -218,7 +219,7 @@ export const RulerPicker = ({
           style={{
             color: "white",
             fontFamily: "LexendDeca-Bold",
-            fontSize: 32,
+            fontSize: rf(32),
           }}
         >
           {unitPrefix}
@@ -238,7 +239,7 @@ export const RulerPicker = ({
           style={{
             color: "white",
             fontFamily: "LexendDeca-Bold",
-            fontSize: 32,
+            fontSize: rf(32),
             padding: 0,
             textAlign: "center",
           }}
@@ -321,12 +322,12 @@ export const RulerPicker = ({
           pointerEvents="none"
           style={{
             position: "absolute",
-            left: CENTER_OFFSET - 1.5,
+            left: CENTER_OFFSET - s(1.5),
             bottom: 0,
-            width: 3,
-            height: 75,
+            width: s(3),
+            height: vs(75),
             backgroundColor: "#00AEB5",
-            borderRadius: 1.5,
+            borderRadius: s(1.5),
             zIndex: 10,
           }}
         />

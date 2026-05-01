@@ -38,10 +38,10 @@ export default function MileageTracker({
           <View className="w-full">
             <View className="flex-row justify-between items-center">
               <View>
-                <Text className="text-[#000000] font-lexendMedium text-[20px]">
+                <Text className="text-[#000000] font-lexendMedium text-[1.25rem]">
                   Mileage Tracker
                 </Text>
-                <Text className="text-[#4A8588] font-lexendRegular text-[12px] mt-1">
+                <Text className="text-[#4A8588] font-lexendRegular text-[0.75rem] mt-1">
                   No entry has been recorded
                 </Text>
               </View>
@@ -71,10 +71,10 @@ export default function MileageTracker({
           {/* Header */}
           <View className="flex-row justify-between items-start">
             <View>
-              <Text className="text-[#000000] font-lexendBold text-[20px]">
+              <Text className="text-[#000000] font-lexendBold text-[1.25rem]">
                 Mileage Tracker
               </Text>
-              <Text className="text-[#4A8588] font-lexendRegular text-[12px] mt-0.5">
+              <Text className="text-[#4A8588] font-lexendRegular text-[0.75rem] mt-0.5">
                 {getDaysAgo(updatedAt)}
               </Text>
             </View>
@@ -94,11 +94,11 @@ export default function MileageTracker({
             <View className="items-end">
               <View className="flex-row items-end gap-1.5">
                 <View className="bg-[#F8E761] px-2.5 py-1 rounded-[5px] items-center justify-center">
-                  <Text className="text-[#425658] font-lexendRegular text-[10px] text-center tracking-wider">
+                  <Text className="text-[#425658] font-lexendRegular text-[0.625rem] text-center tracking-wider">
                     {entriesCount} Entries
                   </Text>
                 </View>
-                <Text className="text-[#006C70] font-lexendMedium text-[32px] leading-[38px] tracking-tight">
+                <Text className="text-[#006C70] font-lexendMedium text-[2rem] leading-[38px] tracking-tight">
                   {mileage.toLocaleString()}
                 </Text>
               </View>

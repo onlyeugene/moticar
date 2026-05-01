@@ -103,7 +103,7 @@ export default function Search() {
           <View className="flex-1">
             <View className="flex-row justify-between items-center">
               <Text
-                className={`font-lexendRegular text-[14px] ${active ? "text-[#FFFFFF]" : "text-[#94ADAD]"}`}
+                className={`font-lexendRegular text-[0.875rem] ${active ? "text-[#FFFFFF]" : "text-[#94ADAD]"}`}
               >
                 {car.model}
               </Text>
@@ -115,7 +115,7 @@ export default function Search() {
                   color={active ? "#29D7DE" : "#406065"} 
                 />
                 <View className="bg-[#5E9597] px-2 py-0.5 rounded">
-                  <Text className="text-[#002E35] font-lexendMedium text-[8px] uppercase">
+                  <Text className="text-[#002E35] font-lexendMedium text-[0.5rem] uppercase">
                     {car.class || "SUV"}
                   </Text>
                 </View>
@@ -171,10 +171,10 @@ export default function Search() {
             </View>
 
             <View className="mt-8">
-              <Text className="text-white text-[32px] font-lexendMedium">
+              <Text className="text-white text-[2rem] font-lexendMedium">
                 Search for your car
               </Text>
-              <Text className="text-[#9BBABB] font-lexendRegular text-[14px] mt-2 leading-6">
+              <Text className="text-[#9BBABB] font-lexendRegular text-[0.875rem] mt-2 leading-6">
                 Start by adding the details of your personal car for a rich user
                 experience
               </Text>
@@ -211,7 +211,7 @@ export default function Search() {
                   size={48}
                   color="#ED5E5E"
                 />
-                <Text className="text-white font-lexendBold text-[18px] mt-4">
+                <Text className="text-white font-lexendBold text-[1.125rem] mt-4">
                   Network Error
                 </Text>
                 <Text className="text-[#9BBABB] font-lexendRegular text-center mt-2 px-6">

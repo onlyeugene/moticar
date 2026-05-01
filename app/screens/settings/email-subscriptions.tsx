@@ -56,10 +56,10 @@ export default function EmailSubscriptionsScreen() {
         </View>
 
         <View className="mt-10 mb-8">
-          <Text className="text-white text-[32px] font-lexendMedium">
+          <Text className="text-white text-[2rem] font-lexendMedium">
             Email Subscriptions
           </Text>
-          <Text className="text-[#9BBABB] font-lexendRegular text-[16px] mt-2 leading-6">
+          <Text className="text-[#9BBABB] font-lexendRegular text-[1rem] mt-2 leading-6">
             Manage the emails you receive from us.
           </Text>
         </View>
@@ -67,10 +67,10 @@ export default function EmailSubscriptionsScreen() {
         <View className="bg-[#002227] border border-[#09515D] rounded-[16px] p-4">
           <View className="flex-row items-center justify-between pb-4 border-b border-[#09515D]">
             <View className="flex-1 pr-4">
-              <Text className="text-white text-[16px] font-lexendMedium mb-1">
+              <Text className="text-white text-[1rem] font-lexendMedium mb-1">
                 Announcements & Updates
               </Text>
-              <Text className="text-[#7BA0A3] text-[12px] font-lexendRegular leading-5">
+              <Text className="text-[#7BA0A3] text-[0.75rem] font-lexendRegular leading-5">
                 Receive important updates, product announcements, and personalized Motiversery reminders.
               </Text>
             </View>
@@ -91,7 +91,7 @@ export default function EmailSubscriptionsScreen() {
 
           <View className="pt-4 flex-row items-start gap-2">
             <Ionicons name="information-circle-outline" size={16} color="#7BA0A3" />
-            <Text className="flex-1 text-[#7BA0A3] text-[11px] font-lexendRegular leading-4">
+            <Text className="flex-1 text-[#7BA0A3] text-[0.6875rem] font-lexendRegular leading-4">
               Critical updates like password resets or security alerts cannot be disabled.
             </Text>
           </View>

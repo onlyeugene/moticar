@@ -89,16 +89,16 @@ export default function ChangePasswordScreen() {
         </View>
 
         <View className="mt-10">
-          <Text className="text-white text-[32px] font-lexendMedium">
+          <Text className="text-white text-[2rem] font-lexendMedium">
             Change Password
           </Text>
-          <Text className="text-[#9BBABB] font-lexendRegular text-[16px] mt-2 leading-6">
+          <Text className="text-[#9BBABB] font-lexendRegular text-[1rem] mt-2 leading-6">
             Enter your current password and pick a new one.
           </Text>
         </View>
 
         <View className="mt-10">
-          <Text className="text-[#32717B] font-lexendMedium text-[14px] mb-3">
+          <Text className="text-[#32717B] font-lexendMedium text-[0.875rem] mb-3">
             Current Password
           </Text>
           <ControlledInput
@@ -112,7 +112,7 @@ export default function ChangePasswordScreen() {
         </View>
 
         <View className="mt-4">
-          <Text className="text-[#32717B] font-lexendMedium text-[14px] mb-3">
+          <Text className="text-[#32717B] font-lexendMedium text-[0.875rem] mb-3">
             New Password
           </Text>
           <ControlledInput
@@ -126,7 +126,7 @@ export default function ChangePasswordScreen() {
         </View>
 
         <View className="mt-4">
-          <Text className="text-[#32717B] font-lexendMedium text-[14px] mb-3">
+          <Text className="text-[#32717B] font-lexendMedium text-[0.875rem] mb-3">
             Confirm New Password
           </Text>
           <ControlledInput
@@ -148,7 +148,7 @@ export default function ChangePasswordScreen() {
             {changePassword.isPending ? (
               <ActivityIndicator color="#00343F" />
             ) : (
-              <Text className="font-lexendBold text-[16px] text-[#00343F]">
+              <Text className="font-lexendBold text-[1rem] text-[#00343F]">
                 Update Password
               </Text>
             )}

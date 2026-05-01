@@ -35,23 +35,23 @@ export default function MilestoneCard({
         <View className="flex-row items-start gap-4">
           <View className="items-center w-10">
             <Speedometer width={28} height={28} />
-            <Text className="text-[#AFB4B4] font-lexendRegular text-[10px] mt-1">
+            <Text className="text-[#AFB4B4] font-lexendRegular text-[0.625rem] mt-1">
               {format(new Date(milestone.timestamp), "HH:mm")}
             </Text>
           </View>
           
           <View className="flex-1">
             <View className="flex-row items-baseline gap-2">
-              <Text className="text-[#001A1F] font-lexendMedium text-[16px]">
+              <Text className="text-[#001A1F] font-lexendMedium text-[1rem]">
                 {milestone.mileage.toLocaleString()}
               </Text>
               {delta !== undefined && delta > 0 && (
-                <Text className="text-[#919D9D] font-lexendRegular text-[14px]">
+                <Text className="text-[#919D9D] font-lexendRegular text-[0.875rem]">
                   + {delta.toLocaleString()}
                 </Text>
               )}
             </View>
-            <Text className="text-[#5D8689] font-lexendRegular text-[10px]">
+            <Text className="text-[#5D8689] font-lexendRegular text-[0.625rem]">
               {milestone.description || (isMoticode ? "Moticode auto-sync" : "Manual mileage update")}
             </Text>
           </View>
@@ -59,7 +59,7 @@ export default function MilestoneCard({
 
         <View className="items-end">
           {gpsDistance !== undefined && gpsDistance > 0 && (
-            <Text className="text-[#00AEB5] font-lexendMedium text-[12px]">
+            <Text className="text-[#00AEB5] font-lexendMedium text-[0.75rem]">
               + approx. {gpsDistance.toFixed(0)}km
             </Text>
           )}
@@ -69,7 +69,7 @@ export default function MilestoneCard({
               onPress={onResolve}
               className="bg-[#002D35] px-3 py-1.5 rounded-full mt-2"
             >
-              <Text className="text-white font-lexendBold text-[10px]">Action needed</Text>
+              <Text className="text-white font-lexendBold text-[0.625rem]">Action needed</Text>
             </TouchableOpacity>
           )}
         </View>

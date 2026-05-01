@@ -36,7 +36,7 @@ export default function FilterGrainSheet({
       height="40%"
     >
       <View className="px-4 py-2">
-        <Text className="text-[#8B8B8B] text-[14px] font-lexendRegular mb-6">
+        <Text className="text-[#8B8B8B] text-[0.875rem] font-lexendRegular mb-6">
           Choose how you want to filter your activity data
         </Text>
 
@@ -61,7 +61,7 @@ export default function FilterGrainSheet({
                     color={isSelected ? "white" : "#7BA0A3"} 
                   />
                 </View>
-                <Text className={`text-[16px] ${isSelected ? "font-lexendSemiBold text-[#00343F]" : "font-lexendRegular text-[#8B8B8B]"}`}>
+                <Text className={`text-[1rem] ${isSelected ? "font-lexendSemiBold text-[#00343F]" : "font-lexendRegular text-[#8B8B8B]"}`}>
                   {item.label}
                 </Text>
               </View>

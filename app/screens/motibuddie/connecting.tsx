@@ -222,10 +222,10 @@ export default function Connecting() {
           </View>
 
           <View className="mt-16 items-center">
-            <Text className="text-white text-[26px] font-lexendMedium text-center">
+            <Text className="text-white text-[1.625rem] font-lexendMedium text-center">
               Connecting to device
             </Text>
-            <Text className="text-[#9BBABB] font-lexendRegular text-[14px] mt-2 text-center">
+            <Text className="text-[#9BBABB] font-lexendRegular text-[0.875rem] mt-2 text-center">
               {statusText}
             </Text>
           </View>

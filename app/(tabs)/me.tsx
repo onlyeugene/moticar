@@ -108,7 +108,7 @@ export default function MeScreen() {
           <View className="flex-row justify-between items-center ">
             <Logo height={32} width={126} />
           </View>
-          <Text className="text-[12px] font-lexendRegular text-[#00343F] leading-[18px] px-4 py-2">
+          <Text className="text-[0.75rem] font-lexendRegular text-[#00343F] leading-[18px] px-4 py-2">
             It is so simple that you have to just keep track of all expenses you
             incur and we can provide you the insights you need for taking money
             saving decisions.
@@ -131,13 +131,13 @@ export default function MeScreen() {
               <MotiIcon width={32} height={18} />
             </View>
             <View className="flex-1 gap-1">
-              <Text className="text-white font-lexendBold text-[16px]">
+              <Text className="text-white font-lexendBold text-[1rem]">
                 motibuddie detected
               </Text>
-              <Text className="text-[#29D7DE] font-lexendRegular text-[10px] ">
+              <Text className="text-[#29D7DE] font-lexendRegular text-[0.625rem] ">
                 ID: {activeCar?.imei || "12121212311"}
               </Text>
-              <Text className="text-[#BCBCBC] font-lexendRegular text-[10px] ">
+              <Text className="text-[#BCBCBC] font-lexendRegular text-[0.625rem] ">
                 Nothing to be alarmed about. Your device can now read about your
                 car. You have a buddie to count on.
               </Text>
@@ -145,10 +145,10 @@ export default function MeScreen() {
                 <View className="bg-[#FEF597] w-6 h-6 rounded-full items-center justify-center">
                   <Ionicons name="location" size={12} color="#013037" />
                 </View>
-                <Text className="text-[#FBE74C] font-lexendRegular text-[10px]">
+                <Text className="text-[#FBE74C] font-lexendRegular text-[0.625rem]">
                   Detected in Ikoyi, Lagos
                 </Text>
-                <Text className="text-[#77A287] font-lexendRegular text-[10px] ml-auto">
+                <Text className="text-[#77A287] font-lexendRegular text-[0.625rem] ml-auto">
                   453km away
                 </Text>
               </View>
@@ -157,7 +157,7 @@ export default function MeScreen() {
         )}
 
         <View className="mt-4">
-          <Text className="text-[#00343F] font-lexendBold text-[26px] mb-6">
+          <Text className="text-[#00343F] font-lexendBold text-[1.625rem] mb-6">
             Your Garage
           </Text>
 
@@ -166,7 +166,7 @@ export default function MeScreen() {
               <View className="w-20 h-20 bg-[#B8F2F4] rounded-full items-center justify-center mb-6">
                 <EmptyIcon width={48} height={48} />
               </View>
-              <Text className="text-[#00343F] font-lexendBold text-[18px] mb-2">
+              <Text className="text-[#00343F] font-lexendBold text-[1.125rem] mb-2">
                 No car added yet
               </Text>
             </View>
@@ -191,10 +191,10 @@ export default function MeScreen() {
 
                       <View className="flex-row justify-between w-full flex-1">
                         <View className="">
-                          <Text className="text-[14px] font-lexendMedium text-[#013037]">
+                          <Text className="text-[0.875rem] font-lexendMedium text-[#013037]">
                             {car.make} {car.carModel}
                           </Text>
-                          <Text className="font-ukNumberPlate text-[18px] text-[#006C70] mt-3">
+                          <Text className="font-ukNumberPlate text-[1.125rem] text-[#006C70] mt-3">
                             {car.plate}
                           </Text>
                         </View>
@@ -229,17 +229,17 @@ export default function MeScreen() {
                           className="w-3 h-3 rounded-[2px]"
                         />
                         <View className="bg-[#8FE2E5] px-3 py-0.5 rounded-[4px]">
-                          <Text className="text-[#40585C] font-lexendRegular text-[10px]">
+                          <Text className="text-[#40585C] font-lexendRegular text-[0.625rem]">
                             {car.transmission || "Manual"}
                           </Text>
                         </View>
                         <View className="bg-[#8FE2E5] px-3 py-0.5 rounded-[4px]">
-                          <Text className="text-[#40585C] font-lexendRegular text-[10px]">
+                          <Text className="text-[#40585C] font-lexendRegular text-[0.625rem]">
                             {car.fuelType || "Petrol"}
                           </Text>
                         </View>
                       </View>
-                      <Text className="text-[#5E9597] font-lexendRegular text-[8px] mt-2">
+                      <Text className="text-[#5E9597] font-lexendRegular text-[0.5rem] mt-2">
                         Added : {createdAt}
                       </Text>
 
@@ -247,7 +247,7 @@ export default function MeScreen() {
                         <View className="flex-row items-center justify-between">
                           <View className="flex-row items-center gap-2 flex-1">
                             <Text
-                              className="text-[#00343F] font-lexendMedium text-[14px]"
+                              className="text-[#00343F] font-lexendMedium text-[0.875rem]"
                               numberOfLines={1}
                             >
                               {car.make} {car.carModel}
@@ -275,7 +275,7 @@ export default function MeScreen() {
 
                         <View className="flex-row items-center justify-between">
                           <View>
-                            <Text className="text-[#00343F] font-ukNumberPlate text-[14px]">
+                            <Text className="text-[#00343F] font-ukNumberPlate text-[0.875rem]">
                               {car.plate}
                             </Text>
 
@@ -285,12 +285,12 @@ export default function MeScreen() {
                                 className="w-3 h-3 rounded-[2px]" 
                               />
                               <View className="bg-[#29D7DE20] px-3 py-0.5 rounded-full">
-                                <Text className="text-[#00343F] font-lexendMedium text-[10px]">
+                                <Text className="text-[#00343F] font-lexendMedium text-[0.625rem]">
                                   {car.transmission || "Manual"}
                                 </Text>
                               </View>
                               <View className="bg-[#29D7DE20] px-3 py-0.5 rounded-full">
-                                <Text className="text-[#00343F] font-lexendMedium text-[10px]">
+                                <Text className="text-[#00343F] font-lexendMedium text-[0.625rem]">
                                   {car.fuelType || "Petrol"}
                                 </Text>
                               </View>
@@ -302,7 +302,7 @@ export default function MeScreen() {
                               type={car.bodyStyle}
                               size={45}
                             />
-                            <Text className="text-[#ACB7B7] font-lexendRegular text-[9px] mt-2">
+                            <Text className="text-[#ACB7B7] font-lexendRegular text-[0.5625rem] mt-2">
                               Added : {createdAt}
                             </Text>
                           </View>
@@ -320,17 +320,17 @@ export default function MeScreen() {
               className="bg-[#FBE74C] rounded-full py-6 items-center"
               onPress={() => router.push("/(onboarding)")}
             >
-              <Text className="text-[#00343F] font-lexendSemiBold text-[16px]">
+              <Text className="text-[#00343F] font-lexendSemiBold text-[1rem]">
                 Add another car
               </Text>
             </TouchableOpacity>
           )}
 
           <View className="items-center mt-8 mb-12">
-            <Text className="text-[#0E525C] font-lexendBold text-[12px] mb-1">
+            <Text className="text-[#0E525C] font-lexendBold text-[0.75rem] mb-1">
               moticar
             </Text>
-            <Text className="text-[#0E525C] font-lexendRegular text-[10px]">
+            <Text className="text-[#0E525C] font-lexendRegular text-[0.625rem]">
               version 1.0.1 (73)
             </Text>
           </View>
@@ -380,7 +380,7 @@ export default function MeScreen() {
             >
               <Ionicons name="pencil-outline" size={18} color="#00AEB5" />
               <Text
-                className="text-[#000000] font-lexendRegular text-[14px]"
+                className="text-[#000000] font-lexendRegular text-[0.875rem]"
               >
                 Edit
               </Text>
@@ -401,7 +401,7 @@ export default function MeScreen() {
             >
               <Ionicons name="trash-outline" size={18} color="#00AEB5" />
               <Text
-                className="text-[#000000] font-lexendRegular text-[14px]"
+                className="text-[#000000] font-lexendRegular text-[0.875rem]"
               >
                 Delete
               </Text>
@@ -420,7 +420,7 @@ export default function MeScreen() {
         height="30%"
       >
         <View className="items-center py-6">
-          <Text className="text-[#FFFFFF] font-lexendBold text-[18px] mb-8 text-center px-4">
+          <Text className="text-[#FFFFFF] font-lexendBold text-[1.125rem] mb-8 text-center px-4">
             Are you sure you want to delete?
           </Text>
 
@@ -429,7 +429,7 @@ export default function MeScreen() {
               className="bg-[#FF0000] flex-1 rounded-full h-[52px] items-center justify-center shadow-sm"
               onPress={() => deleteCarId && handleDeleteCar(deleteCarId)}
             >
-              <Text className="text-white font-lexendBold text-[16px]">
+              <Text className="text-white font-lexendBold text-[1rem]">
                 Yes
               </Text>
             </TouchableOpacity>
@@ -437,7 +437,7 @@ export default function MeScreen() {
               className="flex-1 border border-[#00AEB5] rounded-full h-[52px] items-center justify-center"
               onPress={() => setDeleteCarId(null)}
             >
-              <Text className="text-[#00AEB5] font-lexendBold text-[16px]">
+              <Text className="text-[#00AEB5] font-lexendBold text-[1rem]">
                 No
               </Text>
             </TouchableOpacity>

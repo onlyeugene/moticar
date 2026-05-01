@@ -52,7 +52,7 @@ export function MotiBuddieStatus({ plate, carId }: MotiBuddieStatusProps) {
       </View>
       <View className="flex-1">
         <View className="flex-row items-center gap-2 mb-0.5">
-          <Text className="text-white text-[16px] font-lexendBold">
+          <Text className="text-white text-[1rem] font-lexendBold">
             motibuddie
           </Text>
           <View className="flex-row items-center gap-1">
@@ -66,16 +66,16 @@ export function MotiBuddieStatus({ plate, carId }: MotiBuddieStatusProps) {
             />
             <Text
               style={{ color: statusColor }}
-              className="text-[10px] font-lexendMedium"
+              className="text-[0.625rem] font-lexendMedium"
             >
               {statusLabel}
             </Text>
           </View>
         </View>
-        <Text className="text-[#29D7DE] text-[10px] font-lexendBold mb-2">
+        <Text className="text-[#29D7DE] text-[0.625rem] font-lexendBold mb-2">
           ID: {plate || "—"}
         </Text>
-        <Text className="text-[#BCBCBC] text-[10px] font-lexendRegular leading-[17px] mb-3">
+        <Text className="text-[#BCBCBC] text-[0.625rem] font-lexendRegular leading-[17px] mb-3">
           Nothing to be alarmed about. Your device can now read {"\n"}about your
           car. You have a buddie to count on.
         </Text>
@@ -84,7 +84,7 @@ export function MotiBuddieStatus({ plate, carId }: MotiBuddieStatusProps) {
             <View className="bg-[#FEF597] px-2 py-2 rounded-full">
               <Ionicons name="time-outline" size={13} color="#013037" />
             </View>
-            <Text className="text-[#FBE74C] text-[10px] font-lexendRegular">
+            <Text className="text-[#FBE74C] text-[0.625rem] font-lexendRegular">
               {lastSeen ? `Last seen at ${lastSeen}` : "Awaiting data..."}
             </Text>
           </View>

@@ -202,7 +202,7 @@ export default function MotiBuddieDetails() {
         {/* Header Card */}
         <View className="bg-[#E8E7DC] rounded-t-[20px] shadow-2xl overflow-hidden px-6 pt-6 pb-6">
           <View className="items-center">
-            <Text className="text-[#8B8B8B] font-lexendRegular text-[12px] mb-3">
+            <Text className="text-[#8B8B8B] font-lexendRegular text-[0.75rem] mb-3">
               This is what we got
             </Text>
 
@@ -210,20 +210,20 @@ export default function MotiBuddieDetails() {
               <View className="w-[56px] h-[56px] bg-white rounded-[12px] items-center justify-center border border-gray-100 mb-3 shadow-sm">
                 <CarLogo make={carData.make} size={42} />
               </View>
-              <Text className="text-[#00343F] font-lexendBold text-[22px] text-center mb-1">
+              <Text className="text-[#00343F] font-lexendBold text-[1.375rem] text-center mb-1">
                 {carData.make} {carData.model}
               </Text>
 
               <View className="flex-row items-center gap-2 mb-4">
                 <SpeedometerIcon width={14} height={14} fill="#9BBABB" />
-                <Text className="text-[#918E69] font-lexendRegular text-[13px]">
+                <Text className="text-[#918E69] font-lexendRegular text-[0.8125rem]">
                   Mileage — {carData.mileage}
                 </Text>
               </View>
 
               {carData.plate ? (
                 <View className="bg-white h-[40px] px-6 rounded-lg border border-[#00000022] items-center justify-center">
-                  <Text className="text-[#00AEB5] font-ukNumberPlate text-[16px] uppercase tracking-wider">
+                  <Text className="text-[#00AEB5] font-ukNumberPlate text-[1rem] uppercase tracking-wider">
                     {carData.plate.replace(/-/g, " ")}
                   </Text>
                 </View>
@@ -247,7 +247,7 @@ export default function MotiBuddieDetails() {
             className="flex-1"
           >
             <View className="items-center my-6">
-              <Text className="text-[#A8A477] font-lexendMedium text-[11px] uppercase tracking-[3px]">
+              <Text className="text-[#A8A477] font-lexendMedium text-[0.6875rem] uppercase tracking-[3px]">
                 Expected Features
               </Text>
             </View>
@@ -261,10 +261,10 @@ export default function MotiBuddieDetails() {
                 <View className="flex-row items-center gap-3">
                   <Ionicons name="barcode-outline" size={20} color="#9BBABB" />
                   <View>
-                    <Text className="text-[#9BBABB] font-lexendRegular text-[10px] uppercase">
+                    <Text className="text-[#9BBABB] font-lexendRegular text-[0.625rem] uppercase">
                       Vehicle Identification Number
                     </Text>
-                    <Text className="text-[#00343F] font-lexendMedium text-[15px]">
+                    <Text className="text-[#00343F] font-lexendMedium text-[0.9375rem]">
                       {carData.vin}
                     </Text>
                   </View>
@@ -315,7 +315,7 @@ export default function MotiBuddieDetails() {
               activeOpacity={0.8}
               className="h-[64px] rounded-full items-center justify-center bg-[#FBE74C]"
             >
-              <Text className="text-[#00343F] font-lexendBold text-[18px]">
+              <Text className="text-[#00343F] font-lexendBold text-[1.125rem]">
                 That's correct
               </Text>
             </TouchableOpacity>

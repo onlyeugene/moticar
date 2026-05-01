@@ -88,16 +88,16 @@ export default function ForgotPasswordOtp() {
         </View>
 
         <View className="mt-8">
-          <Text className="text-white text-[32px] font-lexendMedium leading-10">
+          <Text className="text-white text-[2rem] font-lexendMedium leading-10">
             Verify OTP
           </Text>
-          <Text className="text-[#9BBABB] font-lexendRegular text-[14px] mt-2 leading-6">
+          <Text className="text-[#9BBABB] font-lexendRegular text-[0.875rem] mt-2 leading-6">
             We just sent a 5-digit code to <Text className="text-white font-lexendBold">{email} </Text>, enter it below:
           </Text>
         </View>
 
         <View className="mt-8">
-          <Text className="text-[#32717B] font-lexendRegular text-[12px] mb-4">
+          <Text className="text-[#32717B] font-lexendRegular text-[0.75rem] mb-4">
             Code
           </Text>
           <Controller
@@ -113,31 +113,20 @@ export default function ForgotPasswordOtp() {
           <Pressable
             disabled={isButtonDisabled}
             onPress={handleSubmit(onSubmit)}
-            className={`w-full h-[54px] rounded-full items-center justify-center active:opacity-90 ${isButtonDisabled ? "bg-[#09515D]" : "bg-[#29D7DE]"}`}
+            className={`w-full h-[3.375rem] rounded-full items-center justify-center active:opacity-90 ${isButtonDisabled ? "bg-[#09515D]" : "bg-[#29D7DE]"}`}
           >
-            <Text className="font-lexendBold text-[16px] text-[#00343F]">
+            <Text className="font-lexendBold text-[1rem] text-[#00343F]">
               Verify Code
             </Text>
           </Pressable>
         </View>
 
         <View className="mt-8 items-center flex-row justify-center">
-          <Text className="text-[#7BA0A3] font-lexendRegular text-[16px]">
-           Wrong email?{" "}
-          
-            {/* <Text
-              onPress={handleResend}
-              className={`text-[#FDEF56] font-lexendSemiBold ${timer > 0 ? "opacity-50" : ""}`}
-            >
-              {resendOtp.isPending
-                ? "Sending..."
-                : timer > 0
-                  ? `Resend in ${timer}s`
-                  : "Resend OTP"}
-            </Text> */}
+          <Text className="text-[#7BA0A3] font-lexendRegular text-[1rem]">
+            Wrong email?{" "}
           </Text>
            <Pressable onPress={() => router.replace("/(auth)/forgot-password")}>
-            <Text className="text-[#FDEF56] text-[16px] font-lexendSemiBold">Send to different email</Text>
+            <Text className="text-[#FDEF56] text-[1rem] font-lexendSemiBold">Send to different email</Text>
            </Pressable>
         </View>
       </Container>

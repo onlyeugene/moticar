@@ -45,7 +45,7 @@ export default function Index() {
     <View className="flex-1 bg-[#FBE74C] items-center justify-center">
       <View className="items-center">
         <LogoIcon width={228} height={58} />
-        <Text className="mt-10 text-[14px] text-[#00232A] font-lexendSemiBold">
+        <Text className="mt-10 text-[0.875rem] text-[#00232A] font-lexendSemiBold">
           ...making sense of every spend
         </Text>
       </View>

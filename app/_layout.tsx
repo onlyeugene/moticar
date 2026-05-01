@@ -26,6 +26,11 @@ import { QueryProvider } from "../providers/QueryProvider";
 import { SnackbarProvider } from "../providers/SnackbarProvider";
 import { SocketProvider } from "../providers/SocketProvider";
 import { PreferenceInitializer } from "@/components/shared/PreferenceInitializer";
+import { rem } from "nativewind";
+import { Dimensions, useWindowDimensions } from "react-native";
+
+// configureReanimatedLogger removed as it is handled by Reanimated directly in newer versions
+// if needed, it should be inside RootLayout or at the top level
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
@@ -35,6 +40,13 @@ configureReanimatedLogger({
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export default function RootLayout() {
+  const { width, fontScale } = useWindowDimensions();
+
+  // Set responsive base font size (rem)
+  useEffect(() => {
+    rem.set((width / 375) * 16 * fontScale);
+  }, [width, fontScale]);
+
   const [isHydrated, setIsHydrated] = useState(false);
   const [fontsLoaded, fontError] = useFonts({
     "LexendDeca-Thin": require("../assets/fonts/LexendDeca-Thin.ttf"),

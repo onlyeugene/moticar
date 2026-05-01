@@ -98,7 +98,7 @@ export default function TechnicianDoughnutChart({
           }}
         >
           {seg.angle > 20 && (
-            <Text className="text-white text-[12px] font-lexendBold">
+            <Text className="text-white text-[0.75rem] font-lexendBold">
                 {seg.percentage}%
             </Text>
           )}

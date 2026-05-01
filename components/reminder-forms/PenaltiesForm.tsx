@@ -32,14 +32,14 @@ export function PenaltiesForm({ state, setState, userEmail }: ReminderFormProps)
       <AmountBlock value={state.amount} onChange={(v) => setState((p) => ({ ...p, amount: v }))} />
 
       <SectionCard>
-        <Text className="text-[#8B8B8B] font-lexendRegular text-[12px] mb-3">Issuing Authority</Text>
+        <Text className="text-[#8B8B8B] font-lexendRegular text-[0.75rem] mb-3">Issuing Authority</Text>
         <View className="flex-row gap-2">
           {AUTHORITIES.map((opt) => (
             <TouchableOpacity key={opt} onPress={() => setState((p) => ({ ...p, issuingAuthority: opt }))}
               className={`flex-1 py-2.5 rounded-[8px] items-center border ${
                 state.issuingAuthority === opt ? "bg-[#00AEB5] border-[#00AEB5]" : "bg-[#F5F5F5] border-[#F0F0F0]"
               }`}>
-              <Text className={`font-lexendRegular text-[12px] ${state.issuingAuthority === opt ? "text-white" : "text-[#8B8B8B]"}`}>{opt}</Text>
+              <Text className={`font-lexendRegular text-[0.75rem] ${state.issuingAuthority === opt ? "text-white" : "text-[#8B8B8B]"}`}>{opt}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -49,7 +49,7 @@ export function PenaltiesForm({ state, setState, userEmail }: ReminderFormProps)
       <SectionCard>
         <View className="flex-row items-center">
           <MaterialCommunityIcons name="image-outline" size={18} color="#8B8B8B" style={{ marginRight: 12 }} />
-          <Text className="flex-1 text-[#8B8B8B] font-lexendRegular text-[13px]">Upload any image proof or receipt</Text>
+          <Text className="flex-1 text-[#8B8B8B] font-lexendRegular text-[0.8125rem]">Upload any image proof or receipt</Text>
           <View className="border border-dashed border-[#C1C3C3] rounded-[8px] w-10 h-10 items-center justify-center mr-2">
             <Ionicons name="add" size={20} color="#C1C3C3" />
           </View>
@@ -60,11 +60,11 @@ export function PenaltiesForm({ state, setState, userEmail }: ReminderFormProps)
       <SectionCard>
         <View className="flex-row items-center py-1">
           <MaterialCommunityIcons name="ticket-outline" size={18} color="#8B8B8B" style={{ marginRight: 12 }} />
-          <Text className="flex-1 text-[#8B8B8B] font-lexendRegular text-[13px]">Reference/Ticket Number</Text>
+          <Text className="flex-1 text-[#8B8B8B] font-lexendRegular text-[0.8125rem]">Reference/Ticket Number</Text>
           <TextInput placeholder="——————" placeholderTextColor="#C1C3C3"
             value={state.reference}
             onChangeText={(v) => setState((p) => ({ ...p, reference: v }))}
-            className="text-[#001A1F] font-lexendRegular text-[13px] mr-1 text-right"
+            className="text-[#001A1F] font-lexendRegular text-[0.8125rem] mr-1 text-right"
           />
           <Ionicons name="chevron-forward" size={18} color="#C1C3C3" />
         </View>

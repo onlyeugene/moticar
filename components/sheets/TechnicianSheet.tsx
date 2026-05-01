@@ -31,7 +31,7 @@ export const Header = ({ onClose }: { onClose: () => void }) => (
     <TouchableOpacity onPress={onClose}>
       <Ionicons name="chevron-back" size={24} color="#1A3B41" />
     </TouchableOpacity>
-    <Text className="text-[#00343F] font-lexendMedium text-[14px]">
+    <Text className="text-[#00343F] font-lexendMedium text-[0.875rem]">
       Add Technician
     </Text>
     <TouchableOpacity onPress={onClose}>
@@ -119,7 +119,7 @@ export default function TechnicianSheet({
                   onPress={() => setSelectedCategory(item as any)}
                 >
                   <Text
-                    className={`text-[11px] font-lexendRegular ${selectedCategory === item ? "text-[#425658]" : "text-[#425658]"}`}
+                    className={`text-[0.6875rem] font-lexendRegular ${selectedCategory === item ? "text-[#425658]" : "text-[#425658]"}`}
                   >
                     {item}
                   </Text>
@@ -134,10 +134,10 @@ export default function TechnicianSheet({
           ) : filteredTechnicians.length === 0 ? (
             <View className="flex-1 items-center justify-center mt-10 px-10">
               <Empty />
-              <Text className="text-[18px] font-lexendRegular text-[#00343F] mt-4">
+              <Text className="text-[1.125rem] font-lexendRegular text-[#00343F] mt-4">
                 No technicians found
               </Text>
-              <Text className="text-[14px] font-lexendRegular text-[#9BBABB] text-center mt-2">
+              <Text className="text-[0.875rem] font-lexendRegular text-[#9BBABB] text-center mt-2">
                 {search
                   ? "Try adjusting your search"
                   : "Start by adding your favorite technicians"}
@@ -164,11 +164,11 @@ export default function TechnicianSheet({
                       </View>
                     )}
                     <View className="flex-1 ml-4">
-                      <Text className="text-[14px] font-lexendRegular text-[#101828]">
+                      <Text className="text-[0.875rem] font-lexendRegular text-[#101828]">
                         {item.name}
                       </Text>
                     </View>
-                    <Text className="text-[14px] font-lexendRegular text-[#00AEB5]">
+                    <Text className="text-[0.875rem] font-lexendRegular text-[#00AEB5]">
                       {item.phone}
                     </Text>
                   </TouchableOpacity>
@@ -184,7 +184,7 @@ export default function TechnicianSheet({
                   className="flex-row items-center justify-center gap-2 mt-6 py-6 bg-[#00343F] rounded-full"
                   onPress={onAdd}
                 >
-                  <Text className="text-[#FFFFFF] font-lexendBold text-[14px]">
+                  <Text className="text-[#FFFFFF] font-lexendBold text-[0.875rem]">
                     Add
                   </Text>
                 </TouchableOpacity>

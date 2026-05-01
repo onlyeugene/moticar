@@ -83,7 +83,7 @@ underline
             <View className={`w-4 h-4 rounded-[6px] border items-center justify-center mr-2 ${state.doesNotExpire ? "bg-[#00AEB5] border-[#00AEB5]" : "border-[#C1C3C3]"}`}>
               {state.doesNotExpire && <Ionicons name="checkmark" size={12} color="white" />}
             </View>
-            <Text className="text-[#ACB7B7] font-lexendRegular text-[14px] ">Does not expire</Text>
+            <Text className="text-[#ACB7B7] font-lexendRegular text-[0.875rem] ">Does not expire</Text>
           </TouchableOpacity>
         </View>
       </SectionCard>
@@ -93,7 +93,7 @@ underline
             onPress={() => setIsExpanded(true)}
             className="py-3 items-center border border-[#B1D0D2] rounded-full flex-row justify-center gap-2"
           >
-            <Text className="text-[#799799] font-lexendMedium text-[12px]">show more</Text>
+            <Text className="text-[#799799] font-lexendMedium text-[0.75rem]">show more</Text>
             <Ionicons name="chevron-down" size={18} color="#ADADAD" />
           </TouchableOpacity>
         ) : (
@@ -102,7 +102,7 @@ underline
               onPress={() => setIsExpanded(false)}
               className="py-3 items-center border border-[#B1D0D2] rounded-full flex-row justify-center gap-2 mb-4"
             >
-              <Text className="text-[#799799] font-lexendMedium text-[12px]">show less</Text>
+              <Text className="text-[#799799] font-lexendMedium text-[0.75rem]">show less</Text>
               <Ionicons name="chevron-up" size={18} color="#ADADAD" />
             </TouchableOpacity>
             <AmountBlock

@@ -45,10 +45,10 @@ export default function DiagnosticView() {
     return (
       <View className="flex-1 items-center justify-center p-10 mt-10">
         <Ionicons name="alert-circle-outline" size={64} color="#F8953A" />
-        <Text className="text-white font-lexendBold text-[20px] mt-4 text-center">
+        <Text className="text-white font-lexendBold text-[1.25rem] mt-4 text-center">
           Connection Failed
         </Text>
-        <Text className="text-[#81B4B4] font-lexendRegular text-[14px] mt-2 text-center">
+        <Text className="text-[#81B4B4] font-lexendRegular text-[0.875rem] mt-2 text-center">
           {(error as any)?.response?.data?.error || "We couldn't connect to your MotiBuddie. Please make sure it's plugged in and the engine is running."}
         </Text>
         <TouchableOpacity 

@@ -206,17 +206,17 @@ export default function ValuationSheet({
           onPress={() => setState("result")}
         >
           <View>
-            <Text className="text-[#8B8B8B] font-lexendSemiBold text-[10px] uppercase mb-1">
+            <Text className="text-[#8B8B8B] font-lexendSemiBold text-[0.625rem] uppercase mb-1">
               PREVIOUS VALUATION
             </Text>
           </View>
           <View className="flex-row items-start gap-2">
             <View className="items-end">
-              <Text className="text-[#2A2A2A] font-lexendRegular text-[14px]">
+              <Text className="text-[#2A2A2A] font-lexendRegular text-[0.875rem]">
                 {currencySymbol}
                 {valuation.estimatedValue?.toLocaleString()}
               </Text>
-              <Text className="text-[#34A853] font-lexendRegular text-[10px]">
+              <Text className="text-[#34A853] font-lexendRegular text-[0.625rem]">
                 valuation as of{" "}
                 {new Date(
                   valuation.valuationDate || Date.now(),
@@ -231,7 +231,7 @@ export default function ValuationSheet({
           </View>
         </TouchableOpacity>
 
-        <Text className="text-[#A4A4A4] text-[10px] font-lexendRegular text-center leading-[14px] mt-4">
+        <Text className="text-[#A4A4A4] text-[0.625rem] font-lexendRegular text-center leading-[14px] mt-4">
           This is considering several factors provided here such as your service{" "}
           {"\n"}history, mileage, condition of the car and modifications
         </Text>
@@ -245,14 +245,14 @@ export default function ValuationSheet({
         <View className="items-center justify-center mb-3">
           <LogoBlue />
         </View>
-        <Text className="text-[#013037] font-lexendRegular text-center text-[14px] mb-6">
+        <Text className="text-[#013037] font-lexendRegular text-center text-[0.875rem] mb-6">
           You are ready to carry out{"\n"}your diagonistic assessment
         </Text>
         <TouchableOpacity
           onPress={handleGenerate}
           className="bg-[#29D7DE] w-full py-4 rounded-full items-center"
         >
-          <Text className="text-[#00343F] font-lexendBold text-[14px]">
+          <Text className="text-[#00343F] font-lexendBold text-[0.875rem]">
             Get a price estimate
           </Text>
         </TouchableOpacity>
@@ -304,12 +304,12 @@ export default function ValuationSheet({
               </G>
             </Svg>
             <View className="absolute top-1/2 items-center">
-              <Text className="text-[#131313] font-lexendMedium text-[32px]">
+              <Text className="text-[#131313] font-lexendMedium text-[2rem]">
                 {days}/30
               </Text>
             </View>
           </View>
-          <Text className="text-[#888282] font-lexendRegular text-center text-[14px] -mt-4">
+          <Text className="text-[#888282] font-lexendRegular text-center text-[0.875rem] -mt-4">
             you can only carry out this{"\n"}exercise once in 30 days.
           </Text>
         </View>
@@ -323,16 +323,16 @@ export default function ValuationSheet({
     <>
       <View className="bg-[#DCF7F8] border-[#92BEC1] shadow-sm rounded-[8px] p-5 mb-6 items-center">
         <View className="flex-row items-center mb-3 gap-2">
-          <Text className="text-[#202A2A] text-[12px] font-lexendRegular">
+          <Text className="text-[#202A2A] text-[0.75rem] font-lexendRegular">
             Up to
           </Text>
-          <Text className="text-[#006C70] text-[32px] font-lexendBold">
+          <Text className="text-[#006C70] text-[2rem] font-lexendBold">
             {currencySymbol}
             {estimatedValue.toLocaleString()}
           </Text>
         </View>
         <View className="bg-[#F8E761] px-4 py-2 rounded-full mb-4">
-          <Text className="text-[#425658] text-[12px] font-lexendRegular">
+          <Text className="text-[#425658] text-[0.75rem] font-lexendRegular">
             Highest valuation is {currencySymbol}
             {highestValuation.toLocaleString()}
           </Text>
@@ -344,7 +344,7 @@ export default function ValuationSheet({
           className="flex-row items-center gap-1"
         >
           <Ionicons name="alert-circle-outline" size={14} color="#00AEB5" />
-          <Text className="text-[#002D36] text-[10px] font-lexendRegular">
+          <Text className="text-[#002D36] text-[0.625rem] font-lexendRegular">
             This value is based on some assumptions
           </Text>
         </TouchableOpacity>
@@ -360,11 +360,11 @@ export default function ValuationSheet({
               <View key={key} className="mb-2">
                 <View className="flex-row justify-between items-start mb-2">
                   <View className="flex-1">
-                    <Text className="text-[#006C70] text-[12px] font-lexendBold flex-1 mr-4">
+                    <Text className="text-[#006C70] text-[0.75rem] font-lexendBold flex-1 mr-4">
                       {config.label}
                     </Text>
                     <Text
-                      className="text-[#495353] text-[10px] font-lexendRegular leading-[19px]"
+                      className="text-[#495353] text-[0.625rem] font-lexendRegular leading-[19px]"
                       numberOfLines={3}
                     >
                       {getFactorDescription(key, config.description)}
@@ -376,7 +376,7 @@ export default function ValuationSheet({
                       backgroundColor: getGradeColor(grade as string),
                     }}
                   >
-                    <Text className="text-white font-lexendSemiBold text-[18px]">
+                    <Text className="text-white font-lexendSemiBold text-[1.125rem]">
                       {grade as string}
                     </Text>
                   </View>
@@ -390,10 +390,10 @@ export default function ValuationSheet({
       )}
 
       <View className="items-center ">
-        <Text className="text-[#006C70] text-[10px] font-lexendMedium mb-1">
+        <Text className="text-[#006C70] text-[0.625rem] font-lexendMedium mb-1">
           {`valuation is valid as of ${displayDate}`}
         </Text>
-        <Text className="text-[#C1C3C3] text-[10px] font-lexendRegular text-center leading-[15px]">
+        <Text className="text-[#C1C3C3] text-[0.625rem] font-lexendRegular text-center leading-[15px]">
           This is considering several factors provided here such as your service
           {"\n"}
           history, mileage, condition of the car and modifications
@@ -412,7 +412,7 @@ export default function ValuationSheet({
       backgroundColor={state === "result" ? "#FFFFFF" : "#F0F0F0"}
     >
       <View className="flex-row justify-between items-center px-1 mb-6">
-        <Text className="text-[#00343F] font-lexendSemiBold text-[22px]">
+        <Text className="text-[#00343F] font-lexendSemiBold text-[1.375rem]">
           Estimated Valuation
         </Text>
         <TouchableOpacity onPress={handleShare}>
@@ -443,7 +443,7 @@ export default function ValuationSheet({
             options={{ format: "png", quality: 0.9 }}
           >
             <View className="bg-white p-8">
-              <Text className="text-[#00343F] font-lexendSemiBold text-[22px] mb-8">
+              <Text className="text-[#00343F] font-lexendSemiBold text-[1.375rem] mb-8">
                 Estimated Valuation
               </Text>
               {renderValuationContent()}
@@ -486,14 +486,14 @@ export default function ValuationSheet({
                             color="#29D7DE"
                           />
                         </View>
-                        <Text className="text-[#9A9B9B] text-[10px] font-lexendRegular flex-1 leading-[22px]">
+                        <Text className="text-[#9A9B9B] text-[0.625rem] font-lexendRegular flex-1 leading-[22px]">
                           {assumption}
                         </Text>
                       </View>
                     ),
                   )
                 ) : (
-                  <Text className="text-[#9BBABB] text-[14px] font-lexendRegular text-center py-10">
+                  <Text className="text-[#9BBABB] text-[0.875rem] font-lexendRegular text-center py-10">
                     No specific assumptions noted for this valuation.
                   </Text>
                 )}
@@ -503,7 +503,7 @@ export default function ValuationSheet({
                 onPress={() => setIsAssumptionsVisible(false)}
                 className="bg-[#00AEB5] py-4 rounded-xl mt-4 items-center"
               >
-                <Text className="text-white font-lexendBold text-[14px]">
+                <Text className="text-white font-lexendBold text-[0.875rem]">
                   Got it!
                 </Text>
               </TouchableOpacity>

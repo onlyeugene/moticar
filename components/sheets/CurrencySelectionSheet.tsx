@@ -40,7 +40,7 @@ export default function CurrencySelectionSheet({
           onPress={handleSave}
           className="bg-[#00AEB5] px-5 py-1.5 rounded-full"
         >
-          <Text className="text-white font-lexendSemiBold text-[14px]">
+          <Text className="text-white font-lexendSemiBold text-[0.875rem]">
             Save
           </Text>
         </TouchableOpacity>
@@ -70,21 +70,21 @@ export default function CurrencySelectionSheet({
                   <Icon width={20} height={20} />
                 ) : (
                   <View className="w-8 h-8 rounded-full bg-[#EEF5F5] items-center justify-center">
-                    <Text className="text-[#006C70] font-lexendBold text-[11px]">
+                    <Text className="text-[#006C70] font-lexendBold text-[0.6875rem]">
                       {item.value.slice(0, 2)}
                     </Text>
                   </View>
                 )}
                 <View className="flex-row items-center gap-2 flex-wrap">
                   <Text
-                    className={`font-lexendRegular text-[15px] ${
+                    className={`font-lexendRegular text-[0.9375rem] ${
                       isSelected ? "text-[#00343F]" : "text-[#5E7A7A]"
                     }`}
                   >
                     {item.label}
                   </Text>
                   <View className="bg-[#5E9597] px-2 py-0.5 rounded-[4px]">
-                    <Text className="text-[#FFFFFF] font-lexendSemiBold text-[9px] uppercase">
+                    <Text className="text-[#FFFFFF] font-lexendSemiBold text-[0.5625rem] uppercase">
                       {item.country}
                     </Text>
                   </View>
@@ -94,7 +94,7 @@ export default function CurrencySelectionSheet({
               {/* Right: symbol + check */}
               <View className="flex-row items-center gap-3">
                 <Text
-                  className={`font-lexendBold text-[15px] text-[#00AEB5]`}
+                  className={`font-lexendBold text-[0.9375rem] text-[#00AEB5]`}
                 >
                   {item.symbol}
                 </Text>
@@ -119,7 +119,7 @@ export default function CurrencySelectionSheet({
           <View className="">
             <XeIcon />
           </View>
-          <Text className="text-[#717272] font-lexendRegular text-[10px] flex-1 leading-5">
+          <Text className="text-[#717272] font-lexendRegular text-[0.625rem] flex-1 leading-5">
            Please note that changing the currency would convert all pre-existing entries to new values to reflect change of currency. The exchange rate to be applied would be as gotten from XE as at the time of conversion.
           </Text>
         </View>

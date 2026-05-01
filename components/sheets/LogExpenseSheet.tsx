@@ -109,7 +109,7 @@ const FieldRow = ({
       )}
       <View className="flex-1 flex-row justify-between items-center">
         {label && (
-          <Text className="text-[#8B8B8B] text-[12px] font-lexendRegular">
+          <Text className="text-[#8B8B8B] text-[0.75rem] font-lexendRegular">
             {label}
           </Text>
         )}
@@ -468,12 +468,12 @@ export default function LogExpenseSheet({
         <CategoryIcon name={category.name} size={20} />
       </View>
       <View>
-        <Text className="text-[#00343F] text-[18px] font-lexendBold">
+        <Text className="text-[#00343F] text-[1.125rem] font-lexendBold">
           {category.name}
         </Text>
-        <Text className="text-[#8B8B8B] text-[12px] font-lexendRegular">
+        <Text className="text-[#8B8B8B] text-[0.75rem] font-lexendRegular">
           Recommeded{" "}
-          <Text className="font-lexendBold text-[#29D7DE] text-[13px]">
+          <Text className="font-lexendBold text-[#29D7DE] text-[0.8125rem]">
             {currencySymbol} {budgetRecommended.toLocaleString()}
           </Text>
         </Text>
@@ -510,7 +510,7 @@ export default function LogExpenseSheet({
         {isPending ? (
           <ActivityIndicator size="small" color="#00343F" />
         ) : (
-          <Text className="text-[#00343F] font-lexendBold text-[14px]">
+          <Text className="text-[#00343F] font-lexendBold text-[0.875rem]">
             Save
           </Text>
         )}
@@ -544,11 +544,11 @@ export default function LogExpenseSheet({
           className="px-4 py-2 flex-row justify-center items-center rounded-t-[8px]"
           style={{ backgroundColor: isOverBudget ? "#FFDCAC" : "#E3FFAC" }}
         >
-          <Text className={`text-[#8B8B8B] text-[12px] font-lexendRegular`}>
+          <Text className={`text-[#8B8B8B] text-[0.75rem] font-lexendRegular`}>
             Budget Left
           </Text>
           <Text
-            className={`${isOverBudget ? "text-[#C7755C]" : "text-[#5CC785]"} text-[14px] font-lexendBold ml-2`}
+            className={`${isOverBudget ? "text-[#C7755C]" : "text-[#5CC785]"} text-[0.875rem] font-lexendBold ml-2`}
           >
             {isOverBudget ? "-" : ""} {currencySymbol}{" "}
             {Math.abs(budgetLeft).toLocaleString()} of{" "}
@@ -565,7 +565,7 @@ export default function LogExpenseSheet({
             <TagIcon />
             <View className="flex-1">
               <TextInput
-                className="text-[#00343F] font-lexendBold text-[12px] pb-4 px-4 border-b border-[#F0F0F0]"
+                className="text-[#00343F] font-lexendBold text-[0.75rem] pb-4 px-4 border-b border-[#F0F0F0]"
                 placeholder="Give your expense a name"
                 placeholderTextColor="#B4B1B1"
                 value={name}
@@ -576,15 +576,15 @@ export default function LogExpenseSheet({
 
           {/* Amount Section */}
           <View className="py-4 border-[#F0F0F0]">
-            <Text className="text-[#9BBABB] text-[12px] font-lexendRegular text-center mb-2">
+            <Text className="text-[#9BBABB] text-[0.75rem] font-lexendRegular text-center mb-2">
               Enter amount
             </Text>
             <View className="flex-row items-center justify-center gap-2 mb-2">
-              <Text className="text-[#00343F] font-lexendBold text-[32px]">
+              <Text className="text-[#00343F] font-lexendBold text-[2rem]">
                 {currencySymbol}
               </Text>
               <TextInput
-                className="text-[#00343F] font-lexendBold text-center text-[32px]"
+                className="text-[#00343F] font-lexendBold text-center text-[2rem]"
                 placeholder="0"
                 placeholderTextColor="#B4B1B1"
                 keyboardType="numeric"
@@ -598,7 +598,7 @@ export default function LogExpenseSheet({
             </View>
 
             {originalAmount && originalCurrency && (
-              <Text className="text-[#8B8B8B] text-[10px] font-lexendRegular text-center -mt-1 mb-2">
+              <Text className="text-[#8B8B8B] text-[0.625rem] font-lexendRegular text-center -mt-1 mb-2">
                 Converted from {originalCurrency}{" "}
                 {originalAmount.toLocaleString()}
               </Text>
@@ -613,13 +613,13 @@ export default function LogExpenseSheet({
             </View>
 
             {category.lastSimilarExpense ? (
-              <Text className="text-[#81B4B4] text-[12px] font-lexendRegular text-center mb-4">
+              <Text className="text-[#81B4B4] text-[0.75rem] font-lexendRegular text-center mb-4">
                 Last similar expense: {currencySymbol}{" "}
                 {category.lastSimilarExpense.amount.toLocaleString()} on{" "}
                 {format(new Date(category.lastSimilarExpense.date), "d MMMM")}
               </Text>
             ) : (
-              <Text className="text-[#81B4B4] text-[12px] font-lexendRegular text-center mb-4">
+              <Text className="text-[#81B4B4] text-[0.75rem] font-lexendRegular text-center mb-4">
                 No previous similar expenses recorded
               </Text>
             )}
@@ -627,14 +627,14 @@ export default function LogExpenseSheet({
             {/* Recommendation Box */}
             <View className="bg-[#FFFBE6] p-4 rounded-xl mb-4">
               <View className="flex-row justify-between items-center mb-1">
-                <Text className="text-[#00AEB5] font-lexendMedium text-[12px]">
+                <Text className="text-[#00AEB5] font-lexendMedium text-[0.75rem]">
                   Recommendation
                 </Text>
-                <Text className="text-[#00AEB5] font-lexendBold text-[14px]">
+                <Text className="text-[#00AEB5] font-lexendBold text-[0.875rem]">
                   {currencySymbol} {budgetRecommended.toLocaleString()}
                 </Text>
               </View>
-              <Text className="text-[#9BBABB] text-[10px] font-lexendRegular leading-4">
+              <Text className="text-[#9BBABB] text-[0.625rem] font-lexendRegular leading-4">
                 From similar car riders who own your kind of vehicle. This might
                 vary from yours based on usage.
               </Text>
@@ -650,7 +650,7 @@ export default function LogExpenseSheet({
             rightElement={
               <View className="flex-row items-center gap-2">
                 <Text
-                  className={`font-lexendMedium text-[14px] ${date ? "text-[#00343F]" : "text-[#B4B1B1]"}`}
+                  className={`font-lexendMedium text-[0.875rem] ${date ? "text-[#00343F]" : "text-[#B4B1B1]"}`}
                 >
                   {date
                     ? date.toLocaleDateString("en-GB", {
@@ -739,7 +739,7 @@ export default function LogExpenseSheet({
                 } // Simple logic for icons, can be improved
               >
                 <TextInput
-                  className="text-[#00343F] font-lexendRegular text-[14px] pb-2 border-b border-[#F0F0F0]"
+                  className="text-[#00343F] font-lexendRegular text-[0.875rem] pb-2 border-b border-[#F0F0F0]"
                   placeholder={`Enter ${field.label}`}
                   placeholderTextColor="#A0A0A0"
                   value={dynamicFields[field.name] || ""}
@@ -764,21 +764,21 @@ export default function LogExpenseSheet({
                 <View className="flex-row items-center gap-2">
                   {selectedTechnician ? (
                     <View className="items-end">
-                      <Text className="text-[#00343F] font-lexendBold text-[14px]">
+                      <Text className="text-[#00343F] font-lexendBold text-[0.875rem]">
                         {selectedTechnician.name}
                       </Text>
                     </View>
                   ) : extractedTechnicianName ? (
                     <View className="items-end">
-                      <Text className="text-[#00AEB5] font-lexendBold text-[14px]">
+                      <Text className="text-[#00AEB5] font-lexendBold text-[0.875rem]">
                         {extractedTechnicianName}
                       </Text>
-                      <Text className="text-[#8B8B8B] text-[10px] font-lexendRegular">
+                      <Text className="text-[#8B8B8B] text-[0.625rem] font-lexendRegular">
                         New entry from scan
                       </Text>
                     </View>
                   ) : (
-                    <Text className="text-[#B4B1B1] font-lexendRegular text-[14px]">
+                    <Text className="text-[#B4B1B1] font-lexendRegular text-[0.875rem]">
                       Select
                     </Text>
                   )}
@@ -802,7 +802,7 @@ export default function LogExpenseSheet({
                 }`}
               >
                 <Text
-                  className={`text-[12px] font-lexendMedium ${
+                  className={`text-[0.75rem] font-lexendMedium ${
                     paymentMethod === method
                       ? "text-[#FFFFFF]"
                       : "text-[#A0A0A0]"
@@ -879,7 +879,7 @@ export default function LogExpenseSheet({
                             }`}
                           >
                             <PartIcon width={16} height={16} color="#00343F" />
-                            <Text className="text-[#4B4B4B] text-[12px] font-lexendRegular">
+                            <Text className="text-[#4B4B4B] text-[0.75rem] font-lexendRegular">
                               {item.name || "Item"}
                             </Text>
                           </TouchableOpacity>
@@ -900,7 +900,7 @@ export default function LogExpenseSheet({
                   <View className="flex-row gap-3 items-center mb-3">
                     <View className="flex-1 border-b border-[#F0F0F0]  px-3 py-3">
                       <TextInput
-                        className="text-[#00343F] font-lexendRegular text-[14px]"
+                        className="text-[#00343F] font-lexendRegular text-[0.875rem]"
                         placeholder="Price"
                         placeholderTextColor="#B4B1B1"
                         keyboardType="numeric"
@@ -920,7 +920,7 @@ export default function LogExpenseSheet({
                     </View>
                     <View className="w-24 border-b border-[#F0F0F0]  px-3 py-3">
                       <TextInput
-                        className="text-[#00343F] font-lexendRegular text-[14px] text-center"
+                        className="text-[#00343F] font-lexendRegular text-[0.875rem] text-center"
                         placeholder="Qty"
                         placeholderTextColor="#B4B1B1"
                         keyboardType="numeric"
@@ -957,7 +957,7 @@ export default function LogExpenseSheet({
                 <View key={index} className="flex-row gap-2 mb-3 items-center">
                   <View className="flex-[2] bg-white border-b border-[#F0F0F0] px-3 py-3">
                     <TextInput
-                      className="text-[#00343F] font-lexendRegular text-[12px]"
+                      className="text-[#00343F] font-lexendRegular text-[0.75rem]"
                       placeholder="Item"
                       placeholderTextColor="#B4B1B1"
                       value={item.name}
@@ -968,7 +968,7 @@ export default function LogExpenseSheet({
                   </View>
                   <View className="flex-1 bg-white border-b border-[#F0F0F0] px-3 py-3">
                     <TextInput
-                      className="text-[#00343F] font-lexendRegular text-[12px]"
+                      className="text-[#00343F] font-lexendRegular text-[0.75rem]"
                       placeholder="Price"
                       placeholderTextColor="#B4B1B1"
                       keyboardType="numeric"
@@ -980,7 +980,7 @@ export default function LogExpenseSheet({
                   </View>
                   <View className="w-16  border-b border-[#F0F0F0] px-2 py-3">
                     <TextInput
-                      className="text-[#00343F] font-lexendRegular text-[12px] text-center"
+                      className="text-[#00343F] font-lexendRegular text-[0.75rem] text-center"
                       placeholder="Qty"
                       placeholderTextColor="#B4B1B1"
                       keyboardType="numeric"
@@ -1004,7 +1004,7 @@ export default function LogExpenseSheet({
 
             {extraCosts.length > 0 && (
               <View className="flex-row justify-end mx-5 mt-2">
-                <Text className="text-[#00AEB5] font-lexendRegular text-[12px]">
+                <Text className="text-[#00AEB5] font-lexendRegular text-[0.75rem]">
                   Total sum : {currencySymbol} {totalExtraSum.toLocaleString()}
                 </Text>
               </View>
@@ -1016,7 +1016,7 @@ export default function LogExpenseSheet({
         <View className="bg-white px-4 mb-1 rounded-none py-4">
           <FieldRow label="Notes/Description" icon={NotesIcon} noBorder />
           <TextInput
-            className="text-[#00343F] font-lexendRegular text-[14px] pb-2 border-b border-[#F0F0F0] min-h-[60px]"
+            className="text-[#00343F] font-lexendRegular text-[0.875rem] pb-2 border-b border-[#F0F0F0] min-h-[60px]"
             placeholder="Write a brief note..."
             placeholderTextColor="#A0A0A0"
             multiline

@@ -109,11 +109,11 @@ export default function SetName() {
               <DoneIcon />
             </View>
 
-            <Text className="text-white text-[26px] font-lexendBold text-center mb-4">
+            <Text className="text-white text-[1.625rem] font-lexendBold text-center mb-4">
               Your account {"\n"} was successfully created!
             </Text>
 
-            <Text className="text-[#9BBABB] font-lexendRegular text-[14px] text-center mb-12">
+            <Text className="text-[#9BBABB] font-lexendRegular text-[0.875rem] text-center mb-12">
               Just one more step! Sign in to start tracking your car expenses.
             </Text>
 
@@ -121,7 +121,7 @@ export default function SetName() {
               onPress={() => router.replace("/(auth)/login")}
               className="w-full h-[50px] bg-[#29D7DE] rounded-full items-center justify-center active:opacity-90"
             >
-              <Text className="font-lexendBold text-[16px] text-[#00343F]">
+              <Text className="font-lexendBold text-[1rem] text-[#00343F]">
                 Go to Login
               </Text>
             </Pressable>
@@ -144,17 +144,17 @@ export default function SetName() {
         </View>
 
         <View className="mt-10">
-          <Text className="text-white text-[26px] font-lexendMedium">
+          <Text className="text-white text-[1.625rem] font-lexendMedium">
             Can we get your name?
           </Text>
-          <Text className="text-[#9BBABB] font-lexendRegular text-[14px] mt-2 leading-6">
+          <Text className="text-[#9BBABB] font-lexendRegular text-[0.875rem] mt-2 leading-6">
             This would help a lot in personalization
           </Text>
         </View>
 
         <View className="mt-10 gap-6">
           <View>
-            <Text className="text-[#00AEB5] font-lexendMedium text-[12px] mb-2 px-1">
+            <Text className="text-[#00AEB5] font-lexendMedium text-[0.75rem] mb-2 px-1">
               Enter your name
             </Text>
             <ControlledInput<NameFormData>
@@ -183,14 +183,14 @@ export default function SetName() {
                 <Ionicons name="checkmark" size={14} color="#00343F" />
               )}
             </View>
-            <Text className="text-white font-lexendMedium text-[14px]">
+            <Text className="text-white font-lexendMedium text-[0.875rem]">
               I have a preferred name
             </Text>
           </Pressable>
 
           {hasPreferredName && (
             <View>
-              <Text className="text-[#00AEB5] font-lexendMedium text-[12px] mb-2 px-1">
+              <Text className="text-[#00AEB5] font-lexendMedium text-[0.75rem] mb-2 px-1">
                 Preferred name
               </Text>
               <ControlledInput<NameFormData>
@@ -215,7 +215,7 @@ export default function SetName() {
             {setNameMutation.isPending ? (
               <ActivityIndicator color="#00343F" />
             ) : (
-              <Text className="font-lexendBold text-[16px] text-[#00343F]">
+              <Text className="font-lexendBold text-[1rem] text-[#00343F]">
                 Next
               </Text>
             )}

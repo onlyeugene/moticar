@@ -171,7 +171,7 @@ export default function ExpenseDoughnutChart({
             >
               <CategoryIcon name={seg.item.category} size={18} />
             </View>
-            <Text className="font-lexendRegular text-[12px] text-[#425658] -mt-0.5 text-center w-[40px]">
+            <Text className="font-lexendRegular text-[0.75rem] text-[#425658] -mt-0.5 text-center w-[40px]">
               {Math.round(seg.item.percentage)}%
             </Text>
           </View>
@@ -191,14 +191,14 @@ export default function ExpenseDoughnutChart({
         }}
       >
         <View className="bg-[#00343F] w-[24px] h-[24px] rounded-[8px] items-center justify-center mb-1.5">
-          <Text className="font-lexendSemiBold text-[14px] text-primary">
+          <Text className="font-lexendSemiBold text-[0.875rem] text-primary">
             {totalCount}
           </Text>
         </View>
-        <Text className="font-lexendRegular text-[12px] text-[#5E7A7C] mb-0.5">
+        <Text className="font-lexendRegular text-[0.75rem] text-[#5E7A7C] mb-0.5">
           Total expense
         </Text>
-        <Text className="font-lexendBold text-[20px] text-[#036D7D]">
+        <Text className="font-lexendBold text-[1.25rem] text-[#036D7D]">
           {currencySymbol} {formatValue(totalSpend)}
         </Text>
       </View>

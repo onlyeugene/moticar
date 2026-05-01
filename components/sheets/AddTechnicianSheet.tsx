@@ -81,12 +81,12 @@ const FieldRow = ({
         <View className="flex-1 flex-row justify-between items-center">
           <View className="flex-row  items-start gap-1 ">
             {label && (
-            <Text className="text-[#8B8B8B] text-[12px] font-lexendRegular">
+            <Text className="text-[#8B8B8B] text-[0.75rem] font-lexendRegular">
               {label}
             </Text>
           )}
           {required && (
-            <Text className="text-[#00AEB5] text-[12px] font-lexendBold">
+            <Text className="text-[#00AEB5] text-[0.75rem] font-lexendBold">
               {required}
             </Text>
           )}
@@ -240,7 +240,7 @@ export default function AddTechnicianSheet({
         {isPending || isUploading ? (
           <ActivityIndicator size="small" color="#00343F" />
         ) : (
-          <Text className="text-[#00343F] font-lexendBold text-[15px]">
+          <Text className="text-[#00343F] font-lexendBold text-[0.9375rem]">
             Save
           </Text>
         )}
@@ -264,11 +264,11 @@ export default function AddTechnicianSheet({
           <View className="bg-white px-4 mb-1 rounded-none pt-2">
             <View className="mt-4 flex-row gap-3">
               <View className="flex-1">
-                <Text className="text-[#8B8B8B] text-[12px] font-lexendRegular mb-3">
+                <Text className="text-[#8B8B8B] text-[0.75rem] font-lexendRegular mb-3">
                   Full Name
                 </Text>
                 <TextInput
-                  className="text-[#00343F] font-lexendRegular text-[14px] pb-4 border-b border-[#F0F0F0]"
+                  className="text-[#00343F] font-lexendRegular text-[0.875rem] pb-4 border-b border-[#F0F0F0]"
                   placeholder="Give your technician a name"
                   placeholderTextColor="#B4B1B1"
                   value={form.name}
@@ -286,7 +286,7 @@ export default function AddTechnicianSheet({
               rightElement={
                 <View className="flex-row items-center gap-2">
                   <Text
-                    className={`font-lexendRegular text-[14px] ${form.specialty ? "text-[#00343F]" : "text-[#ACB7B7]"}`}
+                    className={`font-lexendRegular text-[0.875rem] ${form.specialty ? "text-[#00343F]" : "text-[#ACB7B7]"}`}
                   >
                     {form.specialty || "Select"}
                   </Text>
@@ -306,7 +306,7 @@ export default function AddTechnicianSheet({
               rightElement={
                 <View className="flex-row items-center gap-2 ">
                   <TextInput
-                    className="text-right font-lexendRegular text-[14px] text-[#ACB7B7]"
+                    className="text-right font-lexendRegular text-[0.875rem] text-[#ACB7B7]"
                     placeholder="Select"
                     placeholderTextColor="#ACB7B7"
                     value={form.location}
@@ -322,7 +322,7 @@ export default function AddTechnicianSheet({
             {/* Phone Number */}
             <FieldRow label="Phone Number" icon={PhoneIcon}>
               <TextInput
-                className="text-[#00343F] font-lexendMedium text-[14px] pb-2 ml-10 pt-3 border-b border-[#F0F0F0]"
+                className="text-[#00343F] font-lexendMedium text-[0.875rem] pb-2 ml-10 pt-3 border-b border-[#F0F0F0]"
                 placeholder={defaultPhoneCode}
                 placeholderTextColor="#B4B1B1"
                 keyboardType="phone-pad"
@@ -338,7 +338,7 @@ export default function AddTechnicianSheet({
             <View className="bg-white px-4 mb-1">
                <FieldRow label="Email Address" icon={MailIcon} noBorder>
               <TextInput
-                className="text-[#00343F] font-lexendMedium text-[14px] pb-2 pt-3 ml-10 border-b border-[#F0F0F0]"
+                className="text-[#00343F] font-lexendMedium text-[0.875rem] pb-2 pt-3 ml-10 border-b border-[#F0F0F0]"
                 placeholder="Enter email"
                 placeholderTextColor="#B4B1B1"
                 keyboardType="email-address"
@@ -355,7 +355,7 @@ export default function AddTechnicianSheet({
           <View className="bg-white px-4 mb-1 rounded-none pt-2">
             <FieldRow label="Notes/Description" icon={NotesIcon} noBorder>
               <TextInput
-                className="text-[#00343F] font-lexendRegular text-[14px] ml-10 px-4 border-b border-[#F0F0F0] py-4"
+                className="text-[#00343F] font-lexendRegular text-[0.875rem] ml-10 px-4 border-b border-[#F0F0F0] py-4"
                 placeholder="Write a brief note for your preference"
                 placeholderTextColor="#B4B1B1"
                 multiline

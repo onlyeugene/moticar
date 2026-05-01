@@ -191,12 +191,12 @@ export default function Dashboard() {
                       className="w-full h-full"
                     />
                   ) : (
-                    <Text className="text-[#00AEB5] font-lexendBold text-[16px]">
+                    <Text className="text-[#00AEB5] font-lexendBold text-[1rem]">
                       {(user?.name || "U")[0].toUpperCase()}
                     </Text>
                   )}
                 </View>
-                <Text className="text-[#00232A] font-lexendBold text-[20px]">
+                <Text className="text-[#00232A] font-lexendBold text-[1.25rem]">
                   Hi, {user?.name?.split(" ")[0] || "User"}
                 </Text>
               </View>
@@ -212,7 +212,7 @@ export default function Dashboard() {
                   onPress={() => setShowYearPicker(!showYearPicker)}
                   className="flex-row items-center gap-2 bg-[#00282B] px-4 py-1.5 rounded-full"
                 >
-                  <Text className="text-[#FFFFFF] font-lexendSemiBold text-[12px]">
+                  <Text className="text-[#FFFFFF] font-lexendSemiBold text-[0.75rem]">
                     {selectedDate.getFullYear()}
                   </Text>
                   <Ionicons name="chevron-down" size={20} color="#FFFFFF" />
@@ -236,7 +236,7 @@ export default function Dashboard() {
                         }`}
                       >
                         <Text
-                          className={`text-[14px] font-lexendSemiBold ${
+                          className={`text-[0.875rem] font-lexendSemiBold ${
                             selectedDate.getFullYear() === y
                               ? "text-[#00AEB5]"
                               : "text-white"
@@ -279,7 +279,7 @@ export default function Dashboard() {
                         }`}
                       >
                         <Text
-                          className={` text-[13px] ${
+                          className={` text-[0.8125rem] ${
                             isActive
                               ? "text-[#00AEB5] font-lexendSemiBold"
                               : "text-[#81B4B4] font-lexendRegular"
@@ -350,13 +350,13 @@ export default function Dashboard() {
 
         <View className="mt-4 bg-[#011C21] p-4 rounded-[12px]">
           <View className="flex-row items-center gap-2">
-            <Text className="text-[#FFFFFF] font-lexendMedium text-[16px]">
+            <Text className="text-[#FFFFFF] font-lexendMedium text-[1rem]">
               Get a smart auto advice
             </Text>
             <StarIcon width={20} />
           </View>
 
-          <Text className="text-[#F1F1F1] font-lexendRegular text-[12px] mt-2">
+          <Text className="text-[#F1F1F1] font-lexendRegular text-[0.75rem] mt-2">
             Enter up to 5 expenses and let our smart doc provide some {"\n"}auto
             advice that can help prolong the lifetime of yor car
           </Text>
@@ -365,7 +365,7 @@ export default function Dashboard() {
             onPress={() => setIsDiagnosisVisible(true)}
             className="bg-[#29D7DE] p-4 rounded-full mt-5 w-[70%] items-center"
           >
-            <Text className="text-[#00343F] font-lexendBold text-[16px]">
+            <Text className="text-[#00343F] font-lexendBold text-[1rem]">
               Get Car Advice
             </Text>
           </TouchableOpacity>

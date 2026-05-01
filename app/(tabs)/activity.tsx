@@ -47,7 +47,7 @@ export default function ActivityScreen() {
   return (
     <View className="flex-1 bg-[#F5F7F7]">
       <View className="flex-1 pt-20 px-4">
-        <Text className="text-[28px] font-lexendBold mb-6 text-[#001A1F]">
+        <Text className="text-[1.75rem] font-lexendBold mb-6 text-[#001A1F]">
           Activity
         </Text>
 
@@ -70,7 +70,7 @@ export default function ActivityScreen() {
                     }`}
                   >
                     <Text
-                      className={`text-[12px] font-lexendSemiBold ${
+                      className={`text-[0.75rem] font-lexendSemiBold ${
                         isActive ? "text-white" : "text-[#A1A1A1]"
                       }`}
                     >

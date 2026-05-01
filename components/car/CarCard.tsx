@@ -30,7 +30,7 @@ export function CarCard({ activeCar, onAddCar, onValuation }: CarCardProps) {
             <CarIcon make={activeCar?.make || ""} size={50} />
           </View>
           <View className="bg-white border border-dashed border-[#E5E5E5] px-4 h-[44px] items-center justify-center rounded-lg">
-            <Text className="text-[#00343F] text-[18px] font-ukNumberPlate">
+            <Text className="text-[#00343F] text-[1.125rem] font-ukNumberPlate">
               {activeCar?.plate || "-"}
             </Text>
           </View>
@@ -40,16 +40,16 @@ export function CarCard({ activeCar, onAddCar, onValuation }: CarCardProps) {
         <View className="flex-row justify-between items-start">
           {/* Left: name + meta */}
           <View className="flex-1 mr-4">
-            <Text className="text-[#00AEB5] text-[16px] font-lexendMedium mb-1">
+            <Text className="text-[#00AEB5] text-[1rem] font-lexendMedium mb-1">
               {activeCar?.make} {activeCar?.carModel}
             </Text>
-            <Text className="text-[#9A9B9B] text-[10px] font-lexendRegular leading-[18px]">
+            <Text className="text-[#9A9B9B] text-[0.625rem] font-lexendRegular leading-[18px]">
               {activeCar?.year} · {activeCar?.mileage?.toLocaleString()} km ·{" "}
               {activeCar?.color ? ` · ${activeCar.color}` : "N/A"}{" "}
               {activeCar?.bodyStyle ? `· ${activeCar.bodyStyle}` : "N/A"}
               {activeCar?.fuelType ? ` · ${activeCar.fuelType}` : "N/A"}
               {"\n"}
-              <Text className="text-[#006C70] text-[10px] font-lexendMedium">
+              <Text className="text-[#006C70] text-[0.625rem] font-lexendMedium">
                 {activeCar?.purchaseDate
                   ? `Purchased ${formatDistanceToNow(new Date(activeCar.purchaseDate), { addSuffix: true })}`
                   : "No purchase info"}
@@ -63,7 +63,7 @@ export function CarCard({ activeCar, onAddCar, onValuation }: CarCardProps) {
 
           {/* Right: health score */}
           <View className="items-center bg-[#EAFEFF] rounded-full h-[72px] w-[77px]">
-            <Text className="text-[#7FA4A6] text-[9px] font-lexendRegular mb-1 text-center">
+            <Text className="text-[#7FA4A6] text-[0.5625rem] font-lexendRegular mb-1 text-center">
               Car Health Score
             </Text>
             <View className="">
@@ -77,12 +77,12 @@ export function CarCard({ activeCar, onAddCar, onValuation }: CarCardProps) {
 
       {/* Resale Valuation */}
       <View className="bg-[#FFECCF] px-5 py-3.5 flex-row justify-between items-center">
-        <Text className="text-[#202A2A] text-[12px] font-lexendRegular">
+        <Text className="text-[#202A2A] text-[0.75rem] font-lexendRegular">
           Resale Valuation
         </Text>
         <TouchableOpacity onPress={onValuation}>
           <View className="flex-row items-center gap-2">
-            <Text className="text-[#006C70] text-[14px] font-lexendRegular">
+            <Text className="text-[#006C70] text-[0.875rem] font-lexendRegular">
               {resaleValue
                 ? `${currencySymbol}${resaleValue.toLocaleString()}`
                 : "N/A"}
@@ -110,14 +110,14 @@ export function EmptyCarCard({ onAddCar }: EmptyCarCardProps) {
   return (
     <View className="bg-white p-6 rounded-[24px] items-center mb-6">
       <EmptyIcon width={100} height={80} />
-      <Text className="text-[#888282] text-[14px] font-lexendMedium mt-4 mb-6">
+      <Text className="text-[#888282] text-[0.875rem] font-lexendMedium mt-4 mb-6">
         You haven't registered any car yet
       </Text>
       <TouchableOpacity
         onPress={onAddCar}
         className="bg-[#29D7DE] w-full py-4 rounded-full items-center"
       >
-        <Text className="text-[#00343F] font-lexendBold text-[16px]">
+        <Text className="text-[#00343F] font-lexendBold text-[1rem]">
           Add a car
         </Text>
       </TouchableOpacity>

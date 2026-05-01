@@ -42,7 +42,7 @@ export function VehicleLicenseForm({
             <View className="flex-row items-center justify-between mt-2">
               <View>
             <View className="bg-white border border-[#EFEFEF] shadow-sm px-3 h-[44px] items-center justify-center rounded-lg">
-              <Text className="text-[#006C70] font-ukNumberPlate text-[18px]">
+              <Text className="text-[#006C70] font-ukNumberPlate text-[1.125rem]">
                 {plate || "No Plate"}
               </Text>
             </View>

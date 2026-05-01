@@ -32,28 +32,28 @@ export function DuesAndLeviesForm({ state, setState, userEmail }: ReminderFormPr
       <AmountBlock value={state.amount} onChange={(v) => setState((p) => ({ ...p, amount: v }))} />
 
       <SectionCard>
-        <Text className="text-[#8B8B8B] font-lexendRegular text-[12px] mb-3">Issuing Authority</Text>
+        <Text className="text-[#8B8B8B] font-lexendRegular text-[0.75rem] mb-3">Issuing Authority</Text>
         <View className="flex-row gap-2">
           {AUTHORITIES.map((opt) => (
             <TouchableOpacity key={opt} onPress={() => setState((p) => ({ ...p, issuingAuthority: opt }))}
               className={`flex-1 py-2.5 rounded-[8px] items-center border ${
                 state.issuingAuthority === opt ? "bg-[#00AEB5] border-[#00AEB5]" : "bg-[#F5F5F5] border-[#F0F0F0]"
               }`}>
-              <Text className={`font-lexendRegular text-[12px] ${state.issuingAuthority === opt ? "text-white" : "text-[#8B8B8B]"}`}>{opt}</Text>
+              <Text className={`font-lexendRegular text-[0.75rem] ${state.issuingAuthority === opt ? "text-white" : "text-[#8B8B8B]"}`}>{opt}</Text>
             </TouchableOpacity>
           ))}
         </View>
       </SectionCard>
 
       <SectionCard>
-        <Text className="text-[#8B8B8B] font-lexendRegular text-[12px] mb-3">Frequency</Text>
+        <Text className="text-[#8B8B8B] font-lexendRegular text-[0.75rem] mb-3">Frequency</Text>
         <View className="flex-row gap-2">
           {FREQUENCIES.map((opt) => (
             <TouchableOpacity key={opt} onPress={() => setState((p) => ({ ...p, frequency: opt }))}
               className={`flex-1 py-2.5 rounded-[8px] items-center border ${
                 state.frequency === opt ? "bg-[#00AEB5] border-[#00AEB5]" : "bg-[#F5F5F5] border-[#F0F0F0]"
               }`}>
-              <Text className={`font-lexendRegular text-[12px] ${state.frequency === opt ? "text-white" : "text-[#8B8B8B]"}`}>{opt}</Text>
+              <Text className={`font-lexendRegular text-[0.75rem] ${state.frequency === opt ? "text-white" : "text-[#8B8B8B]"}`}>{opt}</Text>
             </TouchableOpacity>
           ))}
         </View>

@@ -102,7 +102,7 @@ export function FormInput({
       >
         {label && (
           <Text
-            className={`text-[#707676] font-lexendRegular text-[12px] ${align ? "" : "mb-1"}`}
+            className={`text-[#707676] font-lexendRegular text-[0.75rem] ${align ? "" : "mb-1"}`}
           >
             {label} {required && <Text className="text-[#00AEB5]">*</Text>}
           </Text>
@@ -114,7 +114,7 @@ export function FormInput({
           onChangeText={onChange}
           multiline={multiline}
           editable={!disabled}
-          className={`text-[#202A2A] font-lexendMedium text-[14px] ${underline ? "border-b border-[#DEDEDE]" : ""} ${align === "end" ? "text-right" : ""} ${multiline ? "min-h-[40px] pt-1" : ""} ${disabled ? "opacity-60" : ""}`}
+          className={`text-[#202A2A] font-lexendMedium text-[0.875rem] ${underline ? "border-b border-[#DEDEDE]" : ""} ${align === "end" ? "text-right" : ""} ${multiline ? "min-h-[40px] pt-1" : ""} ${disabled ? "opacity-60" : ""}`}
         />
       </View>
     </View>
@@ -140,7 +140,7 @@ export function PillSelector({
 }) {
   return (
     <View className="py-4">
-      <Text className="text-[#8B8B8B] font-lexendRegular text-[12px] mb-3">
+      <Text className="text-[#8B8B8B] font-lexendRegular text-[0.75rem] mb-3">
         {label} {required && <Text className="text-[#00AEB5]">*</Text>}
       </Text>
       <View className="flex-row flex-wrap gap-x-2 gap-y-3">
@@ -157,7 +157,7 @@ export function PillSelector({
             } ${disabled ? "opacity-60" : ""}`}
           >
             <Text
-              className={`font-lexendMedium text-[12px] ${
+              className={`font-lexendMedium text-[0.75rem] ${
                 selected === opt ? "text-white" : "text-[#AFB4B4]"
               }`}
             >
@@ -195,8 +195,8 @@ export function DateSelectRow({
         <Calendar width={24} height={24} />
       </View>
       <View className="flex-1">
-        <Text className="text-[#8B8B8B] font-lexendRegular text-[12px]">
-          {label} {required && <Text className="text-[#00AEB5] text-[12px]">*</Text>}
+        <Text className="text-[#8B8B8B] font-lexendRegular text-[0.75rem]">
+          {label} {required && <Text className="text-[#00AEB5] text-[0.75rem]">*</Text>}
         </Text>
       </View>
       <TouchableOpacity 
@@ -206,11 +206,11 @@ export function DateSelectRow({
       >
         {showExpiryShortcut && !date && (
           <View className="bg-[#F5F5F5] px-2 py-1 rounded-md mr-2">
-            <Text className="text-[#8B8B8B] text-[12px]">+ 12</Text>
+            <Text className="text-[#8B8B8B] text-[0.75rem]">+ 12</Text>
           </View>
         )}
         <Text
-          className={`font-lexendRegular text-[14px] ${date ? "text-[#001A1F]" : "text-[#C1C3C3]"}`}
+          className={`font-lexendRegular text-[0.875rem] ${date ? "text-[#001A1F]" : "text-[#C1C3C3]"}`}
         >
           {date ? format(date, "d MMMM, yyyy") : "Select date"}
         </Text>
@@ -247,7 +247,7 @@ export function AmountBlock({
 
   return (
     <View className="py-6 items-center">
-      <Text className="text-[#8B8B8B] font-lexendRegular text-[12px] mb-1">
+      <Text className="text-[#8B8B8B] font-lexendRegular text-[0.75rem] mb-1">
         {label} {required && <Text className="text-[#00AEB5]">*</Text>}
       </Text>
       <Text className="text-[#001A1F] font-lexendBold text-[34px] mb-4">
@@ -289,7 +289,7 @@ export function DocumentUpload({
       <View className="">
         <Photo width={24} height={24} />
       </View>
-      <Text className="flex-1 text-[#8B8B8B] font-lexendRegular text-[13px]">
+      <Text className="flex-1 text-[#8B8B8B] font-lexendRegular text-[0.8125rem]">
         {label}
       </Text>
       <TouchableOpacity
@@ -357,7 +357,7 @@ export function PartsReplacedList({
             color="#8B8B8B"
             style={{ marginRight: 12 }}
           />
-          <Text className="text-[#8B8B8B] font-lexendRegular text-[12px]">
+          <Text className="text-[#8B8B8B] font-lexendRegular text-[0.75rem]">
             Parts replaced
           </Text>
         </View>
@@ -373,7 +373,7 @@ export function PartsReplacedList({
             value={item.item}
             onChangeText={(text) => onChange(item.id, text)}
             editable={!disabled}
-            className={`flex-1 bg-[#F5F5F5] px-3 py-2 rounded-md text-[#001A1F] font-lexendRegular text-[14px] ${disabled ? "opacity-60" : ""}`}
+            className={`flex-1 bg-[#F5F5F5] px-3 py-2 rounded-md text-[#001A1F] font-lexendRegular text-[0.875rem] ${disabled ? "opacity-60" : ""}`}
           />
           {!disabled && (
             <TouchableOpacity onPress={() => onRemove(item.id)} className="ml-3">

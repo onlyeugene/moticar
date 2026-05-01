@@ -125,7 +125,7 @@ const DateTimelineHeader = ({
                   <View className="w-1 h-1 rounded-full absolute -top-1 -right-2 bg-[#293536]" />
                 )}
                 <Text
-                  className={`text-[14px] font-lexendSemiBold ${isActive ? "text-[#00AEB5]" : "text-[#B0B0B0]"}`}
+                  className={`text-[0.875rem] font-lexendSemiBold ${isActive ? "text-[#00AEB5]" : "text-[#B0B0B0]"}`}
                 >
                   {label}
                 </Text>
@@ -175,10 +175,10 @@ const ExpenseGroupItem = ({
         )}
         <View className="w-[60px] h-[60px] rounded-[10px] border border-[#E2E2E2] bg-white items-center justify-center">
           <Calendar width={20} height={20} />
-          <Text className="text-[#006C70] text-[10px] font-lexendBold mt-1">
+          <Text className="text-[#006C70] text-[0.625rem] font-lexendBold mt-1">
             {format(formattedDate, "do")}
           </Text>
-          <Text className="text-[#006C70] text-[10px] font-lexendRegular">
+          <Text className="text-[#006C70] text-[0.625rem] font-lexendRegular">
             {format(formattedDate, "HH:mm")}
           </Text>
         </View>
@@ -186,12 +186,12 @@ const ExpenseGroupItem = ({
       <TouchableOpacity onPress={onPress} className="flex-1">
         <View className="flex-row items-center justify-between mb-3">
           <View className="flex-row items-center gap-3">
-            <Text className="text-[#001A1F] text-[20px] font-lexendBold">
+            <Text className="text-[#001A1F] text-[1.25rem] font-lexendBold">
               {currencySymbol}
               {totalAmount.toLocaleString()}
             </Text>
             <View className="bg-[#7AE6EB] px-2.5 py-1 rounded-[6px]">
-              <Text className="text-[#006C70] text-[10px] font-lexendBold">
+              <Text className="text-[#006C70] text-[0.625rem] font-lexendBold">
                 {entriesCount} entries
               </Text>
             </View>
@@ -201,7 +201,7 @@ const ExpenseGroupItem = ({
         <View className="flex-row flex-wrap gap-2">
           {categories.map((cat: string, idx: number) => (
             <View key={idx} className="bg-[#F6F6F6] px-3 py-1.5 rounded-[4px]">
-              <Text className="text-[#A1A1A1] text-[10px] font-lexendRegular">
+              <Text className="text-[#A1A1A1] text-[0.625rem] font-lexendRegular">
                 {cat}
               </Text>
             </View>
@@ -228,10 +228,10 @@ const TechnicianGroupItem = ({
       <View className="items-center mr-4 w-[60px]">
         <View className="w-[60px] h-[60px] rounded-[10px] border border-[#E2E2E2] bg-white items-center justify-center">
           <Calendar width={20} height={20} />
-          <Text className="text-[#001A1F] text-[10px] font-lexendBold mt-1">
+          <Text className="text-[#001A1F] text-[0.625rem] font-lexendBold mt-1">
             {format(formattedDate, "do")}
           </Text>
-          <Text className="text-[#00AEB5] text-[10px] font-lexendRegular">
+          <Text className="text-[#00AEB5] text-[0.625rem] font-lexendRegular">
             {format(formattedDate, "HH:mm")}
           </Text>
         </View>
@@ -244,22 +244,22 @@ const TechnicianGroupItem = ({
         <View className="flex-1 flex-row items-start justify-between">
           <View>
             <View className="flex-row items-center gap-2 mb-1">
-              <Text className="text-[#00AEB5] text-[14px] font-lexendRegular">
+              <Text className="text-[#00AEB5] text-[0.875rem] font-lexendRegular">
                 {name}
               </Text>
               <View className="bg-[#7AE6EB] px-2.5 py-1 rounded-[6px]">
-                <Text className="text-[#006C70] text-[10px] font-lexendMedium">
+                <Text className="text-[#006C70] text-[0.625rem] font-lexendMedium">
                   {entriesCount} entries
                 </Text>
               </View>
             </View>
-            <Text className="text-[#001A1F] text-[20px] font-lexendBold mb-2">
+            <Text className="text-[#001A1F] text-[1.25rem] font-lexendBold mb-2">
               {currencySymbol}
               {totalAmount.toLocaleString()}
             </Text>
             {specialty && (
               <View className="bg-[#F6F6F6] px-3 py-1.5 rounded-[3px] self-start">
-                <Text className="text-[#A1A1A1] text-[10px] font-lexendRegular">
+                <Text className="text-[#A1A1A1] text-[0.625rem] font-lexendRegular">
                   {specialty}
                 </Text>
               </View>
@@ -401,7 +401,7 @@ const SpendsTab: React.FC<SpendsTabProps> = ({
             className={`flex-1 py-3 rounded-full items-center justify-center ${filterType === type ? "bg-white shadow-sm" : ""}`}
           >
             <Text
-              className={`text-[14px] font-lexendMedium ${filterType === type ? "text-[#00AEB5]" : "text-[#7BA0A3]"}`}
+              className={`text-[0.875rem] font-lexendMedium ${filterType === type ? "text-[#00AEB5]" : "text-[#7BA0A3]"}`}
             >
               {type}
             </Text>
@@ -459,7 +459,7 @@ const SpendsTab: React.FC<SpendsTabProps> = ({
       ) : (
         <View className="items-center justify-center py-32">
           <EmptyIcon width={54} height={38} />
-          <Text className="text-[#ADADAD] text-[14px] font-lexendRegular mt-5">
+          <Text className="text-[#ADADAD] text-[0.875rem] font-lexendRegular mt-5">
             No spends recorded
           </Text>
         </View>
@@ -471,7 +471,7 @@ const SpendsTab: React.FC<SpendsTabProps> = ({
           onPress={() => setIsScaleMenuOpen(false)}
         >
           <View className="bg-white rounded-t-[24px] p-6 pb-12 shadow-lg">
-            <Text className="text-[#001A1F] text-[18px] font-lexendBold mb-4">
+            <Text className="text-[#001A1F] text-[1.125rem] font-lexendBold mb-4">
               View Scale
             </Text>
             {(["Weekly", "Monthly", "Yearly"] as const).map((opt) => (
@@ -484,7 +484,7 @@ const SpendsTab: React.FC<SpendsTabProps> = ({
                 }}
               >
                 <Text
-                  className={`text-[16px] ${timeFilter === opt ? "text-[#00AEB5] font-lexendBold" : "text-[#879090] font-lexendRegular"}`}
+                  className={`text-[1rem] ${timeFilter === opt ? "text-[#00AEB5] font-lexendBold" : "text-[#879090] font-lexendRegular"}`}
                 >
                   {opt}
                 </Text>

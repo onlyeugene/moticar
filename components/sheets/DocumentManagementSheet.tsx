@@ -207,7 +207,7 @@ export default function DocumentManagementSheet({
             >
               <View className="flex-row items-center gap-4 flex-1">
                 <View className="flex-1 gap-2">
-                  <Text className="text-[#050505] text-[16px] font-lexendSemiBold">
+                  <Text className="text-[#050505] text-[1rem] font-lexendSemiBold">
                     {doc.name}
                   </Text>
 
@@ -230,7 +230,7 @@ export default function DocumentManagementSheet({
                           ''
                         )}
                         <Text
-                          className={`text-[12px] font-lexendMedium ${
+                          className={`text-[0.75rem] font-lexendMedium ${
                             info.status === "Active"
                               ? "text-[#1ED760]"
                               : info.status === "Expired"
@@ -244,13 +244,13 @@ export default function DocumentManagementSheet({
                     ) : null}
                   </View>
                   <View className="">
-                    <Text className="text-[#00AEB5] text-[12px] font-lexendRegular">
+                    <Text className="text-[#00AEB5] text-[0.75rem] font-lexendRegular">
                       {info.date}
                     </Text>
                     {/* {info.meta ? (
                       <>
                         <View className="w-1 h-1 rounded-full bg-[#D9D9D9]" />
-                        <Text className="text-[#00AEB5] text-[12px] font-lexendMedium">
+                        <Text className="text-[#00AEB5] text-[0.75rem] font-lexendMedium">
                           {info.meta}
                         </Text>
                       </>

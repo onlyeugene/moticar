@@ -68,7 +68,7 @@ export default function DiagnosticChecking({ onCancel, status = "scanning" }: Pr
           className="absolute top-20 left-0 right-0 bg-[#FFD9A0] py-2 flex-row items-center justify-center gap-2"
         >
           <Ionicons name="warning-outline" size={16} color="#BA7C1B" />
-          <Text className="text-[#BA7C1B] font-lexendMedium text-[12px]">Signal Lost</Text>
+          <Text className="text-[#BA7C1B] font-lexendMedium text-[0.75rem]">Signal Lost</Text>
         </Animated.View>
       )}
 
@@ -78,8 +78,8 @@ export default function DiagnosticChecking({ onCancel, status = "scanning" }: Pr
           <MotiBuddieLogo width={80} height={80} />
         </View>
 
-        <Text className="text-white font-lexendMedium text-[26px] mt-10">Checking</Text>
-        <Text className="text-[#9BBABB] font-lexendRegular text-[14px] mt-2">
+        <Text className="text-white font-lexendMedium text-[1.625rem] mt-10">Checking</Text>
+        <Text className="text-[#9BBABB] font-lexendRegular text-[0.875rem] mt-2">
           Last checked: 12th March, 2026
         </Text>
       </View>

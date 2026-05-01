@@ -169,10 +169,10 @@ export default function ExpenseListItem({
             </View>
             <View className="flex-row items-start gap-2">
               <View className="items-start">
-                <Text className="text-[#1A3B41] font-lexendSemiBold text-[15px]">
+                <Text className="text-[#1A3B41] font-lexendSemiBold text-[0.9375rem]">
                   {expense.category || ""}
                 </Text>
-                <Text className="text-[#9BBABB] font-lexendRegular text-[11px] mt-0.5">
+                <Text className="text-[#9BBABB] font-lexendRegular text-[0.6875rem] mt-0.5">
                   {relativeDate} . {time}
                 </Text>
               </View>
@@ -180,7 +180,7 @@ export default function ExpenseListItem({
                 <View className="bg-[#ECE6B7] px-2 py-0.5 rounded-full max-w-[120px]">
                   <Text
                     numberOfLines={1}
-                    className="text-[#425658] font-lexendRegular text-[10px]"
+                    className="text-[#425658] font-lexendRegular text-[0.625rem]"
                   >
                     {(() => {
                       const name =
@@ -215,14 +215,14 @@ export default function ExpenseListItem({
                     <SwapIcon width={15} height={15}/>
                   </TouchableOpacity>
                 )}
-              <Text className="text-[#1FCAE3] font-lexendMedium text-[16px]">
+              <Text className="text-[#1FCAE3] font-lexendMedium text-[1rem]">
                 {currencySymbol}
                 {expense.amount.toLocaleString()}
               </Text>
               {/* Converted Currency Indicator */}
              
             </View>
-            <Text className="text-[#CDC270] font-lexendRegular text-[12px] mt-0.5">
+            <Text className="text-[#CDC270] font-lexendRegular text-[0.75rem] mt-0.5">
               {expense.paymentMethod}
             </Text>
           </View>
@@ -233,7 +233,7 @@ export default function ExpenseListItem({
         <View className="bg-[#F5F5F5] mt-2 px-4 py-3 rounded-b-xl flex-row justify-around border-x border-b border-[#F0F0F0]">
           <TouchableOpacity className="flex-row items-center gap-1.5">
             <Ionicons name="refresh" size={16} color="#1A3B41" />
-            <Text className="text-[#586A6B] font-lexendRegular text-[12px]">
+            <Text className="text-[#586A6B] font-lexendRegular text-[0.75rem]">
               Repeat
             </Text>
           </TouchableOpacity>
@@ -243,7 +243,7 @@ export default function ExpenseListItem({
             className="flex-row items-center gap-1.5"
           >
             <Ionicons name="eye-outline" size={16} color="#1A3B41" />
-            <Text className="text-[#586A6B] font-lexendRegular text-[12px]">
+            <Text className="text-[#586A6B] font-lexendRegular text-[0.75rem]">
               Details
             </Text>
           </TouchableOpacity>
@@ -259,7 +259,7 @@ export default function ExpenseListItem({
               color={deleteMutation.isPending ? "#CCC" : "#FF7A8D"}
             />
             <Text
-              className={`font-lexendRegular text-[12px] ${
+              className={`font-lexendRegular text-[0.75rem] ${
                 deleteMutation.isPending ? "text-[#CCC]" : "text-[#EE6969]"
               }`}
             >

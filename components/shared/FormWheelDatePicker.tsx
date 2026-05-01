@@ -88,7 +88,7 @@ const WheelPicker = ({ data, initialValue, onValueChange, width = 80 }: WheelPic
             }}
           >
             <Text
-              className={`${isSelected ? "font-lexendRegular text-[#FFFFFF]" : "font-lexendRegular text-[#9BA5A5]"} text-[14px]`}
+              className={`${isSelected ? "font-lexendRegular text-[#FFFFFF]" : "font-lexendRegular text-[#9BA5A5]"} text-[0.875rem]`}
             >
               {item}
             </Text>

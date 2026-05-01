@@ -24,6 +24,9 @@ import HelpIcon from "@/assets/more/help-circle.svg";
 import KeyIcon from "@/assets/more/key.svg";
 import Logout from "@/assets/more/logout.svg";
 import Translate from "@/assets/more/translate.svg";
+import Website from "@/assets/icons/web.svg";
+import External from "@/assets/icons/external.svg";
+import Linktree from "@/assets/icons/linktree.svg";
 import Inbox from "@/assets/more/inbox.svg";
 import { LoadingModal } from "@/components/ui/LoadingModal";
 
@@ -31,16 +34,20 @@ interface SettingItemProps {
   icon: React.FC<any>;
   label: string;
   value?: string;
+  ValueIcon?: React.FC<any>;
   onPress?: () => void;
   isLast?: boolean;
+  choose? : boolean
 }
 
 function SettingItem({
   icon: Icon,
   label,
   value,
+  ValueIcon,
   onPress,
   isLast,
+  choose
 }: SettingItemProps) {
   return (
     <TouchableOpacity
@@ -51,17 +58,18 @@ function SettingItem({
     >
       <View className="flex-row items-center gap-3">
         <Icon width={18} height={18} />
-        <Text className="text-[#001A1F] text-[14px] font-lexendRegular">
+        <Text className="text-[#001A1F] text-[0.875rem] font-lexendRegular">
           {label}
         </Text>
       </View>
       <View className="flex-row items-center gap-2">
         {value && (
-          <Text className="text-[#00AEB5] text-[12px] font-lexendRegular">
+          <Text className="text-[#00AEB5] text-[0.75rem] font-lexendRegular">
             {value}
           </Text>
         )}
-        <Ionicons name="chevron-forward" size={16} color="#7BA0A3" />
+        {ValueIcon && <ValueIcon width={18} height={18} />}
+        {!choose ? <Ionicons name="chevron-forward" size={16} color="#7BA0A3" /> : <External width={18} height={18} />}
       </View>
     </TouchableOpacity>
   );
@@ -115,7 +123,7 @@ export default function MoreScreen() {
         contentContainerStyle={{ paddingTop: 60, paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >
-        <Text className="text-[#00343F] text-[26px] font-lexendMedium mb-6">
+        <Text className="text-[#00343F] text-[1.625rem] font-lexendMedium mb-6">
           More
         </Text>
 
@@ -132,7 +140,7 @@ export default function MoreScreen() {
                       resizeMode="cover"
                     />
                   ) : (
-                    <Text className="text-[#006C70] text-[24px] font-lexendBold">
+                    <Text className="text-[#006C70] text-[1.5rem] font-lexendBold">
                       {user?.name?.charAt(0) || user?.username?.charAt(0) || "U"}
                     </Text>
                   )}
@@ -141,18 +149,18 @@ export default function MoreScreen() {
               <View className="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-[#22C55E] border-2 border-[#FEF9C3]" />
             </View>
             <View className="flex-1">
-              <Text className="text-[#00343F] text-[14px] font-lexendMedium">
+              <Text className="text-[#00343F] text-[0.875rem] font-lexendMedium">
                 {user?.name || ""}
               </Text>
               <Text
-                className="text-[#00343F] text-[16px] font-lexendBold"
+                className="text-[#00343F] text-[1rem] font-lexendBold"
                 numberOfLines={1}
                 ellipsizeMode="tail"
               >
                 {user?.username || ""}
               </Text>
               <View className="bg-[#29D7DE] px-2 py-2 rounded-[8px] mt-1 self-start">
-                <Text className="text-[#00343F] text-[12px] font-lexendRegular">
+                <Text className="text-[#00343F] text-[0.75rem] font-lexendRegular">
                   userID: {user?.id?.slice(-8) || ""}
                 </Text>
               </View>
@@ -167,7 +175,7 @@ export default function MoreScreen() {
         </TouchableOpacity>
 
         {/* SETTINGS */}
-        <Text className="text-[#6C6C70] text-[14px] font-lexendMedium mb-2 px-1">
+        <Text className="text-[#6C6C70] text-[0.875rem] font-lexendMedium mb-2 px-1">
           SETTINGS
         </Text>
         <View className="bg-white rounded-[16px] px-4 mb-8">
@@ -191,17 +199,18 @@ export default function MoreScreen() {
             icon={Translate}
             label="Language"
             value={currentLanguage.label}
+            ValueIcon={currentLanguage.flag as React.FC<any>}
             onPress={() => setShowLanguageSheet(true)}
             isLast={true}
           />
         </View>
 
         {/* SUPPORT */}
-        <Text className="text-[#6C6C70] text-[14px] font-lexendMedium mb-2 px-1">
+        <Text className="text-[#6C6C70] text-[0.875rem] font-lexendMedium mb-2 px-1">
           SUPPORT
         </Text>
         <View className="bg-white rounded-[16px] px-4 mb-8">
-          <SettingItem icon={Headset} label="Contact Us" />
+          {/* <SettingItem icon={Headset} label="Contact Us" /> */}
           <SettingItem
             icon={HelpIcon}
             label="FAQ"
@@ -212,21 +221,22 @@ export default function MoreScreen() {
             label="Terms of Use"
             onPress={() => router.push("/screens/legal/terms-and-conditions")}
           />
-          <SettingItem
+          {/* <SettingItem
             icon={BookIcon}
             label="Membership Terms"
             onPress={() => router.push("/screens/legal/membership-terms")}
-          />
-          <SettingItem
+          /> */}
+          {/* <SettingItem
             icon={BookIcon}
             label="Privacy Policy"
             onPress={() => router.push("/screens/legal/privacy-policy")}
-          />
-          <SettingItem icon={Command} label="Community" isLast={true} />
+          /> */}
+          <SettingItem icon={Command} label="Community" choose={true}/>
+          <SettingItem icon={Website} label="Website" isLast={true} choose={true}/>
         </View>
 
         {/* YOUR ACCOUNT */}
-        <Text className="text-[#6C6C70] text-[14px] font-lexendMedium mb-2 px-1">
+        <Text className="text-[#6C6C70] text-[0.875rem] font-lexendMedium mb-2 px-1">
           YOUR ACCOUNT
         </Text>
         <View className="bg-white rounded-[16px] px-4 mb-8">
@@ -237,6 +247,11 @@ export default function MoreScreen() {
             onPress={handleDeleteAccount}
             isLast={true}
           />
+        </View>
+
+        <View className="items-center justify-center gap-3">
+            <Text className="text-[14px] font-lexendBold text-[#667085]">Join our socials</Text>
+            <Linktree />
         </View>
       </ScrollView>
 

@@ -170,10 +170,10 @@ export default function Pictures() {
         >
           {/* Title and Subtitle */}
           <View className="px-2">
-            <Text className="text-[32px] font-lexendMedium text-[#FFFFFF]">
+            <Text className="text-[2rem] font-lexendMedium text-[#FFFFFF]">
               Take pictures
             </Text>
-            <Text className="text-[14px] font-lexendRegular text-[#9BBABB] mt-2 leading-5">
+            <Text className="text-[0.875rem] font-lexendRegular text-[#9BBABB] mt-2 leading-5">
               Ensure you are in a well lit area so that data gathered can be
               close to accurate as much as possible
             </Text>
@@ -208,7 +208,7 @@ export default function Pictures() {
                     <Ionicons name="camera" size={24} color="#00232A" />
                   </View>
                 </TouchableOpacity>
-                <Text className="text-[#C1C3C3] font-lexendMedium text-[16px]">
+                <Text className="text-[#C1C3C3] font-lexendMedium text-[1rem]">
                   {option.label}
                 </Text>
               </View>
@@ -255,7 +255,7 @@ export default function Pictures() {
               <ActivityIndicator color="#00232A" />
             ) : (
               <Text
-                className={`font-lexendBold text-[16px] ${
+                className={`font-lexendBold text-[1rem] ${
                   isNextEnabled ? "text-[#00232A]" : "text-[#1E5B64]"
                 }`}
               >
@@ -270,7 +270,7 @@ export default function Pictures() {
               className="w-full h-[56px] border border-[#29D7DE] rounded-full flex-row items-center gap-1 justify-center"
             >
               <Ionicons name="add" size={16} color="#29D7DE" />
-              <Text className="text-[#29D7DE] font-lexendBold text-[16px]">
+              <Text className="text-[#29D7DE] font-lexendBold text-[1rem]">
                 Add more
               </Text>
             </TouchableOpacity>
@@ -286,7 +286,7 @@ export default function Pictures() {
             <Text className="mt-4 font-lexendMedium text-[#00343F]">
               Recognizing your vehicle...
             </Text>
-            <Text className="text-[12px] text-[#9BA0A0] mt-1">
+            <Text className="text-[0.75rem] text-[#9BA0A0] mt-1">
               This might take a few seconds
             </Text>
           </View>

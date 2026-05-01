@@ -102,16 +102,16 @@ export default function ImeiEntry() {
               </View>
 
               <View className="mt-10">
-                <Text className="text-white text-[28px] font-lexendMedium">
+                <Text className="text-white text-[1.75rem] font-lexendMedium">
                   Enter Device ID
                 </Text>
-                <Text className="text-[#9BBABB] font-lexendRegular text-[15px] mt-4 leading-7">
+                <Text className="text-[#9BBABB] font-lexendRegular text-[0.9375rem] mt-4 leading-7">
                   Please enter the Serial Number (SN) or IMEI found on the back of your MotiBuddie device.
                 </Text>
               </View>
 
               <View className="mt-10">
-                <Text className="text-[#32717B] font-lexendRegular text-[12px] mb-2 px-1">
+                <Text className="text-[#32717B] font-lexendRegular text-[0.75rem] mb-2 px-1">
                   Serial Number / IMEI
                 </Text>
                 <ControlledInput
@@ -159,7 +159,7 @@ export default function ImeiEntry() {
                 {isPairing ? (
                   <ActivityIndicator color="#00343F" />
                 ) : (
-                  <Text className={`font-lexendBold text-[16px] ${isValid ? "text-[#00343F]" : "text-white/50"}`}>
+                  <Text className={`font-lexendBold text-[1rem] ${isValid ? "text-[#00343F]" : "text-white/50"}`}>
                     Connect Device
                   </Text>
                 )}

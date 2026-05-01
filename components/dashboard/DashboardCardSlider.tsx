@@ -85,7 +85,7 @@ export default function DashboardCardSlider({ carId, month, year, monthlyBudget 
       <View className="items-center" style={{ marginRight: CARD_SPACING }}>
         {item.type === 'analysis' && (
           <View className="bg-[#E0FBFC] border border-[#E0FBFC] rounded-[8px] p-4 h-[284px] w-[315px] items-center justify-center shadow-sm">
-            <Text className="text-[#1A3B41] font-lexendBold text-[16px]">{item.title}</Text>
+            <Text className="text-[#1A3B41] font-lexendBold text-[1rem]">{item.title}</Text>
 
             <View className="items-center justify-center relative">
               {isLoading ? (
@@ -103,8 +103,8 @@ export default function DashboardCardSlider({ carId, month, year, monthlyBudget 
             </View>
 
             <View className="items-center">
-              <Text className="text-[#91C2C2] font-lexendRegular text-[12px]">Last Expense Recorded:</Text>
-              <Text className="text-[#202A2A] font-lexendSemiBold text-[15px] mt-1">
+              <Text className="text-[#91C2C2] font-lexendRegular text-[0.75rem]">Last Expense Recorded:</Text>
+              <Text className="text-[#202A2A] font-lexendSemiBold text-[0.9375rem] mt-1">
                 {spendData?.lastExpenseDate
                   ? new Date(spendData.lastExpenseDate).toLocaleDateString('en-GB', {
                       day: 'numeric',
@@ -119,41 +119,41 @@ export default function DashboardCardSlider({ carId, month, year, monthlyBudget 
 
         {item.type === 'cost-per-mile' && (
           <View className="bg-[#E0FBFC] rounded-[8px] p-8 h-[284px] w-[315px] items-center justify-center shadow-sm">
-            <Text className="text-[#1A3B41] font-lexendBold text-[18px] mb-10">{item.title}</Text>
+            <Text className="text-[#1A3B41] font-lexendBold text-[1.125rem] mb-10">{item.title}</Text>
 
             <View className={`px-4 py-2 rounded-full flex-row items-center gap-1.5 mb-2 ${cpmDiff >= 0 ? 'bg-[#FFFD54]' : 'bg-[#7AE6EB]'}`}>
               <Ionicons name={cpmDiff >= 0 ? "arrow-up" : "arrow-down"} size={12} color="#1A3B41" />
-              <Text className="text-[#1A3B41] font-lexendBold text-[13px]">{Math.abs(cpmDiff).toFixed(0)}%</Text>
+              <Text className="text-[#1A3B41] font-lexendBold text-[0.8125rem]">{Math.abs(cpmDiff).toFixed(0)}%</Text>
             </View>
 
             <Text className="text-[#1A3B41] font-lexendBold text-[44px] tracking-tighter">
               {currencySymbol}{currentMonthCPM.toFixed(2)}
             </Text>
-            <Text className="text-[#9BBABB] font-lexendRegular text-[14px] mt-1">than last month</Text>
+            <Text className="text-[#9BBABB] font-lexendRegular text-[0.875rem] mt-1">than last month</Text>
           </View>
         )}
 
         {item.type === 'comparison' && (
           <View className="bg-[#E0FBFC] rounded-[8px] p-6 h-[284px] w-[315px] items-center justify-center shadow-sm">
-            <Text className="text-[#1A3B41] font-lexendBold text-[18px] mb-8">{item.title}</Text>
+            <Text className="text-[#1A3B41] font-lexendBold text-[1.125rem] mb-8">{item.title}</Text>
 
             <View className={`px-4 py-2 rounded-full flex-row items-center gap-1.5 mb-4 ${spendData?.comparison?.trend === 'up' ? 'bg-[#FFFD54]' : 'bg-[#7AE6EB]'}`}>
               <Ionicons name={spendData?.comparison?.trend === 'up' ? "arrow-up" : "arrow-down"} size={12} color="#1A3B41" />
-              <Text className="text-[#1A3B41] font-lexendBold text-[13px]">{Math.abs(spendData?.comparison?.percentage || 0).toFixed(0)}%</Text>
+              <Text className="text-[#1A3B41] font-lexendBold text-[0.8125rem]">{Math.abs(spendData?.comparison?.percentage || 0).toFixed(0)}%</Text>
             </View>
 
             <Text className="text-[#1A3B41] font-lexendBold text-[38px] mt-1">
               {spendData?.comparison?.trend === 'up' ? '+' : '-'} {currencySymbol}{Math.abs(spendData?.comparison?.difference || 0).toLocaleString()}
             </Text>
-            <Text className="text-[#9BBABB] font-lexendRegular text-[14px] mt-1">than last month</Text>
+            <Text className="text-[#9BBABB] font-lexendRegular text-[0.875rem] mt-1">than last month</Text>
 
             <View className="bg-[#B8F2F4]/60 p-3 rounded-[24px] mt-8 w-full">
               <View className="flex-row items-start justify-between">
                 <View>
-                  <Text className="text-[#1A3B41] font-lexendBold text-[11px] uppercase tracking-wider opacity-60">
+                  <Text className="text-[#1A3B41] font-lexendBold text-[0.6875rem] uppercase tracking-wider opacity-60">
                     Weekly Average
                   </Text>
-                  <Text className="text-[#1A3B41] font-lexendBold text-[20px] mt-1">{currencySymbol}{weeklyAverage.toLocaleString(undefined, { maximumFractionDigits: 0 })}</Text>
+                  <Text className="text-[#1A3B41] font-lexendBold text-[1.25rem] mt-1">{currencySymbol}{weeklyAverage.toLocaleString(undefined, { maximumFractionDigits: 0 })}</Text>
                 </View>
                 <Ionicons 
                   name={weeklyAverage <= weeklyBudget ? "thumbs-up" : "warning"} 
@@ -161,7 +161,7 @@ export default function DashboardCardSlider({ carId, month, year, monthlyBudget 
                   color={weeklyAverage <= weeklyBudget ? "#00AEB5" : "#FF6B6B"} 
                 />
               </View>
-              <Text className="text-[#1A3B41] font-lexendRegular text-[10px] mt-2 opacity-70">
+              <Text className="text-[#1A3B41] font-lexendRegular text-[0.625rem] mt-2 opacity-70">
                 {weeklyAverage <= weeklyBudget 
                   ? "Great! You didn't exceed your weekly average threshold."
                   : "Caution: You are exceeding your set weekly budget threshold."}
@@ -172,7 +172,7 @@ export default function DashboardCardSlider({ carId, month, year, monthlyBudget 
 
         {item.type === 'weekly' && (
           <View className="bg-[#E0FBFC] rounded-[8px] p-6 h-[284px] w-[315px] items-center shadow-sm">
-            <Text className="text-[#1A3B41] font-lexendBold text-[18px] mb-8">{item.title}</Text>
+            <Text className="text-[#1A3B41] font-lexendBold text-[1.125rem] mb-8">{item.title}</Text>
 
             <View className="flex-row gap-2 mb-2">
               {[1, 2, 3, 4].map((w) => (
@@ -184,7 +184,7 @@ export default function DashboardCardSlider({ carId, month, year, monthlyBudget 
                   }`}
                 >
                   <Text
-                    className={`text-[10px] font-lexendMedium ${
+                    className={`text-[0.625rem] font-lexendMedium ${
                       selectedWeek === w ? 'text-[#00343F]' : 'text-[#9BBABB]'
                     }`}
                   >
@@ -196,7 +196,7 @@ export default function DashboardCardSlider({ carId, month, year, monthlyBudget 
 
             <View className="flex-row items-end justify-between w-full h-32 px-4 mb-8">
               <View className="absolute left-0 top-0 h-full justify-between py-2">
-                <Text className="text-[10px] text-[#9BBABB] font-lexendRegular rotate-[-90deg] translate-x-[-15px]">
+                <Text className="text-[0.625rem] text-[#9BBABB] font-lexendRegular rotate-[-90deg] translate-x-[-15px]">
                   {currencySymbol}{Math.round(maxWeeklySpend).toLocaleString()}
                 </Text>
               </View>
@@ -206,7 +206,7 @@ export default function DashboardCardSlider({ carId, month, year, monthlyBudget 
                     style={{ height: Math.max((d.amount / maxWeeklySpend) * 100, 4) }}
                     className={`w-3.5 ${i % 2 === 0 ? 'bg-[#00AEB5]/20' : 'bg-[#00AEB5]'} rounded-sm`}
                   />
-                  <Text className="text-[10px] text-[#1A3B41] font-lexendBold mt-1.5">
+                  <Text className="text-[0.625rem] text-[#1A3B41] font-lexendBold mt-1.5">
                     {d.label}
                   </Text>
                 </View>
@@ -214,8 +214,8 @@ export default function DashboardCardSlider({ carId, month, year, monthlyBudget 
             </View>
 
             <View className="w-full flex-row justify-between items-center pt-4 border-t border-[#F0F0F0]">
-              <Text className="text-[#9BBABB] font-lexendRegular text-[12px]">Your Set Budget</Text>
-              <Text className="text-[#1A3B41] font-lexendBold text-[18px]">{currencySymbol}{weeklyBudget.toLocaleString(undefined, { maximumFractionDigits: 0 })}</Text>
+              <Text className="text-[#9BBABB] font-lexendRegular text-[0.75rem]">Your Set Budget</Text>
+              <Text className="text-[#1A3B41] font-lexendBold text-[1.125rem]">{currencySymbol}{weeklyBudget.toLocaleString(undefined, { maximumFractionDigits: 0 })}</Text>
             </View>
           </View>
         )}

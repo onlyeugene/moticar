@@ -117,7 +117,7 @@ export default function ExpenseDetailSheet({
         <View className="flex-row justify-between items-start">
           <View className="flex-1">
             {label && (
-              <Text className="text-[#9BBABB] text-[12px] font-lexendRegular">
+              <Text className="text-[#9BBABB] text-[0.75rem] font-lexendRegular">
                 {label}
               </Text>
             )}
@@ -132,18 +132,18 @@ export default function ExpenseDetailSheet({
                     keyboardType={keyboardType}
                     multiline={multiline}
                     editable={isEditing}
-                    className={`text-[#1A3B41] font-lexendMedium ${valueClassName || "text-[16px]"} ${alignRight ? "text-right" : "text-left"} border-b border-[#1018280D] py-2 w-full`}
+                    className={`text-[#1A3B41] font-lexendMedium ${valueClassName || "text-[1rem]"} ${alignRight ? "text-right" : "text-left"} border-b border-[#1018280D] py-2 w-full`}
                     autoFocus={isEditable === "auto" && isEditing}
                   />
                 ) : (
                   <Text
-                    className={`text-[#1A3B41] font-lexendMedium ${valueClassName || "text-[16px]"}`}
+                    className={`text-[#1A3B41] font-lexendMedium ${valueClassName || "text-[1rem]"}`}
                   >
                     {value}
                   </Text>
                 )}
                 {subValue && !isEditing && (
-                  <Text className="text-[#27AE60] text-[10px] font-lexendRegular mt-0.5">
+                  <Text className="text-[#27AE60] text-[0.625rem] font-lexendRegular mt-0.5">
                     {subValue}
                   </Text>
                 )}
@@ -328,7 +328,7 @@ export default function ExpenseDetailSheet({
           onPress={handleSave}
           className="bg-[#29D7DE] px-8 py-2 rounded-full"
         >
-          <Text className="text-[#00343F] font-lexendBold text-[14px]">
+          <Text className="text-[#00343F] font-lexendBold text-[0.875rem]">
             Save
           </Text>
         </TouchableOpacity>
@@ -369,11 +369,11 @@ export default function ExpenseDetailSheet({
         <Ionicons name="settings" size={20} color="#002D36" />
       </View>
       <View>
-        <Text className="text-[#00343F] text-[16px] font-lexendBold">
+        <Text className="text-[#00343F] text-[1rem] font-lexendBold">
           {editedExpense.category}
         </Text>
         {editedExpense.metadata?.recommendedBudget && (
-          <Text className="text-[#9BBABB] text-[10px] font-lexendRegular">
+          <Text className="text-[#9BBABB] text-[0.625rem] font-lexendRegular">
             Recommended{" "}
             <Text className="text-[#29D7DE]">
               {currencySymbol}{" "}
@@ -413,7 +413,7 @@ export default function ExpenseDetailSheet({
           <DetailRow
             icon={Tag}
             value={editedExpense.name || "--"}
-            valueClassName="text-[18px] text-[#1A3B41] font-lexendBold"
+            valueClassName="text-[1.125rem] text-[#1A3B41] font-lexendBold"
             isEditable
             onValueChange={(val: string) => updateField("name", val)}
             alignRight
@@ -429,7 +429,7 @@ export default function ExpenseDetailSheet({
                 {isEditing ? (
                   <View className="flex-row items-center border border-[#1018280D] rounded-lg h-[54px] mt-2 overflow-hidden">
                     <View className="w-14 items-center justify-center border-r border-[#1018280D]  h-full">
-                      <Text className="text-gray-400 text-[20px] font-lexendMedium">
+                      <Text className="text-gray-400 text-[1.25rem] font-lexendMedium">
                         {currencySymbol}
                       </Text>
                     </View>
@@ -439,13 +439,13 @@ export default function ExpenseDetailSheet({
                         updateField("amount", parseFloat(val) || 0)
                       }
                       keyboardType="numeric"
-                      className="flex-1 px-4 text-center text-[28px] font-lexendBold text-[#00343F]"
+                      className="flex-1 px-4 text-center text-[1.75rem] font-lexendBold text-[#00343F]"
                     />
                   </View>
                 ) : (
                   <View className="items-end">
                     <View className="flex-row items-center gap-2">
-                      <Text className="text-[32px] font-lexendBold text-[#1A3B41]">
+                      <Text className="text-[2rem] font-lexendBold text-[#1A3B41]">
                         {currencySymbol}
                         {editedExpense.amount.toLocaleString()}
                       </Text>
@@ -559,7 +559,7 @@ export default function ExpenseDetailSheet({
                 ? editedExpense.technicianId?.name
                 : editedExpense.metadata?.workshopName) || "--"
             }
-            valueClassName="text-[14px]"
+            valueClassName="text-[0.875rem]"
             alignRight
             showChevron
             noBorder
@@ -573,7 +573,7 @@ export default function ExpenseDetailSheet({
                 size={14}
                 color="#27AE60"
               />
-              <Text className="text-[#27AE60] text-[11px] font-lexendRegular">
+              <Text className="text-[#27AE60] text-[0.6875rem] font-lexendRegular">
                 {(typeof editedExpense.technicianId === "object"
                   ? editedExpense.technicianId?.phone
                   : editedExpense.metadata?.technicianPhone) || "--"}
@@ -588,7 +588,7 @@ export default function ExpenseDetailSheet({
             icon={Wallet}
             label="Method of Payment"
             value={isEditing ? "" : editedExpense.paymentMethod}
-            valueClassName="text-[14px]"
+            valueClassName="text-[0.875rem]"
             alignRight
             noBorder
           >
@@ -601,7 +601,7 @@ export default function ExpenseDetailSheet({
                     className={`flex-1 flex-row items-center justify-center p-3 rounded-xl ${editedExpense.paymentMethod === method ? "bg-[#00AEB5]" : "bg-[#F5F5F5]"}`}
                   >
                     <Text
-                      className={`text-[12px] font-lexendMedium ${editedExpense.paymentMethod === method ? "text-[#FFFFFF]" : "text-[#A0A0A0]"}`}
+                      className={`text-[0.75rem] font-lexendMedium ${editedExpense.paymentMethod === method ? "text-[#FFFFFF]" : "text-[#A0A0A0]"}`}
                     >
                       {method}
                     </Text>
@@ -625,17 +625,17 @@ export default function ExpenseDetailSheet({
                 {editedExpense.items.map((item, idx) => (
                   <View key={idx} className="flex-row items-center gap-2 mb-2">
                     <View className="flex-1 bg-white h-[44px] justify-center px-4 rounded-[4px] border border-[#1018280D] shadow-[0_2px_4px_0_rgba(0,0,0,0.05)]">
-                      <Text className="text-[#00343F] font-lexendBold text-[12px]">
+                      <Text className="text-[#00343F] font-lexendBold text-[0.75rem]">
                         {item.name}
                       </Text>
                     </View>
                     <View className="bg-white h-[44px] min-w-[100px] justify-center items-center rounded-[4px] border border-[#1018280D] shadow-[0_2px_4px_0_rgba(0,0,0,0.05)]">
-                      <Text className="text-[#00343F] font-lexendBold text-[12px]">
+                      <Text className="text-[#00343F] font-lexendBold text-[0.75rem]">
                         {currencySymbol} {item.price.toLocaleString()}
                       </Text>
                     </View>
                     <View className="w-12 bg-white h-[44px] justify-center items-center rounded-[4px] border border-[#1018280D] shadow-[0_2px_4px_0_rgba(0,0,0,0.05)]">
-                      <Text className="text-[#00343F] font-lexendBold text-[12px]">
+                      <Text className="text-[#00343F] font-lexendBold text-[0.75rem]">
                         {item.qty}
                       </Text>
                     </View>
@@ -651,7 +651,7 @@ export default function ExpenseDetailSheet({
                   </View>
                 ))}
                 <View className="items-end mt-1">
-                  <Text className="text-[#00AEB5] font-lexendRegular text-[12px] ">
+                  <Text className="text-[#00AEB5] font-lexendRegular text-[0.75rem] ">
                     Total sum : {currencySymbol}{" "}
                     {extraCostsTotal.toLocaleString()}
                   </Text>
@@ -679,7 +679,7 @@ export default function ExpenseDetailSheet({
             ) : (
               <View className="mt-2 pb-4">
                 <View className="border-b py-4 border-[#DEDEDE]">
-                  <Text className="text-[13px] text-[#586A6B] font-lexendRegular">
+                  <Text className="text-[0.8125rem] text-[#586A6B] font-lexendRegular">
                     {editedExpense.notes || ""}
                   </Text>
                 </View>
@@ -693,7 +693,7 @@ export default function ExpenseDetailSheet({
             onPress={() => setIsEditing(false)}
             className="mt-4 mb-8 border border-[#29D7DE] py-4 rounded-full items-center"
           >
-            <Text className="text-[#00343F] font-lexendBold text-[16px]">
+            <Text className="text-[#00343F] font-lexendBold text-[1rem]">
               Cancel
             </Text>
           </TouchableOpacity>

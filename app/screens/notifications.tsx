@@ -80,20 +80,20 @@ export default function NotificationsScreen() {
             <View className="flex-1 ">
               <View className="flex-row items-center justify-between mb-1">
                 <View className="flex-row items-center gap-2 flex-1">
-                  <Text className="text-[#001A1F] font-lexendBold text-[14px]" numberOfLines={1}>
+                  <Text className="text-[#001A1F] font-lexendBold text-[0.875rem]" numberOfLines={1}>
                     {item.title}
                   </Text>
                   {isMotibuddie && (
                     <View className="bg-[#C46A2A] px-2 py-0.5 rounded-[4px]">
-                      <Text className="text-white text-[8px] font-lexendBold">motibuddie</Text>
+                      <Text className="text-white text-[0.5rem] font-lexendBold">motibuddie</Text>
                     </View>
                   )}
                 </View>
-                <Text className="text-[#00AEB5] font-lexendRegular text-[10px]">
+                <Text className="text-[#00AEB5] font-lexendRegular text-[0.625rem]">
                   {format(new Date(item.createdAt), "d/M/yy")}
                 </Text>
               </View>
-              <Text className="text-[#5D8689] font-lexendRegular text-[12px]" numberOfLines={2}>
+              <Text className="text-[#5D8689] font-lexendRegular text-[0.75rem]" numberOfLines={2}>
                 {item.body}
               </Text>
             </View>
@@ -113,14 +113,14 @@ export default function NotificationsScreen() {
       return (
         <ScrollView className="flex-1 px-5" showsVerticalScrollIndicator={false}>
            <View className="flex-row items-center justify-between mb-4 mt-6">
-              <Text className="text-[#001A1F] font-lexendMedium text-[16px]">
+              <Text className="text-[#001A1F] font-lexendMedium text-[1rem]">
                 Upcoming Reminders
               </Text>
            </View>
           {reminders.length === 0 ? (
             <View className="flex-1 items-center justify-center mt-20">
               <Empty />
-              <Text className="text-[#5D8689] font-lexendRegular text-[14px] mt-4">
+              <Text className="text-[#5D8689] font-lexendRegular text-[0.875rem] mt-4">
                 No reminders scheduled
               </Text>
             </View>
@@ -145,20 +145,20 @@ export default function NotificationsScreen() {
                       <MaterialCommunityIcons name="bell-outline" size={20} color="#00AEB5" />
                     </View>
                     <View className="flex-1">
-                      <Text className="text-[#001A1F] font-lexendMedium text-[14px]">
+                      <Text className="text-[#001A1F] font-lexendMedium text-[0.875rem]">
                         {reminder.name}
                       </Text>
-                      <Text className="text-[#8B8B8B] font-lexendRegular text-[12px]">
+                      <Text className="text-[#8B8B8B] font-lexendRegular text-[0.75rem]">
                         {reminder.category}{primaryDate ? ` • ${format(new Date(primaryDate), "MMM d, yyyy")}` : ''}
                       </Text>
                       {severity && (
-                        <Text className="text-[#C1C3C3] font-lexendRegular text-[10px] mt-0.5">
+                        <Text className="text-[#C1C3C3] font-lexendRegular text-[0.625rem] mt-0.5">
                           {severity}
                         </Text>
                       )}
                     </View>
                     {amount ? (
-                      <Text className="text-[#001A1F] font-lexendMedium text-[14px]">
+                      <Text className="text-[#001A1F] font-lexendMedium text-[0.875rem]">
                         {currencySymbol}{Number(amount).toLocaleString()}
                       </Text>
                     ) : null}
@@ -176,7 +176,7 @@ export default function NotificationsScreen() {
         <View className="flex-row items-center justify-between mb-4 mt-4">
           {notifications.some(n => !n.isRead) && (
             <TouchableOpacity onPress={handleMarkAllRead}>
-              <Text className="text-[#00AEB5] font-lexendMedium text-[12px]">
+              <Text className="text-[#00AEB5] font-lexendMedium text-[0.75rem]">
                 Mark all as read
               </Text>
             </TouchableOpacity>
@@ -186,7 +186,7 @@ export default function NotificationsScreen() {
         {notifications.length === 0 ? (
           <View className="flex-1 items-center justify-center mt-20">
             <Empty />
-            <Text className="text-[#5D8689] font-lexendRegular text-[14px] mt-4">
+            <Text className="text-[#5D8689] font-lexendRegular text-[0.875rem] mt-4">
               No {activeTab.toLowerCase()} for now
             </Text>
           </View>
@@ -201,7 +201,7 @@ export default function NotificationsScreen() {
     <View className="flex-1 bg-[#EEF5F5] pt-12">
       <View className="flex-1 pt-6">
 
-        <Text className="px-5 text-[24px] font-lexendBold text-[#001A1F] mb-8">
+        <Text className="px-5 text-[1.5rem] font-lexendBold text-[#001A1F] mb-8">
           Notifications
         </Text>
 
@@ -218,7 +218,7 @@ export default function NotificationsScreen() {
                   >
                     <View className="flex-row items-center">
                       <Text
-                        className={`text-[14px] font-lexendBold ${
+                        className={`text-[0.875rem] font-lexendBold ${
                           isActive ? "text-[#00AEB5]" : "text-[#C1C3C3]"
                         }`}
                       >

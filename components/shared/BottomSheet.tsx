@@ -79,7 +79,7 @@ export default function BottomSheet({
                 </TouchableOpacity>
               )}
               {typeof title === "string" ? (
-                <Text className="text-[#00343F] text-[16px] font-lexendBold">
+                <Text className="text-[#00343F] text-[1rem] font-lexendBold">
                   {title}
                 </Text>
               ) : (

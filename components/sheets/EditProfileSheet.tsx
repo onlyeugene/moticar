@@ -56,18 +56,18 @@ function ProfileRow({
       <View className="flex-row items-center flex-1 mr-2">
         <Ionicons name={icon} size={20} color={ROW_ICON_COLOR} />
         <View className="ml-4">
-          <Text className="text-[#8B8B8B] font-lexendRegular text-[12px]">
+          <Text className="text-[#8B8B8B] font-lexendRegular text-[0.75rem]">
             {label}
           </Text>
         </View>
       </View>
       <View className="items-end">
-        <Text className={`${textColor || "text-[#00343F]"} font-lexendRegular ${textSize || "text-[14px]"}`}>
+        <Text className={`${textColor || "text-[#00343F]"} font-lexendRegular ${textSize || "text-[0.875rem]"}`}>
           {value || "—"}
         </Text>
         {subtext ? (
           <Text
-            className="text-[10px] font-lexendRegular mt-0.5"
+            className="text-[0.625rem] font-lexendRegular mt-0.5"
             style={{ color: subtextColor || "#34A853" }}
           >
             {subtext}
@@ -201,7 +201,7 @@ export default function EditProfileSheet({
             disabled={isPending}
             className="bg-[#00AEB5] px-5 py-1.5 rounded-full"
           >
-            <Text className="text-white font-lexendSemiBold text-[14px]">
+            <Text className="text-white font-lexendSemiBold text-[0.875rem]">
               {isPending ? "..." : "Save"}
             </Text>
           </TouchableOpacity>
@@ -233,7 +233,7 @@ export default function EditProfileSheet({
                     resizeMode="cover"
                   />
                 ) : (
-                  <Text className="text-[#00AEB5] font-lexendBold text-[32px]">
+                  <Text className="text-[#00AEB5] font-lexendBold text-[2rem]">
                     {initials}
                   </Text>
                 )}
@@ -256,7 +256,7 @@ export default function EditProfileSheet({
 
             {/* UserID badge */}
             <View className="bg-[#29D7DE] px-4 py-1 rounded-full mt-3">
-              <Text className="text-[#00343F] font-lexendRegular text-[12px]">
+              <Text className="text-[#00343F] font-lexendRegular text-[0.75rem]">
                 userID: {user?.id?.slice(0, 12) || "—"}
               </Text>
             </View>
@@ -270,13 +270,13 @@ export default function EditProfileSheet({
                     size={20}
                     color={ROW_ICON_COLOR}
                   />
-                  <Text className="text-[#879090] font-lexendRegular text-[12px] ml-4">Name</Text>
+                  <Text className="text-[#879090] font-lexendRegular text-[0.75rem] ml-4">Name</Text>
                 </View>
                 <TextInput
                   value={nameValue}
                   onChangeText={setNameValue}
                   placeholderTextColor="#9BBABB"
-                  className="text-[#013037] font-lexendRegular text-[24px]"
+                  className="text-[#013037] font-lexendRegular text-[1.5rem]"
                 />
               </View>
               <View className="flex-row items-center justify-between px-4 py-4 border-b border-[#F0F4F4]">
@@ -286,14 +286,14 @@ export default function EditProfileSheet({
                     size={20}
                     color={ROW_ICON_COLOR}
                   />
-                  <Text className="text-[#879090] font-lexendRegular text-[12px] ml-4">Username</Text>
+                  <Text className="text-[#879090] font-lexendRegular text-[0.75rem] ml-4">Username</Text>
                 </View>
                 <TextInput
                   value={usernameValue}
                   onChangeText={setUsernameValue}
                   placeholder="Username"
                   placeholderTextColor="#9BBABB"
-                  className="text-[#013037] font-lexendRegular text-[16px]"
+                  className="text-[#013037] font-lexendRegular text-[1rem]"
                 />
               </View>
               <TouchableOpacity 
@@ -306,10 +306,10 @@ export default function EditProfileSheet({
                     size={20}
                     color={ROW_ICON_COLOR}
                   />
-                  <Text className="text-[#879090] font-lexendRegular text-[12px] ml-4">DOB</Text>
+                  <Text className="text-[#879090] font-lexendRegular text-[0.75rem] ml-4">DOB</Text>
                 </View>
                 <View className="flex-row items-center gap-2">
-                  <Text className={`font-lexendRegular text-[14px] ${dobValue ? "text-[#00343F]" : "text-[#9BBABB]"}`}>
+                  <Text className={`font-lexendRegular text-[0.875rem] ${dobValue ? "text-[#00343F]" : "text-[#9BBABB]"}`}>
                     {dobValue ? format(dobValue, "MMMM d, yyyy") : "Date of Birth"}
                   </Text>
                   <Ionicons name="chevron-forward" size={16} color="#7BA0A3" />
@@ -325,10 +325,10 @@ export default function EditProfileSheet({
                     size={20}
                     color={ROW_ICON_COLOR}
                   />
-                  <Text className="text-[#879090] font-lexendRegular text-[12px] ml-4">Gender</Text>
+                  <Text className="text-[#879090] font-lexendRegular text-[0.75rem] ml-4">Gender</Text>
                 </View>
                 <View className="flex-row items-center gap-2">
-                  <Text className={`font-lexendRegular text-[14px] ${genderValue ? "text-[#00343F]" : "text-[#9BBABB]"}`}>
+                  <Text className={`font-lexendRegular text-[0.875rem] ${genderValue ? "text-[#00343F]" : "text-[#9BBABB]"}`}>
                     {genderValue || "Gender"}
                   </Text>
                   <Ionicons name="chevron-forward" size={16} color="#7BA0A3" />
@@ -340,20 +340,20 @@ export default function EditProfileSheet({
               <ProfileRow
                 icon="pricetag-outline"
                 value={user?.name}
-                textSize="text-[24px]"
+                textSize="text-[1.5rem]"
                 textColor="text-[#013037]"
               />
               <ProfileRow
                 icon="person-circle-outline"
                 value={user?.username ? `@${user.username}` : undefined}
-                textSize="text-[16px]"
+                textSize="text-[1rem]"
                 textColor="text-[#2A2A2A]"
               />
               <ProfileRow
                 icon="calendar-outline"
                 label="Date of Birth"
                 value={user?.dob ? format(new Date(user.dob), "MMMM d, yyyy") : undefined}
-                textSize="text-[14px]"
+                textSize="text-[0.875rem]"
                 textColor="text-[#2A2A2A]"
                 subtext=""
               />
@@ -361,7 +361,7 @@ export default function EditProfileSheet({
                 icon="male-female-outline"
                 label="Gender"
                 value={user?.gender}
-                textSize="text-[14px]"
+                textSize="text-[0.875rem]"
                 textColor="text-[#2A2A2A]"
               />
             </>
@@ -373,13 +373,13 @@ export default function EditProfileSheet({
             icon="mail-outline"
             label="Email address"
             value={user?.email}
-            textSize="text-[14px]"
+            textSize="text-[0.875rem]"
             textColor="text-[#C4C4C4]"
           />
         </View>
 
         {/* Footer */}
-        <Text className="text-center text-[#646060] font-lexendRegular text-[12px] mt-6">
+        <Text className="text-center text-[#646060] font-lexendRegular text-[0.75rem] mt-6">
           Account created {user?.createdAt}
         </Text>
       </ScrollView>

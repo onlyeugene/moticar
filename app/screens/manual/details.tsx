@@ -313,7 +313,7 @@ export default function CarDetailsScreen() {
           <View className="bg-[#E8E7DC] px-6 pt-6 pb-4">
             <View className="flex-row justify-between items-center mb-4">
               <View className="flex-1" />
-              <Text className="text-[#767674] font-lexendRegular text-[14px]">
+              <Text className="text-[#767674] font-lexendRegular text-[0.875rem]">
                 This is what we got
               </Text>
               <TouchableOpacity
@@ -328,14 +328,14 @@ export default function CarDetailsScreen() {
               <View className="w-[48px] h-[48px] bg-white rounded-[10px] items-center justify-center border border-gray-50 mb-3 shadow-sm">
                 <CarLogo make={params.make || ""} size={40} />
               </View>
-              <Text className="text-[#00343F] font-lexendBold text-[20px] text-center uppercase">
+              <Text className="text-[#00343F] font-lexendBold text-[1.25rem] text-center uppercase">
                 {params.make} {params.model}
               </Text>
             </View>
           </View>
 
           <View className="items-center mt-6">
-            <Text className="text-[#A8A477] font-lexendMedium text-[12px] uppercase tracking-widest">
+            <Text className="text-[#A8A477] font-lexendMedium text-[0.75rem] uppercase tracking-widest">
               Expected Features
             </Text>
           </View>

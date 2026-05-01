@@ -82,10 +82,10 @@ export default function Selection() {
         </View>
 
         <View className="mt-8">
-          <Text className="text-white text-[26px] font-lexendMedium">
+          <Text className="text-white text-[1.625rem] font-lexendMedium">
             Search for your car
           </Text>
-          <Text className="text-[#9BBABB] font-lexendRegular text-[14px] mt-2 leading-6">
+          <Text className="text-[#9BBABB] font-lexendRegular text-[0.875rem] mt-2 leading-6">
             Start by adding the details of your personal car for a rich user
             experience
           </Text>
@@ -106,7 +106,7 @@ export default function Selection() {
 
             <View className="flex-1">
               <View className="flex-row justify-between items-center">
-                <Text className="font-lexendRegular text-[14px] text-[#FFFFFF]">
+                <Text className="font-lexendRegular text-[0.875rem] text-[#FFFFFF]">
                   {params.model}
                 </Text>
                 <View className="flex-row items-center gap-3">
@@ -116,7 +116,7 @@ export default function Selection() {
                     color="#29D7DE" 
                   />
                   <View className="bg-[#5E9597] px-2 py-1 rounded">
-                    <Text className="text-[#002E35] font-lexendBold text-[8px] uppercase">
+                    <Text className="text-[#002E35] font-lexendBold text-[0.5rem] uppercase">
                       {params.class || "SUV"}
                     </Text>
                   </View>
@@ -134,7 +134,7 @@ export default function Selection() {
           {/* Year Selection */}
           {availableYears.length > 0 && (
             <View>
-              <Text className="text-[#4FB8C8] font-lexendRegular text-[12px] mb-4">
+              <Text className="text-[#4FB8C8] font-lexendRegular text-[0.75rem] mb-4">
                 Year of Model
               </Text>
               <ScrollView
@@ -149,7 +149,7 @@ export default function Selection() {
                     className={`px-8 py-3 rounded-[8px]  ${selectedYear === year ? "bg-[#00AEB5] " : "border border-[#09515D]"}`}
                   >
                     <Text
-                      className={` text-[14px] ${selectedYear === year ? "text-[#FFFFFF] font-lexendMedium" : "text-[#94ADAD] font-lexendRegular"}`}
+                      className={` text-[0.875rem] ${selectedYear === year ? "text-[#FFFFFF] font-lexendMedium" : "text-[#94ADAD] font-lexendRegular"}`}
                     >
                       {year}
                     </Text>
@@ -163,7 +163,7 @@ export default function Selection() {
           {/* Fuel Type Selection */}
           {availableFuelTypes.length > 0 && (
             <View>
-              <Text className="text-[#4FB8C8] font-lexendRegular text-[12px] mb-4">
+              <Text className="text-[#4FB8C8] font-lexendRegular text-[0.75rem] mb-4">
                 Fuel Type
               </Text>
               <ScrollView
@@ -178,7 +178,7 @@ export default function Selection() {
                     className={`px-8 py-3 rounded-[8px]  ${selectedFuelType === fuel ? "bg-[#00AEB5] " : "border border-[#09515D]"}`}
                   >
                     <Text
-                      className={`text-[14px] ${selectedFuelType === fuel ? "text-[#FFFFFF] font-lexendMedium" : " font-lexendRegular text-[#94ADAD]"}`}
+                      className={`text-[0.875rem] ${selectedFuelType === fuel ? "text-[#FFFFFF] font-lexendMedium" : " font-lexendRegular text-[#94ADAD]"}`}
                     >
                       {fuel}
                     </Text>

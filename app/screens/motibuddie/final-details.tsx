@@ -127,16 +127,16 @@ export default function ObdFinalDetails() {
                 <View className="w-8 h-2 rounded-full bg-[#09515D]" />
               </View>
               <TouchableOpacity onPress={() => router.replace("/(tabs)/car")}>
-                <Text className="text-[#9BBABB] font-lexendRegular text-[14px]">
+                <Text className="text-[#9BBABB] font-lexendRegular text-[0.875rem]">
                   Skip
                 </Text>
               </TouchableOpacity>
             </View>
 
-            <Text className="text-white text-[28px] font-lexendMedium mb-2">
+            <Text className="text-white text-[1.75rem] font-lexendMedium mb-2">
               Final Details
             </Text>
-            <Text className="text-[#9BBABB] font-lexendRegular text-[14px] mb-8">
+            <Text className="text-[#9BBABB] font-lexendRegular text-[0.875rem] mb-8">
               These details are used to verify your identity and keep your
               details safe
             </Text>
@@ -154,12 +154,12 @@ export default function ObdFinalDetails() {
 
             {/* Plate Number */}
             <View className="mb-6">
-              <Text className="text-[#9BBABB] font-lexendRegular text-[12px] mb-2 px-1">
+              <Text className="text-[#9BBABB] font-lexendRegular text-[0.75rem] mb-2 px-1">
                 Car Number Plate
               </Text>
               <View className="bg-[#032529] border border-[#09515D] rounded-xl px-4 h-[56px] justify-center">
                 <Text
-                  className="text-white font-lexendMedium text-[16px] text-center tracking-widest uppercase"
+                  className="text-white font-lexendMedium text-[1rem] text-center tracking-widest uppercase"
                   onPress={() => {}}
                 >
                   {plate || "-- --- ---"}
@@ -187,7 +187,7 @@ export default function ObdFinalDetails() {
                   }}
                 />
               </View>
-              <Text className="text-[#597374] font-lexendRegular text-[10px] mt-1 px-1">
+              <Text className="text-[#597374] font-lexendRegular text-[0.625rem] mt-1 px-1">
                 You can find this on your vehicle papers
               </Text>
             </View>
@@ -195,7 +195,7 @@ export default function ObdFinalDetails() {
             {/* Date of Purchase */}
             <View className="mb-6">
               <View className="flex-row items-center justify-between mb-3">
-                <Text className="text-[#9BBABB] font-lexendRegular text-[12px]">
+                <Text className="text-[#9BBABB] font-lexendRegular text-[0.75rem]">
                   Date of Purchase
                 </Text>
                 <TouchableOpacity
@@ -213,7 +213,7 @@ export default function ObdFinalDetails() {
                       <Ionicons name="checkmark" size={12} color="#00343F" />
                     )}
                   </View>
-                  <Text className="text-[#9BBABB] font-lexendRegular text-[12px]">
+                  <Text className="text-[#9BBABB] font-lexendRegular text-[0.75rem]">
                     I don't remember
                   </Text>
                 </TouchableOpacity>
@@ -238,7 +238,7 @@ export default function ObdFinalDetails() {
                         }`}
                       >
                         <Text
-                          className={`font-lexendMedium text-[13px] ${
+                          className={`font-lexendMedium text-[0.8125rem] ${
                             purchaseDate.getMonth() === i
                               ? "text-[#00343F]"
                               : "text-[#9BBABB]"
@@ -249,7 +249,7 @@ export default function ObdFinalDetails() {
                       </TouchableOpacity>
                     ))}
                   </View>
-                  <Text className="text-[#9BBABB] text-center text-[12px] mt-2">
+                  <Text className="text-[#9BBABB] text-center text-[0.75rem] mt-2">
                     {purchaseDate.toLocaleDateString("en-GB", {
                       day: "numeric",
                       month: "long",
@@ -262,7 +262,7 @@ export default function ObdFinalDetails() {
 
             {/* Condition */}
             <View className="mb-8">
-              <Text className="text-[#9BBABB] font-lexendRegular text-[12px] mb-3">
+              <Text className="text-[#9BBABB] font-lexendRegular text-[0.75rem] mb-3">
                 Condition at the time of purchase
               </Text>
               {(
@@ -278,7 +278,7 @@ export default function ObdFinalDetails() {
                   }`}
                 >
                   <Text
-                    className={`font-lexendMedium text-[14px] ${
+                    className={`font-lexendMedium text-[0.875rem] ${
                       condition === opt ? "text-white" : "text-[#9BBABB]"
                     }`}
                   >
@@ -307,7 +307,7 @@ export default function ObdFinalDetails() {
               {isSaving ? (
                 <ActivityIndicator color="#00343F" />
               ) : (
-                <Text className="text-[#00343F] font-lexendBold text-[16px]">
+                <Text className="text-[#00343F] font-lexendBold text-[1rem]">
                   Save
                 </Text>
               )}

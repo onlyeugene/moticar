@@ -48,7 +48,7 @@ export function PlannedTripsForm({
             color="#8B8B8B"
             style={{ marginRight: 12 }}
           />
-          <Text className="text-[#8B8B8B] font-lexendRegular text-[13px] mr-2">
+          <Text className="text-[#8B8B8B] font-lexendRegular text-[0.8125rem] mr-2">
             Destination <Text className="text-[#00AEB5]">*</Text>
           </Text>
           <TextInput
@@ -56,7 +56,7 @@ export function PlannedTripsForm({
             placeholderTextColor="#C1C3C3"
             value={state.destination}
             onChangeText={(v) => setState((p) => ({ ...p, destination: v }))}
-            className="flex-1 text-[#001A1F] font-lexendRegular text-[13px] text-right"
+            className="flex-1 text-[#001A1F] font-lexendRegular text-[0.8125rem] text-right"
           />
         </View>
         <DateRow

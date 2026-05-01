@@ -41,11 +41,11 @@ function DetailRow({
       <View className="flex-1">
         {isNote ? (
           <>
-            <Text className="text-[#ADADAD] text-[12px] font-lexendRegular mb-2">
+            <Text className="text-[#ADADAD] text-[0.75rem] font-lexendRegular mb-2">
               {label}
             </Text>
             <View className=" p-3 rounded-lg border-b border-[#F0F0F0]">
-              <Text className="text-[#00343F] text-[14px] font-lexendMedium leading-5">
+              <Text className="text-[#00343F] text-[0.875rem] font-lexendMedium leading-5">
                 {value || "No notes added"}
               </Text>
             </View>
@@ -53,18 +53,18 @@ function DetailRow({
         ) : (
           <View className="flex-row justify-between items-center">
             {label && (
-              <Text className="text-[#ADADAD] text-[12px] font-lexendRegular">
+              <Text className="text-[#ADADAD] text-[0.75rem] font-lexendRegular">
                 {label}
               </Text>
             )}
             <View className="items-end flex-1">
               <Text
-                className={`text-[#001A1F] font-lexendRegular text-[14px] ${isPhone && "text-[24px]"} ${isName && "text-[16px]"} `}
+                className={`text-[#001A1F] font-lexendRegular text-[0.875rem] ${isPhone && "text-[1.5rem]"} ${isName && "text-[1rem]"} `}
               >
                 {value || "—"}
               </Text>
               {subValue && (
-                <Text className="text-[#34A853] text-[10px] font-lexendMedium mt-0.5">
+                <Text className="text-[#34A853] text-[0.625rem] font-lexendMedium mt-0.5">
                   {subValue}
                 </Text>
               )}
@@ -130,7 +130,7 @@ export default function TechnicianDetailSheet({
                   className="w-full h-full"
                 />
               ) : (
-                <Text className="text-[#7F56D9] text-[32px] font-lexendMedium">
+                <Text className="text-[#7F56D9] text-[2rem] font-lexendMedium">
                   {technician?.name
                     ?.split(" ")
                     .map((n) => n[0])

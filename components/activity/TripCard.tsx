@@ -53,7 +53,7 @@ const TripCard: React.FC<TripCardProps> = ({ trip, onPressDetails, onEdit, onDel
       <View className="py-2">
         {trip.source === "obd_gps" && (
           <View className=" items-center justify-center gap-2">
-            <Text className="text-[#29D7DE] text-[10px] font-lexendMedium">
+            <Text className="text-[#29D7DE] text-[0.625rem] font-lexendMedium">
               Detected automatically by your motibuddie
             </Text>
           </View>
@@ -82,13 +82,13 @@ const TripCard: React.FC<TripCardProps> = ({ trip, onPressDetails, onEdit, onDel
         <View className="flex-1 gap-6">
           <View>
             <Text
-              className="text-[#00343F] text-[16px] font-lexendMedium"
+              className="text-[#00343F] text-[1rem] font-lexendMedium"
               numberOfLines={1}
             >
               {trip.origin?.address || "Unknown Origin"}
             </Text>
             <Text
-              className="text-[#979595] text-[11px] font-lexendRegular"
+              className="text-[#979595] text-[0.6875rem] font-lexendRegular"
               numberOfLines={1}
             >
               {trip.description || "Start Location"}
@@ -110,13 +110,13 @@ const TripCard: React.FC<TripCardProps> = ({ trip, onPressDetails, onEdit, onDel
           </View>
           <View>
             <Text
-              className="text-[#00343F] text-[16px] font-lexendMedium"
+              className="text-[#00343F] text-[1rem] font-lexendMedium"
               numberOfLines={1}
             >
               {trip.destination?.address || "Unknown Destination"}
             </Text>
             <Text
-              className="text-[#979595] text-[11px] font-lexendRegular"
+              className="text-[#979595] text-[0.6875rem] font-lexendRegular"
               numberOfLines={1}
             >
               {trip.description || "Destination Location"}
@@ -155,23 +155,23 @@ const TripCard: React.FC<TripCardProps> = ({ trip, onPressDetails, onEdit, onDel
         <View className="flex-row items-center gap-1">
           <Ionicons name="alarm-outline" size={24} color="#ADADAD" />
           <View>
-            <Text className="text-[#979595] text-[8px] font-lexendMedium">
+            <Text className="text-[#979595] text-[0.5rem] font-lexendMedium">
               Time
             </Text>
-            <Text className="text-[#ACA669] text-[11px] font-lexendRegular">
+            <Text className="text-[#ACA669] text-[0.6875rem] font-lexendRegular">
               {startTimeStr} - {endTimeStr}
             </Text>
           </View>
         </View>
         <View className="flex-row items-center gap-4">
           <View className="flex-row items-center gap-1">
-            <Text className="text-[#A39A35] text-[10px] font-lexendRegular">
+            <Text className="text-[#A39A35] text-[0.625rem] font-lexendRegular">
               {durationStr}
             </Text>
           </View>
           <View className="flex-row items-center gap-1">
             <Route width={15} height={15} />
-            <Text className="text-[#00AEB5] text-[14px] font-lexendMedium">
+            <Text className="text-[#00AEB5] text-[0.875rem] font-lexendMedium">
               {trip.distanceKm}km
             </Text>
           </View>
@@ -186,13 +186,13 @@ const TripCard: React.FC<TripCardProps> = ({ trip, onPressDetails, onEdit, onDel
           >
             <View className="flex-row items-center gap-2">
               <Info width={24} height={24} />
-              <Text className="text-[#202A2A] text-[12px] font-lexendRegular">
+              <Text className="text-[#202A2A] text-[0.75rem] font-lexendRegular">
                 {insightCount === 1 ? "Insight" : "Insights"}
               </Text>
             </View>
            <View className="flex-row items-center gap-1">
              <View className="border border-[#29D7DE] bg-[#29D7DE] rounded-full items-center justify-center h-[26px] w-[35px]">
-              <Text className="text-[#006C70] text-[14px] font-lexendRegular ">
+              <Text className="text-[#006C70] text-[0.875rem] font-lexendRegular ">
                 {insightCount}
               </Text>
             </View>
@@ -205,7 +205,7 @@ const TripCard: React.FC<TripCardProps> = ({ trip, onPressDetails, onEdit, onDel
               {trip.insights.ecoScore !== undefined && (
                 <View className="flex-row items-center gap-1">
                   <Ionicons name="leaf" size={12} color="#00343F" />
-                  <Text className="text-[#00343F] text-[10px] font-lexendRegular">
+                  <Text className="text-[#00343F] text-[0.625rem] font-lexendRegular">
                     Eco Score: {trip.insights.ecoScore}%
                   </Text>
                 </View>
@@ -214,7 +214,7 @@ const TripCard: React.FC<TripCardProps> = ({ trip, onPressDetails, onEdit, onDel
                 trip.insights.hardBrakeCount > 0 && (
                   <View className="flex-row items-center gap-1">
                     <Ionicons name="warning" size={12} color="#D9534F" />
-                    <Text className="text-[#D9534F] text-[10px] font-lexendRegular">
+                    <Text className="text-[#D9534F] text-[0.625rem] font-lexendRegular">
                       {trip.insights.hardBrakeCount} Hard Brakes
                     </Text>
                   </View>
@@ -223,7 +223,7 @@ const TripCard: React.FC<TripCardProps> = ({ trip, onPressDetails, onEdit, onDel
                 trip.insights.rapidAccelerationCount > 0 && (
                   <View className="flex-row items-center gap-1">
                     <Ionicons name="speedometer" size={12} color="#00343F" />
-                    <Text className="text-[#00343F] text-[10px] font-lexendRegular">
+                    <Text className="text-[#00343F] text-[0.625rem] font-lexendRegular">
                       {trip.insights.rapidAccelerationCount} Rapid Accel
                     </Text>
                   </View>
@@ -232,7 +232,7 @@ const TripCard: React.FC<TripCardProps> = ({ trip, onPressDetails, onEdit, onDel
                 trip.insights.idleDurationMins > 0 && (
                   <View className="flex-row items-center gap-1">
                     <Ionicons name="hourglass" size={12} color="#00343F" />
-                    <Text className="text-[#00343F] text-[10px] font-lexendRegular">
+                    <Text className="text-[#00343F] text-[0.625rem] font-lexendRegular">
                       {Math.round(trip.insights.idleDurationMins)}m Idle
                     </Text>
                   </View>

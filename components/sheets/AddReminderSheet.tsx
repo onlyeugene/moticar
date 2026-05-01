@@ -257,10 +257,10 @@ export default function AddReminderSheet({
                 <Ionicons name="close" size={22} color="#293536" />
               </TouchableOpacity>
               <View className="flex-1">
-                <Text className="text-[#00AEB5] font-lexendRegular text-[11px] mb-0.5">
+                <Text className="text-[#00AEB5] font-lexendRegular text-[0.6875rem] mb-0.5">
                   Reminder
                 </Text>
-                <Text className="text-[#001A1F] font-lexendBold text-[22px]">
+                <Text className="text-[#001A1F] font-lexendBold text-[1.375rem]">
                   {category}
                 </Text>
               </View>
@@ -280,7 +280,7 @@ export default function AddReminderSheet({
                   disabled={!saveEnabled || isPending}
                   className={`px-5 py-2 rounded-full mt-1 ${saveEnabled && !isPending ? "bg-[#29D7DE]" : "bg-[#29D7DE]/40"}`}
                 >
-                  <Text className="text-[#00343F] font-lexendBold text-[14px]">
+                  <Text className="text-[#00343F] font-lexendBold text-[0.875rem]">
                     {isPending ? "Saving..." : "Save"}
                   </Text>
                 </TouchableOpacity>

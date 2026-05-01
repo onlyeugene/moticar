@@ -44,7 +44,7 @@ export default function GenderSelectionSheet({
           disabled={!selected}
           className={`bg-[#00AEB5] px-5 py-1.5 rounded-full ${!selected ? 'opacity-50' : ''}`}
         >
-          <Text className="text-white font-lexendSemiBold text-[14px]">
+          <Text className="text-white font-lexendSemiBold text-[0.875rem]">
             Save
           </Text>
         </TouchableOpacity>
@@ -70,7 +70,7 @@ export default function GenderSelectionSheet({
                   color={isSelected ? "#00AEB5" : "#7BA0A3"} 
                 />
                 <Text
-                  className={`font-lexendRegular text-[15px] ${
+                  className={`font-lexendRegular text-[0.9375rem] ${
                     isSelected ? "text-[#00343F]" : "text-[#5E7A7A]"
                   }`}
                 >

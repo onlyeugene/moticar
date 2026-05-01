@@ -103,7 +103,7 @@ const TripsTab: React.FC<TripsTabProps> = ({
         onPress={onAddTrip}
         className="border border-[#00AEB5] rounded-full h-[40px] items-center justify-center mb-8 mt-4"
       >
-        <Text className="text-[#00AEB5] text-[14px] font-lexendSemiBold">
+        <Text className="text-[#00AEB5] text-[0.875rem] font-lexendSemiBold">
           + Add new trip
         </Text>
       </TouchableOpacity>
@@ -113,7 +113,7 @@ const TripsTab: React.FC<TripsTabProps> = ({
       ) : (
         sortedDateKeys.map(dateKey => (
           <View key={dateKey}>
-            <Text className="text-[#879090] text-[14px] font-lexendMedium mb-4">
+            <Text className="text-[#879090] text-[0.875rem] font-lexendMedium mb-4">
               {dateKey}
             </Text>
             {groupedTrips[dateKey].map((trip, idx) => (
@@ -130,7 +130,7 @@ const TripsTab: React.FC<TripsTabProps> = ({
       )}
 
       {trips.length > 0 && (
-        <Text className="text-[#ADADAD] text-[12px] font-lexendRegular text-center mt-10 mb-20">
+        <Text className="text-[#ADADAD] text-[0.75rem] font-lexendRegular text-center mt-10 mb-20">
           No more trips for this period
         </Text>
       )}

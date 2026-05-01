@@ -48,7 +48,7 @@ export function CarFacts({
   return (
     <View className="mb-6 bg-white rounded-[8px] p-4">
       <View className="flex-row justify-between items-center mb-4">
-        <Text className="text-[#036D7D] text-[20px] font-lexendMedium">
+        <Text className="text-[#036D7D] text-[1.25rem] font-lexendMedium">
           Your Car Facts
         </Text>
         <TouchableOpacity onPress={onOpenDiagnostics}>
@@ -66,17 +66,17 @@ export function CarFacts({
           >
             <View className="flex-row justify-between items-start mb-2">
               <EngineOilIcon width={30} height={30} />
-              <Text className="text-[#006C70] text-[24px] font-lexendRegular">
+              <Text className="text-[#006C70] text-[1.5rem] font-lexendRegular">
                 {activeCar?.engineOil?.capacityLiters
                   ? `${activeCar.engineOil.capacityLiters}L`
                   : "N/A"}
               </Text>
             </View>
-            <Text className="text-[#006C70] text-[14px] font-lexendRegular mb-1">
+            <Text className="text-[#006C70] text-[0.875rem] font-lexendRegular mb-1">
               Engine Oil
             </Text>
             <Text
-              className="text-[#879090] text-[10px] font-lexendRegular mb-2"
+              className="text-[#879090] text-[0.625rem] font-lexendRegular mb-2"
               numberOfLines={1}
             >
               Grade: {activeCar?.engineOil?.recommendedGrade || "N/A"}
@@ -91,7 +91,7 @@ export function CarFacts({
           >
             <View className="flex-row justify-between items-start mb-2">
               <FuelIcon width={30} height={30} />
-              <Text className="text-[#006C70] text-[24px] font-lexendRegular">
+              <Text className="text-[#006C70] text-[1.5rem] font-lexendRegular">
                 {obdData?.fuelLevel !== undefined
                   ? `${obdData.fuelLevel}%`
                   : activeCar?.fuelSpec?.capacityLiters
@@ -99,16 +99,16 @@ export function CarFacts({
                     : "N/A"}
               </Text>
             </View>
-            <Text className="text-[#006C70] text-[14px] font-lexendRegular mb-2">
+            <Text className="text-[#006C70] text-[0.875rem] font-lexendRegular mb-2">
               Fuel {obdData?.fuelLevel !== undefined && "(Live)"}
             </Text>
             <View className="justify-between flex-row items-center mt-3">
-              <Text className="text-[#879090] text-[10px] font-lexendRegular ">
+              <Text className="text-[#879090] text-[0.625rem] font-lexendRegular ">
                 Full Tank
               </Text>
               <View className="flex-row items-center ">
                 <View className="bg-[#FEF597] px-2 py-0.5 rounded-full">
-                  <Text className="text-[#425658] text-[8px] font-lexendRegular">
+                  <Text className="text-[#425658] text-[0.5rem] font-lexendRegular">
                     {getFuelEst()}
                   </Text>
                 </View>
@@ -129,19 +129,19 @@ export function CarFacts({
             <View className="flex-row justify-between items-start">
               <View>
                 <TyresIcon width={30} height={30} />
-                <Text className="text-[#006C70] text-[14px] font-lexendRegular mt-2 ">
+                <Text className="text-[#006C70] text-[0.875rem] font-lexendRegular mt-2 ">
                   Tyres
                 </Text>
               </View>
               <View className="">
-                <Text className="text-[#006C70] text-[24px] font-lexendRegular">
+                <Text className="text-[#006C70] text-[1.5rem] font-lexendRegular">
                   {activeCar?.tyreSpec?.size || "N/A"}
                 </Text>
               </View>
             </View>
             {/* <BrandTags brands={activeCar?.tyreSpec?.manufacturers} /> */}
             <View className="flex-1 flex-row justify-between items-center">
-              <Text className="text-[#879090] text-[10px] font-lexendRegular">
+              <Text className="text-[#879090] text-[0.625rem] font-lexendRegular">
                 Recommended tyre pressure is between{" "}
                 <Text className="font-lexendBold text-[#006C70]">
                   {activeCar?.tyreSpec?.recommendedPressurePsi || "N/A"}
@@ -162,19 +162,19 @@ export function CarFacts({
         >
           <View className="flex-row justify-between items-start mb-2">
             <BrakesIcon width={30} height={30} />
-            <Text className="text-[#006C70] text-[24px] font-lexendRegular">
+            <Text className="text-[#006C70] text-[1.5rem] font-lexendRegular">
               {activeCar?.brakePads?.thicknessMm
                 ? `${activeCar.brakePads.thicknessMm}mm`
                 : "N/A"}
             </Text>
           </View>
-          <Text className="text-[#006C70] text-[14px] font-lexendRegular mb-1">
+          <Text className="text-[#006C70] text-[0.875rem] font-lexendRegular mb-1">
             Brake Pads
           </Text>
           {/* <BrandTags brands={activeCar?.brakePads?.reputableBrands} /> */}
           <View className="flex-row justify-between items-center mt-3">
             <Text
-              className="text-[#879090] text-[10px] font-lexendRegular"
+              className="text-[#879090] text-[0.625rem] font-lexendRegular"
               numberOfLines={2}
             >
               Last between:{"\n"}
@@ -195,7 +195,7 @@ export function CarFacts({
         >
           <View className="flex-row justify-between items-start mb-2">
             <BatteryIcon width={30} height={30} />
-            <Text className="text-[#006C70] text-[24px] font-lexendRegular">
+            <Text className="text-[#006C70] text-[1.5rem] font-lexendRegular">
               {obdData?.voltage
                 ? `${obdData.voltage}V`
                 : activeCar?.batterySpec?.voltage
@@ -203,7 +203,7 @@ export function CarFacts({
                   : "N/A"}
             </Text>
           </View>
-          <Text className="text-[#006C70] text-[14px] font-lexendRegular mb-1">
+          <Text className="text-[#006C70] text-[0.875rem] font-lexendRegular mb-1">
             Battery {obdData?.voltage && "(Live)"}
           </Text>
           <View className="mt-4 flex-row justify-between items-center">
@@ -213,7 +213,7 @@ export function CarFacts({
         </TouchableOpacity>
       </View>
 
-      <Text className="text-[#879090] text-[10px] font-lexendRegular text-center mt-6 mb-3">
+      <Text className="text-[#879090] text-[0.625rem] font-lexendRegular text-center mt-6 mb-3">
         These details are powered by motiNtelligence
       </Text>
     </View>
